@@ -1,0 +1,49 @@
+<section>
+    <div class="page-header">
+	    <h1>Showing Data For Dataset.</h1>
+	</div>
+
+	<div class="row" ng-show="DatasetsEdit.usersDatasets.length > 0">
+		<div class="graph col-md-6"> </div>
+		<div class="datasets-list col-md-6">
+			<select 
+			ng-options="dataset as dataset.title for dataset in DatasetsEdit.usersDatasets track by dataset._id" 
+			ng-model="DatasetsEdit.selectedDatasetOption"
+			ng-change="DatasetsEdit.mergeDataset()"></select>
+		</div>
+	</div>
+
+	<div data-ng-hide="DatasetsEdit.hasLoadedData"> Retrieving Data </div>
+
+	<div class="row">
+		<div class="col-md-6">
+			<!-- <h3>{{ DatasetsEdit.viewingDataset.title }}</h3> -->
+			<table class="table">
+				<tr
+					<th ng-repeat="column in DatasetsEdit.columns">{{ column }}</th>
+				</tr>
+				<tr ng-repeat="row in DatasetsEdit.rows">
+					<td ng-repeat="column in DatasetsEdit.columns">{{ row[column] }}</td>
+				</tr>
+			</table>
+		</div>
+
+		<div class="col-md-6">
+			<!-- <h3>{{ DatasetsEdit.selectedDatasetOption.title }}</h3> -->
+				<table class="table">
+					<tr
+					<th ng-repeat="column in DatasetsEdit.selectedDatasetColumns">{{ column }}</th>
+				</tr>
+				<tr ng-repeat="row in DatasetsEdit.selectedDatasetRows">
+				<td ng-repeat="column in DatasetsEdit.selectedDatasetColumns">{{ row[column] }}</td>
+				</tr>
+			</table>
+		</div>
+
+		<div class="col-md-12">
+		    <button class="btn btn-success btn-sm" ng-click="DatasetsEdit.addtoUser()">Save to My Canvas</button>
+		    <button class="btn btn-danger btn-sm" ng-click="DatasetsEdit.cancel()">Cancel</button>
+		</div>
+
+	</div><!-- row -->
+</section>

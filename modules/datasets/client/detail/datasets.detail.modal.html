@@ -1,0 +1,50 @@
+<div class="modal-header">
+    <h4 class="modal-title">
+        Showing Data For Dataset.
+    </h4>
+</div>
+<div class="modal-body">
+  
+  <div class="row" ng-show="DatasetDetailModal.usersDatasets.length > 0">
+    <div class="graph col-md-6"> </div>
+    <div class="datasets-list col-md-6">
+      <select 
+        ng-options="dataset as dataset.title for dataset in DatasetDetailModal.usersDatasets track by dataset._id" 
+        ng-model="DatasetDetailModal.selectedDatasetOption"
+        ng-change="DatasetDetailModal.mergeDataset()"></select>
+    </div>
+  </div>
+
+  <div data-ng-hide="DatasetDetailModal.hasLoadedData"> Retrieving Data </div>
+  
+  <div class="row">
+    <div class="col-md-6">
+      <!-- <h3>{{ DatasetDetailModal.viewingDataset.title }}</h3> -->
+      <table class="table">
+          <tr
+              <th ng-repeat="column in DatasetDetailModal.columns">{{ column }}</th>
+          </tr>
+          <tr ng-repeat="row in DatasetDetailModal.rows">
+              <td ng-repeat="column in DatasetDetailModal.columns">{{ row[column] }}</td>
+          </tr>
+      </table>
+    </div>
+    
+    <div class="col-md-6">
+      <!-- <h3>{{ DatasetDetailModal.selectedDatasetOption.title }}</h3> -->
+      <table class="table">
+          <tr
+              <th ng-repeat="column in DatasetDetailModal.selectedDatasetColumns">{{ column }}</th>
+          </tr>
+          <tr ng-repeat="row in DatasetDetailModal.selectedDatasetRows">
+              <td ng-repeat="column in DatasetDetailModal.selectedDatasetColumns">{{ row[column] }}</td>
+          </tr>
+      </table>
+    </div>
+  </div><!-- row -->
+  
+</div>
+<div class="modal-footer">
+    <button class="btn btn-success btn-sm" ng-click="DatasetDetailModal.addtoUser()">Save to My Canvas</button>
+    <button class="btn btn-danger btn-sm" ng-click="DatasetDetailModal.cancel()">Cancel</button>
+</div>

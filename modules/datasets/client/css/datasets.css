@@ -1,0 +1,23 @@
+.datasets-search-container {
+	position: relative;
+	margin-bottom: 10px;
+}
+	
+.datasets-search-container .btn {
+	position: absolute;
+	right: 0;
+	top: 0;
+}
+
+.datasets-search-container .form-control {
+	max-width: 95%;
+}
+
+.workbench .data-loading {
+    text-align: center;
+    padding-top: 50px;
+}
+
+.workbench .data-loading .glyphicon{
+	font-size: 50px;
+}

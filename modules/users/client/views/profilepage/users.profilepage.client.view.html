@@ -1,0 +1,29 @@
+<div class="col-md-12">
+
+ <div class="list-group">
+        <div data-ng-repeat="dataset in UsersProfilePage.usersDatasets" class="list-group-item">
+			<small class="list-group-item-text">
+				Title:
+				<span data-ng-bind="dataset.title | date:'medium'"></span>
+				Source:
+				<span data-ng-bind="dataset.source"></span>
+			</small>
+			<h4 class="list-group-item-heading" data-ng-bind="dataset.name"></h4>
+
+            <button 
+            	class="btn btn-secondary"
+            	data-ng-hide ="UsersProfilePage.isCurrentUser()" 
+            	data-ng-click="UsersProfilePage.addToUser(dataset)">
+            	Save to My Canvas
+            </button>
+            <a 
+            	class="btn btn-warning btn-sm"
+            	data-ng-show ="UsersProfilePage.isCurrentUser()" 
+            	data-ui-sref="datasets.workbench({ds1: dataset._id})">
+            	Edit
+            </a>
+        </div>
+
+    </div>
+</div>
+
