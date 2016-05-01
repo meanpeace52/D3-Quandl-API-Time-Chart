@@ -35,6 +35,14 @@ exports.invokeRolesPolicies = function () {
                 {
                     resources: '/api/datasets/:datasetId/withs3',
                     permissions: ['*']
+                },
+                {
+                    resources: '/api/saveCustom',
+                    permissions: ['post']
+                },
+                {
+                    resources: '/api/merge',
+                    permissions: ['post']
                 }
             ]
         },
@@ -60,6 +68,14 @@ exports.invokeRolesPolicies = function () {
                 {
                     resources: '/api/datasets/:datasetId/withs3',
                     permissions: ['get']
+                },
+                {
+                    resources: '/api/saveCustom',
+                    permissions: ['post']
+                },
+                {
+                    resources: '/api/merge',
+                    permissions: ['post']
                 }
             ]
         },

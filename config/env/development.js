@@ -3,6 +3,7 @@
 var defaultEnvConfig = require('./default');
 
 module.exports = {
+  port: 3001,
   db: {
     uri: process.env.MONGOHQ_URL || process.env.MONGOLAB_URI || 'mongodb://administrator:password@54.84.240.194/datasets',
     options: {

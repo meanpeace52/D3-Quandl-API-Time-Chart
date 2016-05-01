@@ -72,7 +72,7 @@ function readWithS3(s3reference) {
     ref.shift();
     var bucketFile = ref.join('/'),
         localBucketFile = getS3LocalPath(bucketFile);
-
+        console.log(ref);
     return new Promise(function (resolve, reject) {
         try {
             fs.accessSync(localBucketFile);

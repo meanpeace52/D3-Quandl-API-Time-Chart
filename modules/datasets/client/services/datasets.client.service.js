@@ -9,6 +9,8 @@ angular.module('datasets')
                 search: search,
                 addToUserApiCall: addToUserApiCall,
                 getDatasetWithS3: getDatasetWithS3,
+                saveCustom: saveCustom,
+                mergeColumns: mergeColumns
             };
 
             function crud() {
@@ -49,6 +51,30 @@ angular.module('datasets')
             	}).then(function(res) {
                     return res.data;
 				}, function (err) {
+                    console.log(err);
+                });
+            }
+
+            function saveCustom(dataset) {
+                return $http({
+                    url: '/api/saveCustom',
+                    data: dataset,
+                    method: 'POST'
+                }).then(function(res) {
+                    return res.data;
+                }, function (err) {
+                    console.log(err);
+                });
+            }
+
+            function mergeColumns (data) {
+                return $http({
+                    url: '/api/merge',
+                    data: data,
+                    method: 'POST'
+                }).then(function(res) {
+                    return res.data;
+                }, function (err) {
                     console.log(err);
                 });
             }

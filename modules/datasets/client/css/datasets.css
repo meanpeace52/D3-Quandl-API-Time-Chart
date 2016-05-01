@@ -21,3 +21,40 @@
 .workbench .data-loading .glyphicon{
 	font-size: 50px;
 }
+
+.title-checkbox-label,
+	.title-radio-label {
+	cursor: pointer;
+	margin: 0 !important;
+	vertical-align: middle;
+	position: relative;
+  z-index: 500;
+}
+
+.title-checkbox,
+	.title-radio {
+	margin: 0 10px 0 0 !important;
+	vertical-align: middle;
+  pointer-events: none;
+
+}
+.title-checkbox {
+	margin: 0 0 0 10px !important;
+}
+
+.save-changes-btn-wrap {
+	text-align: center;
+}
+@media (min-width: 768px) {
+	.save-changes-btn-wrap {
+		text-align: left;
+	}
+}
+
+.workbench__footer-buttons {
+	margin-top: 15px;
+}
+
+.top-buffer {
+	margin-top: 15px;
+}

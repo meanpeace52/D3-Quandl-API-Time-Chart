@@ -105,6 +105,7 @@ exports.me = function (req, res) {
 };
 
 exports.read = function(req, res) {
+    console.log(req.readUser);
     res.json(req.readUser || null);
 };
 
