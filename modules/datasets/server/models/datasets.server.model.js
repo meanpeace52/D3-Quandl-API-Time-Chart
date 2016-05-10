@@ -14,9 +14,14 @@ var DatasetSchema = new Schema({
         type: String,
         default: '',
         required: 'Please give this Dataset a title',
+        index: { unique: true },
         trim: true
     },
     index: {
+        type: String,
+        default: ''
+    },
+    notice: {
         type: String,
         default: ''
     },

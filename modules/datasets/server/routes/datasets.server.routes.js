@@ -17,10 +17,10 @@ module.exports = function (app) {
     app.route('/api/datasets/search').all(datasetsPolicy.isAllowed)
         .get(datasets.searchDataset);
 
-    app.route('/api/saveCustom').all(datasetsPolicy.isAllowed)
+    app.route('/api/datasets/saveCustom').all(datasetsPolicy.isAllowed)
         .post(datasets.saveCustom);
 
-    app.route('/api/merge').all(datasetsPolicy.isAllowed)
+    app.route('/api/datasets/merge').all(datasetsPolicy.isAllowed)
         .post(datasets.merge);
 
     // Single article routes

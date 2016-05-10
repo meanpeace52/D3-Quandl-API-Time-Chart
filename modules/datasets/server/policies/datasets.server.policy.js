@@ -37,11 +37,11 @@ exports.invokeRolesPolicies = function () {
                     permissions: ['*']
                 },
                 {
-                    resources: '/api/saveCustom',
+                    resources: '/api/datasets/saveCustom',
                     permissions: ['post']
                 },
                 {
-                    resources: '/api/merge',
+                    resources: '/api/datasets/merge',
                     permissions: ['post']
                 }
             ]
@@ -70,11 +70,11 @@ exports.invokeRolesPolicies = function () {
                     permissions: ['get']
                 },
                 {
-                    resources: '/api/saveCustom',
+                    resources: '/api/datasets/saveCustom',
                     permissions: ['post']
                 },
                 {
-                    resources: '/api/merge',
+                    resources: '/api/datasets/merge',
                     permissions: ['post']
                 }
             ]

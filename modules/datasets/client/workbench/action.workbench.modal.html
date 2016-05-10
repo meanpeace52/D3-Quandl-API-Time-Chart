@@ -1,0 +1,63 @@
+<div class="modal-header">
+    <h4 class="modal-title">
+        {{ActionModalCtrl.title}}
+    </h4>
+</div>
+<div class="modal-body">
+
+    <form name="actionForm" accessible-form novalidate ng-hide="ActionModalCtrl.actionComplete">
+        <div class="form-group" ng-class="{'has-error':actionForm.tableName.$error.required && actionForm.tableName.$dirty}">
+            <label for="name">Title* {{ActionModalCtrl.notation}}</label>
+            <input type="text" class="form-control" id="name" name="tableName" placeholder="Enter table name" ng-model="ActionModalCtrl.mergeParams.tableName" ng-change="ActionModalCtrl.compareName()" ng-disabled="ActionModalCtrl.inprogress" required>
+            <div ng-messages="actionForm.tableName.$error" role="alert">
+                <p class="help-block error-text" ng-message="required" ng-if="actionForm.tableName.$dirty">Please enter a title.</p>
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="note">Notes</label>
+            <textarea class="form-control vresize" id="note" placeholder="Notes" ng-model="ActionModalCtrl.mergeParams.notes" ng-disabled="ActionModalCtrl.inprogress"></textarea>
+        </div>
+    </form>
+
+    <div class="alert alert-success" role="alert" ng-hide="ActionModalCtrl.hasLoadedData">
+        {{ActionModalCtrl.infoText}}
+    </div>
+
+    <div class="loader-data-row" ng-show="ActionModalCtrl.hasLoadedData">
+        <i class="loader-data loader-data--modal"></i>
+        <span>Operation in progress...</span>
+    </div>
+    
+    <div class="row ">
+        <div class="col-md-12 text-right">
+            <button class="btn btn_submit btn-success btn_wide" ng-disabled="actionForm.$invalid || ActionModalCtrl.inprogress || ActionModalCtrl.isNameNotChange" ng-click="ActionModalCtrl.submit(actionForm.$valid)" ng-hide="ActionModalCtrl.actionComplete">Save</button>
+            <button class="btn btn_submit btn-success btn_wide" ng-if="ActionModalCtrl.actionComplete" ng-click="ActionModalCtrl.ok()">Ok</button>
+            <button class="btn btn-danger btn-sm" ng-disabled="ActionModalCtrl.inprogress" ng-click="ActionModalCtrl.cancel()" ng-hide="ActionModalCtrl.actionComplete">cancel</button> 
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-12 text-right">
+            <small ng-hide="ActionModalCtrl.actionComplete">If you close this modal without save this dataset will be lost.</small>
+        </div>
+    </div>
+
+
+</div>
+<div class="modal-footer">
+    
+    <div class="row" ng-show="ActionModalCtrl.columns.length">
+        <div class="col-md-12">
+            <table class="table table-striped text-left">
+                <tr>
+                    <th ng-repeat="column in ActionModalCtrl.columns">{{ column }}</th>
+                </tr>
+                <tr ng-repeat="row in ActionModalCtrl.rows">
+                    <td ng-repeat="column in ActionModalCtrl.columns">{{ row[column] }}</td>
+                </tr>
+            </table>
+        </div>
+    </div>
+
+</div>
+

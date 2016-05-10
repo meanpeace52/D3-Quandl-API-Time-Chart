@@ -57,7 +57,7 @@ angular.module('datasets')
 
             function saveCustom(dataset) {
                 return $http({
-                    url: '/api/saveCustom',
+                    url: '/api/datasets/saveCustom',
                     data: dataset,
                     method: 'POST'
                 }).then(function(res) {
@@ -69,7 +69,7 @@ angular.module('datasets')
 
             function mergeColumns (data) {
                 return $http({
-                    url: '/api/merge',
+                    url: '/api/datasets/merge',
                     data: data,
                     method: 'POST'
                 }).then(function(res) {

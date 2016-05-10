@@ -29,7 +29,7 @@
 				  <option value="0">Inner Join</option>
 				  <option value="1">Left Join</option>
 				</select>
-			  <button type="submit" class="btn btn-default" ng-class="{}" ng-click="Workbench.mergeColumns()">Merge</button>
+			  <button type="submit" class="btn btn-success" ng-click="Workbench.mergeColumns()">Merge</button>
 			</form>
 		</div>
 	</div>
@@ -38,9 +38,7 @@
 		<div class="col-md-6">
 			<!-- <h3>{{ Workbench.viewingDataset.title }}</h3> -->
 			<div class="data-loading">
-				<i 
-		    		ng-hide="Workbench.ds1.hasLoadedData" 
-		    		class="glyphicon glyphicon-hourglass"></i>
+				<i ng-hide="Workbench.ds1.hasLoadedData" class="loader-data"></i>
 			</div>
 
 			<div class="table-container" ng-if="Workbench.ds1.hasLoadedData">
@@ -53,9 +51,8 @@
 			</div>
 
 			<datatable-wrapper>
-				<table cellspacing="0" width="100%" class="table" datatable="" dt-options="Workbench.ds1.tableOptions" dt-column-defs="Workbench.ds1.tableColumnDefs">
+				<table cellspacing="0" width="100%" class="table table-striped" datatable="" dt-options="Workbench.ds1.tableOptions" dt-column-defs="Workbench.ds1.tableColumnDefs">
 					<thead>
-
 						<tr>
 							<th ng-repeat="column in Workbench.ds1.columns">
 								<!-- {{ column }} -->
@@ -75,7 +72,7 @@
 				</datatable-wrapper>
 				<div class="row">
 					<div class="col-md-6 save-changes-btn-wrap">
-						<button class="btn btn-default" type="submit" ng-click="Workbench.saveChanges(Workbench.ds1,'ds1')">Save changes (this dataset only)</button>
+						<button class="btn btn-success" type="submit" ng-click="Workbench.saveChanges(Workbench.ds1,'ds1')">Subset this dataset</button>
 					</div>
 				</div>
 			</div>
@@ -84,9 +81,10 @@
 		<div class="col-md-6">
 			<!-- <h3>{{ Workbench.selectedDatasetOption.title }}</h3> -->
 			<div class="data-loading">
-				<i 
+				<i ng-hide="Workbench.ds2.hasLoadedData" class="loader-data"></i>
+				<!-- <i 
 		    		ng-hide="Workbench.ds2.hasLoadedData" 
-		    		class="glyphicon glyphicon-hourglass"></i>
+		    		class="glyphicon glyphicon-hourglass"></i> -->
 			</div>
 
 			<div class="table-container"  ng-if="Workbench.ds2.hasLoadedData">
@@ -99,7 +97,7 @@
 			</div>
 
 			<datatable-wrapper>
-				<table cellspacing="0" width="100%" class="table" datatable="" dt-options="Workbench.ds2.tableOptions" dt-column-defs="Workbench.ds2.tableColumnDefs">
+				<table cellspacing="0" width="100%" class="table table-striped" datatable="" dt-options="Workbench.ds2.tableOptions" dt-column-defs="Workbench.ds2.tableColumnDefs">
 					<thead>
 						<tr>
 							<th ng-repeat="column in Workbench.ds2.columns">
@@ -116,16 +114,16 @@
 				</datatable-wrapper>
 				<div class="row">
 					<div class="col-md-6 save-changes-btn-wrap">
-						<button class="btn btn-default" type="submit" ng-click="Workbench.saveChanges(Workbench.ds2,'ds2')">Save changes (this dataset only)</button>
+						<button class="btn btn-success" type="submit" ng-click="Workbench.saveChanges(Workbench.ds2,'ds2')">Subset this dataset</button>
 					</div>
 				</div>
 			</div>
 		</div>
 
-		<div class="col-md-12 workbench__footer-buttons">
+<!-- 		<div class="col-md-12 workbench__footer-buttons">
 		    <button class="btn btn-success btn-sm" ng-click="Workbench.addtoUser()">Save to My Canvas</button>
 		    <button class="btn btn-danger btn-sm" ng-click="Workbench.cancel()">Cancel</button>
-		</div>
+		</div> -->
 
 	</div><!-- row -->
 

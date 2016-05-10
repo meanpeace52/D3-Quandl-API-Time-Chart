@@ -25,6 +25,8 @@
                 <span data-ng-bind-html="DatasetsList.showTitle (dataset.title)"></span>
                 Source:
                 <span ng-bind="dataset.source"></span>
+                <span ng-bind="dataset.user.displayName"></span>
+
             </small>
             <h4 class="list-group-item-heading" ng-bind="dataset.name"></h4>
             <button class="btn btn-secondary" ng-click="DatasetsList.addToUser(dataset)">Save to My Canvas</button>

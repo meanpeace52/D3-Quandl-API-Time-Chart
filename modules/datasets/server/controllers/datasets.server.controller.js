@@ -128,13 +128,6 @@ exports.read = function (req, res) {
  * Merge darasets
  */
 exports.merge = function (req, res) {
-    // var datasets = [
-
-    //     {id: "572439a76c58ddc70358be8f", cols: ["DATE", "VALUEA", "VALUEB"], primary: "DATE"},
-    //     {id: "57219ce88b59880e5d1dfe75", cols: ["DATE", "VALUE"], primary: "DATE"}
-    // ];
-    // req.body.datasets = datasets;
-    // req.body.type = 1;
 
     Dataset.findById(req.body.datasets[0].id, function (err, one) {
 
@@ -227,7 +220,7 @@ exports.merge = function (req, res) {
                     var out = [],
                         columns = [];
 
-                    if(req.body.type == 0 || req.body.type == 1) {
+                    if(req.body.params.type == 0 || req.body.params.type == 1) {
 
                         for (var i = 0; i < data_len; i++) {
 
@@ -264,7 +257,7 @@ exports.merge = function (req, res) {
 
                                 }
 
-                                if(req.body.type == 0 && i == 0) {
+                                if(req.body.params.type == 0 && i == 0) {
 
                                     var flag_inner = false;
 
@@ -350,31 +343,41 @@ exports.merge = function (req, res) {
                         return (a[req.body.datasets[0].primary] > b[req.body.datasets[0].primary]) ? 1 : -1;
                     });
 
-                    console.log(out);
+                    out.splice(0, 1);
 
-                    json2csv({ data: out, fields: columns }, function(err, csv) {
+                    if(req.body.params.action == 'show') {
 
-                        fs.writeFileSync("./s3-cache/" + path + ".csv", csv);
+                        res.json({ rows: out, columns: columns });
 
-                        saveFileToS3(path + ".csv", p1[4]+'/'+p1[5]+'/'+p1[6]+'/');
+                    } else if(req.body.params.action == 'insert') {
 
-                        var dataset = new Dataset();
-                        dataset.s3reference = "https://s3.amazonaws.com/datasetstl/"+p1[4]+'/'+p1[5]+'/'+p1[6]+'/'+path+".csv";
-                        dataset.user = one.user;
-                        dataset.title = one.title;
-                        dataset.save(function (err) {
+                        json2csv({ data: out, fields: columns }, function(err, csv) {
 
-                            if (err) {
-                                return res.status(400).send({
-                                    message: errorHandler.getErrorMessage(err)
-                                });
-                            } else {
-                                res.json(dataset);
-                            }
+                            csv = csv.replace(/"/ig,'');
+
+                            fs.writeFileSync("./s3-cache/" + path + ".csv", csv);
+
+                            saveFileToS3(path + ".csv", p1[4]+'/'+p1[5]+'/'+p1[6]+'/');
+                            var dataset = new Dataset();
+                            dataset.s3reference = "https://s3.amazonaws.com/datasetstl/"+p1[4]+'/'+p1[5]+'/'+p1[6]+'/'+path+".csv";
+                            dataset.user = one.user;
+                            dataset.title = req.body.params.title;
+                            dataset.notice = req.body.params.notice;
+                            dataset.save(function (err) {
+
+                                if (err) {
+                                    return res.status(400).send({
+                                        message: errorHandler.getErrorMessage(err)
+                                    });
+                                } else {
+                                    res.json(dataset);
+                                }
+
+                            });
 
                         });
 
-                    });
+                    }
 
 
                 });
@@ -436,29 +439,42 @@ exports.saveCustom = function (req, res) {
 
             }
 
-            json2csv({ data: data.rows, fields: data.columns }, function(err, csv) {
+            data.rows.splice(0, 1);
 
-                fs.writeFileSync("./s3-cache/" + path + ".csv", csv);
+            if(req.body.action == 'show') {
 
-                saveFileToS3(path + ".csv", p1[4]+'/'+p1[5]+'/'+p1[6]+'/');
+                res.json({ rows: data.rows, columns: data.columns });
 
-                var dataset = new Dataset();
-                dataset.s3reference = "https://s3.amazonaws.com/datasetstl/"+p1[4]+'/'+p1[5]+'/'+p1[6]+'/'+path+".csv";
-                dataset.user = one.user;
-                dataset.title = one.title;
-                dataset.save(function (err) {
+            } else if(req.body.action == 'insert') {
 
-                    if (err) {
-                        return res.status(400).send({
-                            message: errorHandler.getErrorMessage(err)
-                        });
-                    } else {
-                        res.json(dataset);
-                    }
+                json2csv({ data: data.rows, fields: data.columns }, function(err, csv) {
+
+                    csv = csv.replace(/"/ig,'');
+                    
+                    fs.writeFileSync("./s3-cache/" + path + ".csv", csv);
+
+                    saveFileToS3(path + ".csv", p1[4]+'/'+p1[5]+'/'+p1[6]+'/');
+
+                    var dataset = new Dataset();
+                    dataset.s3reference = "https://s3.amazonaws.com/datasetstl/"+p1[4]+'/'+p1[5]+'/'+p1[6]+'/'+path+".csv";
+                    dataset.user = one.user;
+                    dataset.title = req.body.title;
+                    dataset.notice = req.body.notice;
+                    dataset.save(function (err) {
+
+                        if (err) {
+                            return res.status(400).send({
+                                message: errorHandler.getErrorMessage(err)
+                            });
+                        } else {
+                            res.json(dataset);
+                        }
+
+                    });
 
                 });
 
-            });
+            }
 
         });
 

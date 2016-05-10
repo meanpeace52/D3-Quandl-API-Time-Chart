@@ -1,13 +1,10 @@
 <div class="modal-header">
-    <h4 ng-show="{{DatasetWorkbenchModal.isAlert}}" class="modal-title">
-        Merging error.
-    </h4>
-    <h4 ng-show="{{!DatasetWorkbenchModal.isAlert}}" class="modal-title">
-        Merging complete.
+    <h4 class="modal-title">
+        Error
     </h4>
 </div>
 <div class="modal-body">
-    <div class="alert" ng-class="{'alert-success':!DatasetWorkbenchModal.isAlert, 'alert-danger':DatasetWorkbenchModal.isAlert}" role="alert" ng-repeat="msg in DatasetWorkbenchModal.mergeData.msg">
+    <div class="alert alert-danger" role="alert" ng-repeat="msg in DatasetWorkbenchModal.mergeData.msg">
       {{msg}}
     </div>
 </div>
