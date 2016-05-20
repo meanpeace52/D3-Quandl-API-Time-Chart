@@ -8,8 +8,11 @@ module.exports = {
             css: [
                 BOWER_PATH + 'bootstrap/dist/css/bootstrap.css',
                 // BOWER_PATH + 'bootstrap/dist/css/bootstrap-theme.css',
+                BOWER_PATH + 'startbootstrap-simple-sidebar-1.0.5/css/simple-sidebar.css',
                 BOWER_PATH + 'angularjs-slider/dist/rzslider.css',
                 BOWER_PATH + 'datatables/media/css/dataTables.bootstrap.min.css',
+                BOWER_PATH + 'font-awesome/css/font-awesome.min.css',
+                'https://fonts.googleapis.com/css?family=Open+Sans:400,600,700',
                 'https://fonts.googleapis.com/css?family=PT+Sans:400,700',
                 'https://fonts.googleapis.com/css?family=Droid+Sans',
                 'https://fonts.googleapis.com/css?family=Quicksand'

@@ -50,6 +50,24 @@ var DatasetSchema = new Schema({
         type: String,
         default: ''
     },
+    access: {
+        type: [{
+            type: String,
+            enum: ['private']
+        }],
+        default: ['private']
+    },
+    mediatype: {
+        type: [{
+            type: String,
+            enum: ['in the news', 'trending on TheoryLab'] // 5 tags, listed above, “in the news,” “trending on TheoryLab,” etc
+        }],
+        default: ['in the news']
+    },
+    subject: {
+        type: String,
+        default: 'Tags' // Tags
+    }
 });
 
 mongoose.model('Dataset', DatasetSchema);

@@ -30,7 +30,7 @@ angular.module(ApplicationConfiguration.applicationModuleName, ApplicationConfig
     ])
 
     .run(function ($rootScope, $state, Authentication) {
-
+        
         // Check authentication before changing state
         $rootScope.$on('$stateChangeStart', function (event, toState, toParams, fromState, fromParams) {
             if (toState.data) {

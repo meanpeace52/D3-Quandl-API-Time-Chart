@@ -1,46 +1,363 @@
 <section data-ng-controller="HomeController">
-    <div class="jumbotron text-center">
-        <div class="row">
-            <div class="col-md-6 col-md-offset-3 col-sm-6 col-sm-offset-3 col-xs-12">
-                <img alt="MEAN.JS" class="img-responsive text-center" src="modules/core/client//img/brand/logo.png"/>
+    
+    <div data-ng-hide="(authentication.user)">
+        <!-- Header -->
+        <a name="about"></a>
+        <div class="intro-header">
+            <div class="container">
+
+                <div class="row">
+                    <div class="col-lg-12">
+                        <div class="intro-message">
+                            <h1>Landing Page</h1>
+                            <h3>A Template by Start Bootstrap</h3>
+                            <hr class="intro-divider">
+                            <ul class="list-inline intro-social-buttons">
+                                <li>
+                                    <a href="https://twitter.com/SBootstrap" class="btn btn-default btn-lg"><i class="fa fa-twitter fa-fw"></i> <span class="network-name">Twitter</span></a>
+                                </li>
+                                <li>
+                                    <a href="https://github.com/IronSummitMedia/startbootstrap" class="btn btn-default btn-lg"><i class="fa fa-github fa-fw"></i> <span class="network-name">Github</span></a>
+                                </li>
+                                <li>
+                                    <a href="#" class="btn btn-default btn-lg"><i class="fa fa-linkedin fa-fw"></i> <span class="network-name">Linkedin</span></a>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+            <!-- /.container -->
+
+        </div>
+        <!-- /.intro-header -->
+
+        <!-- Page Content -->
+
+        <a  name="services"></a>
+        <div class="content-section-a">
+
+            <div class="container">
+                <div class="row">
+                    <div class="col-lg-5 col-sm-6">
+                        <hr class="section-heading-spacer">
+                        <div class="clearfix"></div>
+                        <h2 class="section-heading">Death to the Stock Photo:<br>Special Thanks</h2>
+                        <p class="lead">A special thanks to <a target="_blank" href="http://join.deathtothestockphoto.com/">Death to the Stock Photo</a> for providing the photographs that you see in this template. Visit their website to become a member.</p>
+                    </div>
+                    <div class="col-lg-5 col-lg-offset-2 col-sm-6">
+                        <img class="img-responsive" src="modules/core/client/img/ipad.png" alt="">
+                    </div>
+                </div>
+
+            </div>
+            <!-- /.container -->
+
+        </div>
+        <!-- /.content-section-a -->
+
+        <div class="content-section-b">
+
+            <div class="container">
+
+                <div class="row">
+                    <div class="col-lg-5 col-lg-offset-1 col-sm-push-6  col-sm-6">
+                        <hr class="section-heading-spacer">
+                        <div class="clearfix"></div>
+                        <h2 class="section-heading">3D Device Mockups<br>by PSDCovers</h2>
+                        <p class="lead">Turn your 2D designs into high quality, 3D product shots in seconds using free Photoshop actions by <a target="_blank" href="http://www.psdcovers.com/">PSDCovers</a>! Visit their website to download some of their awesome, free photoshop actions!</p>
+                    </div>
+                    <div class="col-lg-5 col-sm-pull-6  col-sm-6">
+                        <img class="img-responsive" src="modules/core/client/img/dog.png" alt="">
+                    </div>
+                </div>
+
+            </div>
+            <!-- /.container -->
+
+        </div>
+        <!-- /.content-section-b -->
+
+        <div class="content-section-a">
+
+            <div class="container">
+
+                <div class="row">
+                    <div class="col-lg-5 col-sm-6">
+                        <hr class="section-heading-spacer">
+                        <div class="clearfix"></div>
+                        <h2 class="section-heading">Google Web Fonts and<br>Font Awesome Icons</h2>
+                        <p class="lead">This template features the 'Lato' font, part of the <a target="_blank" href="http://www.google.com/fonts">Google Web Font library</a>, as well as <a target="_blank" href="http://fontawesome.io">icons from Font Awesome</a>.</p>
+                    </div>
+                    <div class="col-lg-5 col-lg-offset-2 col-sm-6">
+                        <img class="img-responsive" src="modules/core/client/img/phones.png" alt="">
+                    </div>
+                </div>
+
+            </div>
+            <!-- /.container -->
+
+        </div>
+        <!-- /.content-section-a -->
+
+        <a  name="contact"></a>
+        <div class="banner">
+
+            <div class="container">
+
+                <div class="row">
+                    <div class="col-lg-6">
+                        <h2>Connect to Start Bootstrap:</h2>
+                    </div>
+                    <div class="col-lg-6">
+                        <ul class="list-inline banner-social-buttons">
+                            <li>
+                                <a href="https://twitter.com/SBootstrap" class="btn btn-default btn-lg"><i class="fa fa-twitter fa-fw"></i> <span class="network-name">Twitter</span></a>
+                            </li>
+                            <li>
+                                <a href="https://github.com/IronSummitMedia/startbootstrap" class="btn btn-default btn-lg"><i class="fa fa-github fa-fw"></i> <span class="network-name">Github</span></a>
+                            </li>
+                            <li>
+                                <a href="#" class="btn btn-default btn-lg"><i class="fa fa-linkedin fa-fw"></i> <span class="network-name">Linkedin</span></a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+
+            </div>
+            <!-- /.container -->
+
+        </div>
+        <!-- /.banner -->
+
+        <!-- Footer -->
+        <footer>
+            <div class="container">
+                <div class="row">
+                    <div class="col-lg-12">
+                        <ul class="list-inline">
+                            <li>
+                                <a href="#">Home</a>
+                            </li>
+                            <li class="footer-menu-divider">&sdot;</li>
+                            <li>
+                                <a href="#about">About</a>
+                            </li>
+                            <li class="footer-menu-divider">&sdot;</li>
+                            <li>
+                                <a href="#services">Services</a>
+                            </li>
+                            <li class="footer-menu-divider">&sdot;</li>
+                            <li>
+                                <a href="#contact">Contact</a>
+                            </li>
+                        </ul>
+                        <p class="copyright text-muted small">Copyright &copy; Your Company 2014. All Rights Reserved</p>
+                    </div>
+                </div>
+            </div>
+        </footer>
+    </div>
+
+
+    <div data-ng-show="(authentication.user)">
+
+        <!-- Header Carousel -->
+        <header ng-controller="CarouselCtrl as carousel" class="header-carousel--home">
+            <div style="height: 305px">
+                <carousel interval="5000">
+                    <slide ng-repeat="slide in carousel.slides" active="slide.active" index="slide.id">
+                      <img ng-src="{{slide.image}}" class="img--home-carousel" style="margin:auto;">
+                      <div class="carousel-caption">
+                        <h4>Slide {{slide.id}}</h4>
+                        <p>{{slide.text}}</p>
+                      </div>
+                    </slide>
+                </carousel>
+            </div>
+        </header>
+
+        <!-- Page Content -->
+        <div is-need-container="toggle">
+
+            <!-- Marketing Icons Section -->
+            <div class="row">
+                <div class="col-lg-12">
+                    <h1 class="page-header">
+                        Welcome to Modern Business
+                    </h1>
+                </div>
+                <div class="col-md-4">
+                    <div class="panel panel-default">
+                        <div class="panel-heading">
+                            <h4><i class="fa fa-fw fa-check"></i> Bootstrap v3.2.0</h4>
+                        </div>
+                        <div class="panel-body">
+                            <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Itaque, optio corporis quae nulla aspernatur in alias at numquam rerum ea excepturi expedita tenetur assumenda voluptatibus eveniet incidunt dicta nostrum quod?</p>
+                            <a href="#" class="btn btn-default">Learn More</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="panel panel-default">
+                        <div class="panel-heading">
+                            <h4><i class="fa fa-fw fa-gift"></i> Free &amp; Open Source</h4>
+                        </div>
+                        <div class="panel-body">
+                            <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Itaque, optio corporis quae nulla aspernatur in alias at numquam rerum ea excepturi expedita tenetur assumenda voluptatibus eveniet incidunt dicta nostrum quod?</p>
+                            <a href="#" class="btn btn-default">Learn More</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="panel panel-default">
+                        <div class="panel-heading">
+                            <h4><i class="fa fa-fw fa-compass"></i> Easy to Use</h4>
+                        </div>
+                        <div class="panel-body">
+                            <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Itaque, optio corporis quae nulla aspernatur in alias at numquam rerum ea excepturi expedita tenetur assumenda voluptatibus eveniet incidunt dicta nostrum quod?</p>
+                            <a href="#" class="btn btn-default">Learn More</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- /.row -->
+
+            <!-- Portfolio Section -->
+            <div class="row">
+                <div class="col-lg-12">
+                    <h2 class="page-header">Portfolio Heading</h2>
+                </div>
+                <div class="col-md-4 col-sm-6">
+                    <a href="portfolio-item.html">
+                        <img class="img-responsive img-portfolio img-hover" src="http://placehold.it/700x450" alt="">
+                    </a>
+                </div>
+                <div class="col-md-4 col-sm-6">
+                    <a href="portfolio-item.html">
+                        <img class="img-responsive img-portfolio img-hover" src="http://placehold.it/700x450" alt="">
+                    </a>
+                </div>
+                <div class="col-md-4 col-sm-6">
+                    <a href="portfolio-item.html">
+                        <img class="img-responsive img-portfolio img-hover" src="http://placehold.it/700x450" alt="">
+                    </a>
+                </div>
+                <div class="col-md-4 col-sm-6">
+                    <a href="portfolio-item.html">
+                        <img class="img-responsive img-portfolio img-hover" src="http://placehold.it/700x450" alt="">
+                    </a>
+                </div>
+                <div class="col-md-4 col-sm-6">
+                    <a href="portfolio-item.html">
+                        <img class="img-responsive img-portfolio img-hover" src="http://placehold.it/700x450" alt="">
+                    </a>
+                </div>
+                <div class="col-md-4 col-sm-6">
+                    <a href="portfolio-item.html">
+                        <img class="img-responsive img-portfolio img-hover" src="http://placehold.it/700x450" alt="">
+                    </a>
+                </div>
+            </div>
+            <!-- /.row -->
+
+            <!-- Features Section -->
+            <div class="row">
+                <div class="col-lg-12">
+                    <h2 class="page-header">Modern Business Features</h2>
+                </div>
+                <div class="col-md-6">
+                    <p>The Modern Business template by Start Bootstrap includes:</p>
+                    <ul>
+                        <li><strong>Bootstrap v3.2.0</strong>
+                        </li>
+                        <li>jQuery v1.11.0</li>
+                        <li>Font Awesome v4.1.0</li>
+                        <li>Working PHP contact form with validation</li>
+                        <li>Unstyled page elements for easy customization</li>
+                        <li>17 HTML pages</li>
+                    </ul>
+                    <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Corporis, omnis doloremque non cum id reprehenderit, quisquam totam aspernatur tempora minima unde aliquid ea culpa sunt. Reiciendis quia dolorum ducimus unde.</p>
+                </div>
+                <div class="col-md-6">
+                    <img class="img-responsive" src="http://placehold.it/700x450" alt="">
+                </div>
+            </div>
+            <!-- /.row -->
+
+            <hr>
+
+            <!-- Call to Action Section -->
+            <div class="well">
+                <div class="row">
+                    <div class="col-md-8">
+                        <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Molestias, expedita, saepe, vero rerum deleniti beatae veniam harum neque nemo praesentium cum alias asperiores commodi.</p>
+                    </div>
+                    <div class="col-md-4">
+                        <a class="btn btn-lg btn-default btn-block" href="#">Call to Action</a>
+                    </div>
+                </div>
+            </div>
+
+            <hr>
+
+            <!-- Footer -->
+            <footer>
+                <div class="row">
+                    <div class="col-lg-12">
+                        <p>Copyright &copy; Your Website 2014</p>
+                    </div>
+                </div>
+            </footer>
+
+        </div>
+
+
+        <!-- <div class="jumbotron text-center">
+            <div class="row">
+                <div class="col-md-6 col-md-offset-3 col-sm-6 col-sm-offset-3 col-xs-12">
+                    <img alt="MEAN.JS" class="img-responsive text-center" src="modules/core/client//img/brand/logo.png"/>
+                </div>
+            </div>
+            <br>
+            <div class="row">
+                <p class="lead">
+                    Open-Source Full-Stack Solution For MEAN Applications
+                </p>
+            </div>
+            <div class="row">
+                <p>
+                    <a class="btn btn-primary btn-lg" href="http://meanjs.org" target="_blank">Learn more</a>
+                </p>
             </div>
         </div>
-        <br>
-        <div class="row">
-            <p class="lead">
-                Open-Source Full-Stack Solution For MEAN Applications
-            </p>
+        <div>
+            <h2>Congrats! You've configured and run the sample application.</h2>
+            <p>MEAN.JS is a web application boilerplate, which means you should start changing everything :-)</p>
+            <p>This sample application tracks users and articles.</p>
+            <ul>
+                <li>
+                    Click
+                    <em>Signup</em> to get started.
+                </li>
+                <li>
+                    Configure your app to work with your social accounts, by editing the
+                    <em>/config/env/*.js</em> files.
+                </li>
+                <li>
+                    Edit your users module.
+                </li>
+                <li>
+                    Add new CRUD modules.
+                </li>
+                <li>
+                    Have fun...
+                </li>
+            </ul>
         </div>
-        <div class="row">
-            <p>
-                <a class="btn btn-primary btn-lg" href="http://meanjs.org" target="_blank">Learn more</a>
-            </p>
-        </div>
+        <br>Enjoy &amp; Keep Us Updated,
+        <br>The MEAN.JS Team. -->
     </div>
-    <div>
-        <h2>Congrats! You've configured and run the sample application.</h2>
-        <p>MEAN.JS is a web application boilerplate, which means you should start changing everything :-)</p>
-        <p>This sample application tracks users and articles.</p>
-        <ul>
-            <li>
-                Click
-                <em>Signup</em> to get started.
-            </li>
-            <li>
-                Configure your app to work with your social accounts, by editing the
-                <em>/config/env/*.js</em> files.
-            </li>
-            <li>
-                Edit your users module.
-            </li>
-            <li>
-                Add new CRUD modules.
-            </li>
-            <li>
-                Have fun...
-            </li>
-        </ul>
-    </div>
-    <br>Enjoy &amp; Keep Us Updated,
-    <br>The MEAN.JS Team.
+    
 </section>

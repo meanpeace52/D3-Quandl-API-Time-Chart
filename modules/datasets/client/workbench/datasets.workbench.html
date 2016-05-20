@@ -1,6 +1,6 @@
 <section class="workbench">
   <div class="page-header">
-    <h1>Showing Data For Dataset.</h1>
+    <h1>Lab.</h1>
 	</div>
 
 	<div class="row" ng-show="Workbench.usersDatasets.length > 0">
@@ -38,10 +38,12 @@
 		<div class="col-md-6">
 			<!-- <h3>{{ Workbench.viewingDataset.title }}</h3> -->
 			<div class="data-loading">
-				<i ng-hide="Workbench.ds1.hasLoadedData" class="loader-data"></i>
+				<i ng-hide="Workbench.ds1.hasLoadedData" ng-if="Workbench.ds1.data" class="loader-data"></i>
 			</div>
+			
+			<p><div class="alert alert-info" role="alert" ng-if="!Workbench.ds1.hasLoadedDataIsFull && Workbench.ds1.hasLoadedData">Empty dataset.</div></p>
 
-			<div class="table-container" ng-if="Workbench.ds1.hasLoadedData">
+			<div class="table-container" ng-if="Workbench.ds1.hasLoadedDataIsFull">
 			
 			<div class="radio clearfix">
 				<label class="pull-right">
@@ -81,13 +83,15 @@
 		<div class="col-md-6">
 			<!-- <h3>{{ Workbench.selectedDatasetOption.title }}</h3> -->
 			<div class="data-loading">
-				<i ng-hide="Workbench.ds2.hasLoadedData" class="loader-data"></i>
+				<i ng-hide="Workbench.ds2.hasLoadedData" ng-if="Workbench.ds2.data" class="loader-data"></i>
 				<!-- <i 
 		    		ng-hide="Workbench.ds2.hasLoadedData" 
 		    		class="glyphicon glyphicon-hourglass"></i> -->
 			</div>
+			
+			<p><div class="alert alert-info" role="alert" ng-if="!Workbench.ds2.hasLoadedDataIsFull && Workbench.ds2.hasLoadedData">Empty dataset.</div></p>
 
-			<div class="table-container"  ng-if="Workbench.ds2.hasLoadedData">
+			<div class="table-container"  ng-if="Workbench.ds2.hasLoadedDataIsFull">
 
 			<div class="radio clearfix">
 				<label class="pull-right">
@@ -121,7 +125,7 @@
 		</div>
 
 <!-- 		<div class="col-md-12 workbench__footer-buttons">
-		    <button class="btn btn-success btn-sm" ng-click="Workbench.addtoUser()">Save to My Canvas</button>
+		    <button class="btn btn-success btn-sm" ng-click="Workbench.addtoUser()">Save to My Lab</button>
 		    <button class="btn btn-danger btn-sm" ng-click="Workbench.cancel()">Cancel</button>
 		</div> -->
 

@@ -36,8 +36,8 @@ angular.module('datasets')
     })
     
     .controller('WorkbenchController',
-        ['$scope','$stateParams', '$state', '$modal', 'Datasets', 'UsersFactory', 'Authentication', 'DTOptionsBuilder', 'DTColumnDefBuilder',
-            function ($scope, $stateParams, $state, $modal, Datasets, UsersFactory, Authentication, DTOptionsBuilder, DTColumnDefBuilder) {
+        ['$scope','$stateParams', '$timeout', '$state', '$modal', 'Datasets', 'UsersFactory', 'Authentication', 'DTOptionsBuilder', 'DTColumnDefBuilder',
+            function ($scope, $stateParams, $timeout, $state, $modal, Datasets, UsersFactory, Authentication, DTOptionsBuilder, DTColumnDefBuilder) {
                 var vm = this;
 
 				vm.authentication = Authentication;
@@ -48,6 +48,8 @@ angular.module('datasets')
                 vm.ds1 = {
                     data: null, 
                     hasLoadedData: false,
+                    checkedColumns: null, 
+                    hasLoadedDataIsFull: false,
                     tableOptions: null,
                     tableColumnDefs: [
                         DTColumnDefBuilder.newColumnDef(0).notSortable()
@@ -55,8 +57,10 @@ angular.module('datasets')
                     _id: $stateParams.ds1,
                 };
 				vm.ds2 = {
-                    data: null, 
+                    data: null,
+                    checkedColumns: null, 
                     hasLoadedData: false,
+                    hasLoadedDataIsFull: false,
                     tableOptions: null,
                     tableColumnDefs: null,
                     _id: $stateParams.ds2,
@@ -70,11 +74,15 @@ angular.module('datasets')
                     }
                 );
 
-
+                
                 function getDataset(container) {
                     var vmContainer = vm[container];
                     if (vmContainer && vmContainer._id) {
                         vmContainer.hasLoadedData = false;
+                        vmContainer.hasLoadedDataIsFull = false;
+                        vmContainer.checkedColumns = null;
+                        clearPrimaryCol(container);
+
                         Datasets.crud.get({datasetId: vmContainer._id})
                             .$promise.then(function (dataset) {
                                 vmContainer.data = dataset;
@@ -82,32 +90,49 @@ angular.module('datasets')
                             })
                             .then(Datasets.getDatasetWithS3.bind(Datasets))
                             .then(function (data) {
-                                vmContainer.columns = data.columns;
-                                vmContainer.rows = data.rows;
-                                vmContainer.tableColumnDefs = _.map(data.columns, function (col, i) {
-                                    col = col.replace(/"/ig, '');
-                                    var text = '<label class="title-radio-label">'+
-                                                    '<input type="radio" class="title-radio" name="primaryCol_'+container+'" value="'+col+'" ng-model="Workbench.mergeParams.primaryCol.'+container+'">'+
-                                                    col+
-                                                '</label>'+
-                                                '<label class="title-checkbox-label">'+
-                                                    '<input type="checkbox" class="title-checkbox" name="col_'+col+'_'+container+'" value="'+col+'" ng-model="Workbench.checkedColumns.'+col+'_'+container+'" ng-init="Workbench.checkedColumns.'+col+'_'+container+'=true">'+
-                                                '</label>';
+                                if ( !data || (data && data.hasOwnProperty('columns') && !data.columns.length) ) {
+                                    vmContainer.hasLoadedData = true;
+                                    return false;
+                                } 
 
-                                    return DTColumnDefBuilder.newColumnDef(i).withTitle(text).notSortable();
-                                });
-                                vmContainer.tableOptions = DTOptionsBuilder.newOptions()
-                                    .withOption('drawCallback', function (settings) { 
-                                        var api = new $.fn.dataTable.Api( settings );
-                                        var $tabel = $(api.table().node());
-                                        $tabel.find('label').remove();
-                                     })
-                                    .withOption('lengthChange', false)
-                                    .withOption('sort', false)
-                                    .withOption('paging', false)
-                                    .withOption('scrollY', '450px')
-                                    .withOption('scrollX', '100%');
-                                vmContainer.hasLoadedData = true;
+                                $timeout(function () {
+                                    vmContainer.columns = data.columns;
+                                    vmContainer.rows = _.map(data.rows, function (row, i) { 
+                                        for (var val in row) {
+                                            ( row.hasOwnProperty(val) ) && ( row[val].match(/"/g) && ( row[val] = row[val].replace(/"/ig, '') ) ); // del extra quotes if needed
+                                        }
+                                        return row;
+                                    });
+                                    vmContainer.tableColumnDefs = _.map(data.columns, function (col, i) {
+                                        ( col.match(/"/g) && ( col = col.replace(/"/ig, '') ) ); // del extra quotes if needed
+
+                                        var text = '<label class="title-radio-label">'+
+                                                        '<input type="radio" class="title-radio" name="primaryCol_'+container+'" value="'+col+'" ng-model="Workbench.mergeParams.primaryCol.'+container+'">'+
+                                                        col+
+                                                    '</label>'+
+                                                    '<label class="title-checkbox-label">'+
+                                                        '<input type="checkbox" class="title-checkbox" name="col_'+col+'_'+container+'" value="'+col+'" ng-model="Workbench.'+container+'.checkedColumns.'+col+'" ng-init="Workbench.'+container+'.checkedColumns.'+col+'=true">'+
+                                                    '</label>';
+
+                                        return DTColumnDefBuilder.newColumnDef(i).withTitle(text).notSortable();
+                                    });
+                                    vmContainer.tableOptions = DTOptionsBuilder.newOptions()
+                                        .withOption('drawCallback', function (settings) { 
+                                            var api = new $.fn.dataTable.Api( settings );
+                                            var $tabel = $(api.table().node());
+                                            $tabel.find('label').remove();
+                                         })
+                                        .withOption('lengthChange', false)
+                                        .withOption('sort', false)
+                                        .withOption('paging', false)
+                                        .withOption('scrollY', '450px')
+                                        .withOption('scrollX', '100%');
+                                    vmContainer.hasLoadedData = true;
+                                    vmContainer.hasLoadedDataIsFull = true;
+                                },100)
+
+                                
+
                             });
                     }
                 }
@@ -115,6 +140,43 @@ angular.module('datasets')
                 UsersFactory.finduserdatasets(vm.user).then(function (usersDatasets) {
                 	vm.usersDatasets = usersDatasets;
                 });
+                
+
+                // function checkForEmptyData () {
+                        // var testData = [];
+                //     UsersFactory.finduserdatasets(vm.user).then(function (usersDatasets) {
+                //         vm.usersDatasets = usersDatasets;
+                //         var listIds = _.map(usersDatasets, function(elem) {
+                //             return elem._id;
+                //         })
+
+                //         testDatasets(listIds);
+                //     });
+
+
+                //     function testDatasets (listIds) {
+                //         var id = listIds.splice(-1)[0];
+                //         console.log('test func');
+                //         Datasets.crud.get({ datasetId: id })
+                //             .$promise.then(function (dataset) {
+                //                 console.log(dataset)
+                //                 return dataset._id;
+                //             })
+                //             .then(Datasets.getDatasetWithS3.bind(Datasets))
+                //             .then(function (data) {
+                //                 if ( !data || (data && data.hasOwnProperty('columns') && !data.columns.length) ) {
+                                    
+                //                     testData.push(id);
+                //                     console.log('iterate data',testData);
+                                    
+                //                 }
+                //                 if ( listIds.length ) testDatasets(listIds);
+                //                 else console.log(testData);
+                //             });
+
+                //     }
+
+                // }
 
                 getDataset('ds1');
                 getDataset('ds2');
@@ -137,7 +199,7 @@ angular.module('datasets')
                 };
 
                 vm.saveChanges = function (tableData, container) {
-                    var checkedColumns = vm.checkedColumns;
+                    var checkedColumns = vm[container].checkedColumns;
                     var columns = checkedCol(container);
                     console.log(columns,checkedColumns, vm[container]);
                     if (columns.length && vm[container].columns.length > columns.length) {
@@ -172,12 +234,12 @@ angular.module('datasets')
                 };
 
                 vm.showActionModal = function (type,tableData,operationData) {
-
+                    // console.log(type);
                     var modalInstance = $modal.open({
                         templateUrl: 'modules/datasets/client/workbench/action.workbench.modal.html',
                         controller: 'WorkbenchActionModalCtrl',
                         controllerAs: 'ActionModalCtrl',
-                        size: 'md',
+                        size: 'lg',
                         resolve: {
                             modalData: {type:type,tableData:tableData,operationData:operationData}
                         }
@@ -188,14 +250,14 @@ angular.module('datasets')
                 vm.mergeColumns = function () {
                     var params = vm.mergeParams;
                     var ids = window.location.pathname.split('/').slice(-2);
-                    var tables = {ds1:ids[0],ds2:ids[1]};
+                    var tablesIds = {ds1:ids[0],ds2:ids[1]};
                     var msg = {msg:'',type:'alert'};
                     var operationData = {
                         params: {
                             type: +vm.mergeParams.type,
                             action: 'show'
                         },
-                        datasets: createDatasets(params, tables),
+                        datasets: createDatasets(params, tablesIds),
                     }
 
                     var isErrObj = checkMergeData(params,operationData);
@@ -210,7 +272,7 @@ angular.module('datasets')
 
                 }
 
-                 function checkMergeData (params, data) {
+            function checkMergeData (params, data) {
                     var err = {msg:[]};
 
                     switch (true) {
@@ -252,14 +314,13 @@ angular.module('datasets')
                             var dataObj = {
                                 id: tables[tableName],
                                 cols: checkedCol(tableName),
-                                primary: ('primaryCol' in params) ? params.primaryCol[tableName] : null
+                                primary: params.hasOwnProperty('primaryCol') && params.primaryCol[tableName]
                             }
 
                             // if cheked primary column and no other column cheked, add primary column name to columns array
                             if ( dataObj.primary && (dataObj.cols.length <= 1 && dataObj.cols.indexOf(dataObj.primary) < 0) ) {
                                 dataObj.cols.push(dataObj.primary);
                             }
-                            console.log(dataObj);
                             if (dataObj.id == tables[params.primaryTable]) {
                                 datasets.splice(0,0,dataObj); // add primary table to array [0]
                             } else {
@@ -285,24 +346,17 @@ angular.module('datasets')
                     return _.find(vm.usersDatasets,{_id:id});
                 }
 
-                function checkedCol (tableName,colCount) {
-                    var checkedColumns = vm.checkedColumns;
+                function checkedCol (tableName) {
+                    var checkedColumns = vm[tableName].checkedColumns;
                     var columns = [];
                     for (var col in checkedColumns) {
-                        if ( checkedColumns.hasOwnProperty(col) ) {
-                            var colName = getColNameForTable(col,checkedColumns,tableName);
-                            if (colName) {
-                                columns.push(colName);
-                            }
-                        }
+                        ( checkedColumns.hasOwnProperty(col) ) && ( checkedColumns[col] ) && ( columns.push(col) );
                     }
-
                     return columns; 
                 }
 
-
-                function checkFillData () {
-
+                function clearPrimaryCol (container) {
+                    vm.mergeParams.hasOwnProperty('primaryCol') && vm.mergeParams.primaryCol.hasOwnProperty(container) && ( vm.mergeParams.primaryCol[container] = null );
                 }
 
 

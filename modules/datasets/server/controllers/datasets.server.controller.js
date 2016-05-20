@@ -354,12 +354,12 @@ exports.merge = function (req, res) {
                         json2csv({ data: out, fields: columns }, function(err, csv) {
 
                             csv = csv.replace(/"/ig,'');
+                            var name = (new Date().getTime()).toString(16);
+                            fs.writeFileSync("./s3-cache/" + name + ".csv", csv);
 
-                            fs.writeFileSync("./s3-cache/" + path + ".csv", csv);
-
-                            saveFileToS3(path + ".csv", p1[4]+'/'+p1[5]+'/'+p1[6]+'/');
+                            saveFileToS3(name + ".csv", p1[4]+'/'+p1[5]+'/'+p1[6]+'/');
                             var dataset = new Dataset();
-                            dataset.s3reference = "https://s3.amazonaws.com/datasetstl/"+p1[4]+'/'+p1[5]+'/'+p1[6]+'/'+path+".csv";
+                            dataset.s3reference = "https://s3.amazonaws.com/datasetstl/"+p1[4]+'/'+p1[5]+'/'+p1[6]+'/'+name+".csv";
                             dataset.user = one.user;
                             dataset.title = req.body.params.title;
                             dataset.notice = req.body.params.notice;

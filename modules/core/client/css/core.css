@@ -1,5 +1,9 @@
+body {
+    font-family: 'Open Sans', sans-serif;
+}
+
 .content {
-    margin-top: 50px;
+    /*margin-top: 50px;*/
 }
 
 .undecorated-link:hover {
@@ -39,4 +43,29 @@ a:hover .header-profile-image {
 .user-header-dropdown-toggle {
     padding-top: 11px !important;
     padding-bottom: 11px !important;
+}
+
+.navbar-brand--with-margin {
+    margin-right: 80px;
+}
+
+.navbar-toggle--sidebar {
+    margin-left: 15px;
+} 
+
+@media (min-width: 768px) {
+    .navbar-toggle--sidebar {
+        margin-left: 0px;
+    }  
+}
+
+.header-carousel--home {
+    margin: 0 -15px;
+}
+
+.img--home-carousel {
+    width: 100%;
+    height: 300px !important;
+    object-fit: cover;
+    object-position: center;
 }

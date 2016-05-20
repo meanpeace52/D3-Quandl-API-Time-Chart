@@ -16,6 +16,7 @@ angular.module('datasets')
 
                 vm.mergeParams = {};
 
+                vm.hasLoadedDataErr = false;
                 vm.hasLoadedData = true;
                 vm.actionComplete = false;
                 vm.inprogress = true;
@@ -33,8 +34,14 @@ angular.module('datasets')
                             vm.mergeParams.tableName = vm.modalTableData.title;
                         }
                         mergeColumns(vm.modalOperationData).then(function (res) {
-                            vm.columns = res.columns;
-                            vm.rows = res.rows;
+
+                            if ( isDataCorrect(res) ) {
+                                vm.columns = res.columns;
+                                vm.rows = res.rows;
+                                vm.hasLoadedDataErr = false;
+                            } else {
+                                vm.hasLoadedDataErr = true;
+                            }
 
                             vm.inprogress = false;
                             vm.hasLoadedData = false;
@@ -51,8 +58,14 @@ angular.module('datasets')
                             vm.mergeParams.tableName = vm.modalTableData.title;
                         }
                         saveDataset(vm.modalOperationData).then(function (res) {
-                            vm.columns = res.columns;
-                            vm.rows = res.rows;
+                            
+                            if ( isDataCorrect(res) ) {
+                                vm.columns = res.columns;
+                                vm.rows = res.rows;
+                                vm.hasLoadedDataErr = false;
+                            } else {
+                                vm.hasLoadedDataErr = true;
+                            }
 
                             vm.inprogress = false;
                             vm.hasLoadedData = false;
@@ -109,7 +122,6 @@ angular.module('datasets')
 
 
                 function mergeColumns (params) {
-                    // you can check is form valid with help of $valid parameter
                     return Datasets.mergeColumns(params).then(function (data) {
                         return data;
                     });                        
@@ -138,10 +150,21 @@ angular.module('datasets')
 
                 function getResultTabelData (newTabelId) {
                     Datasets.getDatasetWithS3(newTabelId).then(function (data) {
-                        vm.columns = data.columns;
-                        vm.rows = data.rows;
                         vm.hasLoadedData = true;
+                        if ( isDataCorrect(data) ) {
+                            vm.columns = data.columns;
+                            vm.rows = data.rows;
+                            vm.hasLoadedDataErr = false;
+                        } else {
+                            vm.hasLoadedDataErr = true;
+                        }
+                        
                     });
+                }
+
+                function isDataCorrect (data) {
+                    console.log(data.hasOwnProperty('columns') && data.columns.length > 0);
+                    return data.hasOwnProperty('columns') && data.columns.length > 0;
                 }
 
                 vm.ok = function () {

@@ -19,8 +19,11 @@
         </div>
     </form>
 
-    <div class="alert alert-success" role="alert" ng-hide="ActionModalCtrl.hasLoadedData">
+    <div class="alert alert-success" role="alert" ng-if="!ActionModalCtrl.hasLoadedDataErr" ng-hide="ActionModalCtrl.hasLoadedData">
         {{ActionModalCtrl.infoText}}
+    </div>
+    <div class="alert alert-warning" role="alert" ng-if="ActionModalCtrl.hasLoadedDataErr">
+        <!-- {{ActionModalCtrl.infoText}} -->No data to render.
     </div>
 
     <div class="loader-data-row" ng-show="ActionModalCtrl.hasLoadedData">
@@ -30,9 +33,17 @@
     
     <div class="row ">
         <div class="col-md-12 text-right">
-            <button class="btn btn_submit btn-success btn_wide" ng-disabled="actionForm.$invalid || ActionModalCtrl.inprogress || ActionModalCtrl.isNameNotChange" ng-click="ActionModalCtrl.submit(actionForm.$valid)" ng-hide="ActionModalCtrl.actionComplete">Save</button>
-            <button class="btn btn_submit btn-success btn_wide" ng-if="ActionModalCtrl.actionComplete" ng-click="ActionModalCtrl.ok()">Ok</button>
-            <button class="btn btn-danger btn-sm" ng-disabled="ActionModalCtrl.inprogress" ng-click="ActionModalCtrl.cancel()" ng-hide="ActionModalCtrl.actionComplete">cancel</button> 
+            <button class="btn btn_submit btn-success btn_wide" 
+                ng-disabled="actionForm.$invalid || ActionModalCtrl.inprogress || ActionModalCtrl.isNameNotChange" 
+                ng-click="ActionModalCtrl.submit(actionForm.$valid)" 
+                ng-hide="ActionModalCtrl.actionComplete || ActionModalCtrl.hasLoadedDataErr">Save</button>
+            <button class="btn btn_submit btn-success btn_wide" 
+                ng-if="ActionModalCtrl.actionComplete" 
+                ng-click="ActionModalCtrl.ok()">Ok</button>
+            <button class="btn btn-danger btn-sm" 
+                ng-disabled="ActionModalCtrl.inprogress" 
+                ng-click="ActionModalCtrl.cancel()" 
+                ng-hide="ActionModalCtrl.actionComplete">cancel</button> 
         </div>
     </div>
 

@@ -90,6 +90,7 @@ angular.module('core').service('Menus', [
                 state: options.state || '',
                 type: options.type || 'item',
                 class: options.class,
+                faIcon: options.faIcon,
                 roles: ((options.roles === null || typeof options.roles === 'undefined') ? this.defaultRoles : options.roles),
                 position: options.position || 0,
                 items: [],
@@ -169,6 +170,10 @@ angular.module('core').service('Menus', [
         //Adding the topbar menu
         this.addMenu('topbar', {
             roles: ['*']
+        });
+        //Adding the sidebar menu
+        this.addMenu('sidebar', {
+            roles: ['user']
         });
     }
 ]);
