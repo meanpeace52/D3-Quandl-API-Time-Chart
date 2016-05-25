@@ -34,8 +34,8 @@ angular.module('datasets')
                             vm.mergeParams.tableName = vm.modalTableData.title;
                         }
                         mergeColumns(vm.modalOperationData).then(function (res) {
-
-                            if ( isDataCorrect(res) ) {
+                            console.log('merge',res);
+                            if (res && isDataCorrect(res)) {
                                 vm.columns = res.columns;
                                 vm.rows = res.rows;
                                 vm.hasLoadedDataErr = false;
@@ -58,8 +58,8 @@ angular.module('datasets')
                             vm.mergeParams.tableName = vm.modalTableData.title;
                         }
                         saveDataset(vm.modalOperationData).then(function (res) {
-                            
-                            if ( isDataCorrect(res) ) {
+                            console.log('save',res);
+                            if (isDataCorrect(res)) {
                                 vm.columns = res.columns;
                                 vm.rows = res.rows;
                                 vm.hasLoadedDataErr = false;
@@ -89,7 +89,7 @@ angular.module('datasets')
                                 mergeColumns(vm.modalOperationData).then(saveSuccess);
                             break;
                             case 'save':
-                                var params = angular.extend(vm.modalOperationData, {title:formData.name,notice:formData.note})
+                                var params = angular.extend(vm.modalOperationData, {title:formData.name,notice:formData.note});
                                 params.action = 'insert';
 
                                 saveDataset(params).then(saveSuccess);
@@ -102,7 +102,7 @@ angular.module('datasets')
                         vm.hasLoadedData = false;
                         vm.infoText = 'Save complete';
                     }
-                }
+                };
 
                 vm.compareName = compareName;
 
@@ -115,9 +115,9 @@ angular.module('datasets')
 
                 function getModalFormData () {
                     return {
-                        name: vm.mergeParams.tableName ? vm.mergeParams.tableName.replace(/<\/?[^>]+(>|$)/g, "") : '',
-                        note: vm.mergeParams.hasOwnProperty('notes') ? vm.mergeParams.notes.replace(/<\/?[^>]+(>|$)/g, "") : ''
-                    }
+                        name: vm.mergeParams.tableName ? vm.mergeParams.tableName.replace(/<\/?[^>]+(>|$)/g, '') : '',
+                        note: vm.mergeParams.hasOwnProperty('notes') ? vm.mergeParams.notes.replace(/<\/?[^>]+(>|$)/g, '') : ''
+                    };
                 }
 
 
@@ -145,13 +145,14 @@ angular.module('datasets')
                     }, 
                     function (err) {
                         console.warn(err);
-                    })
+                    });
                 }
 
                 function getResultTabelData (newTabelId) {
                     Datasets.getDatasetWithS3(newTabelId).then(function (data) {
                         vm.hasLoadedData = true;
-                        if ( isDataCorrect(data) ) {
+                        console.log('getResultTabelData',data);
+                        if (isDataCorrect(data)) {
                             vm.columns = data.columns;
                             vm.rows = data.rows;
                             vm.hasLoadedDataErr = false;
@@ -163,7 +164,6 @@ angular.module('datasets')
                 }
 
                 function isDataCorrect (data) {
-                    console.log(data.hasOwnProperty('columns') && data.columns.length > 0);
                     return data.hasOwnProperty('columns') && data.columns.length > 0;
                 }
 

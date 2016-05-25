@@ -10,7 +10,6 @@
           	scope.$watch(function () {
           		return $rootScope.isToggleSideBar;
           	}, function (newValue) {
-              console.log(newValue)
           		if (newValue) {
           			element
                   .addClass('toggled');
@@ -31,7 +30,7 @@
             });
 
           }
-      }
+      };
   };
 
   angular.module('core')

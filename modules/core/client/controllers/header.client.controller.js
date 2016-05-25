@@ -18,7 +18,7 @@ angular.module('core').controller('HeaderController', ['$rootScope', '$scope', '
         $rootScope.isToggleSideBar = !!$scope.authentication.user;
         $scope.toggleSideBar = function () {
             $rootScope.isToggleSideBar = !$rootScope.isToggleSideBar;
-        }
+        };
 
         // Collapsing the menu after navigation
         $scope.$on('$stateChangeSuccess', function () {

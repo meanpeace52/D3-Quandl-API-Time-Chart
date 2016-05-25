@@ -7,7 +7,7 @@
           restrict: 'A',
           link: function (scope, element, attrs) {
           	var link = document.createElement('link');
-          	link.rel = "stylesheet";
+          	link.rel = 'stylesheet';
             angular.element('head').append(link);
 
           	scope.$watch(function () {
@@ -20,7 +20,7 @@
           		}
           	});
           }
-      }
+      };
   };
 
   angular.module('core')

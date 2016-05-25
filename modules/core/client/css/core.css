@@ -2,9 +2,9 @@ body {
     font-family: 'Open Sans', sans-serif;
 }
 
-.content {
-    /*margin-top: 50px;*/
-}
+/*.content {
+    margin-top: 50px;
+}*/
 
 .undecorated-link:hover {
     text-decoration: none;
@@ -55,7 +55,7 @@ a:hover .header-profile-image {
 
 @media (min-width: 768px) {
     .navbar-toggle--sidebar {
-        margin-left: 0px;
+        margin-left: 0;
     }  
 }
 

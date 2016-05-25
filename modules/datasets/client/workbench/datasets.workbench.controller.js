@@ -90,7 +90,7 @@ angular.module('datasets')
                             })
                             .then(Datasets.getDatasetWithS3.bind(Datasets))
                             .then(function (data) {
-                                if ( !data || (data && data.hasOwnProperty('columns') && !data.columns.length) ) {
+                                if (!data || (data && data.hasOwnProperty('columns') && !data.columns.length)) {
                                     vmContainer.hasLoadedData = true;
                                     return false;
                                 } 
@@ -99,12 +99,16 @@ angular.module('datasets')
                                     vmContainer.columns = data.columns;
                                     vmContainer.rows = _.map(data.rows, function (row, i) { 
                                         for (var val in row) {
-                                            ( row.hasOwnProperty(val) ) && ( row[val].match(/"/g) && ( row[val] = row[val].replace(/"/ig, '') ) ); // del extra quotes if needed
+                                            if (row.hasOwnProperty(val) && row[val].match(/"/g)) {
+                                                row[val] = row[val].replace(/"/ig, '');  // del extra quotes if needed
+                                            }
                                         }
                                         return row;
                                     });
                                     vmContainer.tableColumnDefs = _.map(data.columns, function (col, i) {
-                                        ( col.match(/"/g) && ( col = col.replace(/"/ig, '') ) ); // del extra quotes if needed
+                                        if (col.match(/"/g)) {
+                                            col = col.replace(/"/ig, '');// del extra quotes if needed
+                                        }
 
                                         var text = '<label class="title-radio-label">'+
                                                         '<input type="radio" class="title-radio" name="primaryCol_'+container+'" value="'+col+'" ng-model="Workbench.mergeParams.primaryCol.'+container+'">'+
@@ -118,7 +122,7 @@ angular.module('datasets')
                                     });
                                     vmContainer.tableOptions = DTOptionsBuilder.newOptions()
                                         .withOption('drawCallback', function (settings) { 
-                                            var api = new $.fn.dataTable.Api( settings );
+                                            var api = new $.fn.dataTable.Api(settings);
                                             var $tabel = $(api.table().node());
                                             $tabel.find('label').remove();
                                          })
@@ -126,10 +130,10 @@ angular.module('datasets')
                                         .withOption('sort', false)
                                         .withOption('paging', false)
                                         .withOption('scrollY', '450px')
-                                        .withOption('scrollX', '100%');
+                                        .withOption('scrollX', '450px');
                                     vmContainer.hasLoadedData = true;
                                     vmContainer.hasLoadedDataIsFull = true;
-                                },100)
+                                },100);
 
                                 
 
@@ -215,9 +219,9 @@ angular.module('datasets')
 
                     } else {
                         console.info('No data to send');
-                        vm.showMessage( {type:'alert',msg:['Not enought data to save dataset']} );
+                        vm.showMessage({type:'alert',msg:['Not enought data to save dataset']});
                     }
-                }
+                };
 
                 vm.showMessage = function (dataset) {
                     if (dataset) {
@@ -245,7 +249,7 @@ angular.module('datasets')
                         }
                     });
                     
-                }
+                };
 
                 vm.mergeColumns = function () {
                     var params = vm.mergeParams;
@@ -258,25 +262,25 @@ angular.module('datasets')
                             action: 'show'
                         },
                         datasets: createDatasets(params, tablesIds),
-                    }
+                    };
 
                     var isErrObj = checkMergeData(params,operationData);
-                    if ( isErrObj ) {
+                    if (isErrObj) {
                         isErrObj.type = 'alert';
-                        vm.showMessage( isErrObj );
+                        vm.showMessage(isErrObj);
                         return;
                     } else {
                         var curDataset = getUserDatasetById(operationData.datasets[0].id);
                         vm.showActionModal('merge',{title:curDataset ? curDataset.title : null},operationData);
                     }
 
-                }
+                };
 
             function checkMergeData (params, data) {
                     var err = {msg:[]};
 
                     switch (true) {
-                        case ( _.isEmpty(params) ):
+                        case (_.isEmpty(params)):
                             err.msg.push('Please check merge parameters');
                             return err;
                         case (params.type !== '0' && params.type !== '1'):
@@ -306,22 +310,22 @@ angular.module('datasets')
 
                 function createDatasets (params, tables) {
                     var datasets = [];
-                    if ( _.isEmpty(params) ) return;
+                    if (_.isEmpty(params)) return;
 
-                    for ( var tableName in tables ) {
-                        if ( tables.hasOwnProperty(tableName) ) {
+                    for (var tableName in tables) {
+                        if (tables.hasOwnProperty(tableName)) {
 
                             var dataObj = {
                                 id: tables[tableName],
                                 cols: checkedCol(tableName),
                                 primary: params.hasOwnProperty('primaryCol') && params.primaryCol[tableName]
-                            }
+                            };
 
                             // if cheked primary column and no other column cheked, add primary column name to columns array
-                            if ( dataObj.primary && (dataObj.cols.length <= 1 && dataObj.cols.indexOf(dataObj.primary) < 0) ) {
+                            if (dataObj.primary && (dataObj.cols.length <= 1 && dataObj.cols.indexOf(dataObj.primary) < 0)) {
                                 dataObj.cols.push(dataObj.primary);
                             }
-                            if (dataObj.id == tables[params.primaryTable]) {
+                            if (+dataObj.id === +tables[params.primaryTable]) {
                                 datasets.splice(0,0,dataObj); // add primary table to array [0]
                             } else {
                                 datasets.push(dataObj);
@@ -350,13 +354,13 @@ angular.module('datasets')
                     var checkedColumns = vm[tableName].checkedColumns;
                     var columns = [];
                     for (var col in checkedColumns) {
-                        ( checkedColumns.hasOwnProperty(col) ) && ( checkedColumns[col] ) && ( columns.push(col) );
+                        if (checkedColumns.hasOwnProperty(col) && checkedColumns[col]) columns.push(col);
                     }
                     return columns; 
                 }
 
                 function clearPrimaryCol (container) {
-                    vm.mergeParams.hasOwnProperty('primaryCol') && vm.mergeParams.primaryCol.hasOwnProperty(container) && ( vm.mergeParams.primaryCol[container] = null );
+                    if (vm.mergeParams.hasOwnProperty('primaryCol') && vm.mergeParams.primaryCol.hasOwnProperty(container)) vm.mergeParams.primaryCol[container] = null;
                 }
 
 

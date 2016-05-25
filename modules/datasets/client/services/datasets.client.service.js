@@ -40,7 +40,7 @@ angular.module('datasets')
                     console.log('done saving to user', res);
                     return res.data;
                 }).catch(function (err) {
-                    console.log('error saving to user', err);
+                    console.error('error saving to user', err);
                 });
             }
 
@@ -51,7 +51,7 @@ angular.module('datasets')
             	}).then(function(res) {
                     return res.data;
 				}, function (err) {
-                    console.log(err);
+                    console.error(err);
                 });
             }
 
@@ -75,7 +75,7 @@ angular.module('datasets')
                 }).then(function(res) {
                     return res.data;
                 }, function (err) {
-                    console.log(err);
+                    console.error(err);
                 });
             }
         }

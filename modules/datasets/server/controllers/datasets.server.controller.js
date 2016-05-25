@@ -75,23 +75,23 @@ function saveFileToS3(filePath, path) {
     });
 
     var params = {
-      localFile: "./s3-cache/" + filePath,
+      localFile: './s3-cache/' + filePath,
      
       s3Params: {
-        Bucket: "datasetstl",
+        Bucket: 'datasetstl',
         Key: path+filePath,
       },
     };
     var uploader = client.uploadFile(params);
     uploader.on('error', function(err) {
-      console.error("unable to upload:", err.stack);
+      console.error('unable to upload:', err.stack);
     });
     uploader.on('progress', function() {
-      console.log("progress", uploader.progressMd5Amount,
+      console.log('progress', uploader.progressMd5Amount,
                 uploader.progressAmount, uploader.progressTotal);
     });
     uploader.on('end', function() {
-      console.log("done uploading");
+      console.log('done uploading');
     });
 
 }
@@ -152,7 +152,7 @@ exports.merge = function (req, res) {
 
                 }
 
-                if(flag == false) {
+                if(flag === false) {
 
                     for (var r = 0; r < rows_count; r++) {
 
@@ -184,7 +184,7 @@ exports.merge = function (req, res) {
                         rows_count = data2.rows.length,
                         splice_i = 0;
 
-                    for (var i = 0; i < columns_count; i++) {
+                    for (var i2 = 0; i2 < columns_count; i2++) {
 
                         var params_count = req.body.datasets[1].cols.length,
                             flag = false;
@@ -195,7 +195,7 @@ exports.merge = function (req, res) {
 
                         }
 
-                        if(flag == false) {
+                        if(flag === false) {
 
                             for (var r = 0; r < rows_count; r++) {
 
@@ -206,7 +206,7 @@ exports.merge = function (req, res) {
 
                         } else {
 
-                            path += '_'+i;
+                            path += '_'+i2;
                             splice_i++;
 
                         }
@@ -220,32 +220,32 @@ exports.merge = function (req, res) {
                     var out = [],
                         columns = [];
 
-                    if(req.body.params.type == 0 || req.body.params.type == 1) {
+                    if(req.body.params.type === 0 || req.body.params.type === 1) {
 
-                        for (var i = 0; i < data_len; i++) {
+                        for (var k = 0; k < data_len; k++) {
 
                             var flag_left = false;
 
-                            for (var j = 0; j < data2_len; j++) {
+                            for (var l = 0; l < data2_len; l++) {
 
-                                if(data.rows[i][req.body.datasets[0].primary] == data2.rows[j][req.body.datasets[1].primary]) {
+                                if(data.rows[k][req.body.datasets[0].primary] == data2.rows[l][req.body.datasets[1].primary]) {
 
-                                    var pre_obj = {};
+                                    var pre_obj1 = {};
                                     flag_left = true;
 
-                                    for (var i_col = 0; i_col < col_len; i_col++) {
+                                    for (var i1_col = 0; i1_col < col_len; i1_col++) {
 
-                                        for (var j_col = 0; j_col < col2_len; j_col++) {
+                                        for (var j1_col = 0; j1_col < col2_len; j1_col++) {
 
 
-                                            if(data.columns[i_col] == req.body.datasets[0].primary && data2.columns[j_col] !== req.body.datasets[1].primary) {
+                                            if(data.columns[i1_col] == req.body.datasets[0].primary && data2.columns[j1_col] !== req.body.datasets[1].primary) {
 
-                                                pre_obj[data.columns[i_col]] = data.rows[i][data.columns[i_col]];
+                                                pre_obj1[data.columns[i1_col]] = data.rows[k][data.columns[i1_col]];
 
-                                            } else if(data2.columns[j_col] !== req.body.datasets[0].primary && data2.columns[j_col] !== req.body.datasets[1].primary) {
+                                            } else if(data2.columns[j1_col] !== req.body.datasets[0].primary && data2.columns[j1_col] !== req.body.datasets[1].primary) {
 
-                                                pre_obj[data.columns[i_col]+'A'] = data.rows[i][data.columns[i_col]];
-                                                pre_obj[data2.columns[j_col]+'B'] = data2.rows[j][data2.columns[j_col]];
+                                                pre_obj1[data.columns[i1_col]+'A'] = data.rows[k][data.columns[i1_col]];
+                                                pre_obj1[data2.columns[j1_col]+'B'] = data2.rows[l][data2.columns[j1_col]];
 
                                             }
 
@@ -253,17 +253,17 @@ exports.merge = function (req, res) {
 
                                     }
 
-                                    out.push(pre_obj);
+                                    out.push(pre_obj1);
 
                                 }
 
-                                if(req.body.params.type == 0 && i == 0) {
+                                if(req.body.params.type === 0 && k === 0) {
 
                                     var flag_inner = false;
 
                                     for (var ii = 0; ii < data_len; ii++) {
 
-                                        if(data.rows[ii][req.body.datasets[0].primary] == data2.rows[j][req.body.datasets[1].primary]) {
+                                        if(data.rows[ii][req.body.datasets[0].primary] == data2.rows[l][req.body.datasets[1].primary]) {
                                         
                                             flag_inner = true;
 
@@ -271,22 +271,22 @@ exports.merge = function (req, res) {
 
                                     }
 
-                                    if(flag_inner == false) {
+                                    if(flag_inner === false) {
 
-                                        var pre_obj = {};
+                                        var pre_obj2 = {};
 
-                                        for (var i_col = 0; i_col < col_len; i_col++) {
+                                        for (var i2_col = 0; i2_col < col_len; i2_col++) {
 
-                                            for (var j_col = 0; j_col < col2_len; j_col++) {
+                                            for (var j2_col = 0; j2_col < col2_len; j2_col++) {
 
-                                                if(data2.columns[j_col] == req.body.datasets[0].primary && data.columns[i_col] !== req.body.datasets[1].primary) {
+                                                if(data2.columns[j2_col] == req.body.datasets[0].primary && data.columns[i2_col] !== req.body.datasets[1].primary) {
 
-                                                    pre_obj[data2.columns[j_col]] = data2.rows[j][data2.columns[j_col]];
+                                                    pre_obj2[data2.columns[j2_col]] = data2.rows[l][data2.columns[j2_col]];
 
-                                                } else if(data.columns[i_col] !== req.body.datasets[0].primary && data.columns[i_col] !== req.body.datasets[1].primary) {
+                                                } else if(data.columns[i2_col] !== req.body.datasets[0].primary && data.columns[i2_col] !== req.body.datasets[1].primary) {
 
-                                                    pre_obj[data.columns[i_col]+'A'] = null;
-                                                    pre_obj[data2.columns[j_col]+'B'] = data2.rows[j][data2.columns[j_col]];
+                                                    pre_obj2[data.columns[i2_col]+'A'] = null;
+                                                    pre_obj2[data2.columns[j2_col]+'B'] = data2.rows[l][data2.columns[j2_col]];
 
                                                 }
 
@@ -294,7 +294,7 @@ exports.merge = function (req, res) {
 
                                         }
 
-                                        out.push(pre_obj);
+                                        out.push(pre_obj2);
 
                                     }
 
@@ -302,22 +302,22 @@ exports.merge = function (req, res) {
 
                             }
 
-                            if(flag_left == false) {
+                            if(flag_left === false) {
 
-                                var pre_obj = {};
+                                var pre_obj3 = {};
 
-                                for (var i_col = 0; i_col < col_len; i_col++) {
+                                for (var i3_col = 0; i3_col < col_len; i3_col++) {
 
-                                    for (var j_col = 0; j_col < col2_len; j_col++) {
+                                    for (var j3_col = 0; j3_col < col2_len; j3_col++) {
 
-                                        if(data.columns[i_col] == req.body.datasets[0].primary && data2.columns[j_col] !== req.body.datasets[1].primary) {
+                                        if(data.columns[i3_col] == req.body.datasets[0].primary && data2.columns[j3_col] !== req.body.datasets[1].primary) {
 
-                                            pre_obj[data.columns[i_col]] = data.rows[i][data.columns[i_col]];
+                                            pre_obj3[data.columns[i3_col]] = data.rows[k][data.columns[i3_col]];
 
-                                        } else if(data2.columns[j_col] !== req.body.datasets[0].primary && data2.columns[j_col] !== req.body.datasets[1].primary) {
+                                        } else if(data2.columns[j3_col] !== req.body.datasets[0].primary && data2.columns[j3_col] !== req.body.datasets[1].primary) {
 
-                                            pre_obj[data.columns[i_col]+'A'] = data.rows[i][data.columns[i_col]];
-                                            pre_obj[data2.columns[j_col]+'B'] = null;
+                                            pre_obj3[data.columns[i3_col]+'A'] = data.rows[k][data.columns[i3_col]];
+                                            pre_obj3[data2.columns[j3_col]+'B'] = null;
 
                                         }
 
@@ -325,7 +325,7 @@ exports.merge = function (req, res) {
 
                                 }
 
-                                out.push(pre_obj);
+                                out.push(pre_obj3);
 
                             }
 
@@ -355,11 +355,11 @@ exports.merge = function (req, res) {
 
                             csv = csv.replace(/"/ig,'');
                             var name = (new Date().getTime()).toString(16);
-                            fs.writeFileSync("./s3-cache/" + name + ".csv", csv);
+                            fs.writeFileSync('./s3-cache/' + name + '.csv', csv);
 
-                            saveFileToS3(name + ".csv", p1[4]+'/'+p1[5]+'/'+p1[6]+'/');
+                            saveFileToS3(name + '.csv', p1[4]+'/'+p1[5]+'/'+p1[6]+'/');
                             var dataset = new Dataset();
-                            dataset.s3reference = "https://s3.amazonaws.com/datasetstl/"+p1[4]+'/'+p1[5]+'/'+p1[6]+'/'+name+".csv";
+                            dataset.s3reference = 'https://s3.amazonaws.com/datasetstl/'+p1[4]+'/'+p1[5]+'/'+p1[6]+'/'+name+'.csv';
                             dataset.user = one.user;
                             dataset.title = req.body.params.title;
                             dataset.notice = req.body.params.notice;
@@ -389,7 +389,7 @@ exports.merge = function (req, res) {
 
     });
 
-}
+};
 
 /**
  * Save custom dataset
@@ -421,7 +421,7 @@ exports.saveCustom = function (req, res) {
 
                 }
 
-                if(flag == false) {
+                if(flag === false) {
 
                     for (var r = 0; r < rows_count; r++) {
 
@@ -451,12 +451,12 @@ exports.saveCustom = function (req, res) {
 
                     csv = csv.replace(/"/ig,'');
                     
-                    fs.writeFileSync("./s3-cache/" + path + ".csv", csv);
+                    fs.writeFileSync('./s3-cache/' + path + '.csv', csv);
 
-                    saveFileToS3(path + ".csv", p1[4]+'/'+p1[5]+'/'+p1[6]+'/');
+                    saveFileToS3(path + '.csv', p1[4]+'/'+p1[5]+'/'+p1[6]+'/');
 
                     var dataset = new Dataset();
-                    dataset.s3reference = "https://s3.amazonaws.com/datasetstl/"+p1[4]+'/'+p1[5]+'/'+p1[6]+'/'+path+".csv";
+                    dataset.s3reference = 'https://s3.amazonaws.com/datasetstl/'+p1[4]+'/'+p1[5]+'/'+p1[6]+'/'+path+'.csv';
                     dataset.user = one.user;
                     dataset.title = req.body.title;
                     dataset.notice = req.body.notice;

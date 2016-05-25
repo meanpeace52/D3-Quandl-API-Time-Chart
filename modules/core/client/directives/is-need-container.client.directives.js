@@ -18,14 +18,14 @@
             scope.$watch(function () {
               return $rootScope.isToggleSideBar;
             }, function (newValue) {
-              if ( isToggle === 'toggle' || curState !== 'home' ) {
+              if (isToggle === 'toggle' || curState !== 'home') {
                 toggleContainer(newValue);
               }
             });
 
             $rootScope.$on('$stateChangeSuccess', function (event, toState, toParams, fromState, fromParams) {
               curState = toState.name;
-              if ( curState === 'home' ) {
+              if (curState === 'home') {
                 element.attr('class', '');
               } else {
                 toggleContainer($rootScope.isToggleSideBar);
@@ -49,7 +49,7 @@
             }
           	
           }
-      }
+      };
   };
 
   angular.module('core')
