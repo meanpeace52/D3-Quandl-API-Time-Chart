@@ -44,7 +44,8 @@ module.exports = {
                 BOWER_PATH + 'datatables/media/js/jquery.dataTables.min.js',
                 BOWER_PATH + 'datatables/media/js/dataTables.bootstrap.min.js',
                 BOWER_PATH + 'angular-datatables/dist/angular-datatables.js',
-                BOWER_PATH + 'aws-sdk/dist/aws-sdk.js'
+                BOWER_PATH + 'aws-sdk/dist/aws-sdk.js',
+                BOWER_PATH + 'angular-drag-and-drop-lists/angular-drag-and-drop-lists.js',
             ],
             tests: [BOWER_PATH + 'angular-mocks/angular-mocks.js']
         },
