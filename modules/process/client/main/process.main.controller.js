@@ -1,10 +1,9 @@
 'use strict';
 
-//Datasets Detail Controller
 angular.module('process')
     .controller('ProcessMainController',
-        ['$stateParams', 'Datasets', 'UsersFactory', 'Authentication', 'DTOptionsBuilder', 'DTColumnDefBuilder',
-            function ($stateParams, Datasets, UsersFactory, Authentication, DTOptionsBuilder, DTColumnDefBuilder) {
+        ['$stateParams', 'Datasets', 'UsersFactory', 'Authentication', 'DTOptionsBuilder', 'DTColumnDefBuilder', '$modal',
+            function ($stateParams, Datasets, UsersFactory, Authentication, DTOptionsBuilder, DTColumnDefBuilder, $modal) {
                 var vm = this;
 
     		vm.authentication = Authentication;
@@ -41,6 +40,20 @@ angular.module('process')
             vm.dataset.columns = data.columns;
     				vm.dataset.rows = data.rows;
           });
+        };
+
+        vm.createProcess = function() {
+          var modalInstance = $modal.open({
+              templateUrl: 'modules/process/client/create/process.create.modal.html',
+              controller: 'ProcessModalController',
+              controllerAs: 'ProcessModal',
+              size: 'lg'
+          });
+
+          modalInstance.result.then(function (selectedTasks) {
+            console.log(selectedTasks);
+          });
+
         };
 
     }]);
