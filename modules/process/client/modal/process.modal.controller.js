@@ -2,8 +2,8 @@
 
 angular.module('process')
     .controller('ProcessModalController',
-        ['$state', 'Tasks', 'selectedTasks',
-          function ($state, Tasks, selectedTasks) {
+        ['$state', '$stateParams', 'Tasks', 'selectedTasks',
+          function ($state, $stateParams, Tasks, selectedTasks) {
             var baseStateUrl = 'lab.process.popup.taskoptions';
             var vm = this;
 
@@ -43,6 +43,13 @@ angular.module('process')
 
         vm.ok = function() {
           updateTaskOptions();
-          $state.go('lab.process', {data: {tasks: vm.copiedTasks}}, {reload: true});
+          $state.go('lab.process', {
+            data: {
+              tasks: vm.copiedTasks,
+              type: $stateParams.type
+            }
+          }, {
+            reload: true
+          });
         };
     }]);

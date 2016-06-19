@@ -2,15 +2,23 @@
 
 angular.module('process')
     .controller('ProcessMainController',
-        ['$stateParams', 'Datasets', 'UsersFactory', 'Authentication', 'DTOptionsBuilder', 'DTColumnDefBuilder',
-            function ($stateParams, Datasets, UsersFactory, Authentication, DTOptionsBuilder, DTColumnDefBuilder) {
+        ['$stateParams', 'Datasets', 'UsersFactory', 'Authentication', 'Process', 'DTOptionsBuilder', 'DTColumnDefBuilder',
+            function ($stateParams, Datasets, UsersFactory, Authentication, Process, DTOptionsBuilder, DTColumnDefBuilder) {
                 var vm = this;
 
         // The Lab page has received data from the process modal.
-        // TODO: Determine whether to create a new one or edit an existing
-        // one and perform further actions.
         if ($stateParams.data) {
           console.log('Inside Main Controller: do something with the modal data', $stateParams.data);
+          if ($stateParams.data.type === 'create') {
+            // TODO: select the newly created process
+          } else {
+            // TODO: update selected process
+          }
+
+          var selectedDataset = Process.getSelectedDataset();
+          if (selectedDataset) {
+            //TODO: perform selected tasks on this dataset!
+          }
         }
 
     		vm.authentication = Authentication;
@@ -37,6 +45,9 @@ angular.module('process')
         });
 
         vm.onDatasetChange = function(dataset) {
+          // Persist selected dataset
+          Process.setSelectedDataset(dataset);
+
           vm.selectedDataset = dataset.title;
           vm.showLoader = true;
           Datasets.getDatasetWithS3(dataset._id)
