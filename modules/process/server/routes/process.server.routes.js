@@ -14,7 +14,7 @@ module.exports = function (app) {
         .get(process.list)
         .post(process.create);
 
-    app.route('/api/process/:processId').all(processPolicy)
+    app.route('/api/process/:processId').all(processPolicy.isAllowed)
         .get(process.read)
         .put(process.update)
         .delete(process.delete);
