@@ -3,6 +3,17 @@
 angular.module('process')
     .factory('Tasks', [function() {
 
+      var SCRIPT_TYPE = {
+        DEPLOYR: 'deployr',
+        CODE: 'code',
+        EXTERNAL: 'external'
+      };
+      
+      var SCRIPT_RETURN_TYPE = {
+        DATASET: 'dataset',
+        MODEL: 'model'
+      };
+      
       /*
        * If a task is supposed to render any options when
        * selected, a route with name `lab.process.taskoptions.${slug}`
@@ -16,6 +27,11 @@ angular.module('process')
         subtasks: [{
           title: 'Merge',
           slug: 'merge',
+          script: {
+            type: SCRIPT_TYPE.EXTERNAL,
+            path: '' //s3 link
+          },
+          returnType: SCRIPT_RETURN_TYPE.DATASET,
           options: {
             dataset1: 'default value',
             dataset2: '',
@@ -56,6 +72,8 @@ angular.module('process')
       var taskOptions = [];
 
       return {
+        SCRIPT_TYPE: SCRIPT_TYPE,
+        SCRIPT_RETURN_TYPE: SCRIPT_RETURN_TYPE,
         getTasks: function() {
           return tasks;
         }
