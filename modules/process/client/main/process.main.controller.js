@@ -47,7 +47,42 @@ angular.module('process')
               templateUrl: 'modules/process/client/create/process.create.modal.html',
               controller: 'ProcessModalController',
               controllerAs: 'ProcessModal',
-              size: 'lg'
+              size: 'lg',
+              resolve: {
+                tasks: function() {
+                  return [{
+                    title: 'Summaries',
+                    subtasks: []
+                  }, {
+                    title: 'Join',
+                    subtasks: [{
+                      title: 'Merge',
+                      options: []
+                    }]
+                  }, {
+                    title: 'Transforms',
+                    subtasks: [{
+                      title: 'Standardize dates'
+                    }, {
+                      title: 'Sub-sample (rows)'
+                    }, {
+                      title: 'Missing data imputation'
+                    }, {
+                      title: 'Convert factors'
+                    }]
+                  }, {
+                    title: 'Exploratory',
+                    subtasks: [{
+                      title: 'PCA'
+                    }, {
+                      title: 'K-means'
+                    }]
+                  }, {
+                    title: 'Econometric',
+                    subtasks: []
+                  }];
+                }
+              }
           });
 
           modalInstance.result.then(function (selectedTasks) {
