@@ -29,3 +29,14 @@ ul.drop-list li:first-child {
 .panel-group .panel + .panel {
 	margin-top:0;
 }
+.current-process {
+	display:inline-block;
+	margin-left: 20px;
+}
+.current-process-text {
+	font-size: 16px;
+	margin-bottom: 5px;
+}
+.content {
+	margin-top: 10px;
+}
