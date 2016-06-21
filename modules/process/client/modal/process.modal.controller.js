@@ -2,8 +2,8 @@
 
 angular.module('process')
     .controller('ProcessModalController',
-        ['$state', '$stateParams', 'Tasks', 'selectedTasks',
-          function ($state, $stateParams, Tasks, selectedTasks) {
+        ['$state', '$stateParams', 'Tasks', 'process',
+          function ($state, $stateParams, Tasks, process) {
             var baseStateUrl = 'lab.process.popup.taskoptions';
             var vm = this;
 
@@ -29,15 +29,15 @@ angular.module('process')
           }
         }
 
-        vm.copiedTasks = selectedTasks || [];
+        vm.copiedTasks = (process || {}).tasks || [];
         vm.onCopy = function(event, index, item) {
-          if (!_.find(vm.copiedTasks, {slug: item.slug})) {
+          if (!_.find(vm.copiedTasks, {title: item.title})) {
             updateTaskOptions();
             vm.copiedTasks.splice(index, 0, item);
             if (item.slug) {
               $state.go(baseStateUrl + '.' + item.slug, {options: item.options});
             } else {
-              $state.go('^');
+              $state.go('lab.process.popup');
             }
           }
           return true;

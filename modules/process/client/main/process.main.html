@@ -12,10 +12,10 @@
     </ul>
   </div>
   <div class="current-process">
-    <div class="current-process-text">Current Selected Process: (EMPTY)</div>
+    <div class="current-process-text">Current Selected Process: <span ng-if="ProcessMain.process">{{ProcessMain.process.title}}</span> <span ng-if="!ProcessMain.process">(EMPTY)</span></div>
     <button class="btn btn-default">Perform Process</button>
     <button class="btn btn-default">Save</button>
-    <button class="btn btn-default">Edit</button>
+    <button class="btn btn-default" ng-disabled="!ProcessMain.process" ng-click="ProcessMain.openEditModal()">Edit</button>
   </div>
   <div class="pull-right">
     <button class="btn btn-primary" ng-click="ProcessMain.openCreateModal()">Create NEW Process</a>

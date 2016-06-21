@@ -22,11 +22,20 @@ angular.module('process')
                   resolve: {
                     authService: 'Authentication',
                     usersFactory: 'UsersFactory',
+                    processService: 'Process',
+                    // parameters to be shared by all the child states
+                    // including the modal and the states for task options
                     user: function(authService) {
                       return authService.user;
                     },
                     datasets: function(authService, usersFactory) {
                       return usersFactory.finduserdatasets(authService.user);
+                    },
+                    selectedDataset: function(processService) {
+                      return processService.getSelectedDataset();
+                    },
+                    process: function(processService) {
+                      return processService.getSelectedProcess();
                     }
                   }
                 })
@@ -37,17 +46,6 @@ angular.module('process')
                   // common way around to use angular-ui modals with
                   // the router having nested states
                   template: '<div ui-view="modal"></div>',
-                  resolve: {
-                    // pre-populate tasks and it's options
-                    // from the currently selected process
-                    processService: 'Process',
-                    selectedTasks: function(processService) {
-                      return (processService.getSelectedProcess() || {}).tasks;
-                    },
-                    selectedDataset: function(processService) {
-                      return processService.getSelectedDataset();
-                    }
-                  },
                   views: {
                     'modal@': {
                       templateUrl: MODULE_PATH + 'modal/process.modal.html',
