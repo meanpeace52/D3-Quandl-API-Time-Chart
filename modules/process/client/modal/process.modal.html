@@ -7,11 +7,11 @@
     <div class="container-fluid">
       <div class="row">
         <div class="col-md-3">
-          <accordion close-others="true">
-            <accordion-group ng-repeat="task in ProcessModal.tasks" is-open="task.status.open">
-              <accordion-heading>
+          <uib-accordion close-others="true">
+            <uib-accordion-group ng-repeat="task in ProcessModal.tasks" is-open="task.status.open">
+              <uib-accordion-heading>
                 {{task.title}} <i class="pull-right glyphicon ng-scope glyphicon-chevron-right" ng-class="{'glyphicon-chevron-down': task.status.open, 'glyphicon-chevron-right': !task.status.open}"></i>
-              </accordion-heading>
+              </uib-accordion-heading>
               <ul>
                 <li ng-repeat="subtask in task.subtasks"
                     dnd-draggable="subtask"
@@ -19,8 +19,8 @@
                     {{subtask.title}}
                 </li>
               </ul>
-            </accordion-group>
-          </accordion>
+            </uib-accordion-group>
+          </uib-accordion>
         </div>
         <div class="col-md-9">
           <ul
@@ -33,10 +33,13 @@
               </li>
               <li ng-repeat-end class="arrow"><i class="fa fa-long-arrow-right"></i></li>
           </ul>
+          <div class="options">
+            <div ui-view></div>
+          </div>
         </div>
       </div>
     </div>
 </div>
 <div class="modal-footer">
-    <button class="btn btn-danger btn-sm" ng-click="DatasetWorkbenchModal.ok()">ok</button>
+    <button class="btn btn-danger btn-sm" ng-click="ProcessModal.ok()">OK</button>
 </div>

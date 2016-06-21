@@ -2,9 +2,16 @@
 
 angular.module('process')
     .controller('ProcessMainController',
-        ['$stateParams', 'Datasets', 'UsersFactory', 'Authentication', 'DTOptionsBuilder', 'DTColumnDefBuilder', '$modal',
-            function ($stateParams, Datasets, UsersFactory, Authentication, DTOptionsBuilder, DTColumnDefBuilder, $modal) {
+        ['$stateParams', 'Datasets', 'UsersFactory', 'Authentication', 'DTOptionsBuilder', 'DTColumnDefBuilder',
+            function ($stateParams, Datasets, UsersFactory, Authentication, DTOptionsBuilder, DTColumnDefBuilder) {
                 var vm = this;
+
+        // The Lab page has received data from the process modal.
+        // TODO: Determine whether to create a new one or edit an existing
+        // one and perform further actions.
+        if ($stateParams.data) {
+          console.log('Inside Main Controller: do something with the modal data', $stateParams.data);
+        }
 
     		vm.authentication = Authentication;
     		vm.user = Authentication.user;
@@ -41,54 +48,4 @@ angular.module('process')
     				vm.dataset.rows = data.rows;
           });
         };
-
-        vm.createProcess = function() {
-          var modalInstance = $modal.open({
-              templateUrl: 'modules/process/client/create/process.create.modal.html',
-              controller: 'ProcessModalController',
-              controllerAs: 'ProcessModal',
-              size: 'lg',
-              resolve: {
-                tasks: function() {
-                  return [{
-                    title: 'Summaries',
-                    subtasks: []
-                  }, {
-                    title: 'Join',
-                    subtasks: [{
-                      title: 'Merge',
-                      options: []
-                    }]
-                  }, {
-                    title: 'Transforms',
-                    subtasks: [{
-                      title: 'Standardize dates'
-                    }, {
-                      title: 'Sub-sample (rows)'
-                    }, {
-                      title: 'Missing data imputation'
-                    }, {
-                      title: 'Convert factors'
-                    }]
-                  }, {
-                    title: 'Exploratory',
-                    subtasks: [{
-                      title: 'PCA'
-                    }, {
-                      title: 'K-means'
-                    }]
-                  }, {
-                    title: 'Econometric',
-                    subtasks: []
-                  }];
-                }
-              }
-          });
-
-          modalInstance.result.then(function (selectedTasks) {
-            console.log(selectedTasks);
-          });
-
-        };
-
     }]);
