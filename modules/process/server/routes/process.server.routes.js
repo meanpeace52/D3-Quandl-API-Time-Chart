@@ -19,7 +19,7 @@ module.exports = function (app) {
         .put(process.update)
         .delete(process.delete);
 
-    app.route('/api/process/user/:username').all(processPolicy.isAllowed)
-        .get(process.listByUsername);
+    app.route('/api/process/user/:userId').all(processPolicy.isAllowed)
+        .get(process.listByUserId);
 
 };

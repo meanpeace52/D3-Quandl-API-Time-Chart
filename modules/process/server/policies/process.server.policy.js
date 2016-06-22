@@ -25,7 +25,7 @@ exports.invokeRolesPolicies = function () {
                     permissions: ['get', 'put', 'delete']
                 },
                 {
-                    resources: '/api/process/user/:username',
+                    resources: '/api/process/user/:userId',
                     permissions: ['get']
                 }
             ]
@@ -42,7 +42,7 @@ exports.invokeRolesPolicies = function () {
                     permissions: ['get', 'put', 'delete']
                 },
                 {
-                    resources: '/api/process/user/:username',
+                    resources: '/api/process/user/:userId',
                     permissions: ['get']
                 }
             ]
@@ -59,7 +59,7 @@ exports.invokeRolesPolicies = function () {
                     permissions: ['get']
                 },
                 {
-                    resources: '/api/process/user/:username',
+                    resources: '/api/process/user/:userId',
                     permissions: ['get']
                 }
             ]
@@ -75,7 +75,7 @@ exports.isAllowed = function (req, res, next) {
 
     // If a process is being processed and the current user created it then allow any manipulation
     // TODO: allow admin to manipulate other user's processes
-    if (req.process && req.user && req.process.user && req.process.user.id === req.user.id) {
+    if (req.body.process && req.user && req.body.process.user && req.body.process.user === req.user._id) {
         return next();
     }
 
