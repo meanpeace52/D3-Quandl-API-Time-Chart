@@ -18,7 +18,17 @@ angular.module('process')
                   controller: 'ProcessMainController',
                   controllerAs: 'ProcessMain',
                   templateUrl: MODULE_PATH + 'main/process.main.html',
-                  params: { data: null }
+                  params: { data: null },
+                  resolve: {
+                    authService: 'Authentication',
+                    usersFactory: 'UsersFactory',
+                    user: function(authService) {
+                      return authService.user;
+                    },
+                    datasets: function(authService, usersFactory) {
+                      return usersFactory.finduserdatasets(authService.user);
+                    }
+                  }
                 })
                 .state('lab.process.popup', {
                   url: '/:type',
@@ -33,6 +43,9 @@ angular.module('process')
                     processService: 'Process',
                     selectedTasks: function(processService) {
                       return (processService.getSelectedProcess() || {}).tasks;
+                    },
+                    selectedDataset: function(processService) {
+                      return processService.getSelectedDataset();
                     }
                   },
                   views: {

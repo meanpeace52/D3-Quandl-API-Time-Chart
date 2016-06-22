@@ -2,8 +2,8 @@
 
 angular.module('process')
     .controller('ProcessMainController',
-        ['$stateParams', 'Datasets', 'UsersFactory', 'Authentication', 'Process', 'DTOptionsBuilder', 'DTColumnDefBuilder',
-            function ($stateParams, Datasets, UsersFactory, Authentication, Process, DTOptionsBuilder, DTColumnDefBuilder) {
+        ['$state', '$stateParams', 'Datasets', 'UsersFactory', 'Authentication', 'Process', 'DTOptionsBuilder', 'DTColumnDefBuilder', 'user', 'datasets',
+            function ($state, $stateParams, Datasets, UsersFactory, Authentication, Process, DTOptionsBuilder, DTColumnDefBuilder, user, datasets) {
                 var vm = this;
 
         // The Lab page has received data from the process modal.
@@ -21,8 +21,7 @@ angular.module('process')
           }
         }
 
-    		vm.authentication = Authentication;
-    		vm.user = Authentication.user;
+    		vm.usersDatasets = datasets;
         vm.showLoader = false;
         vm.selectedDataset = '';
         vm.dataset = {
@@ -40,14 +39,9 @@ angular.module('process')
             })
         };
 
-        UsersFactory.finduserdatasets(vm.user).then(function (usersDatasets) {
-          vm.usersDatasets = usersDatasets;
-        });
-
         vm.onDatasetChange = function(dataset) {
           // Persist selected dataset
           Process.setSelectedDataset(dataset);
-
           vm.selectedDataset = dataset.title;
           vm.showLoader = true;
           Datasets.getDatasetWithS3(dataset._id)
@@ -58,5 +52,12 @@ angular.module('process')
             vm.dataset.columns = data.columns;
     				vm.dataset.rows = data.rows;
           });
+        };
+
+        vm.openCreateModal = function() {
+          if (!vm.selectedDataset) {
+            return alert('Please select a datatset!');
+          }
+          $state.go('lab.process.popup', {type: 'create'});
         };
     }]);

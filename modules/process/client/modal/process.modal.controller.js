@@ -31,11 +31,13 @@ angular.module('process')
 
         vm.copiedTasks = selectedTasks || [];
         vm.onCopy = function(event, index, item) {
-          if (!_.find(vm.copiedTasks, item)) {
+          if (!_.find(vm.copiedTasks, {slug: item.slug})) {
             updateTaskOptions();
             vm.copiedTasks.splice(index, 0, item);
             if (item.slug) {
               $state.go(baseStateUrl + '.' + item.slug, {options: item.options});
+            } else {
+              $state.go('^');
             }
           }
           return true;

@@ -8,12 +8,12 @@ angular.module('process')
         CODE: 'code',
         EXTERNAL: 'external'
       };
-      
+
       var SCRIPT_RETURN_TYPE = {
         DATASET: 'dataset',
         MODEL: 'model'
       };
-      
+
       /*
        * If a task is supposed to render any options when
        * selected, a route with name `lab.process.taskoptions.${slug}`
@@ -25,7 +25,7 @@ angular.module('process')
       }, {
         title: 'Join',
         subtasks: [{
-          title: 'Merge',
+          title: 'Merge (Drag me)',
           slug: 'merge',
           script: {
             type: SCRIPT_TYPE.EXTERNAL,
@@ -33,7 +33,7 @@ angular.module('process')
           },
           returnType: SCRIPT_RETURN_TYPE.DATASET,
           options: {
-            dataset1: 'default value',
+            dataset1: '',
             dataset2: '',
             dataset1Key: '',
             dataset2Key: '',
@@ -43,26 +43,20 @@ angular.module('process')
       }, {
         title: 'Transforms',
         subtasks: [{
-          title: 'Standardize dates',
-          slug: 'standardize-dates'
+          title: 'Standardize dates'
         }, {
-          title: 'Sub-sample (rows)',
-          slug: 'subsample'
+          title: 'Sub-sample (rows)'
         }, {
-          title: 'Missing data imputation',
-          slug: 'missing-data-imputation'
+          title: 'Missing data imputation'
         }, {
-          title: 'Convert factors',
-          slug: 'convert-factors'
+          title: 'Convert factors'
         }]
       }, {
         title: 'Exploratory',
         subtasks: [{
-          title: 'PCA',
-          slug: 'pca'
+          title: 'PCA'
         }, {
-          title: 'K-means',
-          slug: 'kmeans'
+          title: 'K-means'
         }]
       }, {
         title: 'Econometric',
