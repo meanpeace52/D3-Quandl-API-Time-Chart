@@ -36,7 +36,8 @@
     "aws-sdk": "aws-sdk-js#~2.2.28",
     "color-thief": "~2.0.1",
     "angular-datatables": "^0.5.3",
-    "angular-ui-router-uib-modal": "~0.0.8"
+    "angular-ui-router-uib-modal": "~0.0.8",
+    "handlebars": "~4.0.5"
   },
   "resolutions": {
     "objectpath": "~1.1.0",

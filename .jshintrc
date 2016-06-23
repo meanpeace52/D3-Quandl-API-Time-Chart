@@ -18,7 +18,8 @@
     "_": true,
     "ApplicationConfiguration": true,
     "$": true,
-    "Promise": true
+    "Promise": true,
+    "Handlebars": true
   },
   "predef": [ // Extra globals.
     "inject",
