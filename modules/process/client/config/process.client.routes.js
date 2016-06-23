@@ -18,26 +18,7 @@ angular.module('process')
                   controller: 'ProcessMainController',
                   controllerAs: 'ProcessMain',
                   templateUrl: MODULE_PATH + 'main/process.main.html',
-                  params: { data: null },
-                  resolve: {
-                    authService: 'Authentication',
-                    usersFactory: 'UsersFactory',
-                    processService: 'Process',
-                    // parameters to be shared by all the child states
-                    // including the modal and the states for task options
-                    user: function(authService) {
-                      return authService.user;
-                    },
-                    datasets: function(authService, usersFactory) {
-                      return usersFactory.finduserdatasets(authService.user);
-                    },
-                    selectedDataset: function(processService) {
-                      return processService.getSelectedDataset();
-                    },
-                    process: function(processService) {
-                      return processService.getSelectedProcess();
-                    }
-                  }
+                  params: { data: null }
                 })
                 .state('lab.process.popup', {
                   url: '/:type',
@@ -46,6 +27,20 @@ angular.module('process')
                   // common way around to use angular-ui modals with
                   // the router having nested states
                   template: '<div ui-view="modal"></div>',
+                  resolve: {
+                    // parameters to be shared by all the child states
+                    // including the modal and the states for task options
+                    processService: 'Process',
+                    usersDatasets: function(processService) {
+                      return processService.getUsersDatasets();
+                    },
+                    selectedDataset: function(processService) {
+                      return processService.getSelectedDataset();
+                    },
+                    process: function(processService) {
+                      return processService.getSelectedProcess();
+                    }
+                  },
                   views: {
                     'modal@': {
                       templateUrl: MODULE_PATH + 'modal/process.modal.html',

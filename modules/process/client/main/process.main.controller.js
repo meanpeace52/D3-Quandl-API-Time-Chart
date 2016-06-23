@@ -2,11 +2,11 @@
 
 angular.module('process')
     .controller('ProcessMainController',
-        ['$state', '$stateParams', '$timeout', 'Datasets', 'UsersFactory', 'Authentication', 'Process', 'DTOptionsBuilder', 'DTColumnDefBuilder', 'user', 'datasets',
-            function ($state, $stateParams, $timeout, Datasets, UsersFactory, Authentication, Process, DTOptionsBuilder, DTColumnDefBuilder, user, datasets) {
+        ['$state', '$stateParams', '$timeout', 'Datasets', 'UsersFactory', 'Authentication', 'Process',
+            function ($state, $stateParams, $timeout, Datasets, UsersFactory, Authentication, Process) {
                 var vm = this;
 
-        vm.usersDatasets = datasets;
+        vm.user = Authentication.user;
         vm.showLoader = false;
         vm.selectedDataset = '';
         vm.dataset = {
@@ -14,6 +14,17 @@ angular.module('process')
           columns: []
         };
         vm.process = null;
+
+        Process.getByUser(vm.user._id)
+          .then(function(processes) {
+            vm.usersProcesses = processes;
+          });
+
+        UsersFactory.finduserdatasets(vm.user)
+          .then(function(datasets) {
+            vm.usersDatasets = datasets;
+            Process.setUsersDatasets(datasets);
+          });
 
         vm.onDatasetChange = function(dataset) {
           // re-initialize table data
@@ -41,7 +52,7 @@ angular.module('process')
             Process.setSelectedProcess({
               title: 'Unnamed',
               tasks: $stateParams.data.tasks,
-              user: user._id
+              user: vm.user._id
             });
           } else {
             Process.setSelectedProcess(_.extend(Process.getSelectedProcess(), {
@@ -62,10 +73,15 @@ angular.module('process')
           if (!vm.selectedDataset) {
             return alert('Please select a datatset!');
           }
-          $state.go('lab.process.popup', {type: 'create'}, {reload: true});
+          $state.go('lab.process.popup', {type: 'create'});
         };
 
         vm.openEditModal = function() {
-          $state.go('lab.process.popup', {type: 'edit'}, {reload: true});
+          $state.go('lab.process.popup', {type: 'edit'});
+        };
+
+        vm.onProcessChange = function(process) {
+          Process.setSelectedProcess(process);
+          vm.process = process;
         };
     }]);

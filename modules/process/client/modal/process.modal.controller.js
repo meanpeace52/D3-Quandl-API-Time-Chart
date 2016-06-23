@@ -37,7 +37,11 @@ angular.module('process')
           }
         }
 
-        vm.copiedTasks = (process || {}).tasks || [];
+        vm.copiedTasks = [];
+        if ($stateParams.type !== 'create') {
+          vm.copiedTasks = (process || {}).tasks || [];
+        }
+
         vm.onCopy = function(event, index, task) {
           if (!_.find(vm.copiedTasks, {title: task.title})) {
             updateTaskOptions();

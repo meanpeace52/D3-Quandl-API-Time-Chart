@@ -4,8 +4,15 @@ angular.module('process')
     .factory('Process', ['$http', function($http) {
       var currentProcess = null;
       var selectedDataset = null;
+      var usersDatasets = null;
 
       return {
+        setUsersDatasets: function(datasets) {
+          usersDatasets = datasets;
+        },
+        getUsersDatasets: function() {
+          return usersDatasets;
+        },
         setSelectedDataset: function(dataset) {
           selectedDataset = dataset;
         },

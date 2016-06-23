@@ -1,14 +1,14 @@
 'use strict';
 
 angular.module('process')
-    .controller('MergeTaskOptionsController', ['$stateParams', 'Datasets', 'user', 'datasets', 'selectedDataset', function($stateParams, Datasets, user, datasets, selectedDataset) {
+    .controller('MergeTaskOptionsController', ['$stateParams', 'Datasets', 'usersDatasets', 'selectedDataset', function($stateParams, Datasets, usersDatasets, selectedDataset) {
 
       var vm = this;
 
       vm.options = $stateParams.options || {};
       vm.options.dataset1 = selectedDataset;
 
-      vm.usersDatasets = datasets;
+      vm.usersDatasets = usersDatasets;
       vm.dataset1 = selectedDataset;
 
       if (selectedDataset) {
