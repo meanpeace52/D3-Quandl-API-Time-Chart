@@ -2,47 +2,38 @@
 
 angular.module('process')
     .controller('ProcessMainController',
-        ['$state', '$stateParams', 'Datasets', 'UsersFactory', 'Authentication', 'Process', 'DTOptionsBuilder', 'DTColumnDefBuilder', 'user', 'datasets',
-            function ($state, $stateParams, Datasets, UsersFactory, Authentication, Process, DTOptionsBuilder, DTColumnDefBuilder, user, datasets) {
+        ['$state', '$stateParams', '$timeout', 'Datasets', 'UsersFactory', 'Authentication', 'Process', 'DTOptionsBuilder', 'DTColumnDefBuilder', 'user', 'datasets',
+            function ($state, $stateParams, $timeout, Datasets, UsersFactory, Authentication, Process, DTOptionsBuilder, DTColumnDefBuilder, user, datasets) {
                 var vm = this;
-
 
         vm.usersDatasets = datasets;
         vm.showLoader = false;
         vm.selectedDataset = '';
         vm.dataset = {
           rows: [],
-          columns: [],
-          dtOptions: DTOptionsBuilder.newOptions()
-            .withOption('paging', false)
-            .withOption('sort', false)
-            .withOption('searching', false)
-            .withOption('scrollY', 500)
-            .withOption('info', false)
-            .withOption('deferRender', true)
-            .withOption('fnInitComplete', function () {
-              vm.showLoader = false;
-            })
+          columns: []
         };
         vm.process = null;
 
         vm.onDatasetChange = function(dataset) {
+          // re-initialize table data
+          vm.dataset.rows = [];
+          vm.dataset.columns = [];
+
           // Persist selected dataset
           Process.setSelectedDataset(dataset);
           vm.selectedDataset = dataset.title;
           vm.showLoader = true;
           Datasets.getDatasetWithS3(dataset._id)
           .then(function (data) {
-            vm.dataset.dtColumnDefs = data.columns.map(function (column, i) {
-              return DTColumnDefBuilder.newColumnDef(i).notSortable();
-            });
+            vm.showLoader = false;
             vm.dataset.columns = data.columns;
             vm.dataset.rows = data.rows;
           });
         };
 
         // The Lab page has received data from the process modal.
-        // the update in state unfortunately requires a reload which 
+        // the update in state unfortunately requires a reload which
         // resets the state of the controller. Until a better solution
         // is implemented, going with restoring the previous state for now.
         if ($stateParams.data) {
