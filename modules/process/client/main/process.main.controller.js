@@ -81,7 +81,30 @@ angular.module('process')
         };
 
         vm.onProcessChange = function(process) {
+          if (vm.process._id && process._id && vm.process._id === process._id) {
+            return;
+          }
           Process.setSelectedProcess(process);
           vm.process = process;
+        };
+
+        vm.saveProcess = function() {
+          var process = _.clone(vm.process);
+          process.tasks = process.tasks.map(function(task) {
+            return _.pick(task, ['title', 'slug']);
+          });
+          process.title = prompt('Please enter a title for process', process.title) || 'Unnamed';
+          if (process._id) {
+            Process.update(process)
+              .then(function(process) {
+                var index = _.findIndex(vm.usersProcesses, {_id: process._id});
+                vm.usersProcesses[index] = process;
+              });
+          } else {
+            Process.create(process)
+              .then(function(process) {
+                vm.usersProcesses.push(process);
+              });
+          }
         };
     }]);
