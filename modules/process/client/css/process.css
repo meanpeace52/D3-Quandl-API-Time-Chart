@@ -16,12 +16,13 @@ ul.drop-list li {
 	display: inline-block;
 	margin-left: 10px;
 }
-ul.drop-list li:not(.arrow) {
-	border: 1px solid #ccc;
-	padding: 5px;
-}
-ul.drop-list li:first-child {
-	margin-left: 0;
+ul.drop-list li.task:after {
+	font-family: FontAwesome;
+  content: "\f178";
+  margin-left: 5px;
+  display: inline-block;
+  font-size: 20px;
+  vertical-align: middle;
 }
 .panel-group .panel {
 	border-radius:0;

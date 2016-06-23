@@ -29,18 +29,26 @@ angular.module('process')
           }
         }
 
+        function showTaskOptions(task) {
+          if (task.slug) {
+            $state.go(baseStateUrl + '.' + task.slug, {options: task.options});
+          } else {
+            $state.go('lab.process.popup');
+          }
+        }
+
         vm.copiedTasks = (process || {}).tasks || [];
-        vm.onCopy = function(event, index, item) {
-          if (!_.find(vm.copiedTasks, {title: item.title})) {
+        vm.onCopy = function(event, index, task) {
+          if (!_.find(vm.copiedTasks, {title: task.title})) {
             updateTaskOptions();
-            vm.copiedTasks.splice(index, 0, item);
-            if (item.slug) {
-              $state.go(baseStateUrl + '.' + item.slug, {options: item.options});
-            } else {
-              $state.go('lab.process.popup');
-            }
+            vm.copiedTasks.splice(index, 0, task);
+            showTaskOptions(vm.copiedTasks[index]);
           }
           return true;
+        };
+
+        vm.onTaskClick = function(task) {
+          showTaskOptions(task);
         };
 
         vm.ok = function() {

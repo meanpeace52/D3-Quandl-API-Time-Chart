@@ -28,10 +28,9 @@
               dnd-list="task.subtasks"
               dnd-drop="ProcessModal.onCopy(event, index, item)"
               dnd-horizontal-list="true">
-              <li ng-repeat-start="task in ProcessModal.copiedTasks">
-                {{task.title}}
+              <li ng-repeat="task in ProcessModal.copiedTasks" class="task">
+                <button class="btn btn-default" ng-click="ProcessModal.onTaskClick(task)">{{task.title}}</button>
               </li>
-              <li ng-repeat-end class="arrow"><i class="fa fa-long-arrow-right"></i></li>
           </ul>
           <div class="options">
             <div ui-view></div>
