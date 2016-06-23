@@ -14,12 +14,12 @@ ul.drop-list {
 }
 ul.drop-list li {
 	display: inline-block;
-	margin-left: 10px;
+	margin-bottom: 10px;
 }
 ul.drop-list li.task:after {
 	font-family: FontAwesome;
   content: "\f178";
-  margin-left: 5px;
+  margin: 0px 10px;
   display: inline-block;
   font-size: 20px;
   vertical-align: middle;
