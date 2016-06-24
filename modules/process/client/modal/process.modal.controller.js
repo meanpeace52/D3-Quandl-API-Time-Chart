@@ -20,6 +20,14 @@ angular.module('process')
           return task;
         });
 
+        // we only have title and slug in the received process
+        // therefore, appending returnTypes from the tasks static array
+        vm.process.tasks.forEach(function(task) {
+          task.returnType = _.compact(vm.tasks.map(function(_task) {
+            return _.find(_task.subtasks, {title: task.title});
+          }))[0].returnType;
+        });
+
         vm.showPlaceholderArrow = true;
 
 
