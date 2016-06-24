@@ -43,20 +43,26 @@ angular.module('process')
       }, {
         title: 'Transforms',
         subtasks: [{
-          title: 'Standardize dates'
+          title: 'Standardize dates',
+          returnType: SCRIPT_RETURN_TYPE.DATASET,
         }, {
-          title: 'Sub-sample (rows)'
+          title: 'Sub-sample (rows)',
+          returnType: SCRIPT_RETURN_TYPE.DATASET,
         }, {
-          title: 'Missing data imputation'
+          title: 'Missing data imputation',
+          returnType: SCRIPT_RETURN_TYPE.DATASET,
         }, {
-          title: 'Convert factors'
+          title: 'Convert factors',
+          returnType: SCRIPT_RETURN_TYPE.DATASET,
         }]
       }, {
         title: 'Exploratory',
         subtasks: [{
-          title: 'PCA'
+          title: 'PCA',
+          returnType: SCRIPT_RETURN_TYPE.MODEL,
         }, {
-          title: 'K-means'
+          title: 'K-means',
+          returnType: SCRIPT_RETURN_TYPE.MODEL,
         }]
       }, {
         title: 'Econometric',

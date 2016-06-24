@@ -2,8 +2,8 @@
 
 angular.module('process')
     .controller('ProcessModalController',
-        ['$state', '$stateParams', 'Tasks', 'process',
-          function ($state, $stateParams, Tasks, process) {
+        ['$state', '$stateParams', '$timeout', 'Tasks', 'process',
+          function ($state, $stateParams, $timeout, Tasks, process) {
             var baseStateUrl = 'lab.process.popup.taskoptions';
             var vm = this;
 
@@ -19,6 +19,8 @@ angular.module('process')
           };
           return task;
         });
+
+        vm.showPlaceholderArrow = true;
 
 
         // save current task options before closing the modal,
@@ -42,6 +44,25 @@ angular.module('process')
             $state.go('lab.process.popup');
           }
         }
+
+        // disable drag if this task is already dropped
+        vm.disableDrag = function(task) {
+          return _.find(vm.process.tasks, {title: task.title});
+        };
+
+        // 1. Set a boolean indicating if the task is of type dataset or
+        // model.
+        // 2. disallow any task with return type "model" to be dropped
+        // in between other tasks
+        // 3. disallow any task to be added next to a task having return
+        // type "model".
+        vm.onDrag = function(event, index, type) {
+          $timeout(function() {
+            vm.showPlaceholderArrow = type === 'dataset';
+          }, 0);
+          return !((type === 'model' && index <= vm.process.tasks.length - 1)
+                  || ((_.last(vm.process.tasks) || {}).returnType === 'model' && index >= vm.process.tasks.length));
+        };
 
         vm.onCopy = function(event, index, task) {
           if (!_.find(vm.process.tasks, {title: task.title})) {

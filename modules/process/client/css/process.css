@@ -15,11 +15,32 @@ ul.drop-list {
 ul.drop-list li {
 	display: inline-block;
 	margin-bottom: 10px;
+	vertical-align: middle;
 }
-ul.drop-list li.task:after {
+ul.drop-list li.dndPlaceholder {
+	width: 140px;
+	height: 34px;
+	display: inline-block;
+}
+ul.drop-list li.dndPlaceholder:before {
+	content: "";
+	width: 100px;
+	height: 100%;
+	border: 1px solid #ccc;
+	display: inline-block;
+	vertical-align: middle;
+	background-color: #eee;
+}
+ul.drop-list li.dndPlaceholder .arrow {
+	font-size: 20px;
+  margin: 0 8px 0 5px;
+  display: inline-block;
+  vertical-align: middle;
+}
+ul.drop-list li.task-arrow:after {
 	font-family: FontAwesome;
   content: "\f178";
-  margin: 0px 10px;
+  margin: 0 10px;
   display: inline-block;
   font-size: 20px;
   vertical-align: middle;
