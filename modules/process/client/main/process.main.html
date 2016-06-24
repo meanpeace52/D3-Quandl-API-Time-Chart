@@ -15,10 +15,10 @@
     <div class="current-process-text">Current Selected Process: <span ng-if="ProcessMain.process">{{ProcessMain.process.title}}</span> <span ng-if="!ProcessMain.process">(EMPTY)</span></div>
     <button class="btn btn-default">Perform Process</button>
     <button class="btn btn-default" ng-disabled="!ProcessMain.process" ng-click="ProcessMain.saveProcess()">Save</button>
-    <button class="btn btn-default" ng-disabled="!ProcessMain.process" ng-click="ProcessMain.openEditModal()">Edit</button>
+    <button class="btn btn-default" ng-disabled="!ProcessMain.process" ng-click="ProcessMain.openModal('edit')">Edit</button>
   </div>
   <div class="pull-right">
-    <button class="btn btn-primary" ng-click="ProcessMain.openCreateModal()">Create NEW Process</button>
+    <button class="btn btn-primary" ng-click="ProcessMain.openModal('create')">Create NEW Process</button>
     <div class="btn-group" uib-dropdown>
       <button id="dropdown-processes" class="btn btn-default" type="button" uib-dropdown-toggle>
         Use Saved Process <span class="caret"></span>

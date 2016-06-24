@@ -49,15 +49,13 @@ angular.module('process')
         // is implemented, going with restoring the previous state for now.
         if ($stateParams.data) {
           if ($stateParams.data.type === 'create') {
-            Process.setSelectedProcess({
-              title: 'Unnamed',
-              tasks: $stateParams.data.tasks,
+            Process.setSelectedProcess(_.extend($stateParams.data.process, {
               user: vm.user._id
-            });
-          } else {
-            Process.setSelectedProcess(_.extend(Process.getSelectedProcess(), {
-              tasks: $stateParams.data.tasks
             }));
+          } else {
+            Process.setSelectedProcess(
+              _.extend(Process.getSelectedProcess(), $stateParams.data.process)
+            );
           }
 
           vm.process = Process.getSelectedProcess();
@@ -69,19 +67,15 @@ angular.module('process')
           }
         }
 
-        vm.openCreateModal = function() {
+        vm.openModal = function(type) {
           if (!vm.selectedDataset) {
             return alert('Please select a datatset!');
           }
-          $state.go('lab.process.popup', {type: 'create'});
-        };
-
-        vm.openEditModal = function() {
-          $state.go('lab.process.popup', {type: 'edit'});
+          $state.go('lab.process.popup', {type: type});
         };
 
         vm.onProcessChange = function(process) {
-          if (vm.process._id && process._id && vm.process._id === process._id) {
+          if (vm.process && vm.process._id && process._id && vm.process._id === process._id) {
             return;
           }
           Process.setSelectedProcess(process);
@@ -93,16 +87,17 @@ angular.module('process')
           process.tasks = process.tasks.map(function(task) {
             return _.pick(task, ['title', 'slug']);
           });
-          process.title = prompt('Please enter a title for process', process.title) || 'Unnamed';
           if (process._id) {
             Process.update(process)
               .then(function(process) {
+                alert('updated!');
                 var index = _.findIndex(vm.usersProcesses, {_id: process._id});
                 vm.usersProcesses[index] = process;
               });
           } else {
             Process.create(process)
               .then(function(process) {
+                alert('created!');
                 vm.usersProcesses.push(process);
               });
           }

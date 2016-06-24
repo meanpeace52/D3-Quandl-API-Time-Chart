@@ -1,6 +1,6 @@
 <div class="modal-header">
     <h4 class="modal-title">
-        Create Process
+        <span ng-if="ProcessModal.type == 'create'">Create</span> <span ng-if="ProcessModal.type != 'create'">Edit</span> Process
     </h4>
 </div>
 <div class="modal-body">
@@ -28,7 +28,7 @@
               dnd-list="task.subtasks"
               dnd-drop="ProcessModal.onCopy(event, index, item)"
               dnd-horizontal-list="true">
-              <li ng-repeat="task in ProcessModal.copiedTasks" class="task">
+              <li ng-repeat="task in ProcessModal.process.tasks" class="task">
                 <button class="btn btn-default" ng-click="ProcessModal.onTaskClick(task)">{{task.title}}</button>
               </li>
           </ul>
@@ -40,5 +40,18 @@
     </div>
 </div>
 <div class="modal-footer">
-    <button class="btn btn-danger btn-sm" ng-click="ProcessModal.ok()">OK</button>
+    <div class="col-md-9">
+      <form class="form-horizontal">
+        <div class="form-group">
+            <label for="title" class="col-sm-3 control-label">Process Title:</label>
+            <div class="col-sm-9">
+              <input type="text" ng-model="ProcessModal.process.title" class="form-control" id="title">
+            </div>
+        </div>
+      </form>
+    </div>
+    <div class="col-md-3">
+      <button class="btn btn-primary" ng-click="ProcessModal.ok()">Save</button>
+      <button class="btn btn-danger" ng-click="ProcessModal.cancel()">Cancel</button>
+    </div>
 </div>

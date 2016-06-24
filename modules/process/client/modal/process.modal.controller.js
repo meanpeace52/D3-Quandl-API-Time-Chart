@@ -7,6 +7,11 @@ angular.module('process')
             var baseStateUrl = 'lab.process.popup.taskoptions';
             var vm = this;
 
+        vm.process = _.defaults($stateParams.type !== 'create' ? _.cloneDeep(process || {}) : {}, {
+          title: '',
+          tasks: []
+        });
+        vm.type = $stateParams.type;
         vm.tasks = Tasks.getTasks();
         vm.tasks.forEach(function(task, i) {
           task.status = {
@@ -15,12 +20,13 @@ angular.module('process')
           return task;
         });
 
+
         // save current task options before closing the modal,
         // or showing options for another task
         function updateTaskOptions() {
           if ($state.params && $state.params.options) {
             var slug = $state.current.url.slice(1);
-            var task = _.find(vm.copiedTasks, function(task) {
+            var task = _.find(vm.process.tasks, function(task) {
               return task.slug === slug;
             });
             if (task) {
@@ -37,16 +43,11 @@ angular.module('process')
           }
         }
 
-        vm.copiedTasks = [];
-        if ($stateParams.type !== 'create') {
-          vm.copiedTasks = (process || {}).tasks || [];
-        }
-
         vm.onCopy = function(event, index, task) {
-          if (!_.find(vm.copiedTasks, {title: task.title})) {
+          if (!_.find(vm.process.tasks, {title: task.title})) {
             updateTaskOptions();
-            vm.copiedTasks.splice(index, 0, task);
-            showTaskOptions(vm.copiedTasks[index]);
+            vm.process.tasks.splice(index, 0, task);
+            showTaskOptions(vm.process.tasks[index]);
           }
           return true;
         };
@@ -59,11 +60,15 @@ angular.module('process')
           updateTaskOptions();
           $state.go('lab.process', {
             data: {
-              tasks: vm.copiedTasks,
+              process: vm.process,
               type: $stateParams.type
             }
           }, {
             reload: true
           });
+        };
+
+        vm.cancel = function() {
+          $state.go('lab.process');
         };
     }]);
