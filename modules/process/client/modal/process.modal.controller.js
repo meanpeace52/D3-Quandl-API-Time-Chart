@@ -68,8 +68,8 @@ angular.module('process')
           $timeout(function() {
             vm.showPlaceholderArrow = type === 'dataset';
           }, 0);
-          return !((type === 'model' && index <= vm.process.tasks.length - 1)
-                  || ((_.last(vm.process.tasks) || {}).returnType === 'model' && index >= vm.process.tasks.length));
+          return !((type === 'model' && index <= vm.process.tasks.length - 1) ||
+                  ((_.last(vm.process.tasks) || {}).returnType === 'model' && index >= vm.process.tasks.length));
         };
 
         vm.onCopy = function(event, index, task) {
