@@ -1,0 +1,15 @@
+{
+  "name": "js-rbroker-framework",
+  "homepage": "https://github.com/Microsoft/js-rbroker-framework",
+  "version": "7.4.0",
+  "_release": "7.4.0",
+  "_resolution": {
+    "type": "version",
+    "tag": "v7.4.0",
+    "commit": "570480fe839834760e91a8df9d33b225514790a8"
+  },
+  "_source": "git@github.com:Microsoft/js-rbroker-framework.git",
+  "_target": "~7.4.0",
+  "_originalSource": "git@github.com:Microsoft/js-rbroker-framework.git",
+  "_direct": true
+}

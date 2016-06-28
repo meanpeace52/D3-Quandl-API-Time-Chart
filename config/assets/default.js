@@ -47,7 +47,8 @@ module.exports = {
                 BOWER_PATH + 'aws-sdk/dist/aws-sdk.js',
                 BOWER_PATH + 'angular-drag-and-drop-lists/angular-drag-and-drop-lists.js',
                 BOWER_PATH + 'angular-ui-router-uib-modal/src/angular-ui-router-uib-modal.js',
-                BOWER_PATH + 'handlebars/handlebars.js'
+                BOWER_PATH + 'handlebars/handlebars.js',
+                BOWER_PATH + 'js-rbroker-framework/browser/rbroker.min.js'
             ],
             tests: [BOWER_PATH + 'angular-mocks/angular-mocks.js']
         },
