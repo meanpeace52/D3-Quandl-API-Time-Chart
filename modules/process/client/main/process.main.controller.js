@@ -2,8 +2,8 @@
 
 angular.module('process')
     .controller('ProcessMainController',
-        ['$state', '$stateParams', '$timeout', 'Datasets', 'UsersFactory', 'Authentication', 'Process',
-            function ($state, $stateParams, $timeout, Datasets, UsersFactory, Authentication, Process) {
+        ['$state', '$stateParams', '$q', '$uibModal', 'Datasets', 'UsersFactory', 'Authentication', 'Tasks', 'Process', 'Deployr',
+            function ($state, $stateParams, $q, $uibModal, Datasets, UsersFactory, Authentication, Tasks, Process, Deployr) {
                 var vm = this;
 
         vm.user = Authentication.user;
@@ -48,6 +48,19 @@ angular.module('process')
         // resets the state of the controller. Until a better solution
         // is implemented, going with restoring the previous state for now.
         if ($stateParams.data) {
+
+          // re-append script property from the original task,
+          // as some of the nested properties are functions which
+          // are automatically stripped when sent as route params
+          $stateParams.data.process.tasks.forEach(function(task) {
+            var originalTask = Tasks.getSubtaskByTitle(task.title);
+            if (originalTask) {
+              task = _.extend(task.script, originalTask.script);
+            }
+          });
+
+          console.log($stateParams.data.process.tasks);
+
           if ($stateParams.data.type === 'create') {
             Process.setSelectedProcess(_.extend($stateParams.data.process, {
               user: vm.user._id
@@ -78,8 +91,12 @@ angular.module('process')
           if (vm.process && vm.process._id && process._id && vm.process._id === process._id) {
             return;
           }
-          Process.setSelectedProcess(process);
-          vm.process = process;
+          vm.process = _.cloneDeep(process);
+          vm.process.tasks = vm.process.tasks.map(function(task) {
+            var originalTask = Tasks.getSubtaskByTitle(task.title);
+            return originalTask || task;
+          });
+          Process.setSelectedProcess(vm.process);
         };
 
         vm.saveProcess = function() {
@@ -102,4 +119,59 @@ angular.module('process')
               });
           }
         };
+
+        function getRowsFromResult(result, columns) {
+          return _.zip.apply(_, result[0].value.map(function(obj) {
+          	return obj.value;
+          })).map(function(rowValues) {
+            var row = {};
+            rowValues.forEach(function(rowValue, i) {
+              row[columns[i]] = rowValue;
+            });
+            return row;
+          });
+        }
+
+        function process(dataset, tasks) {
+          return Deployr.run(dataset, tasks[0].script)
+            .then(function(result) {
+              if (tasks[0].returnType === 'dataset' && typeof tasks[1] !== 'undefined') {
+                var _dataset = {
+                  columns: result[0].value.map(function(obj) {
+                    return obj.name;
+                  })
+                };
+                _dataset.rows = getRowsFromResult(result, _dataset.columns);
+                return process(_dataset, _.drop(tasks));
+              }
+              return result;
+            });
+        }
+
+        vm.performProcess = function() {
+          process(vm.dataset, vm.process.tasks)
+            .then(function(result) {
+              if (_.last(vm.process.tasks).returnType === 'model') {
+                var modalInstance = $uibModal.open({
+                  controller: 'ModelModalController',
+                  controllerAs: 'ModelModal',
+                  templateUrl: 'modules/process/client/model/model.modal.html',
+                  size: 'md',
+                  backdrop: true,
+                  resolve: {
+                    model: function() {
+                      return {
+                        type: 'Linear Regression',
+                        equation: 'Some equation here',
+                        output: result
+                      };
+                    }
+                  }
+                });
+              } else {
+                // update dataset from the result
+              }
+            });
+        };
+
     }]);

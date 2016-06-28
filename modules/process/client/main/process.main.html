@@ -13,7 +13,7 @@
   </div>
   <div class="current-process">
     <div class="current-process-text">Current Selected Process: <span ng-if="ProcessMain.process">{{ProcessMain.process.title}}</span> <span ng-if="!ProcessMain.process">(EMPTY)</span></div>
-    <button class="btn btn-default">Perform Process</button>
+    <button class="btn btn-default" ng-disabled="!ProcessMain.process" ng-click="ProcessMain.performProcess()">Perform Process</button>
     <button class="btn btn-default" ng-disabled="!ProcessMain.process" ng-click="ProcessMain.saveProcess()">Save</button>
     <button class="btn btn-default" ng-disabled="!ProcessMain.process" ng-click="ProcessMain.openModal('edit')">Edit</button>
   </div>

@@ -14,6 +14,14 @@ angular.module('process')
         MODEL: 'model'
       };
 
+      var dataFrameInput = function(name, vectorType, columns, rows) {
+        return [rbroker.RInput.dataframe(name, columns.map(function(column) {
+          return rbroker.RInput[vectorType](column, rows.map(function(row) {
+            return row[column];
+          }));
+        }))];
+      };
+
       /*
        * If a task is supposed to render any options when
        * selected, a route with name `lab.process.taskoptions.${slug}`
@@ -51,6 +59,13 @@ angular.module('process')
         }, {
           title: 'Missing data imputation',
           returnType: SCRIPT_RETURN_TYPE.DATASET,
+          script: {
+            type: SCRIPT_TYPE.DEPLOYR,
+            directory: 'root',
+            filename: 'LRtest.R',
+            rInputsFn: dataFrameInput.bind(null, 'datasetwithNA', 'characterVector'),
+            routputs: ['dataset']
+          }
         }, {
           title: 'Convert factors',
           returnType: SCRIPT_RETURN_TYPE.DATASET,
@@ -59,14 +74,28 @@ angular.module('process')
         title: 'Exploratory',
         subtasks: [{
           title: 'PCA',
-          returnType: SCRIPT_RETURN_TYPE.MODEL,
+          returnType: SCRIPT_RETURN_TYPE.DATASET,
         }, {
           title: 'K-means',
-          returnType: SCRIPT_RETURN_TYPE.MODEL,
+          returnType: SCRIPT_RETURN_TYPE.DATASET,
         }]
       }, {
         title: 'Econometric',
         subtasks: []
+      }, {
+        title: 'MODEL IT!',
+        subtasks: [{
+          title: 'Linear Regression',
+          returnType: SCRIPT_RETURN_TYPE.MODEL,
+          script: {
+            type: SCRIPT_TYPE.DEPLOYR,
+            directory: 'root',
+            filename: 'LRtest6.R',
+            // TODO: what if the selected dataset has null values
+            rInputsFn: dataFrameInput.bind(null, 'dataset', 'numericVector'),
+            routputs: ['coefficients', 'interceptSE', 'x', 'xSE']
+          }
+        }]
       }];
 
       var taskOptions = [];
@@ -76,6 +105,11 @@ angular.module('process')
         SCRIPT_RETURN_TYPE: SCRIPT_RETURN_TYPE,
         getTasks: function() {
           return tasks;
+        },
+        getSubtaskByTitle: function(title) {
+          return _.compact(tasks.map(function(task) {
+            return _.find(task.subtasks, {title: title});
+          }))[0];
         }
       };
     }]);
