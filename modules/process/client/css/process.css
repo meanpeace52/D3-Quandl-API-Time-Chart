@@ -5,6 +5,65 @@
   width: 50px;
   height: 50px;
 }
+.task-accordion .panel-group {
+	border-bottom: 1px solid #ccc;
+}
+.task-accordion .panel {
+	border-bottom: none;
+}
+.task-accordion .panel-heading {
+	border-radius: 0;
+}
+.task-accordion .panel-body {
+	padding:0;
+}
+ul.task-list {
+	list-style: none;
+	padding: 0;
+	margin: 0;
+}
+ul.task-list li {
+	padding: 10px;
+	border-bottom: 1px solid #ccc;
+}
+ul.task-list li:last-child {
+	border-bottom: none;
+}
+.panel.color-blue .panel-heading {
+	border-left: 10px solid #e1f5fe;
+}
+.panel.color-blue ul.task-list li,
+ul.drop-list button.color-blue {
+	background-color: #e1f5fe;
+}
+.panel.color-green .panel-heading {
+	border-left: 10px solid #c8e6c9;
+}
+.panel.color-green ul.task-list li,
+ul.drop-list button.color-green {
+	background-color: #c8e6c9;
+}
+.panel.color-yellow .panel-heading {
+	border-left: 10px solid #fffde7;
+}
+.panel.color-yellow ul.task-list li,
+ul.drop-list button.color-yellow {
+	background-color: #fffde7;
+}
+.panel.color-pink .panel-heading {
+	border-left: 10px solid #fce4ec;
+}
+.panel.color-pink ul.task-list li,
+ul.drop-list button.color-pink {
+	background-color: #fce4ec;
+}
+.panel.color-orange .panel-heading {
+	border-left: 10px solid #ffe0b2;
+}
+.panel.color-orange ul.task-list li,
+ul.drop-list button.color-orange {
+	background-color: #ffe0b2;
+}
 ul.drop-list {
 	height: 200px;
 	width: 100%;

@@ -17,7 +17,9 @@ angular.module('process')
           task.status = {
             open: i === 0
           };
-          return task;
+          task.subtasks.forEach(function(subtask) {
+            subtask.color = task.color;
+          });
         });
 
         // we only have title and slug in the received process

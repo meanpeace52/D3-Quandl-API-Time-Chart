@@ -6,13 +6,13 @@
 <div class="modal-body">
     <div class="container-fluid">
       <div class="row">
-        <div class="col-md-3">
+        <div class="col-md-3 task-accordion">
           <uib-accordion close-others="true">
-            <uib-accordion-group ng-repeat="task in ProcessModal.tasks" is-open="task.status.open">
+            <uib-accordion-group ng-repeat="task in ProcessModal.tasks" is-open="task.status.open" class="color-{{task.color}}">
               <uib-accordion-heading>
                 {{task.title}} <i class="pull-right glyphicon ng-scope glyphicon-chevron-right" ng-class="{'glyphicon-chevron-down': task.status.open, 'glyphicon-chevron-right': !task.status.open}"></i>
               </uib-accordion-heading>
-              <ul>
+              <ul class="task-list">
                 <li ng-repeat="subtask in task.subtasks"
                     dnd-draggable="subtask"
                     dnd-disable-if="ProcessModal.disableDrag(subtask)"
@@ -35,7 +35,7 @@
                 <i ng-show="ProcessModal.showPlaceholderArrow" class="fa fa-long-arrow-right arrow"></i>
               </li>
               <li ng-repeat="task in ProcessModal.process.tasks" ng-class="{'task-arrow': task.returnType == 'dataset'}">
-                <button class="btn btn-default" ng-click="ProcessModal.onTaskClick(task)">{{task.title}}</button>
+                <button class="btn btn-default color-{{task.color}}" ng-click="ProcessModal.onTaskClick(task)">{{task.title}}</button>
               </li>
           </ul>
           <div class="options">

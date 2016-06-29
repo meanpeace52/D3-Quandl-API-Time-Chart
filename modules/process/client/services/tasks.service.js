@@ -29,9 +29,11 @@ angular.module('process')
        */
       var tasks = [{
         title: 'Summaries',
+        color: 'blue',
         subtasks: []
       }, {
         title: 'Join',
+        color: 'green',
         subtasks: [{
           title: 'Merge (Drag me)',
           slug: 'merge',
@@ -50,6 +52,7 @@ angular.module('process')
         }]
       }, {
         title: 'Transforms',
+        color: 'yellow',
         subtasks: [{
           title: 'Standardize dates',
           returnType: SCRIPT_RETURN_TYPE.DATASET,
@@ -72,6 +75,7 @@ angular.module('process')
         }]
       }, {
         title: 'Exploratory',
+        color: 'pink',
         subtasks: [{
           title: 'PCA',
           returnType: SCRIPT_RETURN_TYPE.DATASET,
@@ -81,6 +85,7 @@ angular.module('process')
         }]
       }, {
         title: 'Econometric',
+        color: 'orange',
         subtasks: []
       }, {
         title: 'MODEL IT!',
