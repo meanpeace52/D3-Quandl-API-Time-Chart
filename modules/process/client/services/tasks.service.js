@@ -14,10 +14,10 @@ angular.module('process')
         MODEL: 'model'
       };
 
-      var dataFrameInput = function(name, vectorType, columns, rows) {
+      var dataFrameInput = function(name, columns, rows) {
         return [rbroker.RInput.dataframe(name, columns.map(function(column) {
-          return rbroker.RInput[vectorType](column, rows.map(function(row) {
-            return row[column];
+          return rbroker.RInput.characterVector(column, rows.map(function(row) {
+            return row[column].toString();
           }));
         }))];
       };
@@ -63,7 +63,7 @@ angular.module('process')
             type: SCRIPT_TYPE.DEPLOYR,
             directory: 'root',
             filename: 'LRtest.R',
-            rInputsFn: dataFrameInput.bind(null, 'datasetwithNA', 'characterVector'),
+            rInputsFn: dataFrameInput.bind(null, 'datasetwithNA'),
             routputs: ['dataset']
           }
         }, {
@@ -92,7 +92,7 @@ angular.module('process')
             directory: 'root',
             filename: 'LRtest6.R',
             // TODO: what if the selected dataset has null values
-            rInputsFn: dataFrameInput.bind(null, 'dataset', 'numericVector'),
+            rInputsFn: dataFrameInput.bind(null, 'dataset'),
             routputs: ['coefficients', 'interceptSE', 'x', 'xSE']
           }
         }]
