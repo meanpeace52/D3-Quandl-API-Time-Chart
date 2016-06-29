@@ -10,20 +10,19 @@
 			</small>
 			<h4 class="list-group-item-heading" data-ng-bind="dataset.name"></h4>
 
-            <button 
+            <button
             	class="btn btn-secondary"
-            	data-ng-hide ="UsersProfilePage.isCurrentUser()" 
+            	data-ng-hide ="UsersProfilePage.isCurrentUser()"
             	data-ng-click="UsersProfilePage.addToUser(dataset)">
             	Save to My Lab
             </button>
-            <a 
+            <a
             	class="btn btn-warning btn-sm"
-            	data-ng-show ="UsersProfilePage.isCurrentUser()" 
-            	data-ui-sref="datasets.workbench({ds1: dataset._id})">
+            	data-ng-show ="UsersProfilePage.isCurrentUser()"
+            	data-ui-sref="lab.process({data: {dataset: dataset}})">
             	Edit
             </a>
         </div>
 
     </div>
 </div>
-

@@ -47,7 +47,7 @@ angular.module('process')
         // the update in state unfortunately requires a reload which
         // resets the state of the controller. Until a better solution
         // is implemented, going with restoring the previous state for now.
-        if ($stateParams.data) {
+        if ($stateParams.data && $stateParams.data.process) {
 
           // re-append script property from the original task,
           // as some of the nested properties are functions which
@@ -58,8 +58,6 @@ angular.module('process')
               task = _.extend(task.script, originalTask.script);
             }
           });
-
-          console.log($stateParams.data.process.tasks);
 
           if ($stateParams.data.type === 'create') {
             Process.setSelectedProcess(_.extend($stateParams.data.process, {
@@ -78,6 +76,13 @@ angular.module('process')
             vm.selectedDataset = selectedDataset.title;
             vm.onDatasetChange(selectedDataset);
           }
+        }
+
+        // If the lab page has been opened up by clicking the "edit"
+        // button on a dataset from "My Data" page, pre-select
+        // the dataset
+        if ($stateParams.data && $stateParams.data.dataset) {
+          vm.onDatasetChange($stateParams.data.dataset);
         }
 
         vm.openModal = function(type) {
