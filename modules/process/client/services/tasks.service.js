@@ -91,7 +91,6 @@ angular.module('process')
             type: SCRIPT_TYPE.DEPLOYR,
             directory: 'root',
             filename: 'LRtest6.R',
-            // TODO: what if the selected dataset has null values
             rInputsFn: dataFrameInput.bind(null, 'dataset'),
             routputs: ['coefficients', 'interceptSE', 'x', 'xSE']
           }
