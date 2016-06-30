@@ -35,6 +35,7 @@
 <div class="clear"></div>
 
 <div class="content">
+  <uib-alert ng-repeat="alert in ProcessMain.alerts" type="{{alert.type}}" close="ProcessMain.closeAlert($index)">{{alert.msg}}</uib-alert>
   <div class="loader" ng-show="ProcessMain.showLoader">
     <i class="spinner"></i>
   </div>

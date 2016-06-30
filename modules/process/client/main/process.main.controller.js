@@ -6,6 +6,7 @@ angular.module('process')
             function ($state, $stateParams, $q, $uibModal, Datasets, UsersFactory, Authentication, Tasks, Process, Deployr) {
                 var vm = this;
 
+        vm.alerts = [];
         vm.user = Authentication.user;
         vm.showLoader = false;
         vm.selectedDataset = '';
@@ -140,23 +141,32 @@ angular.module('process')
         function process(dataset, tasks) {
           return Deployr.run(dataset, tasks[0].script)
             .then(function(result) {
-              if (tasks[0].returnType === 'dataset' && typeof tasks[1] !== 'undefined') {
+              if (tasks[0].returnType === 'dataset') {
                 var _dataset = {
                   columns: result[0].value.map(function(obj) {
                     return obj.name;
                   })
                 };
                 _dataset.rows = getRowsFromResult(result, _dataset.columns);
-                return process(_dataset, _.drop(tasks));
+                if (typeof tasks[1] !== 'undefined') {
+                  return process(_dataset, _.drop(tasks));
+                }
+                return _dataset;
               }
               return result;
             });
         }
 
         vm.performProcess = function() {
-          process(vm.dataset, vm.process.tasks)
+          var dataset = _.cloneDeep(vm.dataset);
+          if (_.last(vm.process.tasks).returnType === 'dataset') {
+            vm.dataset.rows = vm.dataset.columns = [];
+            vm.showLoader = true;
+          }
+
+          process(dataset, vm.process.tasks)
             .then(function(result) {
-              if (_.last(vm.process.tasks).returnType === 'model') {
+              if (Array.isArray(result)) {
                 var modalInstance = $uibModal.open({
                   controller: 'ModelModalController',
                   controllerAs: 'ModelModal',
@@ -174,9 +184,16 @@ angular.module('process')
                   }
                 });
               } else {
-                // update dataset from the result
+                vm.selectedDataset = '';
+                vm.showLoader = false;
+                vm.dataset = result;
+                vm.alerts.push({msg: 'The dataset has been changed'});
               }
             });
         };
+
+        vm.closeAlert = function(index) {
+          vm.alerts.splice(index, 1);
+        }
 
     }]);
