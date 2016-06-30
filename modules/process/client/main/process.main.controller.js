@@ -143,7 +143,7 @@ angular.module('process')
         }
 
         function process(dataset, tasks) {
-          return Deployr.run(dataset, tasks[0].script)
+          return Deployr.run(dataset, tasks[0])
             .then(function(result) {
               if (tasks[0].returnType === 'dataset') {
                 var _dataset = {

@@ -91,12 +91,19 @@ angular.module('process')
         title: 'MODEL IT!',
         subtasks: [{
           title: 'Linear Regression',
+          slug: 'linearregression',
           returnType: SCRIPT_RETURN_TYPE.MODEL,
+          options: {
+            yColIndex: ''
+          },
           script: {
             type: SCRIPT_TYPE.DEPLOYR,
             directory: 'root',
             filename: 'LRtest6.R',
-            rInputsFn: dataFrameInput.bind(null, 'dataset'),
+            rInputsFn: function(columns, rows, options) {
+              return [rbroker.RInput.numeric('Ycolindex', parseInt(options.yColIndex) + 1)]
+                .concat(dataFrameInput('dataset', columns, rows));
+            },
             routputs: ['coefficients', 'interceptSE', 'x', 'xSE']
           }
         }]

@@ -59,6 +59,13 @@ angular.module('process')
                   controller: 'MergeTaskOptionsController',
                   controllerAs: 'MergeTaskOptions',
                   params: { options: {} }
+                })
+                .state('lab.process.popup.taskoptions.linearregression', {
+                  url: '/linearregression',
+                  templateUrl: MODULE_PATH + 'tasks/tasks.linearregression.html',
+                  controller: 'LROptionsController',
+                  controllerAs: 'LROptions',
+                  params: { options: {} }
                 });
         }
     ]);
