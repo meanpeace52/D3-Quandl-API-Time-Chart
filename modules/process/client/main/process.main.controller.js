@@ -87,10 +87,14 @@ angular.module('process')
         }
 
         vm.openModal = function(type) {
-          if (!vm.selectedDataset) {
+          if (!vm.selectedDataset && (vm.dataset.rows.length || vm.dataset.columns.length)) {
+            return alert('Please save the dataset before proceeding');
+          } else if (!vm.selectedDataset) {
             return alert('Please select a datatset!');
           }
-          $state.go('lab.process.popup', {type: type});
+          $state.go('lab.process.popup', {type: type}, {
+            reload: 'lab.process.popup'
+          });
         };
 
         vm.onProcessChange = function(process) {
@@ -187,6 +191,7 @@ angular.module('process')
                 vm.selectedDataset = '';
                 vm.showLoader = false;
                 vm.dataset = result;
+                Process.setSelectedDataset(vm.dataset);
                 vm.alerts.push({msg: 'The dataset has been changed'});
               }
             });
@@ -194,6 +199,6 @@ angular.module('process')
 
         vm.closeAlert = function(index) {
           vm.alerts.splice(index, 1);
-        }
+        };
 
     }]);

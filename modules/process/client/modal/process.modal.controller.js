@@ -100,6 +100,6 @@ angular.module('process')
         };
 
         vm.cancel = function() {
-          $state.go('lab.process');
+          $state.go('lab.process', $stateParams);
         };
     }]);
