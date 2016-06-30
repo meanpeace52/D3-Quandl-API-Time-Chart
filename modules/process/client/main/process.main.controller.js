@@ -9,6 +9,7 @@ angular.module('process')
         vm.alerts = [];
         vm.user = Authentication.user;
         vm.showLoader = false;
+        vm.showProcessLoader = false;
         vm.selectedDataset = '';
         vm.dataset = {
           rows: [],
@@ -166,10 +167,15 @@ angular.module('process')
           if (_.last(vm.process.tasks).returnType === 'dataset') {
             vm.dataset.rows = vm.dataset.columns = [];
             vm.showLoader = true;
+          } else {
+            vm.showProcessLoader = true;
           }
 
           process(dataset, vm.process.tasks)
             .then(function(result) {
+              vm.showProcessLoader = false;
+              vm.showLoader = false;
+              
               if (Array.isArray(result)) {
                 var modalInstance = $uibModal.open({
                   controller: 'ModelModalController',
@@ -189,7 +195,6 @@ angular.module('process')
                 });
               } else {
                 vm.selectedDataset = '';
-                vm.showLoader = false;
                 vm.dataset = result;
                 Process.setSelectedDataset(vm.dataset);
                 vm.alerts.push({msg: 'The dataset has been changed'});
