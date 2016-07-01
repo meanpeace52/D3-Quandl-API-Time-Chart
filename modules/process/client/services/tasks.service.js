@@ -17,7 +17,7 @@ angular.module('process')
       var dataFrameInput = function(name, columns, rows) {
         // filter out empty rows
         rows = rows.filter(function(row) {
-          return _.every(columns.map(function(column) { return row[column]; }))
+          return _.every(columns.map(function(column) { return row[column]; }));
         });
         return [rbroker.RInput.dataframe(name, columns.map(function(column) {
           return rbroker.RInput.characterVector(column, rows.map(function(row) {
