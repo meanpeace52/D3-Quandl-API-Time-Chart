@@ -1,9 +1,12 @@
- <div class="modal-body">
-  <div class="container-fluid">
+<div class="modal-body">
+  <div ng-if="ModelModal.model" class="container-fluid">
     <p>Model Type: {{ModelModal.model.type}}</p>
     <p>Equation: {{ModelModal.model.equation}}</p>
     <p>Full Summary Output: {{ModelModal.model.output}}</p>
     <p>Error/Goodness of Fit Stats: N/A</p>
+  </div>
+  <div ng-if="ModelModal.dataset" class="container-fluid">
+    <p>The dataset has been modified!</p>
   </div>
 </div>
 <div class="modal-footer">

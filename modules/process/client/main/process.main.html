@@ -12,11 +12,22 @@
     </ul>
   </div>
   <div class="current-process">
-    <div class="current-process-text">Current Selected Process: <span ng-if="ProcessMain.process">{{ProcessMain.process.title}}</span> <span ng-if="!ProcessMain.process">(EMPTY)</span></div>
+    <div class="current-process-text" ng-if="!ProcessMain.showProcessLoader">
+      Current Selected Process: <span ng-if="ProcessMain.process">{{ProcessMain.process.title}}</span> <span ng-if="!ProcessMain.process">(EMPTY)</span>
+    </div>
+    <div class="current-process-text" ng-if="ProcessMain.showProcessLoader">
+      <i class="fa fa-circle-o-notch fa-spin fa-3x fa-fw"></i> Processing {{ProcessMain.process.title}}</span>
+    </div>
     <button class="btn btn-default"
-            ng-disabled="!ProcessMain.process || !ProcessMain.dataset.rows.length || !ProcessMain.dataset.columns.length || ProcessMain.showProcessLoader"
+            ng-disabled="!ProcessMain.process || !ProcessMain.dataset.rows.length || !ProcessMain.dataset.columns.length"
+            ng-if="!ProcessMain.showProcessLoader"
             ng-click="ProcessMain.performProcess()">
-      <i class="fa fa-circle-o-notch fa-spin fa-3x fa-fw" ng-show="ProcessMain.showProcessLoader"></i>  Perform Process
+      Perform Process
+    </button>
+    <button class="btn btn-default"
+            ng-if="ProcessMain.showProcessLoader"
+            ng-click="ProcessMain.cancelProcess()">
+      Cancel Process
     </button>
     <button class="btn btn-default" ng-disabled="!ProcessMain.process" ng-click="ProcessMain.saveProcess()">Save</button>
     <button class="btn btn-default" ng-disabled="!ProcessMain.process" ng-click="ProcessMain.openModal('edit')">Edit</button>

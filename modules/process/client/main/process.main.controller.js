@@ -5,6 +5,7 @@ angular.module('process')
         ['$state', '$stateParams', '$q', '$uibModal', 'Datasets', 'UsersFactory', 'Authentication', 'Tasks', 'Process', 'Deployr',
             function ($state, $stateParams, $q, $uibModal, Datasets, UsersFactory, Authentication, Tasks, Process, Deployr) {
                 var vm = this;
+                var runningTask = null;
 
         vm.alerts = [];
         vm.user = Authentication.user;
@@ -143,72 +144,72 @@ angular.module('process')
           });
         }
 
-        function process(dataset, tasks) {
-          return Deployr.run(dataset, tasks[0])
-            .then(function(result) {
-              if (tasks[0].returnType === 'dataset') {
-                if (!result.length) {
-                  throw new Error('one of the tasks returned empty dataset!');
-                }
-                var _dataset = {
-                  columns: result[0].value.map(function(obj) {
-                    return obj.name;
-                  })
-                };
-                _dataset.rows = getRowsFromResult(result, _dataset.columns);
-                if (typeof tasks[1] !== 'undefined') {
-                  return process(_dataset, _.drop(tasks));
-                }
-                return _dataset;
+        function process(dataset, tasks, deferred, results) {
+          if (!deferred) deferred = $q.defer();
+          if (!results) results = [];
+          runningTask = Deployr.run(dataset, tasks[0]);
+          runningTask.promise().then(function(res) {
+            var result = res.result.generatedObjects;
+            if (tasks[0].returnType === 'dataset') {
+              if (!result.length) {
+                return deferred.reject('one of the tasks returned empty dataset!');
               }
-              return result;
-            });
+              var _dataset = {
+                columns: result[0].value.map(function(obj) {
+                  return obj.name;
+                })
+              };
+              _dataset.rows = getRowsFromResult(result, _dataset.columns);
+              results.push(_dataset);
+              if (typeof tasks[1] !== 'undefined') {
+                return process(_dataset, _.drop(tasks), deferred, results);
+              }
+            } else {
+              results.push(result);
+            }
+            return deferred.resolve(results);
+          }).error(function(error) {
+            deferred.reject(error);
+          });
+          return deferred.promise;
         }
 
         vm.performProcess = function() {
-          var dataset = _.cloneDeep(vm.dataset);
-          if (_.last(vm.process.tasks).returnType === 'dataset') {
-            vm.dataset.rows = vm.dataset.columns = [];
-            vm.showLoader = true;
-          } else {
-            vm.showProcessLoader = true;
-          }
-
-          process(dataset, vm.process.tasks)
-            .then(function(result) {
-              if (Array.isArray(result)) {
-                var modalInstance = $uibModal.open({
-                  controller: 'ModelModalController',
-                  controllerAs: 'ModelModal',
-                  templateUrl: 'modules/process/client/model/model.modal.html',
-                  size: 'md',
-                  backdrop: true,
-                  resolve: {
-                    model: function() {
-                      return {
-                        type: 'Linear Regression',
-                        equation: 'Some equation here',
-                        output: result
-                      };
-                    }
+          vm.showProcessLoader = true;
+          process(vm.dataset, vm.process.tasks)
+            .then(function(results) {
+              var modalInstance = $uibModal.open({
+                controller: 'ModelModalController',
+                controllerAs: 'ModelModal',
+                templateUrl: 'modules/process/client/model/model.modal.html',
+                size: 'md',
+                backdrop: true,
+                resolve: {
+                  tasks: function() {
+                    return vm.process.tasks;
+                  },
+                  results: function() {
+                    return results;
                   }
-                });
-              } else {
-                vm.selectedDataset = '';
-                vm.dataset = result;
-                Process.setSelectedDataset(vm.dataset);
-                vm.alerts.push({msg: 'The dataset has been changed'});
-              }
+                }
+              });
             })
             .catch(function(err) {
-              vm.dataset = dataset;
               console.log('error', err);
-              alert(err.message || err);
+              if (err instanceof Error) {
+                alert(err.message || err);
+              }
             })
             .finally(function() {
               vm.showProcessLoader = false;
-              vm.showLoader = false;
             });
+        };
+
+        vm.cancelProcess = function() {
+          if (runningTask) {
+            runningTask.cancel(true);
+            runningTask = null;
+          }
         };
 
         vm.closeAlert = function(index) {

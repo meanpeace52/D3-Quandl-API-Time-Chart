@@ -15,19 +15,13 @@ angular.module('process')
 
       return {
         run: function(dataset, task) {
-          var deferred = $q.defer();
-          dBroker.submit(rbroker.discreteTask({
+          return dBroker.submit(rbroker.discreteTask({
             filename: task.script.filename,
             directory: task.script.directory,
             author: 'testuser',
             rinputs: task.script.rInputsFn(dataset.columns, dataset.rows, task.options),
             routputs: task.script.routputs
-          })).promise().then(function(res) {
-            deferred.resolve(res.result.generatedObjects);
-          }).error(function(error) {
-            deferred.reject(error);
-          });
-          return deferred.promise;
+          }));
         },
         runExternal: function(task) {
 
