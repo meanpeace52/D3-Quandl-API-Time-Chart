@@ -124,3 +124,11 @@ ul.drop-list li.task-arrow:after {
 .content {
 	margin-top: 10px;
 }
+.modal-footer .row {
+	margin-bottom: 10px;
+	text-align: left;
+}
+.modal-footer .row:last-child {
+	margin-bottom: 0px;
+	text-align: right;
+}
