@@ -147,6 +147,9 @@ angular.module('process')
           return Deployr.run(dataset, tasks[0])
             .then(function(result) {
               if (tasks[0].returnType === 'dataset') {
+                if (!result.length) {
+                  throw new Error('one of the tasks returned empty dataset!');
+                }
                 var _dataset = {
                   columns: result[0].value.map(function(obj) {
                     return obj.name;
@@ -173,9 +176,6 @@ angular.module('process')
 
           process(dataset, vm.process.tasks)
             .then(function(result) {
-              vm.showProcessLoader = false;
-              vm.showLoader = false;
-              
               if (Array.isArray(result)) {
                 var modalInstance = $uibModal.open({
                   controller: 'ModelModalController',
@@ -199,6 +199,15 @@ angular.module('process')
                 Process.setSelectedDataset(vm.dataset);
                 vm.alerts.push({msg: 'The dataset has been changed'});
               }
+            })
+            .catch(function(err) {
+              vm.dataset = dataset;
+              console.log('error', err);
+              alert(err.message || err);
+            })
+            .finally(function() {
+              vm.showProcessLoader = false;
+              vm.showLoader = false;
             });
         };
 

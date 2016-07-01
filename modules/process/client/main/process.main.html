@@ -13,7 +13,11 @@
   </div>
   <div class="current-process">
     <div class="current-process-text">Current Selected Process: <span ng-if="ProcessMain.process">{{ProcessMain.process.title}}</span> <span ng-if="!ProcessMain.process">(EMPTY)</span></div>
-    <button class="btn btn-default" ng-disabled="!ProcessMain.process || ProcessMain.showProcessLoader" ng-click="ProcessMain.performProcess()"><i class="fa fa-circle-o-notch fa-spin fa-3x fa-fw" ng-show="ProcessMain.showProcessLoader"></i> Perform Process</button>
+    <button class="btn btn-default"
+            ng-disabled="!ProcessMain.process || !ProcessMain.dataset.row.length || !ProcessMain.dataset.columns.length || ProcessMain.showProcessLoader"
+            ng-click="ProcessMain.performProcess()">
+      <i class="fa fa-circle-o-notch fa-spin fa-3x fa-fw" ng-show="ProcessMain.showProcessLoader"></i>  Perform Process
+    </button>
     <button class="btn btn-default" ng-disabled="!ProcessMain.process" ng-click="ProcessMain.saveProcess()">Save</button>
     <button class="btn btn-default" ng-disabled="!ProcessMain.process" ng-click="ProcessMain.openModal('edit')">Edit</button>
   </div>

@@ -24,6 +24,8 @@ angular.module('process')
             routputs: task.script.routputs
           })).promise().then(function(res) {
             deferred.resolve(res.result.generatedObjects);
+          }).error(function(error) {
+            deferred.reject(error);
           });
           return deferred.promise;
         },
