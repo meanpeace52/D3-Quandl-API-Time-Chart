@@ -14,6 +14,9 @@ module.exports = function (app) {
         .get(datasets.list)
         .post(datasets.create);
 
+    app.route('/api/datasets/insert').all(datasetsPolicy.isAllowed)
+        .post(datasets.insert);
+
     app.route('/api/datasets/search').all(datasetsPolicy.isAllowed)
         .get(datasets.searchDataset);
 
