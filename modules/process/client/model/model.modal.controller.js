@@ -8,6 +8,7 @@ angular.module('process')
 
         vm.model = null;
         vm.dataset = null;
+        vm.tasks = tasks;
         vm.saving = false;
 
         var lastResult = _.last(results);

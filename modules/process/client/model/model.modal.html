@@ -21,6 +21,13 @@
         <p>No model returned by the process.</p>
       </div>
     </section>
+    <section>
+      <h3>Transform performed:</h3>
+      <div ng-repeat="task in ModelModal.tasks">
+        <h4>{{$index + 1}}) {{task.title}}</h4>
+        <p ng-if="task.options">options: {{task.options}}</p>
+      </div>
+    </section>
   </div>
 </div>
 <div class="modal-footer">

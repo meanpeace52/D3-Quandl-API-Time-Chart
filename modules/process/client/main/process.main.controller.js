@@ -199,7 +199,9 @@ angular.module('process')
             return alert('Please select the required options for the tasks present in the process!');
           }
           vm.showProcessLoader = true;
-          process(vm.dataset, vm.process.tasks)
+          process(vm.dataset, vm.process.tasks.filter(function(task) {
+            return task.script;
+          }))
             .then(function(results) {
               var modalInstance = $uibModal.open({
                 controller: 'ModelModalController',

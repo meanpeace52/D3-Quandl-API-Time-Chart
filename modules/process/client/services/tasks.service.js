@@ -41,10 +41,6 @@ angular.module('process')
         subtasks: [{
           title: 'Merge (Drag me)',
           slug: 'merge',
-          script: {
-            type: SCRIPT_TYPE.EXTERNAL,
-            path: '' //s3 link
-          },
           returnType: SCRIPT_RETURN_TYPE.DATASET,
           options: {
             dataset1: '',
