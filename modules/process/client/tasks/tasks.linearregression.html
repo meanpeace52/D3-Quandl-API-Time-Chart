@@ -6,6 +6,7 @@
     <select id="yColIndex"
             class="form-control"
             ng-model="LROptions.options.yColIndex"
-            ng-options="LROptions.columns.indexOf(column) as column for column in LROptions.columns"></select>
+            ng-options="idx as column for (idx, column) in LROptions.columns">
+      </select>
   </div>
 </form>

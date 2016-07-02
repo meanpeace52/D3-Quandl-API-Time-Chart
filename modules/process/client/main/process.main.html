@@ -7,7 +7,7 @@
     </button>
     <ul class="dropdown-menu" role="menu" aria-labelledby="dropdown-datasets">
       <li role="menuitem" ng-repeat="dataset in ProcessMain.usersDatasets">
-        <a href="#" ng-click="ProcessMain.onDatasetChange(dataset)">{{dataset.title}}</a>
+        <a href="#" ng-click="ProcessMain.onDatasetChange(dataset, true)">{{dataset.title}}</a>
       </li>
     </ul>
   </div>

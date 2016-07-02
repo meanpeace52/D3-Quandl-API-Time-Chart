@@ -66,6 +66,9 @@ angular.module('process')
         }, {
           title: 'Missing data imputation',
           returnType: SCRIPT_RETURN_TYPE.DATASET,
+          validate: function() {
+            return true;
+          },
           script: {
             type: SCRIPT_TYPE.DEPLOYR,
             directory: 'root',
@@ -99,6 +102,12 @@ angular.module('process')
           returnType: SCRIPT_RETURN_TYPE.MODEL,
           options: {
             yColIndex: ''
+          },
+          validate: function(options) {
+            return !isNaN(parseInt(options.yColIndex));
+          },
+          datasetChanged: function(options) {
+            options.yColIndex = '';
           },
           script: {
             type: SCRIPT_TYPE.DEPLOYR,

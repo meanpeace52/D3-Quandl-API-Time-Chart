@@ -29,10 +29,19 @@ angular.module('process')
             Process.setUsersDatasets(datasets);
           });
 
-        vm.onDatasetChange = function(dataset) {
+        vm.onDatasetChange = function(dataset, resetOptions) {
           // re-initialize table data
           vm.dataset.rows = [];
           vm.dataset.columns = [];
+
+          // invalidate any dataset specific options
+          if (resetOptions && vm.process && vm.process.tasks) {
+            vm.process.tasks.forEach(function(task) {
+              if (task.datasetChanged) {
+                task.datasetChanged(task.options);
+              }
+            });
+          }
 
           // Persist selected dataset
           Process.setSelectedDataset(dataset);
@@ -58,7 +67,11 @@ angular.module('process')
           $stateParams.data.process.tasks.forEach(function(task) {
             var originalTask = Tasks.getSubtaskByTitle(task.title);
             if (originalTask) {
-              task = _.extend(task.script, originalTask.script);
+              task = _.extend(task, {
+                script: originalTask.script,
+                validate: originalTask.validate,
+                datasetChanged: originalTask.datasetChanged
+              });
             }
           });
 
@@ -175,6 +188,12 @@ angular.module('process')
         }
 
         vm.performProcess = function() {
+          var invalidTasks = vm.process.tasks.filter(function(task) {
+            return task.validate && !task.validate(task.options);
+          });
+          if (invalidTasks.length) {
+            return alert('Please select the required options for the tasks present in the process!');
+          }
           vm.showProcessLoader = true;
           process(vm.dataset, vm.process.tasks)
             .then(function(results) {
@@ -185,6 +204,9 @@ angular.module('process')
                 size: 'md',
                 backdrop: true,
                 resolve: {
+                  selectedDataset: function() {
+                    return Process.getSelectedDataset();
+                  },
                   tasks: function() {
                     return vm.process.tasks;
                   },

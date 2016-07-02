@@ -129,6 +129,6 @@ ul.drop-list li.task-arrow:after {
 	text-align: left;
 }
 .modal-footer .row:last-child {
-	margin-bottom: 0px;
+	margin-bottom: 0;
 	text-align: right;
 }
