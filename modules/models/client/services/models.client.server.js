@@ -24,8 +24,6 @@ angular.module('models')
           })
           .then(function(res) {
             return res.data;
-          }, function(err) {
-            console.error(err);
           });
         }
       };

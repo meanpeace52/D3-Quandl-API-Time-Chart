@@ -63,7 +63,14 @@ angular.module('process')
               $uibModalInstance.close(model);
             })
             .catch(function(err) {
-              alert('Failed with error: ' + (err.message || err));
+              console.error('error saving model', err);
+              var message = '';
+              if (err instanceof Error) {
+                message = err.message;
+              } else if (err.data && err.data.message) {
+                message = err.data.message;
+              }
+              alert('Failed with error: ' + (message || err));
             })
             .finally(function() {
               vm.saving = false;

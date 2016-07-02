@@ -86,10 +86,7 @@ angular.module('datasets')
                 data: data,
                 method: 'POST'
               }).then(function(res) {
-                console.log('res', res.data);
                 return res.data;
-              }, function(err) {
-                console.error(err);
               });
             }
         }
