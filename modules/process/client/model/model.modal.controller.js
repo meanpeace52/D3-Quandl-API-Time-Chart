@@ -8,6 +8,7 @@ angular.module('process')
 
         vm.model = null;
         vm.dataset = null;
+        vm.saving = false;
 
         var lastResult = _.last(results);
         if (Array.isArray(lastResult)) {
@@ -42,6 +43,7 @@ angular.module('process')
         }
 
         vm.save = function() {
+          vm.saving = true;
           getDataset()
             .then(function(dataset) {
               if (vm.model) {
@@ -62,6 +64,9 @@ angular.module('process')
             })
             .catch(function(err) {
               alert('Failed with error: ' + (err.message || err));
+            })
+            .finally(function() {
+              vm.saving = false;
             });
         };
 
