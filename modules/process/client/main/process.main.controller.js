@@ -23,11 +23,15 @@ angular.module('process')
             vm.usersProcesses = processes;
           });
 
-        UsersFactory.finduserdatasets(vm.user)
-          .then(function(datasets) {
-            vm.usersDatasets = datasets;
-            Process.setUsersDatasets(datasets);
-          });
+        function getDatasets() {
+          UsersFactory.finduserdatasets(vm.user)
+            .then(function(datasets) {
+              vm.usersDatasets = datasets;
+              Process.setUsersDatasets(datasets);
+            });
+        }
+
+        getDatasets();
 
         vm.onDatasetChange = function(dataset, resetOptions) {
           // re-initialize table data
@@ -214,6 +218,13 @@ angular.module('process')
                     return results;
                   }
                 }
+              });
+              modalInstance.result.then(function(model) {
+                vm.alerts.push({
+                  type: 'success',
+                  msg: 'The result has been successfully saved!'
+                });
+                getDatasets();
               });
             })
             .catch(function(err) {
