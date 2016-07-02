@@ -63,6 +63,7 @@ angular.module('process')
               $uibModalInstance.close(model);
             })
             .catch(function(err) {
+              //TODO: rollback if model fails and dataset has been saved
               console.error('error saving model', err);
               var message = '';
               if (err instanceof Error) {
