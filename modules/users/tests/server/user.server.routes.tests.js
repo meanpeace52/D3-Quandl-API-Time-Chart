@@ -179,7 +179,7 @@ describe('User CRUD tests', function () {
           }
 
           // Get single user information from the database
-          agent.get('/api/users/' + user._id)
+          agent.get('/api/users/' + user.username)
             .expect(200)
             .end(function (userInfoErr, userInfoRes) {
               if (userInfoErr) {

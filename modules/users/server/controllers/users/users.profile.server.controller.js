@@ -131,7 +131,7 @@ exports.search = function(req, res) {
 exports.userByUsername = function(req, res, next, username) {
 User.findOne({
     username: username
-}, '_id displayName username created').exec(function(err, user) {
+}).exec(function(err, user) {
     if (err) return next(err);
     if (!user) return next(new Error('Failed to load User ' + username));
     req.readUser = user;
