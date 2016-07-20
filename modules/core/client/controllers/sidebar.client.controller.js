@@ -21,7 +21,7 @@ angular.module('core')
 			// Add the Posts sidebar item
       Menus.addMenuItem('sidebar', {
           title: 'My Posts',
-          state: 'articles.list',
+          state: 'posts.list',
           faIcon: 'fa-file',
           roles: ['user'],
           position: 1
@@ -30,7 +30,7 @@ angular.module('core')
       // Add the My Models sidebar item
       Menus.addMenuItem('sidebar', {
           title: 'My Models',
-          state: 'home',
+          state: 'models.list',
           faIcon: 'fa-cogs',
           roles: ['user'],
           position: 3

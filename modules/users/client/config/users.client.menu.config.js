@@ -8,17 +8,16 @@ angular.module('users')
             //remove user role here if want non-logged in users to be able to see menu to search users
             Menus.addMenuItem('topbar', {
                 title: 'Users',
-                state: 'users',
-                type: 'dropdown',
+                state: 'users.list',
                 roles: ['user']
             });
-
+/*
             // Add the dropdown list item
             Menus.addSubMenuItem('topbar', 'users', {
                 title: 'List Users',
                 state: 'users.list'
             });
+*/
 
-           
         }
     ]);
