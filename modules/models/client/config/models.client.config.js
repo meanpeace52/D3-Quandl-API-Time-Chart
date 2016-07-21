@@ -8,7 +8,8 @@
     Menus.addMenuItem('topbar', {
       title: 'Models',
       state: 'models.list',
-      roles: ['user']
+      roles: ['user'],
+      position: 3
     });
     /*
         // Add the dropdown list item

@@ -6,8 +6,22 @@ angular.module('core').controller('HeaderController', ['$rootScope', '$scope', '
         $scope.$state = $state;
         $scope.authentication = Authentication;
 
-        // Get the topbar menu
+        // Get the  menu
         $scope.menu = Menus.getMenu('topbar');
+        
+         Menus.addMenuItem('topbar', {
+                title: 'Home',
+                state: 'home',
+                roles: ['*'],
+                position: 0
+            });
+            
+         Menus.addMenuItem('topbar', {
+            title: 'Finance',
+            state: 'finance',
+            roles: ['*'],
+            position: 1
+        });
 
         // Toggle the menu items
         $scope.isCollapsed = false;

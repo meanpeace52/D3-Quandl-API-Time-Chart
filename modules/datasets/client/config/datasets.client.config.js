@@ -8,7 +8,8 @@ angular.module('datasets')
             Menus.addMenuItem('topbar', {
                 title: 'Datasets',
                 state: 'datasets.list',
-                roles: ['user']
+                roles: ['user'],
+                position: 2
             });
 
 /*

@@ -62,7 +62,7 @@
       };
 
       // Initialize the posts controller.
-      postsController = $controller('postsController', {
+      postsController = $controller('postsController as vm', {
         $scope: scope
       });
     }));

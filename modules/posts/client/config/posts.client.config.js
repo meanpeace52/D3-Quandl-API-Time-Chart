@@ -9,7 +9,8 @@ angular.module('posts')
             Menus.addMenuItem('topbar', {
                 title: 'Posts',
                 state: 'posts.list',
-                roles: ['user']
+                roles: ['user'],
+                position: 3
             });
 /*
             // Add the dropdown list item

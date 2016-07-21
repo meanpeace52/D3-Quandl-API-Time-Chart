@@ -72,8 +72,8 @@ angular.module(ApplicationConfiguration.applicationModuleName, ApplicationConfig
         $rootScope.$on('$stateChangeStart', function (event, toState, toParams, fromState, fromParams) {
             if (toState.data) {
                 var allowed = false;
-
-                if (toState.data.roles && toState.data.roles.length > 0) {
+                console.log(toState.data, Authentication.user.roles);
+                if (toState.data.roles.length) {
                     toState.data.roles.forEach(function (role) {
                         if (Authentication.user.roles !== undefined && Authentication.user.roles.indexOf(role) !== -1) {
                             allowed = true;
@@ -81,7 +81,11 @@ angular.module(ApplicationConfiguration.applicationModuleName, ApplicationConfig
                         }
                     });
                 }
-
+                
+                else {
+                    allowed = true;
+                }
+                
                 if (!allowed) {
                     event.preventDefault();
                     if (Authentication.user !== undefined && typeof Authentication.user === 'object') {
@@ -152,11 +156,6 @@ ApplicationConfiguration.registerModule('admin.users.routes', ['core.admin.route
 'use strict';
 
 // Use Applicaion configuration module to register a new module
-ApplicationConfiguration.registerModule('articles');
-
-'use strict';
-
-// Use Applicaion configuration module to register a new module
 ApplicationConfiguration.registerModule('core');
 ApplicationConfiguration.registerModule('core.admin', ['core']);
 ApplicationConfiguration.registerModule('core.admin.routes', ['ui.router']);
@@ -174,7 +173,7 @@ ApplicationConfiguration.registerModule('datasets', ['datatables']);
 
 'use strict';
 
-// Use application configuration module to register a new module
+// Use Applicaion configuration module to register a new module
 ApplicationConfiguration.registerModule('posts');
 
 'use strict';
@@ -346,194 +345,6 @@ angular.module('admin.users')
 
 'use strict';
 
-// Configuring the Articles module
-angular.module('articles')
-    .run(['Menus', 'Authentication',
-        function (Menus, Authentication) {
-            
-            // Add the articles dropdown item
-            Menus.addMenuItem('topbar', {
-                title: 'Articles',
-                state: 'articles',
-                type: 'dropdown',
-                roles: ['user']
-            });
-
-            // Add the dropdown list item
-            Menus.addSubMenuItem('topbar', 'articles', {
-                title: 'List Articles',
-                state: 'articles.list'
-            });
-
-            // Add the dropdown create item
-            Menus.addSubMenuItem('topbar', 'articles', {
-                title: 'Create Articles',
-                state: 'articles.create',
-                roles: ['user']
-            });
-
-        }
-    ]);
-
-'use strict';
-
-// Setting up route
-angular.module('articles')
-    .config(['$stateProvider',
-        function ($stateProvider) {
-            var MODULE_PATH = 'modules/articles/client/';
-
-            // Articles state routing
-            $stateProvider
-                .state('articles', {
-                    abstract: true,
-                    url: '/articles',
-                    template: '<ui-view/>'
-                })
-                .state('articles.list', {
-                    url: '',
-                    controller: 'ArticlesListController',
-                    controllerAs: 'ArticlesList',
-                    templateUrl: MODULE_PATH + 'list/articles.list.html'
-                })
-                .state('articles.create', {
-                    url: '/create',
-                    controller: 'ArticlesCreateController',
-                    controllerAs: 'ArticlesCreate',
-                    templateUrl: MODULE_PATH + 'create/articles.create.html',
-                    data: {
-                        roles: ['user', 'admin']
-                    }
-                })
-                .state('articles.detail', {
-                    url: '/:articleId',
-                    controller: 'ArticlesDetailController',
-                    controllerAs: 'ArticlesDetail',
-                    templateUrl: MODULE_PATH + 'detail/articles.detail.html'
-                })
-                .state('articles.edit', {
-                    url: '/:articleId/edit',
-                    controller: 'ArticlesEditController',
-                    controllerAs: 'ArticlesEdit',
-                    templateUrl: MODULE_PATH + 'edit/articles.edit.html',
-                    data: {
-                        roles: ['user', 'admin']
-                    }
-                });
-        }
-    ]);
-
-'use strict';
-
-//Articles Create Controller
-angular.module('articles')
-    .controller('ArticlesCreateController',
-        ['$scope', '$state', 'Authentication', 'Articles',
-            function ($scope, $state, Authentication, Articles) {
-                var vm = this;
-
-                vm.authentification = Authentication;
-                vm.article = new Articles();
-
-                // Create new Article
-                vm.create = function (isValid) {
-                    vm.error = null;
-
-                    if (!isValid) {
-                        $scope.$broadcast('show-errors-check-validity', 'articleForm');
-
-                        return false;
-                    }
-
-                    // Redirect after save
-                    vm.article.$save(function (response) {
-                        $state.go('articles.detail', { articleId: response._id });
-
-                    }, function (errorResponse) {
-                        vm.error = errorResponse.data.message;
-                    });
-                };
-            }]);
-
-'use strict';
-
-//Articles Detail Controller
-angular.module('articles')
-    .controller('ArticlesDetailController',
-        ['$stateParams', 'Authentication', 'Articles',
-            function ($stateParams, Authentication, Articles) {
-                var vm = this;
-
-                vm.authentication = Authentication;
-
-                vm.article = Articles.get({
-                    articleId: $stateParams.articleId
-                });
-
-                console.log(vm.authentication);
-                console.log(vm.article);
-
-            }]);
-
-'use strict';
-
-//Articles Edit Controller
-angular.module('articles')
-    .controller('ArticlesEditController',
-        ['$scope', '$state', '$stateParams', 'Authentication', 'Articles',
-            function ($scope, $state, $stateParams, Authentication, Articles) {
-                var vm = this;
-
-                vm.authentication = Authentication;
-
-                vm.article = Articles.get({
-                    articleId: $stateParams.articleId
-                });
-
-                vm.update = function () {
-
-                    vm.article.$update(function () {
-                        $state.go('articles.detail', { articleId: vm.article._id });
-
-                    }, function (errorResponse) {
-                        vm.error = errorResponse.data.message;
-                    });
-                };
-
-            }]);
-
-'use strict';
-
-//Articles List Controller
-angular.module('articles')
-    .controller('ArticlesListController',
-        ['$scope', '$state', 'Authentication', 'Articles',
-            function ($scope, $state, Authentication, Articles) {
-                var vm = this;
-
-                vm.authentication = Authentication;
-                vm.articles = Articles.query();
-
-            }]);
-
-'use strict';
-
-//Articles service used for communicating with the articles REST endpoints
-angular.module('articles')
-    .factory('Articles', ['$resource',
-        function ($resource) {
-            return $resource('api/articles/:articleId', {
-                articleId: '@_id'
-            }, {
-                update: {
-                    method: 'PUT'
-                }
-            });
-        }
-    ]);
-
-'use strict';
-
 angular.module('core.admin').run(['Menus',
     function (Menus) {
         Menus.addMenuItem('topbar', {
@@ -661,8 +472,22 @@ angular.module('core').controller('HeaderController', ['$rootScope', '$scope', '
         $scope.$state = $state;
         $scope.authentication = Authentication;
 
-        // Get the topbar menu
+        // Get the  menu
         $scope.menu = Menus.getMenu('topbar');
+        
+         Menus.addMenuItem('topbar', {
+                title: 'Home',
+                state: 'home',
+                roles: ['*'],
+                position: 0
+            });
+            
+         Menus.addMenuItem('topbar', {
+            title: 'Finance',
+            state: 'finance',
+            roles: ['*'],
+            position: 1
+        });
 
         // Toggle the menu items
         $scope.isCollapsed = false;
@@ -688,6 +513,7 @@ angular.module('core').controller('HomeController', ['$scope', 'Authentication',
     function ($scope, Authentication) {
         // This provides Authentication context.
         $scope.authentication = Authentication;
+        
     }
 ]);
 
@@ -714,7 +540,7 @@ angular.module('core')
 			// Add the Posts sidebar item
       Menus.addMenuItem('sidebar', {
           title: 'My Posts',
-          state: 'articles.list',
+          state: 'posts.list',
           faIcon: 'fa-file',
           roles: ['user'],
           position: 1
@@ -723,7 +549,7 @@ angular.module('core')
       // Add the My Models sidebar item
       Menus.addMenuItem('sidebar', {
           title: 'My Models',
-          state: 'home',
+          state: 'models.list',
           faIcon: 'fa-cogs',
           roles: ['user'],
           position: 3
@@ -1207,11 +1033,12 @@ angular.module('datasets')
             // Add the datasets dropdown item
             Menus.addMenuItem('topbar', {
                 title: 'Datasets',
-                state: 'datasets',
-                type: 'dropdown',
-                roles: ['user']
+                state: 'datasets.list',
+                roles: ['user'],
+                position: 2
             });
 
+/*
             // Add the dropdown list item
             Menus.addSubMenuItem('topbar', 'datasets', {
                 title: 'List datasets',
@@ -1224,7 +1051,7 @@ angular.module('datasets')
                 state: 'datasets.create',
                 roles: ['user']
             });
-
+*/
             
         }
     ]);
@@ -1289,29 +1116,29 @@ angular.module('datasets')
 
 'use strict';
 
-//Articles Create Controller
-angular.module('articles')
-    .controller('ArticlesCreateController',
-        ['$scope', '$state', 'Authentication', 'Articles',
-            function ($scope, $state, Authentication, Articles) {
+//Posts Create Controller
+angular.module('posts')
+    .controller('PostsCreateController',
+        ['$scope', '$state', 'Authentication', 'Posts',
+            function ($scope, $state, Authentication, Posts) {
                 var vm = this;
 
                 vm.authentification = Authentication;
-                vm.article = new Articles();
+                vm.post = new Posts();
 
-                // Create new Article
+                // Create new Post
                 vm.create = function (isValid) {
                     vm.error = null;
 
                     if (!isValid) {
-                        $scope.$broadcast('show-errors-check-validity', 'articleForm');
+                        $scope.$broadcast('show-errors-check-validity', 'postForm');
 
                         return false;
                     }
 
                     // Redirect after save
-                    vm.article.$save(function (response) {
-                        $state.go('articles.detail', { articleId: response._id });
+                    vm.post.$save(function (response) {
+                        $state.go('posts.detail', { postId: response._id });
 
                     }, function (errorResponse) {
                         vm.error = errorResponse.data.message;
@@ -2158,34 +1985,31 @@ angular.module('datasets')
 
 (function () {
   'use strict';
-
-  angular
-    .module('models')
-    .run(menuConfig);
-
+  angular.module('models').run(menuConfig);
   menuConfig.$inject = ['Menus'];
 
   function menuConfig(Menus) {
     // Set top bar menu items
     Menus.addMenuItem('topbar', {
       title: 'Models',
-      state: 'models',
-      type: 'dropdown',
-      roles: ['*']
+      state: 'models.list',
+      roles: ['user'],
+      position: 3
     });
+    /*
+        // Add the dropdown list item
+        Menus.addSubMenuItem('topbar', 'models', {
+          title: 'List Models',
+          state: 'models.list'
+        });
 
-    // Add the dropdown list item
-    Menus.addSubMenuItem('topbar', 'models', {
-      title: 'List Models',
-      state: 'models.list'
-    });
-
-    // Add the dropdown create item
-    Menus.addSubMenuItem('topbar', 'models', {
-      title: 'Create Model',
-      state: 'models.create',
-      roles: ['user']
-    });
+        // Add the dropdown create item
+        Menus.addSubMenuItem('topbar', 'models', {
+          title: 'Create Model',
+          state: 'models.create',
+          roles: ['user']
+        });
+    */
   }
 })();
 
@@ -2249,7 +2073,7 @@ angular.module('datasets')
           modelResolve: getModel
         },
         data:{
-          pageTitle: 'Model {{ articleResolve.name }}'
+          pageTitle: 'Model {{ postResolve.name }}'
         }
       });
   }
@@ -2362,6 +2186,195 @@ angular.module('datasets')
 
 'use strict';
 
+// Configuring the posts module
+angular.module('posts')
+    .run(['Menus', 'Authentication',
+        function (Menus, Authentication) {
+            
+            // Add the posts dropdown item
+            Menus.addMenuItem('topbar', {
+                title: 'Posts',
+                state: 'posts.list',
+                roles: ['user'],
+                position: 3
+            });
+/*
+            // Add the dropdown list item
+            Menus.addSubMenuItem('topbar', 'posts', {
+                title: 'List posts',
+                state: 'posts.list'
+            });
+
+            // Add the dropdown create item
+            Menus.addSubMenuItem('topbar', 'posts', {
+                title: 'Create posts',
+                state: 'posts.create',
+                roles: ['user']
+            });
+            
+*/
+        }
+    ]);
+
+'use strict';
+
+// Setting up route
+angular.module('posts')
+    .config(['$stateProvider',
+        function ($stateProvider) {
+            var MODULE_PATH = 'modules/posts/client/';
+
+            // posts state routing
+            $stateProvider
+                .state('posts', {
+                    abstract: true,
+                    url: '/posts',
+                    template: '<ui-view/>'
+                })
+                .state('posts.list', {
+                    url: '',
+                    controller: 'postsListController',
+                    controllerAs: 'postsList',
+                    templateUrl: MODULE_PATH + 'list/posts.list.html'
+                })
+                .state('posts.create', {
+                    url: '/create',
+                    controller: 'postsCreateController',
+                    controllerAs: 'postsCreate',
+                    templateUrl: MODULE_PATH + 'create/posts.create.html',
+                    data: {
+                        roles: ['user', 'admin']
+                    }
+                })
+                .state('posts.detail', {
+                    url: '/:postId',
+                    controller: 'postsDetailController',
+                    controllerAs: 'postsDetail',
+                    templateUrl: MODULE_PATH + 'detail/posts.detail.html'
+                })
+                .state('posts.edit', {
+                    url: '/:postId/edit',
+                    controller: 'postsEditController',
+                    controllerAs: 'postsEdit',
+                    templateUrl: MODULE_PATH + 'edit/posts.edit.html',
+                    data: {
+                        roles: ['user', 'admin']
+                    }
+                });
+        }
+    ]);
+
+'use strict';
+
+//posts Create Controller
+angular.module('posts')
+    .controller('postsCreateController',
+        ['$scope', '$state', 'Authentication', 'Posts',
+            function ($scope, $state, Authentication, Posts) {
+                var vm = this;
+
+                vm.authentification = Authentication;
+                vm.post = new Posts();
+
+                // Create new post
+                vm.create = function (isValid) {
+                    vm.error = null;
+
+                    if (!isValid) {
+                        $scope.$broadcast('show-errors-check-validity', 'postForm');
+
+                        return false;
+                    }
+
+                    // Redirect after save
+                    vm.post.$save(function (response) {
+                        $state.go('posts.detail', { postId: response._id });
+
+                    }, function (errorResponse) {
+                        vm.error = errorResponse.data.message;
+                    });
+                };
+            }]);
+
+'use strict';
+
+//posts Detail Controller
+angular.module('posts')
+    .controller('postsDetailController',
+        ['$stateParams', 'Authentication', 'posts',
+            function ($stateParams, Authentication, posts) {
+                var vm = this;
+
+                vm.authentication = Authentication;
+
+                vm.post = posts.get({
+                    postId: $stateParams.postId
+                });
+
+                console.log(vm.authentication);
+                console.log(vm.post);
+
+            }]);
+
+'use strict';
+
+//posts Edit Controller
+angular.module('posts')
+    .controller('postsEditController',
+        ['$scope', '$state', '$stateParams', 'Authentication', 'posts',
+            function ($scope, $state, $stateParams, Authentication, posts) {
+                var vm = this;
+
+                vm.authentication = Authentication;
+
+                vm.post = posts.get({
+                    postId: $stateParams.postId
+                });
+
+                vm.update = function () {
+
+                    vm.post.$update(function () {
+                        $state.go('posts.detail', { postId: vm.post._id });
+
+                    }, function (errorResponse) {
+                        vm.error = errorResponse.data.message;
+                    });
+                };
+
+            }]);
+
+'use strict';
+
+//posts List Controller
+angular.module('posts')
+    .controller('postsListController',
+        ['$scope', '$state', 'Authentication', 'posts',
+            function ($scope, $state, Authentication, posts) {
+                var vm = this;
+
+                vm.authentication = Authentication;
+                vm.posts = posts.query();
+
+            }]);
+
+'use strict';
+
+//posts service used for communicating with the posts REST endpoints
+angular.module('posts')
+    .factory('posts', ['$resource',
+        function ($resource) {
+            return $resource('api/posts/:postId', {
+                postId: '@_id'
+            }, {
+                update: {
+                    method: 'PUT'
+                }
+            });
+        }
+    ]);
+
+'use strict';
+
 // Config HTTP Error Handling
 angular.module('users').config(['$httpProvider',
     function ($httpProvider) {
@@ -2401,18 +2414,18 @@ angular.module('users')
             //remove user role here if want non-logged in users to be able to see menu to search users
             Menus.addMenuItem('topbar', {
                 title: 'Users',
-                state: 'users',
-                type: 'dropdown',
-                roles: ['user']
+                state: 'users.list',
+                roles: ['user'],
+                position: 5
             });
-
+/*
             // Add the dropdown list item
             Menus.addSubMenuItem('topbar', 'users', {
                 title: 'List Users',
                 state: 'users.list'
             });
+*/
 
-           
         }
     ]);
 

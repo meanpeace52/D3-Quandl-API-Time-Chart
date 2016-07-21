@@ -9,7 +9,8 @@ angular.module('users')
             Menus.addMenuItem('topbar', {
                 title: 'Users',
                 state: 'users.list',
-                roles: ['user']
+                roles: ['user'],
+                position: 5
             });
 /*
             // Add the dropdown list item
