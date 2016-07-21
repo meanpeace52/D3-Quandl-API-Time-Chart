@@ -5,11 +5,12 @@ angular.module('posts')
     .controller('postsDetailController',
         ['$stateParams', 'Authentication', 'posts',
             function ($stateParams, Authentication, posts) {
+                
                 var vm = this;
 
                 vm.authentication = Authentication;
-
-                vm.post = posts.get({
+                
+                vm.post = posts.crud({
                     postId: $stateParams.postId
                 });
 

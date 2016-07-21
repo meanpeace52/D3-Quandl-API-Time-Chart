@@ -74,7 +74,13 @@ exports.delete = function (req, res) {
  * List of posts
  */
 exports.list = function (req, res) {
-    Post.find().sort('-created').populate('user', 'displayName').exec(function (err, posts) {
+    var options = {};
+    
+    if (req.params.hasOwnProperty('subject')) {
+        options.subject = req.params.subject;
+    }
+    
+    Post.find(options).sort('-created').populate('user', 'displayName').exec(function (err, posts) {
         if (err) {
             return res.status(400).send({
                 message: errorHandler.getErrorMessage(err)

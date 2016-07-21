@@ -25,6 +25,11 @@ var postSchema = new Schema({
         default: '',
         trim: true
     },
+    subject: {
+        type: String,
+        default: '',
+        trim: true
+    },
     user: {
         type: Schema.ObjectId,
         ref: 'User'

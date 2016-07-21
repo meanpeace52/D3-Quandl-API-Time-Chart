@@ -17,6 +17,11 @@ angular.module('posts')
                     url: '',
                     controller: 'postsListController',
                     controllerAs: 'postsList',
+                    templateUrl: MODULE_PATH + 'list/posts.list.html',
+                })
+                .state('posts.subject', {
+                    url: '/subject/:subject',
+                    controller: 'postsListController',
                     templateUrl: MODULE_PATH + 'list/posts.list.html'
                 })
                 .state('posts.create', {
@@ -43,5 +48,5 @@ angular.module('posts')
                         roles: ['user', 'admin']
                     }
                 });
-        }
-    ]);
+                    }
+                ]);

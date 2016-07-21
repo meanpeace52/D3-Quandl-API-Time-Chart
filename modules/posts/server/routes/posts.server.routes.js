@@ -11,7 +11,12 @@ module.exports = function (app) {
     app.route('/api/posts').all(postsPolicy.isAllowed)
         .get(posts.list)
         .post(posts.create);
-
+        
+    app.route('/api/posts/subject/:subject').all(postsPolicy.isAllowed)
+        .get(posts.list);
+        
+    app.param('subject', posts.list);
+        
     // Single post routes
     app.route('/api/posts/:postId').all(postsPolicy.isAllowed)
         .get(posts.read)

@@ -8,17 +8,17 @@ angular.module('core').controller('HeaderController', ['$rootScope', '$scope', '
 
         // Get the  menu
         $scope.menu = Menus.getMenu('topbar');
-        
-         Menus.addMenuItem('topbar', {
-                title: 'Home',
-                state: 'home',
-                roles: ['*'],
-                position: 0
-            });
-            
-         Menus.addMenuItem('topbar', {
+
+        Menus.addMenuItem('topbar', {
+            title: 'Home',
+            state: 'home',
+            roles: ['*'],
+            position: 0
+        });
+
+        Menus.addMenuItem('topbar', {
             title: 'Finance',
-            state: 'finance',
+            state: 'posts.subject({subject: "finance"})',
             roles: ['*'],
             position: 1
         });

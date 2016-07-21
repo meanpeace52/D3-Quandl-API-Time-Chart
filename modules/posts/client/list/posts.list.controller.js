@@ -2,12 +2,23 @@
 
 //posts List Controller
 angular.module('posts')
-    .controller('postsListController',
-        ['$scope', '$state', 'Authentication', 'posts',
-            function ($scope, $state, Authentication, posts) {
-                var vm = this;
+    .controller('postsListController', ['$scope', '$stateParams', '$state', 'Authentication', 'posts',
+            function ($scope, $stateParams, $state, Authentication, posts) {
+            var vm = this;
 
-                vm.authentication = Authentication;
-                vm.posts = posts.query();
+            vm.authentication = Authentication;
+            
+            var params = $stateParams.hasOwnProperty('subject');
+            
+            if (params) {
+                posts.subject($scope.subject)
+                    .success(function (response) {
+                        vm.searchResults = response;
+                        vm.loadingResults = false;
+                    })
+                    .error(function (error) {
+                        vm.loadingResults = false;
+                    });
+            }
 
             }]);
