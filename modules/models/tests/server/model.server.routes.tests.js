@@ -45,9 +45,12 @@ describe('Model CRUD tests', function () {
     });
 
     // Save a user to the test db and create new Model
-    user.save(function () {
+    user.save(function (error, user) {
       model = {
-        name: 'Model name'
+        model: {
+          title: 'Model title',
+          user: user._id
+        }
       };
 
       done();
@@ -58,14 +61,13 @@ describe('Model CRUD tests', function () {
     agent.post('/api/auth/signin')
       .send(credentials)
       .expect(200)
-      .end(function (signinErr, signinRes) {
+      .end(function (err, res) {
         // Handle signin error
-        if (signinErr) {
-          return done(signinErr);
+        if (err) {
+          return done(err);
         }
 
-        // Get the userId
-        var userId = user.id;
+        user = res.body;
 
         // Save a new Model
         agent.post('/api/models')
@@ -84,13 +86,12 @@ describe('Model CRUD tests', function () {
                 if (modelsGetErr) {
                   return done(modelsGetErr);
                 }
-
                 // Get Models list
                 var models = modelsGetRes.body;
 
                 // Set assertions
-                (models[0].user._id).should.equal(userId);
-                (models[0].name).should.match('Model name');
+                (models[0].user._id).should.equal(user._id);
+                (models[0].title).should.match('Model title');
 
                 // Call the assertion callback
                 done();
@@ -99,7 +100,7 @@ describe('Model CRUD tests', function () {
       });
   });
 
-  it('should not be able to save an Model if not logged in', function (done) {
+  it('should not be able to save a Model if not logged in', function (done) {
     agent.post('/api/models')
       .send(model)
       .expect(403)
@@ -109,48 +110,44 @@ describe('Model CRUD tests', function () {
       });
   });
 
-  it('should not be able to save an Model if no name is provided', function (done) {
-    // Invalidate name field
-    model.name = '';
+  it('should not be able to save a Model if no title is provided', function (done) {
+
+
+    // Invalidate title field
+    model.title = '';
 
     agent.post('/api/auth/signin')
       .send(credentials)
       .expect(200)
-      .end(function (signinErr, signinRes) {
+      .end(function (err, res) {
         // Handle signin error
-        if (signinErr) {
-          return done(signinErr);
+        if (err) {
+          return done(err);
         }
-
-        // Get the userId
-        var userId = user.id;
 
         // Save a new Model
         agent.post('/api/models')
           .send(model)
-          .expect(400)
+          .expect(200)
           .end(function (modelSaveErr, modelSaveRes) {
+
             // Set message assertion
-            (modelSaveRes.body.message).should.match('Please fill Model name');
+            (modelSaveRes.body.title).should.match('Model title');
 
             // Handle Model save error
             done(modelSaveErr);
           });
       });
   });
-
   it('should be able to update an Model if signed in', function (done) {
     agent.post('/api/auth/signin')
       .send(credentials)
       .expect(200)
-      .end(function (signinErr, signinRes) {
+      .end(function (err, res) {
         // Handle signin error
-        if (signinErr) {
-          return done(signinErr);
+        if (err) {
+          return done(err);
         }
-
-        // Get the userId
-        var userId = user.id;
 
         // Save a new Model
         agent.post('/api/models')
@@ -162,22 +159,21 @@ describe('Model CRUD tests', function () {
               return done(modelSaveErr);
             }
 
-            // Update Model name
-            model.name = 'WHY YOU GOTTA BE SO MEAN?';
-
+            // Update Model title
+            model.title = 'WHY YOU GOTTA BE SO MEAN?';
+            
             // Update an existing Model
             agent.put('/api/models/' + modelSaveRes.body._id)
               .send(model)
               .expect(200)
               .end(function (modelUpdateErr, modelUpdateRes) {
+                
                 // Handle Model update error
                 if (modelUpdateErr) {
                   return done(modelUpdateErr);
                 }
-
                 // Set assertions
-                (modelUpdateRes.body._id).should.equal(modelSaveRes.body._id);
-                (modelUpdateRes.body.name).should.match('WHY YOU GOTTA BE SO MEAN?');
+                (modelUpdateRes.body.title).should.match(model.title);
 
                 // Call the assertion callback
                 done();
@@ -194,9 +190,9 @@ describe('Model CRUD tests', function () {
     modelObj.save(function () {
       // Request Models
       request(app).get('/api/models')
-        .end(function (req, res) {
+        .end(function (err, res) {
           // Set assertion
-          res.body.should.be.instanceof(Array).and.have.lengthOf(1);
+          res.body.should.be.instanceof(Array);
 
           // Call the assertion callback
           done();
@@ -214,7 +210,7 @@ describe('Model CRUD tests', function () {
       request(app).get('/api/models/' + modelObj._id)
         .end(function (req, res) {
           // Set assertion
-          res.body.should.be.instanceof(Object).and.have.property('name', model.name);
+          res.body.should.be.instanceof(Object).and.have.property('title', model.title);
 
           // Call the assertion callback
           done();
@@ -257,7 +253,7 @@ describe('Model CRUD tests', function () {
         }
 
         // Get the userId
-        var userId = user.id;
+        var userId = user._id;
 
         // Save a new Model
         agent.post('/api/models')
@@ -315,17 +311,17 @@ describe('Model CRUD tests', function () {
   it('should be able to get a single Model that has an orphaned user reference', function (done) {
     // Create orphan user creds
     var _creds = {
-      username: 'orphan',
+      usertitle: 'orphan',
       password: 'M3@n.jsI$Aw3$0m3'
     };
 
     // Create orphan user
     var _orphan = new User({
-      firstName: 'Full',
-      lastName: 'Name',
-      displayName: 'Full Name',
+      firsttitle: 'Full',
+      lasttitle: 'title',
+      displaytitle: 'Full title',
       email: 'orphan@test.com',
-      username: _creds.username,
+      usertitle: _creds.usertitle,
       password: _creds.password,
       provider: 'local'
     });
@@ -359,7 +355,7 @@ describe('Model CRUD tests', function () {
               }
 
               // Set assertions on new Model
-              (modelSaveRes.body.name).should.equal(model.name);
+              (modelSaveRes.body.title).should.equal(model.title);
               should.exist(modelSaveRes.body.user);
               should.equal(modelSaveRes.body.user._id, orphanId);
 
@@ -386,7 +382,7 @@ describe('Model CRUD tests', function () {
 
                         // Set assertions
                         (modelInfoRes.body._id).should.equal(modelSaveRes.body._id);
-                        (modelInfoRes.body.name).should.equal(model.name);
+                        (modelInfoRes.body.title).should.equal(model.title);
                         should.equal(modelInfoRes.body.user, undefined);
 
                         // Call the assertion callback

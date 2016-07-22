@@ -27,10 +27,10 @@ describe('Model Model Unit Tests:', function() {
       password: 'password'
     });
 
-    user.save(function() { 
+    user.save(function(user) { 
       model = new Model({
-        name: 'Model Name',
-        user: user
+        title: 'Model Title',
+        user: user._id
       });
 
       done();
@@ -39,15 +39,14 @@ describe('Model Model Unit Tests:', function() {
 
   describe('Method Save', function() {
     it('should be able to save without problems', function(done) {
-      this.timeout(0);
       return model.save(function(err) {
         should.not.exist(err);
         done();
       });
     });
 
-    it('should be able to show an error when try to save without name', function(done) { 
-      model.name = '';
+    it('should be able to show an error when try to save without title', function(done) { 
+      model.title = '';
 
       return model.save(function(err) {
         should.exist(err);

@@ -30,24 +30,24 @@ var postSchema = new Schema({
         default: '',
         trim: true
     },
+    attachments: {
+        type: Array,
+        default: [],
+        trim: false
+    },
     user: {
         type: Schema.ObjectId,
         ref: 'User'
     },
     access: {
         type: String,
-        default: 'public', // public | private
-        trim: true
+        enum: ['public', 'paid', 'private'],
+        default: 'public'
     },
     cost: {
       type: Number,
       default: 0,
       trim: false
-    },
-    attachments: {
-        type: Array,
-        default: [],
-        trim: false
     }
 });
 

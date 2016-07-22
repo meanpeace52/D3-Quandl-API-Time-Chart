@@ -12,9 +12,7 @@ var mongoose = require('mongoose'),
 var ModelSchema = new Schema({
     title: {
         type: String,
-        default: '',
-        required: 'Please give this Model a title',
-        trim: true
+        required: 'Please fill Model title'
     },
     type: String,
     dataset: {

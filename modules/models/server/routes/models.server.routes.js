@@ -21,5 +21,4 @@ module.exports = function (app) {
 
     app.route('/api/models/user/:userId').all(modelPolicy.isAllowed)
         .get(model.listByUserId);
-
 };
