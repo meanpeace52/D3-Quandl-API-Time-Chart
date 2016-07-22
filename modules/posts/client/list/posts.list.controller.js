@@ -7,13 +7,13 @@ angular.module('posts')
             var vm = this;
 
             vm.authentication = Authentication;
-            
-            var params = $stateParams.hasOwnProperty('subject');
-            
-            if (params) {
-                posts.subject($scope.subject)
+
+            var subject = $stateParams.hasOwnProperty('subject');
+
+            if (subject) {
+                posts.subject($stateParams.subject)
                     .success(function (response) {
-                        vm.searchResults = response;
+                        vm.posts = response.data;
                         vm.loadingResults = false;
                     })
                     .error(function (error) {

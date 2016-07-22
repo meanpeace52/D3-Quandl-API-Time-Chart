@@ -28,4 +28,5 @@ angular.module('posts')
                         vm.error = errorResponse.data.message;
                     });
                 };
+                
             }]);

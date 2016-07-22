@@ -33,6 +33,21 @@ var postSchema = new Schema({
     user: {
         type: Schema.ObjectId,
         ref: 'User'
+    },
+    access: {
+        type: String,
+        default: 'public', // public | private
+        trim: true
+    },
+    cost: {
+      type: Number,
+      default: 0,
+      trim: false
+    },
+    attachments: {
+        type: Array,
+        default: [],
+        trim: false
     }
 });
 
