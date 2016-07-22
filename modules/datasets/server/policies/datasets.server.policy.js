@@ -21,6 +21,10 @@ exports.invokeRolesPolicies = function () {
                     permissions: '*'
                 },
                 {
+                    resources: '/api/datasets/insert',
+                    permissions: ['post']
+                },
+                {
                     resources: '/api/datasets/:datasetId',
                     permissions: '*'
                 },
@@ -52,6 +56,10 @@ exports.invokeRolesPolicies = function () {
                 {
                     resources: '/api/datasets',
                     permissions: ['get', 'post']
+                },
+                {
+                    resources: '/api/datasets/insert',
+                    permissions: ['post']
                 },
                 {
                     resources: '/api/datasets/:datasetId',

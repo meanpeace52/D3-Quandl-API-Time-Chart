@@ -18,7 +18,9 @@
     "_": true,
     "ApplicationConfiguration": true,
     "$": true,
-    "Promise": true
+    "Promise": true,
+    "Handlebars": true,
+    "rbroker": true
   },
   "predef": [ // Extra globals.
     "inject",

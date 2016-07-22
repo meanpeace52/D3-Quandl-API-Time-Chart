@@ -10,7 +10,8 @@ angular.module('datasets')
                 addToUserApiCall: addToUserApiCall,
                 getDatasetWithS3: getDatasetWithS3,
                 saveCustom: saveCustom,
-                mergeColumns: mergeColumns
+                mergeColumns: mergeColumns,
+                insert: insert
             };
 
             function crud() {
@@ -78,7 +79,15 @@ angular.module('datasets')
                     console.error(err);
                 });
             }
+
+            function insert (data) {
+              return $http({
+                url: '/api/datasets/insert',
+                data: data,
+                method: 'POST'
+              }).then(function(res) {
+                return res.data;
+              });
+            }
         }
     ]);
-
-

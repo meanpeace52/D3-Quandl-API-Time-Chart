@@ -11,7 +11,7 @@ angular.module('core')
 			// Add the Lab sidebar item
       Menus.addMenuItem('sidebar', {
           title: 'Lab',
-          state: 'datasets.list',
+          state: 'lab.process',
           type: 'item',
           faIcon: 'fa-flask',
           roles: ['user'],

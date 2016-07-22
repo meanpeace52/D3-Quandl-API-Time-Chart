@@ -1,22 +1,25 @@
 'use strict';
 
 /**
- * Module dependencies
+ * Module dependencies.
  */
-var modelsPolicy = require('../policies/models.server.policy'),
-  models = require('../controllers/models.server.controller');
 
-module.exports = function(app) {
-  // Models Routes
-  app.route('/api/models').all(modelsPolicy.isAllowed)
-    .get(models.list)
-    .post(models.create);
+var modelPolicy = require('../policies/models.server.policy'),
+    model = require('../controllers/models.server.controller');
 
-  app.route('/api/models/:modelId').all(modelsPolicy.isAllowed)
-    .get(models.read)
-    .put(models.update)
-    .delete(models.delete);
+module.exports = function (app) {
 
-  // Finish by binding the Model middleware
-  app.param('modelId', models.modelByID);
+    // model collection routes
+    app.route('/api/models').all(modelPolicy.isAllowed)
+        .get(model.list)
+        .post(model.create);
+
+    app.route('/api/models/:modelId').all(modelPolicy.isAllowed)
+        .get(model.read)
+        .put(model.update)
+        .delete(model.delete);
+
+    app.route('/api/models/user/:userId').all(modelPolicy.isAllowed)
+        .get(model.listByUserId);
+
 };

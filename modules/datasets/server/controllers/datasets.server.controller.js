@@ -60,14 +60,14 @@ function saveDatasetCopy(user, entry, cb) {
     dataset.save(cb);
 }
 
-function saveFileToS3(filePath, path) {
+function saveFileToS3(filePath, path, done) {
 
     var client = s3.createClient({
-        maxAsyncS3: 20, 
-        s3RetryCount: 3, 
+        maxAsyncS3: 20,
+        s3RetryCount: 3,
         s3RetryDelay: 1000,
-        multipartUploadThreshold: 20971520, 
-        multipartUploadSize: 15728640, 
+        multipartUploadThreshold: 20971520,
+        multipartUploadSize: 15728640,
         s3Options: {
             accessKeyId: 'AKIAI356G25CALROLSGA',
             secretAccessKey: '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'
@@ -76,7 +76,7 @@ function saveFileToS3(filePath, path) {
 
     var params = {
       localFile: './s3-cache/' + filePath,
-     
+
       s3Params: {
         Bucket: 'datasetstl',
         Key: path+filePath,
@@ -91,6 +91,7 @@ function saveFileToS3(filePath, path) {
                 uploader.progressAmount, uploader.progressTotal);
     });
     uploader.on('end', function() {
+      if (typeof done === 'function') done();
       console.log('done uploading');
     });
 
@@ -113,7 +114,7 @@ exports.create = function (req, res) {
             } else {
                 res.json(result);
             }
-        }); 
+        });
     });
 };
 
@@ -264,7 +265,7 @@ exports.merge = function (req, res) {
                                     for (var ii = 0; ii < data_len; ii++) {
 
                                         if(data.rows[ii][req.body.datasets[0].primary] == data2.rows[l][req.body.datasets[1].primary]) {
-                                        
+
                                             flag_inner = true;
 
                                         }
@@ -450,7 +451,7 @@ exports.saveCustom = function (req, res) {
                 json2csv({ data: data.rows, fields: data.columns }, function(err, csv) {
 
                     csv = csv.replace(/"/ig,'');
-                    
+
                     fs.writeFileSync('./s3-cache/' + path + '.csv', csv);
 
                     saveFileToS3(path + '.csv', p1[4]+'/'+p1[5]+'/'+p1[6]+'/');
@@ -555,4 +556,33 @@ exports.datasetByID = function (req, res, next, id) {
         req.dataset = dataset;
         next();
     });
+};
+
+exports.insert = function(req, res) {
+  var selectedDataset = req.body.selectedDataset,
+      p1 = selectedDataset.s3reference.split('/'),
+      path = (new Date().getTime()).toString(16);
+
+  json2csv({ data: req.body.rows, fields: req.body.columns }, function(err, csv) {
+    if (err) {
+      return res.status(400).send({
+          message: errorHandler.getErrorMessage(err)
+      });
+    }
+    fs.writeFileSync('./s3-cache/' + path + '.csv', csv);
+    saveFileToS3(path + '.csv', p1[4]+'/'+p1[5]+'/'+p1[6]+'/', function() {
+      var dataset = new Dataset();
+      dataset.s3reference = 'https://s3.amazonaws.com/datasetstl/'+p1[4]+'/'+p1[5]+'/'+p1[6]+'/'+path+'.csv';
+      dataset.title = req.body.title;
+      dataset.user = req.user._id;
+      dataset.save(function(err, dataset) {
+        if (err) {
+          return res.status(400).send({
+              message: errorHandler.getErrorMessage(err)
+          });
+        }
+        return res.status(201).json(dataset);
+      });
+    });
+  });
 };

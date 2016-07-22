@@ -4,114 +4,105 @@
  * Module dependencies.
  */
 var path = require('path'),
-  mongoose = require('mongoose'),
-  Model = mongoose.model('Model'),
-  errorHandler = require(path.resolve('./modules/core/server/controllers/errors.server.controller')),
-  _ = require('lodash');
+    mongoose = require('mongoose'),
+    errorHandler = require(path.resolve('./modules/core/server/controllers/errors.server.controller')),
+    Model = mongoose.model('Model');
 
 /**
- * Create a Model
+ * List models
+ */
+exports.list = function(req, res) {
+    Model.find({})
+        .sort('-created')
+        .populate('user', 'displayName')
+        .exec(function (err, models) {
+            if (err) {
+                return res.status(400).send({
+                    message: errorHandler.getErrorMessage(err)
+                });
+            } else {
+                res.json(models);
+            }
+    });
+};
+
+/**
+ * List by user id
+ */
+exports.listByUserId = function(req, res) {
+    Model.find({ user: req.params.userId })
+        .limit(100)
+        .sort('-created')
+        .exec(function (err, models) {
+            if (err) {
+                return res.status(400).send({
+                    message: errorHandler.getErrorMessage(err)
+                });
+            } else {
+                res.json(models);
+            }
+        });
+};
+
+/**
+ * Create a model
  */
 exports.create = function(req, res) {
-  var model = new Model(req.body);
-  model.user = req.user;
-
-  model.save(function(err) {
-    if (err) {
-      return res.status(400).send({
-        message: errorHandler.getErrorMessage(err)
-      });
-    } else {
-      res.jsonp(model);
-    }
-  });
+    new Model(req.body.model)
+        .save(function(err, model) {
+            if (err) {
+                res.status(400).send({
+                  message: errorHandler.getErrorMessage(err)
+                });
+            } else {
+                res.json(model);
+            }
+        });
 };
 
 /**
- * Show the current Model
+ * Get model by id
  */
 exports.read = function(req, res) {
-  // convert mongoose document to JSON
-  var model = req.model ? req.model.toJSON() : {};
-
-  // Add a custom field to the Post, for determining if the current User is the "owner".
-  // NOTE: This field is NOT persisted to the database, since it doesn't exist in the Post model.
-  model.isCurrentUserOwner = req.user && model.user && model.user._id.toString() === req.user._id.toString() ? true : false;
-
-  res.jsonp(model);
+    Model.findOne({_id: req.params.modelId})
+        .populate('user', 'displayName')
+        .exec(function(err, model) {
+            if (err) {
+                res.status(400).send({
+                  message: errorHandler.getErrorMessage(err)
+                });
+            } else {
+                res.json(model);
+            }
+        });
 };
 
 /**
- * Update a Model
+ * Update a model by id
  */
 exports.update = function(req, res) {
-  var model = req.model ;
-
-  model = _.extend(model , req.body);
-
-  model.save(function(err) {
-    if (err) {
-      return res.status(400).send({
-        message: errorHandler.getErrorMessage(err)
-      });
-    } else {
-      res.jsonp(model);
-    }
-  });
+    Model.update({_id: req.params.modelId}, req.body.model, function(err, _res) {
+        if (err) {
+            res.status(400).send({
+              message: errorHandler.getErrorMessage(err)
+            });
+        } else {
+            res.json(req.body.model);
+        }
+    });
 };
 
 /**
- * Delete an Model
+ * Delete a model by id
  */
 exports.delete = function(req, res) {
-  var model = req.model ;
-
-  model.remove(function(err) {
-    if (err) {
-      return res.status(400).send({
-        message: errorHandler.getErrorMessage(err)
-      });
-    } else {
-      res.jsonp(model);
-    }
-  });
-};
-
-/**
- * List of Models
- */
-exports.list = function(req, res) { 
-  Model.find().sort('-created').populate('user', 'displayName').exec(function(err, models) {
-    if (err) {
-      return res.status(400).send({
-        message: errorHandler.getErrorMessage(err)
-      });
-    } else {
-      res.jsonp(models);
-    }
-  });
-};
-
-/**
- * Model middleware
- */
-exports.modelByID = function(req, res, next, id) {
-
-  if (!mongoose.Types.ObjectId.isValid(id)) {
-    return res.status(400).send({
-      message: 'Model is invalid'
+    Model.remove({_id: req.params.modelId}, function(err, model) {
+        if (err) {
+            res.status(400).send({
+              message: errorHandler.getErrorMessage(err)
+            });
+        } else {
+            res.json(model);
+        }
     });
-  }
-
-  Model.findById(id).populate('user', 'displayName').exec(function (err, model) {
-    if (err) {
-      return next(err);
-    } else if (!model) {
-      return res.status(404).send({
-        message: 'No Model with that identifier has been found'
-      });
-    }
-    req.model = model;
-    next();
-  });
 };

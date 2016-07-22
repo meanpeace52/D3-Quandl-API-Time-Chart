@@ -1,0 +1,48 @@
+<p>Merge 2 datasets together</p>
+<form>
+  <div class="row">
+
+    <div class="col-md-6">
+      <div class="form-group">
+        <label for="dataset2">2nd dataset</label>
+        <select id="dataset2"
+                class="form-control"
+                ng-model="MergeTaskOptions.options.dataset2"
+                ng-change="MergeTaskOptions.onDatasetChange()"
+                ng-options="dataset.title for dataset in MergeTaskOptions.usersDatasets track by dataset._id">
+        </select>
+      </div>
+      <div class="form-group">
+        <label for="primary">Primary</label>
+        <select id="primary" class="form-control" ng-model="MergeTaskOptions.options.primary">
+          <option></option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label for="mergetype">Merge Type</label>
+        <select id="mergetype" class="form-control" ng-model="MergeTaskOptions.options.mergeType">
+          <option value="innerJoin">Inner Join</option>
+          <option value="outerJoin">Outer Join</option>
+        </select>
+      </div>
+    </div>
+    <div class="col-md-6">
+      <div class="form-group">
+        <label for="dataset1Key">Dataset 1 Key:</label>
+        <select id="dataset1Key"
+                class="form-control"
+                ng-model="MergeTaskOptions.options.dataset1Key"
+                ng-options="key for key in MergeTaskOptions.dataset1Keys track by key">
+        </select>
+      </div>
+      <div class="form-group">
+        <label for="dataset2Key">Dataset 2 Key:</label>
+        <select id="dataset2Key"
+                class="form-control"
+                ng-model="MergeTaskOptions.options.dataset2Key"
+                ng-options="key for key in MergeTaskOptions.dataset2Keys track by key">
+        </select>
+      </div>
+    </div>
+  </div>
+</form>

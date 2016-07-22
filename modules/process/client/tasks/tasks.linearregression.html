@@ -1,0 +1,12 @@
+<p>Linear Regression</p>
+
+<form class="form-inline">
+  <div class="form-group">
+    <label for="yColIndex">Y: </label>
+    <select id="yColIndex"
+            class="form-control"
+            ng-model="LROptions.options.yColIndex"
+            ng-options="idx as column for (idx, column) in LROptions.columns">
+      </select>
+  </div>
+</form>

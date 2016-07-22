@@ -1,0 +1,63 @@
+<div class="modal-header">
+    <h4 class="modal-title">
+        <span ng-if="ProcessModal.type == 'create'">Create</span> <span ng-if="ProcessModal.type != 'create'">Edit</span> Process
+    </h4>
+</div>
+<div class="modal-body">
+    <div class="container-fluid">
+      <div class="row">
+        <div class="col-md-3 task-accordion">
+          <uib-accordion close-others="true">
+            <uib-accordion-group ng-repeat="task in ProcessModal.tasks" is-open="task.status.open" class="color-{{task.color}}">
+              <uib-accordion-heading>
+                {{task.title}} <i class="pull-right glyphicon ng-scope glyphicon-chevron-right" ng-class="{'glyphicon-chevron-down': task.status.open, 'glyphicon-chevron-right': !task.status.open}"></i>
+              </uib-accordion-heading>
+              <ul class="task-list">
+                <li ng-repeat="subtask in task.subtasks"
+                    dnd-draggable="subtask"
+                    dnd-disable-if="ProcessModal.disableDrag(subtask)"
+                    dnd-type="subtask.returnType"
+                    dnd-effect-allowed="copy">
+                    {{subtask.title}}
+                </li>
+              </ul>
+            </uib-accordion-group>
+          </uib-accordion>
+        </div>
+        <div class="col-md-9">
+          <ul
+              class="drop-list"
+              dnd-list="task.subtasks"
+              dnd-dragover="ProcessModal.onDrag(event, index, type)"
+              dnd-drop="ProcessModal.onCopy(event, index, item)"
+              dnd-horizontal-list="true">
+              <li class="dndPlaceholder">
+                <i ng-show="ProcessModal.showPlaceholderArrow" class="fa fa-long-arrow-right arrow"></i>
+              </li>
+              <li ng-repeat="task in ProcessModal.process.tasks" ng-class="{'task-arrow': task.returnType == 'dataset'}">
+                <button class="btn btn-default color-{{task.color}}" ng-click="ProcessModal.onTaskClick(task)">{{task.title}}</button>
+              </li>
+          </ul>
+          <div class="options">
+            <div ui-view></div>
+          </div>
+        </div>
+      </div>
+    </div>
+</div>
+<div class="modal-footer">
+    <div class="col-md-9">
+      <form class="form-horizontal">
+        <div class="form-group">
+            <label for="title" class="col-sm-3 control-label">Process Title:</label>
+            <div class="col-sm-9">
+              <input type="text" ng-model="ProcessModal.process.title" class="form-control" id="title">
+            </div>
+        </div>
+      </form>
+    </div>
+    <div class="col-md-3">
+      <button class="btn btn-primary" ng-click="ProcessModal.ok()">Save</button>
+      <button class="btn btn-danger" ng-click="ProcessModal.cancel()">Cancel</button>
+    </div>
+</div>

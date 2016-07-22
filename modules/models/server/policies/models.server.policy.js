@@ -1,7 +1,7 @@
 'use strict';
 
 /**
- * Module dependencies
+ * Module dependencies.
  */
 var acl = require('acl');
 
@@ -9,64 +9,90 @@ var acl = require('acl');
 acl = new acl(new acl.memoryBackend());
 
 /**
- * Invoke Models Permissions
+ * Invoke datasets Permissions
  */
 exports.invokeRolesPolicies = function () {
-  acl.allow([{
-    roles: ['admin'],
-    allows: [{
-      resources: '/api/models',
-      permissions: '*'
-    }, {
-      resources: '/api/models/:modelId',
-      permissions: '*'
-    }]
-  }, {
-    roles: ['user'],
-    allows: [{
-      resources: '/api/models',
-      permissions: ['get', 'post']
-    }, {
-      resources: '/api/models/:modelId',
-      permissions: ['get']
-    }]
-  }, {
-    roles: ['guest'],
-    allows: [{
-      resources: '/api/models',
-      permissions: ['get']
-    }, {
-      resources: '/api/models/:modelId',
-      permissions: ['get']
-    }]
-  }]);
+    acl.allow([
+        {
+            roles: ['admin'],
+            allows: [
+                {
+                    resources: '/api/models',
+                    permissions: ['get', 'post']
+                },
+                {
+                    resources: '/api/models/:modelId',
+                    permissions: ['get', 'put', 'delete']
+                },
+                {
+                    resources: '/api/models/user/:userId',
+                    permissions: ['get']
+                }
+            ]
+        },
+        {
+            roles: ['user'],
+            allows: [
+                {
+                    resources: '/api/models',
+                    permissions: ['post']
+                },
+                {
+                    resources: '/api/models/:modelId',
+                    permissions: ['get', 'put', 'delete']
+                },
+                {
+                    resources: '/api/models/user/:userId',
+                    permissions: ['get']
+                }
+            ]
+        },
+        {
+            roles: ['guest'],
+            allows: [
+                {
+                    resources: '/api/models',
+                    permissions: ['get']
+                },
+                {
+                    resources: '/api/models/:modelId',
+                    permissions: ['get']
+                },
+                {
+                    resources: '/api/models/user/:userId',
+                    permissions: ['get']
+                }
+            ]
+        }
+    ]);
 };
 
 /**
- * Check If Models Policy Allows
+ * Check If datasets Policy Allows
  */
 exports.isAllowed = function (req, res, next) {
-  var roles = (req.user) ? req.user.roles : ['guest'];
+    var roles = (req.user) ? req.user.roles : ['guest'];
 
-  // If an Model is being processed and the current user created it then allow any manipulation
-  if (req.model && req.user && req.model.user && req.model.user.id === req.user.id) {
-    return next();
-  }
-
-  // Check for user roles
-  acl.areAnyRolesAllowed(roles, req.route.path, req.method.toLowerCase(), function (err, isAllowed) {
-    if (err) {
-      // An authorization error occurred
-      return res.status(500).send('Unexpected authorization error');
-    } else {
-      if (isAllowed) {
-        // Access granted! Invoke next middleware
+    // If a model is being processed and the current user created it then allow any manipulation
+    // TODO: allow admin to manipulate other user's models
+    if (req.body.model && req.user && req.body.model.user && req.body.model.user === req.user._id) {
         return next();
-      } else {
-        return res.status(403).json({
-          message: 'User is not authorized'
-        });
-      }
     }
-  });
+
+    // Check for user roles
+    acl.areAnyRolesAllowed(roles, req.route.path, req.method.toLowerCase(), function (err, isAllowed) {
+        if (err) {
+            // An authorization error occurred.
+            return res.status(500).send('Unexpected authorization error');
+        } else {
+            if (isAllowed) {
+                // Access granted! Invoke next middleware
+                return next();
+            } else {
+                return res.status(403).json({
+                    message: 'User is not authorized'
+                });
+            }
+        }
+    });
 };
