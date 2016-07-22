@@ -1,28 +1,28 @@
 'use strict';
 
-//Articles Create Controller
-angular.module('articles')
-    .controller('ArticlesCreateController',
-        ['$scope', '$state', 'Authentication', 'Articles',
-            function ($scope, $state, Authentication, Articles) {
+//Posts Create Controller
+angular.module('posts')
+    .controller('PostsCreateController',
+        ['$scope', '$state', 'Authentication', 'Posts',
+            function ($scope, $state, Authentication, Posts) {
                 var vm = this;
 
                 vm.authentification = Authentication;
-                vm.article = new Articles();
+                vm.post = new Posts();
 
-                // Create new Article
+                // Create new Post
                 vm.create = function (isValid) {
                     vm.error = null;
 
                     if (!isValid) {
-                        $scope.$broadcast('show-errors-check-validity', 'articleForm');
+                        $scope.$broadcast('show-errors-check-validity', 'postForm');
 
                         return false;
                     }
 
                     // Redirect after save
-                    vm.article.$save(function (response) {
-                        $state.go('articles.detail', { articleId: response._id });
+                    vm.post.$save(function (response) {
+                        $state.go('posts.detail', { postId: response._id });
 
                     }, function (errorResponse) {
                         vm.error = errorResponse.data.message;

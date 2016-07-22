@@ -7,11 +7,12 @@ angular.module('datasets')
             // Add the datasets dropdown item
             Menus.addMenuItem('topbar', {
                 title: 'Datasets',
-                state: 'datasets',
-                type: 'dropdown',
-                roles: ['user']
+                state: 'datasets.list',
+                roles: ['user'],
+                position: 2
             });
 
+/*
             // Add the dropdown list item
             Menus.addSubMenuItem('topbar', 'datasets', {
                 title: 'List datasets',
@@ -24,7 +25,7 @@ angular.module('datasets')
                 state: 'datasets.create',
                 roles: ['user']
             });
-
+*/
             
         }
     ]);

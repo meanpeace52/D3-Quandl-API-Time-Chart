@@ -35,8 +35,8 @@ angular.module(ApplicationConfiguration.applicationModuleName, ApplicationConfig
         $rootScope.$on('$stateChangeStart', function (event, toState, toParams, fromState, fromParams) {
             if (toState.data) {
                 var allowed = false;
-
-                if (toState.data.roles && toState.data.roles.length > 0) {
+                console.log(toState.data, Authentication.user.roles);
+                if (toState.data.roles.length) {
                     toState.data.roles.forEach(function (role) {
                         if (Authentication.user.roles !== undefined && Authentication.user.roles.indexOf(role) !== -1) {
                             allowed = true;
@@ -44,7 +44,11 @@ angular.module(ApplicationConfiguration.applicationModuleName, ApplicationConfig
                         }
                     });
                 }
-
+                
+                else {
+                    allowed = true;
+                }
+                
                 if (!allowed) {
                     event.preventDefault();
                     if (Authentication.user !== undefined && typeof Authentication.user === 'object') {
