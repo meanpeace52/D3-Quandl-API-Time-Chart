@@ -27,9 +27,11 @@ var postSchema = new Schema({
     },
     subject: {
         type: String,
-        default: '',
+        enum: ['finance', 'social science', 'sports'],
         trim: true
     },
+    models: [{type: Schema.ObjectId, ref: 'Models'}],
+    datasets: [{type: Schema.ObjectId, ref: 'Datasets'}],
     attachments: {
         type: Array,
         default: [],
