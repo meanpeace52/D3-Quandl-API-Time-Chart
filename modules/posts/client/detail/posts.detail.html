@@ -1,0 +1,23 @@
+<section>
+    <div class="page-header">
+        <h1>{{postsDetail.post.title}}</h1>
+    </div>
+    <div class="pull-right" ng-show="postsDetail.authentication.user._id == postsDetail.post.user._id">
+        <a class="btn btn-primary" ui-sref="posts.edit({postId: postsDetail.post._id})">
+            <i class="glyphicon glyphicon-edit"></i>
+        </a>
+        <a class="btn btn-primary" ng-click="postsDetail.remove();">
+            <i class="glyphicon glyphicon-trash"></i>
+        </a>
+    </div>
+    <small>
+        <em class="text-muted">
+            Posted on
+            <span>{{postsDetail.post.created | date:'mediumDate'}}</span>
+            by
+            <span ng-if="postsDetail.post.user">{{postsDetail.post.user.displayName}}</span>
+            <span ng-if="!postsDetail.post.user">Deleted User</span>
+        </em>
+    </small>
+    <p class="lead">{{postsDetail.post.content}}</p>
+</section>

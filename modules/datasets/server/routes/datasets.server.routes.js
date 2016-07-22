@@ -23,7 +23,7 @@ module.exports = function (app) {
     app.route('/api/datasets/merge').all(datasetsPolicy.isAllowed)
         .post(datasets.merge);
 
-    // Single article routes
+    // Single post routes
     app.route('/api/datasets/:datasetId').all(datasetsPolicy.isAllowed)
         .get(datasets.read)
         .put(datasets.update)
@@ -37,6 +37,6 @@ module.exports = function (app) {
         .get(datasets.readWithS3);
 
 
-    // Finish by binding the article middleware
+    // Finish by binding the post middleware
     app.param('datasetId', datasets.datasetByID);
 };
