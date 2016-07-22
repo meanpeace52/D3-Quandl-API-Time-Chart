@@ -5,5 +5,7 @@ angular.module('core').controller('HomeController', ['$scope', 'Authentication',
         // This provides Authentication context.
         $scope.authentication = Authentication;
         
+        $scope.subjects = [{title: 'Finance', subject: 'finance'},{title: 'Trending', subject: 'trending'}];
+        
     }
 ]);
