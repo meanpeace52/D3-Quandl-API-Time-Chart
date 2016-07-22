@@ -1,5 +1,5 @@
 <section data-ng-controller="HomeController">
-    
+
     <div data-ng-hide="(authentication.user)">
         <!-- Header -->
         <a name="about"></a>
@@ -35,7 +35,7 @@
 
         <!-- Page Content -->
 
-        <a  name="services"></a>
+        <a name="services"></a>
         <div class="content-section-a">
 
             <div class="container">
@@ -66,7 +66,8 @@
                         <hr class="section-heading-spacer">
                         <div class="clearfix"></div>
                         <h2 class="section-heading">3D Device Mockups<br>by PSDCovers</h2>
-                        <p class="lead">Turn your 2D designs into high quality, 3D product shots in seconds using free Photoshop actions by <a target="_blank" href="http://www.psdcovers.com/">PSDCovers</a>! Visit their website to download some of their awesome, free photoshop actions!</p>
+                        <p class="lead">Turn your 2D designs into high quality, 3D product shots in seconds using free Photoshop actions by <a target="_blank" href="http://www.psdcovers.com/">PSDCovers</a>! Visit their website to download some of their awesome, free
+                            photoshop actions!</p>
                     </div>
                     <div class="col-lg-5 col-sm-pull-6  col-sm-6">
                         <img class="img-responsive" src="modules/core/client/img/dog.png" alt="">
@@ -101,7 +102,7 @@
         </div>
         <!-- /.content-section-a -->
 
-        <a  name="contact"></a>
+        <a name="contact"></a>
         <div class="banner">
 
             <div class="container">
@@ -168,18 +169,29 @@
             <div style="height: 305px">
                 <carousel interval="5000">
                     <slide ng-repeat="slide in carousel.slides" active="slide.active" index="slide.id">
-                      <img ng-src="{{slide.image}}" class="img--home-carousel" style="margin:auto;">
-                      <div class="carousel-caption">
-                        <h4>Slide {{slide.id}}</h4>
-                        <p>{{slide.text}}</p>
-                      </div>
+                        <img ng-src="{{slide.image}}" class="img--home-carousel" style="margin:auto;">
+                        <div class="carousel-caption">
+                            <h4>Slide {{slide.id}}</h4>
+                            <p>{{slide.text}}</p>
+                        </div>
                     </slide>
                 </carousel>
             </div>
         </header>
 
+
         <!-- Page Content -->
         <div is-need-container="toggle">
+            <!-- Posts by Category -->
+            <div class="row">
+                <div class="col-lg-12 text-center">
+                   <ul class="list-inline">
+            <li data-ng-repeat="subject in subjects" data-ng-class="{ 'active': $state.includes(posts[subject])}">
+                <a data-ui-sref="posts.subject({subject: subject.subject})" data-ng-bind="subject.title" data-ui-sref-active="active"></a> 
+            </li>
+        </ul>
+                </div>
+            </div>
 
             <!-- Marketing Icons Section -->
             <div class="row">
@@ -359,5 +371,5 @@
         <br>Enjoy &amp; Keep Us Updated,
         <br>The MEAN.JS Team. -->
     </div>
-    
+
 </section>
