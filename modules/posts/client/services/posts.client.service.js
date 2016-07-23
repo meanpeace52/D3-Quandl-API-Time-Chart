@@ -24,7 +24,7 @@ angular.module('posts').factory('posts', ['$resource', '$http','$state',
         };
         
         posts.search = function (search) {
-            return $http.get('api/posts/' + search, function (success) {
+            return $http.get('api/posts/' + search).then(function (success) {
                 return success;
             }, function(err) {
                 return err;
