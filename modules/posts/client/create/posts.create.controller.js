@@ -2,31 +2,36 @@
 
 //posts Create Controller
 angular.module('posts')
-    .controller('postsCreateController',
-        ['$scope', '$state', 'Authentication', 'Posts',
-            function ($scope, $state, Authentication, Posts) {
-                var vm = this;
+    .controller('postsCreateController', ['$scope', '$state', 'Authentication', 'posts',
+            function ($scope, $state, Authentication, posts) {
 
-                vm.authentification = Authentication;
-                vm.post = new Posts();
+            var vm = this;
 
-                // Create new post
-                vm.create = function (isValid) {
-                    vm.error = null;
+            vm.authentification = Authentication;
 
-                    if (!isValid) {
-                        $scope.$broadcast('show-errors-check-validity', 'postForm');
+            vm.error = null;
 
-                        return false;
-                    }
+            // Create new post
 
-                    // Redirect after save
-                    vm.post.$save(function (response) {
-                        $state.go('posts.detail', { postId: response._id });
+            vm.create = function (isValid) {
 
-                    }, function (errorResponse) {
-                        vm.error = errorResponse.data.message;
-                    });
-                };
+                vm.error = null;
+
+                if (!isValid) {
+                    $scope.$broadcast('show-errors-check-validity', 'postForm');
+
+                    return false;
+                }
+
+                var post = vm.post;
                 
+                posts.create(post).then(function (response) {
+                    $state.go('posts.detail', {
+                        postId: response._id
+                    });
+                }, function (err) {
+                    vm.error = err.message;
+                });
+            };
+
             }]);

@@ -182,14 +182,15 @@
 
         <!-- Page Content -->
         <div is-need-container="toggle">
+
             <!-- Posts by Category -->
             <div class="row">
                 <div class="col-lg-12 text-center">
-                   <ul class="list-inline">
-            <li data-ng-repeat="subject in subjects" data-ng-class="{ 'active': $state.includes(posts[subject])}">
-                <a data-ui-sref="posts.subject({subject: subject.subject})" data-ng-bind="subject.title" data-ui-sref-active="active"></a> 
-            </li>
-        </ul>
+                    <ul class="list-inline">
+                        <li data-ng-repeat="item in menuItems" data-ng-class="{ active: $state.includes(item.state) }">
+                            <a data-ui-sref="{{item.state}}" data-ng-bind="item.title" data-ui-sref-active="active" ></a>
+                        </li>
+                    </ul>
                 </div>
             </div>
 

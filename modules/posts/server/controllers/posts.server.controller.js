@@ -74,10 +74,12 @@ exports.delete = function (req, res) {
  * List of posts
  */
 exports.list = function (req, res) {
+    
     var options = {};
     
-    if (req.params.hasOwnProperty('subject')) {
-        options.subject = req.params.subject;
+    if (req.params.hasOwnProperty('field')) {
+        var field = req.params.field;
+        options[field] = req.params.value;
     }
     
     Post.find(options).sort('-created').populate('user', 'displayName').exec(function (err, posts) {

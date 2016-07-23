@@ -23,6 +23,15 @@
           pageTitle: 'Models List'
         }
       })
+      .state('models.search', {
+        url: '/:field/:value',
+        templateUrl: 'modules/models/client/views/list-models.client.view.html',
+        controller: 'ModelsListController',
+        controllerAs: 'vm',
+        data: {
+          pageTitle: 'Models List'
+        }
+      })
       .state('models.create', {
         url: '/create',
         templateUrl: 'modules/models/client/views/form-model.client.view.html',
@@ -33,7 +42,7 @@
         },
         data: {
           roles: ['user', 'admin'],
-          pageTitle : 'Models Create'
+          pageTitle: 'Models Create'
         }
       })
       .state('models.edit', {
@@ -57,7 +66,7 @@
         resolve: {
           modelResolve: getModel
         },
-        data:{
+        data: {
           pageTitle: 'Model {{ postResolve.name }}'
         }
       });

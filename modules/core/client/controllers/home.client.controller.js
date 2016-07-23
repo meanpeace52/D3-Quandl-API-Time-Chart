@@ -5,7 +5,7 @@ angular.module('core').controller('HomeController', ['$scope', 'Authentication',
         // This provides Authentication context.
         $scope.authentication = Authentication;
         
-        $scope.subjects = [{title: 'Finance', subject: 'finance'},{title: 'Sports', subject: 'sports'},{title: 'Social Science', subject: 'social-science'}];
+        $scope.menuItems = [{title: 'Finance', state: 'posts.search({field: "subject", value: "finance"})'},{title: 'Sports', state: 'posts.search({field: "subject", value: "sports"})'},{title: 'Social Science', state: 'posts.search({field: "subject", value: "social-science"})'}];
         
     }
 ]);

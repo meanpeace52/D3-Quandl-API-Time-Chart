@@ -9,15 +9,14 @@ angular.module('posts')
 
                 vm.authentication = Authentication;
 
-                vm.post = posts.get({
+                vm.post = posts.crud.get({
                     postId: $stateParams.postId
                 });
-
+                
                 vm.update = function () {
 
                     vm.post.$update(function () {
                         $state.go('posts.detail', { postId: vm.post._id });
-
                     }, function (errorResponse) {
                         vm.error = errorResponse.data.message;
                     });

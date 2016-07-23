@@ -17,7 +17,7 @@
         </a>
     </div>
     <div class="alert alert-warning text-center"
-         ng-if="postsList.posts.$resolved && !postsList.posts.length">
+         ng-if="!postsList.posts.length">
         No posts yet, why don't you <a ui-sref="posts.create">create one</a>?
     </div>
 </section>

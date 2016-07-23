@@ -8,17 +8,17 @@ angular.module('posts')
 
             vm.authentication = Authentication;
 
-            var subject = $stateParams.hasOwnProperty('subject');
+            if ($state.current === 'posts.search') {
 
-            if (subject) {
-                posts.subject($stateParams.subject)
-                    .success(function (response) {
-                        vm.posts = response.data;
-                        vm.loadingResults = false;
-                    })
-                    .error(function (error) {
-                        vm.loadingResults = false;
-                    });
+                var options = {};
+                options[$stateParams.field] = $stateParams.value;
+                posts.search(options).then(function (res) {
+                    console.log('res: ', res);
+                    vm.posts = res.data;
+                    vm.loadingResults = false;
+                }, function (err) {
+                    vm.loadingResults = false;
+                });
             }
 
             }]);

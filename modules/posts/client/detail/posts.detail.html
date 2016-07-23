@@ -2,7 +2,7 @@
     <div class="page-header">
         <h1>{{postsDetail.post.title}}</h1>
     </div>
-    <div class="pull-right" ng-show="postsDetail.authentication.user._id == postsDetail.post.user._id">
+    <div class="pull-right" ng-show="postsDetail.authentication.user._id === postsDetail.post.user._id">
         <a class="btn btn-primary" ui-sref="posts.edit({postId: postsDetail.post._id})">
             <i class="glyphicon glyphicon-edit"></i>
         </a>

@@ -18,7 +18,7 @@ angular.module('core').controller('HeaderController', ['$rootScope', '$scope', '
 
         Menus.addMenuItem('topbar', {
             title: 'Finance',
-            state: 'posts.subject({subject: "finance"})',
+            state: 'posts.search({field: "subject", value: "finance"})',
             roles: ['*'],
             position: 1
         });
