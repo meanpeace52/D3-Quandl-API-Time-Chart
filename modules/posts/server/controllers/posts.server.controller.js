@@ -8,6 +8,16 @@ var path = require('path'),
     Post = mongoose.model('post'),
     errorHandler = require(path.resolve('./modules/core/server/controllers/errors.server.controller'));
 
+// trims sensitive paid Post data if user hasn't paid for it
+function trimPostIfPaid(user, post) {
+    if (post.users.indexOf(user._id) !== -1) {
+        delete post.content;
+        delete post.models;
+        delete post.datasets;
+    }
+    return post;
+}
+
 /**
  * Create a post
  */
@@ -20,7 +30,8 @@ exports.create = function (req, res) {
             return res.status(400).send({
                 message: errorHandler.getErrorMessage(err)
             });
-        } else {
+        }
+        else {
             res.json(post);
         }
     });
@@ -30,7 +41,19 @@ exports.create = function (req, res) {
  * Show the current post
  */
 exports.read = function (req, res) {
-    res.json(req.post);
+    Post.findOne({
+            _id: req.params.postId
+        })
+        .populate('user', 'displayName')
+        .exec(function (err, post) {
+            if (err) {
+                res.status(400).send({
+                    message: errorHandler.getErrorMessage(err)
+                });
+            }
+            post = trimPostIfPaid(req.user, post);
+            res.json(post);
+        });
 };
 
 /**
@@ -47,7 +70,8 @@ exports.update = function (req, res) {
             return res.status(400).send({
                 message: errorHandler.getErrorMessage(err)
             });
-        } else {
+        }
+        else {
             res.json(post);
         }
     });
@@ -64,7 +88,8 @@ exports.delete = function (req, res) {
             return res.status(400).send({
                 message: errorHandler.getErrorMessage(err)
             });
-        } else {
+        }
+        else {
             res.json(post);
         }
     });
@@ -74,20 +99,24 @@ exports.delete = function (req, res) {
  * List of posts
  */
 exports.list = function (req, res) {
-    
+
     var options = {};
-    
+
     if (req.params.hasOwnProperty('field')) {
         var field = req.params.field;
         options[field] = req.params.value;
     }
-    
+
     Post.find(options).sort('-created').populate('user', 'displayName').exec(function (err, posts) {
         if (err) {
             return res.status(400).send({
                 message: errorHandler.getErrorMessage(err)
             });
-        } else {
+        }
+        else {
+            posts.forEach(function (post, index, array) {
+                trimPostIfPaid(req.user, post);
+            });
             res.json(posts);
         }
     });
@@ -107,7 +136,8 @@ exports.postByID = function (req, res, next, id) {
     Post.findById(id).populate('user', 'displayName').exec(function (err, post) {
         if (err) {
             return next(err);
-        } else if (!post) {
+        }
+        else if (!post) {
             return res.status(404).send({
                 message: 'No post with that identifier has been found'
             });

@@ -188,9 +188,27 @@
                 <div class="col-lg-12 text-center">
                     <ul class="list-inline">
                         <li data-ng-repeat="item in menuItems" data-ng-class="{ active: $state.includes(item.state) }">
-                            <a data-ui-sref="{{item.state}}" data-ng-bind="item.title" data-ui-sref-active="active" ></a>
+                            <a data-ui-sref="{{item.state}}" data-ng-bind="item.title" data-ui-sref-active="active"></a>
                         </li>
                     </ul>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-lg-12">
+                    <div class="list-group">
+                        <a ng-repeat="post in posts" ui-sref="posts.detail({postId: post._id})" class="list-group-item">
+                            <small class="list-group-item-text">
+                                Posted on
+                                <span>{{post.created | date:'mediumDate'}}</span>
+                                by
+                                <span ng-if="post.user">{{post.user.displayName}}</span>
+                                <span ng-if="!post.user">Deleted User</span>
+                            </small>
+                            <h4 class="list-group-item-heading">{{post.title}}</h4>
+                            <p class="list-group-item-text">{{post.content}}</p>
+                        </a>
+                    </div>
                 </div>
             </div>
 

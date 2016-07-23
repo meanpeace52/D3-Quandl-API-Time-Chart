@@ -41,6 +41,7 @@ var postSchema = new Schema({
         type: Schema.ObjectId,
         ref: 'User'
     },
+    users: [{type: Schema.ObjectId, ref: 'User'}],
     access: {
         type: String,
         enum: ['public', 'paid', 'private'],
