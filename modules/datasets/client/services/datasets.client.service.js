@@ -11,7 +11,8 @@ angular.module('datasets')
                 getDatasetWithS3: getDatasetWithS3,
                 saveCustom: saveCustom,
                 mergeColumns: mergeColumns,
-                insert: insert
+                insert: insert,
+                filter: filter
             };
 
             function crud() {
@@ -23,7 +24,13 @@ angular.module('datasets')
                     }
                 });
             }
-
+            
+            function filter(field, value) {
+                 return $http({
+                    url: 'api/datasets/filter/' + field + '/' + value,
+                    method: 'GET'
+                });
+            }
 
             function search(q) {
                 return $http({

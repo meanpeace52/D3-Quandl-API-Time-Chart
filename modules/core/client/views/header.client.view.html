@@ -12,8 +12,8 @@
         </button> </div>
     <nav class="collapse navbar-collapse" collapse="!isCollapsed" role="navigation">
         <ul class="nav navbar-nav" data-ng-if="menu.shouldRender(authentication.user);">
-            <li data-ng-repeat="item in menu.items | orderBy: 'position'" data-ng-if="item.shouldRender(authentication.user);" data-ng-switch="item.type"  data-ng-class="{ 'active': $state.includes(item.state)}">
-                <a data-ui-sref="{{item.state}}" data-ng-bind="item.title" data-ui-sref-active="active"></a> 
+            <li data-ng-repeat="item in menu.items | orderBy: 'position'" data-ng-if="item.shouldRender(authentication.user);" data-ng-switch="item.type"  data-ui-sref-active="active">
+                <a data-ui-sref="{{item.state}}" data-ng-bind="item.title"></a> 
             </li>
         </ul>
         <ul class="nav navbar-nav navbar-right" data-ng-hide="authentication.user">

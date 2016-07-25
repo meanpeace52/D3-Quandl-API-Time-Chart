@@ -1,0 +1,7 @@
+#post-menu li.active {
+    border-bottom: 2px solid navy;
+}
+
+#post-menu li.active > a {
+    font-weight: bold;
+}

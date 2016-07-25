@@ -10,22 +10,20 @@ angular.module('users').controller('UsersProfilePageController', ['$state', '$sc
         vm.userData = [];
 
         vm.menuItems = [{
-
             title: 'Posts',
-            state: 'users.profilepage({data: item.title, username: item.username})'
+            state: 'users.profilepage({data: "posts", username: UsersProfilePage.user.username})'
                 }, {
             title: 'Models',
-            state: 'users.profilepage({data: item.title, username: item.username})'
+            state: 'users.profilepage({data: "models", username: UsersProfilePage.user.username})'
                 }, {
             title: 'Datasets',
-            state: 'users.profilepage({data: item.title, username: item.username})'
-
+            state: 'users.profilepage({data: "data", username: UsersProfilePage.user.username})'
             }];
-
+            
         vm.userData = function () {
             var data = $stateParams.data||'posts';
             UsersFactory.userData(data, $stateParams.username).then(function (res) {
-                vm.userData = res.data;
+                vm.userData = res;
             });
         };
 

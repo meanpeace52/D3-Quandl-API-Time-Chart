@@ -31,9 +31,9 @@ angular.module('posts').factory('posts', ['$resource', '$http', '$state',
             });
         };
         
-        posts.filter = function (field, value) {
-            var filter = field + '/' + value;
-            return $http.get('api/posts/filter/' + filter).then(function (res) {
+        posts.search = function (field, value) {
+            var search = field + '/' + value;
+            return $http.get('api/posts/search/' + search).then(function (res) {
                 return res.data;
             }, function (err) {
                 return err.data;

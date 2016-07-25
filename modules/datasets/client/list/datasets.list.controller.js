@@ -9,8 +9,8 @@ angular.module('datasets').controller('DatasetsListController', ['$state', '$sta
         vm.loadingResults = false;
 
         vm.filterData = function (field, value) {
-            Datasets.find(field, value).then(function (posts) {
-                vm.posts = posts;
+            Datasets.filter(field, value).then(function (res) {
+                vm.posts = res;
                 vm.loadingResults = false;
             }, function (err) {
                 vm.loadingResults = false;

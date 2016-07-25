@@ -15,7 +15,7 @@ angular.module('posts')
 
             Menus.addMenuItem('topbar', {
                 title: 'Finance',
-                state: 'posts.filter({field: "subject", value: "finance"})',
+                state: 'posts.search({field: "subject", value: "finance"})',
                 roles: ['*'],
                 position: 1
             });

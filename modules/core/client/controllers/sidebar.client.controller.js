@@ -30,7 +30,7 @@ angular.module('core')
 
             Menus.addMenuItem('sidebar', {
               title: 'My Posts',
-              state: 'posts.filter({ field: "username" , value: "' + newVal.username + '"})',
+              state: 'posts.search({ field: "username" , value: "' + newVal.username + '"})',
               faIcon: 'fa-file',
               roles: ['user'],
               position: 1
@@ -39,7 +39,7 @@ angular.module('core')
             // Add the My Data sidebar item
             Menus.addMenuItem('sidebar', {
               title: 'My Data',
-              state: 'users.profilepage({ username: "' + newVal.username + '" })',
+              state: 'users.profilepage({ username: "' + newVal.username + '", data: "posts" })',
               faIcon: 'fa-line-chart',
               roles: ['user'],
               position: 2
