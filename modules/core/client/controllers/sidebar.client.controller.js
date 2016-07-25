@@ -25,12 +25,12 @@ angular.module('core')
           return Authentication.user;
         },
         function (newVal) {
-          if (newVal && newVal.hasOwnProperty('username')) {
+          if (newVal && newVal.hasOwnProperty('_id')) {
             $rootScope.isToggleSideBar = true;
 
             Menus.addMenuItem('sidebar', {
               title: 'My Posts',
-              state: 'posts.search({ field: "username" , value: "' + newVal.username + '"})',
+              state: 'posts.search({ field: "user" , value: "' + newVal._id + '"})',
               faIcon: 'fa-file',
               roles: ['user'],
               position: 1
@@ -47,7 +47,7 @@ angular.module('core')
             
             Menus.addMenuItem('sidebar', {
               title: 'My Models',
-              state: 'models.filter({field: "username" , value: "' + newVal.username + '"})',
+              state: 'models.filter({field: "user" , value: "' + newVal._id + '"})',
               faIcon: 'fa-cogs',
               roles: ['user'],
               position: 3

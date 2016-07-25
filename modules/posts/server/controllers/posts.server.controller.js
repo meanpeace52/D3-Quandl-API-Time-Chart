@@ -102,7 +102,7 @@ exports.list = function (req, res) {
 
     var options;
 
-    if (req.params.hasOwnProperty('field')) {
+    if (req.params.field) {
         options = {};
         options[req.params.field] = req.params.value;
     }
