@@ -1,28 +1,28 @@
 <div class="col-md-12">
-
- <div class="list-group">
-        <div data-ng-repeat="dataset in UsersProfilePage.usersDatasets" class="list-group-item">
-			<small class="list-group-item-text">
+    <div class="page-header">
+        <span class="h1 text-capitalize">{{UsersProfilePage.user.displayName}}</span>
+    </div>
+    <ul class="list-inline">
+        <li data-ng-repeat="item in UsersProfilePage.menuItems" data-ui-sref="item.state" data-ui-sref-active="active" data-ng-bind="item.title"></li>
+    </ul>
+    <ui-view="data"/>
+    <!--
+    <div class="list-group">
+        <div data-ng-repeat="item in UsersProfilePage.userData" class="list-group-item">
+            <small class="list-group-item-text">
 				Title:
-				<span data-ng-bind="dataset.title | date:'medium'"></span>
+				<span data-ng-bind="item.title | date:'medium'"></span>
 				Source:
-				<span data-ng-bind="dataset.source"></span>
+				<span data-ng-bind="item.source"></span>
 			</small>
-			<h4 class="list-group-item-heading" data-ng-bind="dataset.name"></h4>
-
-            <button
-            	class="btn btn-secondary"
-            	data-ng-hide ="UsersProfilePage.isCurrentUser()"
-            	data-ng-click="UsersProfilePage.addToUser(dataset)">
+            <h4 class="list-group-item-heading" data-ng-bind="item.name"></h4>
+            <button class="btn btn-secondary" data-ng-hide="UsersProfilePage.isCurrentUser()" data-ng-click="UsersProfilePage.addToUser(item)">
             	Save to My Lab
             </button>
-            <a
-            	class="btn btn-warning btn-sm"
-            	data-ng-show ="UsersProfilePage.isCurrentUser()"
-            	data-ui-sref="lab.process({data: {dataset: dataset}})">
+            <a class="btn btn-warning btn-sm" data-ng-show="UsersProfilePage.isCurrentUser()" data-ui-sref="lab.process({data: {item: item}})">
             	Edit
             </a>
         </div>
-
     </div>
+    -->
 </div>

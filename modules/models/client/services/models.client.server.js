@@ -1,30 +1,19 @@
 'use strict';
 
 angular.module('models')
-    .factory('Models', ['$http', function($http) {
-      return {
-        getByUser: function(userId) {
-          return $http({
-            url: 'api/models/user/' + userId,
+  .factory('Models', ['$http', function ($http, $resource) {
+    return {
+      
+      filter: function (field, value) {
+        return $http({
+            url: 'api/models/' + field + '/' + value,
             method: 'GET'
           })
-          .then(function(res) {
+          .then(function (res) {
             return res.data;
-          }, function(err) {
+          }, function (err) {
             console.error(err);
           });
-        },
-        create: function(model) {
-          return $http({
-            url: 'api/models',
-            method: 'POST',
-            data: {
-              model: model
-            }
-          })
-          .then(function(res) {
-            return res.data;
-          });
-        }
-      };
+      }
+    };
     }]);

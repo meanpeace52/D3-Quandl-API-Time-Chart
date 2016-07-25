@@ -69,3 +69,18 @@ a:hover .header-profile-image {
     object-fit: cover;
     object-position: center;
 }
+
+.list-inline {
+    display: inline-block;
+    margin-left: 2em;
+}
+
+.list-inline .badge {
+    padding: 0.6em 1em;
+}
+
+/* for posts.create.html */
+.list-inline .glyphicon {
+    cursor: pointer;
+    margin-right: 0.5em;
+}

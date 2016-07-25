@@ -1,23 +1,31 @@
-<section>
-    <div class="page-header">
-        <h1>Posts</h1>
+<section ng-controller="postsListController">
+
+    <div class="page-header" data-ng-class="{'text-center': (postsList.state === 'home')}">
+        <span data-ng-hide="postsList.state === 'home'" class="h1">Posts</span>
+        <ul data-ng-if="postsList.state === 'home'" class="list-inline">
+            <li data-ng-repeat="item in postsList.menuItems" data-ng-class="{ 'active': $state.includes(item)}">
+                <a data-ui-sref="item.state" data-ng-bind="item.title" data-ui-sref-active="active"></a>
+            </li>
+        </ul>
+        <a data-ng-hide="postsList.state === 'home'" data-ui-sref="posts.create" class="h3 pull-right">Create Post</a>
     </div>
-    <div class="list-group">
-        <a ng-repeat="post in postsList.posts" ui-sref="posts.detail({postId: post._id})"
-           class="list-group-item">
-            <small class="list-group-item-text">
+    <section>
+        <div class="list-group">
+            <a data-ng-repeat="post in postsList.posts | limitTo: postsList.postLimit" data-ui-sref="posts.detail({postId: post._id})" class="list-group-item">
+                <small class="list-group-item-text">
                 Posted on
                 <span>{{post.created | date:'mediumDate'}}</span>
                 by
-                <span ng-if="post.user">{{post.user.displayName}}</span>
-                <span ng-if="!post.user">Deleted User</span>
+                <span data-ng-if="post.user">{{post.user.displayName}}</span>
+                <span data-ng-if="!post.user">Deleted User</span>
             </small>
-            <h4 class="list-group-item-heading">{{post.title}}</h4>
-            <p class="list-group-item-text">{{post.content}}</p>
-        </a>
-    </div>
-    <div class="alert alert-warning text-center"
-         ng-if="!postsList.posts.length">
-        No posts yet, why don't you <a ui-sref="posts.create">create one</a>?
-    </div>
+                <h4 class="list-group-item-heading">{{post.title}}</h4>
+                <p class="list-group-item-text">{{post.content}}</p>
+            </a>
+        </div>
+        <div class="alert alert-warning text-center" data-ng-if="!postsList.posts && postsList.state !== 'home'">
+            No posts yet, why don't you <a data-ui-sref="posts.create">create one</a>?
+        </div>
+    </section>
+
 </section>

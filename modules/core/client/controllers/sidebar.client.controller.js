@@ -30,11 +30,12 @@ angular.module('core')
 
             Menus.addMenuItem('sidebar', {
               title: 'My Posts',
-              state: 'posts.search({ field: "username" , value: "' + newVal.username + '"})',
+              state: 'posts.filter({ field: "username" , value: "' + newVal.username + '"})',
               faIcon: 'fa-file',
               roles: ['user'],
               position: 1
             });
+            
             // Add the My Data sidebar item
             Menus.addMenuItem('sidebar', {
               title: 'My Data',
@@ -43,9 +44,10 @@ angular.module('core')
               roles: ['user'],
               position: 2
             });
+            
             Menus.addMenuItem('sidebar', {
               title: 'My Models',
-              state: 'models.search({field: "username" , value: "' + newVal.username + '"})',
+              state: 'models.filter({field: "username" , value: "' + newVal.username + '"})',
               faIcon: 'fa-cogs',
               roles: ['user'],
               position: 3

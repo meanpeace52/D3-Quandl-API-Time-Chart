@@ -16,13 +16,6 @@ angular.module('core').controller('HeaderController', ['$rootScope', '$scope', '
             position: 0
         });
 
-        Menus.addMenuItem('topbar', {
-            title: 'Finance',
-            state: 'posts.search({field: "subject", value: "finance"})',
-            roles: ['*'],
-            position: 1
-        });
-
         // Toggle the menu items
         $scope.isCollapsed = false;
         $scope.toggleCollapsibleMenu = function () {

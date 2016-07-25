@@ -19,6 +19,12 @@ angular.module('datasets')
                     controllerAs: 'DatasetsList',
                     templateUrl: MODULE_PATH + 'list/datasets.list.html'
                 })
+                .state('datasets.filter', {
+                    url: '/:field/:value',
+                    templateUrl: MODULE_PATH + 'list/datasets.list.html',
+                    controller: 'DatasetsListController',
+                    controllerAs: 'DatasetsList'
+                })
                 .state('datasets.create', {
                     url: '/create',
                     controller: 'DatasetsCreateController',
@@ -34,9 +40,15 @@ angular.module('datasets')
                     controllerAs: 'Workbench',
                     templateUrl: MODULE_PATH + 'workbench/datasets.workbench.html',
                     params: {
-						ds1: {squash: true, value: null},
-						ds2: {squash: true, value: null},
-					}
+                        ds1: {
+                            squash: true,
+                            value: null
+                        },
+                        ds2: {
+                            squash: true,
+                            value: null
+                        },
+                    }
                 })
                 .state('datasets.detail', {
                     url: '/:datasetId',

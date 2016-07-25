@@ -4,7 +4,7 @@
 angular.module('posts')
     .run(['Menus', 'Authentication',
         function (Menus, Authentication) {
-            
+
             // Add the posts dropdown item
             Menus.addMenuItem('topbar', {
                 title: 'Posts',
@@ -12,20 +12,16 @@ angular.module('posts')
                 roles: ['user'],
                 position: 3
             });
-/*
-            // Add the dropdown list item
-            Menus.addSubMenuItem('topbar', 'posts', {
-                title: 'List posts',
-                state: 'posts.list'
+
+            Menus.addMenuItem('topbar', {
+                title: 'Finance',
+                state: 'posts.filter({field: "subject", value: "finance"})',
+                roles: ['*'],
+                position: 1
             });
 
-            // Add the dropdown create item
-            Menus.addSubMenuItem('topbar', 'posts', {
-                title: 'Create posts',
-                state: 'posts.create',
-                roles: ['user']
-            });
-            
-*/
         }
-    ]);
+    ]).constant('postOptions', {
+        subjects: ['finance', 'sports', 'social-science'],
+        access: ['public','private','paid']
+    });

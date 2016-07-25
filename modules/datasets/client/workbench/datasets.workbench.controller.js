@@ -141,14 +141,14 @@ angular.module('datasets')
                     }
                 }
 
-                UsersFactory.finduserdatasets(vm.user).then(function (usersDatasets) {
+                UsersFactory.userData('datasets', vm.user).then(function (usersDatasets) {
                 	vm.usersDatasets = usersDatasets;
                 });
                 
 
                 // function checkForEmptyData () {
                         // var testData = [];
-                //     UsersFactory.finduserdatasets(vm.user).then(function (usersDatasets) {
+                //     UsersFactory.userData('datasets',vm.user).then(function (usersDatasets) {
                 //         vm.usersDatasets = usersDatasets;
                 //         var listIds = _.map(usersDatasets, function(elem) {
                 //             return elem._id;

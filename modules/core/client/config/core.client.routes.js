@@ -10,8 +10,18 @@ angular.module('core').config(['$stateProvider', '$urlRouterProvider',
         // Home state routing
         $stateProvider
             .state('home', {
+
                 url: '/',
-                templateUrl: 'modules/core/client/views/home.client.view.html'
+                views: {
+                    '': {
+                        templateUrl: 'modules/core/client/views/home.client.view.html',
+                    },
+                    'posts@home': {
+                        templateUrl: 'modules/posts/client/list/posts.list.html',
+                        controller: 'postsListController',
+                        controllerAs: 'postsList',
+                    }
+                }
             })
             .state('not-found', {
                 url: '/not-found',

@@ -27,11 +27,21 @@ var postSchema = new Schema({
     },
     subject: {
         type: String,
-        enum: ['finance', 'social science', 'sports'],
+        enum: ['','finance', 'social science', 'sports', 'other',],
+        default: '',
         trim: true
     },
-    models: [{type: Schema.ObjectId, ref: 'Models'}],
-    datasets: [{type: Schema.ObjectId, ref: 'Datasets'}],
+    tags: [{
+        type: String,
+    }],
+    models: [{
+        type: Schema.ObjectId,
+        ref: 'Models'
+    }],
+    datasets: [{
+        type: Schema.ObjectId,
+        ref: 'Datasets'
+    }],
     attachments: {
         type: Array,
         default: [],
@@ -41,16 +51,19 @@ var postSchema = new Schema({
         type: Schema.ObjectId,
         ref: 'User'
     },
-    users: [{type: Schema.ObjectId, ref: 'User'}],
+    users: [{
+        type: Schema.ObjectId,
+        ref: 'User'
+    }],
     access: {
         type: String,
         enum: ['public', 'paid', 'private'],
         default: 'public'
     },
     cost: {
-      type: Number,
-      default: 0,
-      trim: false
+        type: Number,
+        default: 0,
+        trim: false
     }
 });
 

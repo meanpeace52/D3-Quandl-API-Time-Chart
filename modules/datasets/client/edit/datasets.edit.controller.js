@@ -16,7 +16,7 @@ angular.module('datasets')
 				vm.rows = [];
 				vm.hasLoadedData = false;
 
-                UsersFactory.finduserdatasets(vm.user).then(function (usersDatasets) {
+                UsersFactory.userData('datasets', vm.user).then(function (usersDatasets) {
                 	vm.usersDatasets = usersDatasets;
                 });
 

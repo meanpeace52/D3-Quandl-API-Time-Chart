@@ -13,11 +13,11 @@
 
     vm.models = ModelsService.query();
 
-    if ($state.current === 'models.search') {
-      var params = $stateParams;
+    if ($state.current === 'models.filter') {
+          var params = $stateParams;
       var field = params.field;
       var value = params.value;
-      ModelsService.findOne({
+      ModelsService.find({
           field: value
         })
         .success(function (response) {

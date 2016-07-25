@@ -33,17 +33,20 @@ exports.update = function (req, res) {
                 return res.status(400).send({
                     message: errorHandler.getErrorMessage(err)
                 });
-            } else {
+            }
+            else {
                 req.login(user, function (err) {
                     if (err) {
                         res.status(400).send(err);
-                    } else {
+                    }
+                    else {
                         res.json(user);
                     }
                 });
             }
         });
-    } else {
+    }
+    else {
         res.status(400).send({
             message: 'User is not signed in'
         });
@@ -64,11 +67,12 @@ exports.changeProfilePicture = function (req, res) {
 
     if (user) {
         upload(req, res, function (uploadError) {
-            if(uploadError) {
+            if (uploadError) {
                 return res.status(400).send({
                     message: 'Error occurred while uploading profile picture'
                 });
-            } else {
+            }
+            else {
                 user.profileImageURL = config.uploads.profileUpload.dest + req.file.filename;
 
                 user.save(function (saveError) {
@@ -76,11 +80,13 @@ exports.changeProfilePicture = function (req, res) {
                         return res.status(400).send({
                             message: errorHandler.getErrorMessage(saveError)
                         });
-                    } else {
+                    }
+                    else {
                         req.login(user, function (err) {
                             if (err) {
                                 res.status(400).send(err);
-                            } else {
+                            }
+                            else {
                                 res.json(user);
                             }
                         });
@@ -88,7 +94,8 @@ exports.changeProfilePicture = function (req, res) {
                 });
             }
         });
-    } else {
+    }
+    else {
         res.status(400).send({
             message: 'User is not signed in'
         });
@@ -104,20 +111,41 @@ exports.me = function (req, res) {
     res.json(req.user || null);
 };
 
-exports.read = function(req, res) {
+exports.read = function (req, res) {
     console.log(req.readUser);
     res.json(req.readUser || null);
 };
 
-
-exports.search = function(req, res) { 
-  var query = {username: new RegExp(req.query.q, 'i')};
-  User.find(query).sort('-created').select({'username':1,'_id':1}).limit(10).exec(function(err, users) {
+exports.profile = function (req, res) {
+    // 
+    User.findOne({username: req.params.username}).populate('posts', 'models', 'Dataset').exec(function (err, profile) {
+        console.log('user profile: ', profile);
         if (err) {
             return res.status(400).send({
                 message: errorHandler.getErrorMessage(err)
             });
-        } else {
+        }
+        else {
+            res.jsonp(profile);
+        }
+    });
+};
+
+
+exports.search = function (req, res) {
+    var query = {
+        username: new RegExp(req.query.q, 'i')
+    };
+    User.find(query).sort('-created').select({
+        'username': 1,
+        '_id': 1
+    }).limit(10).exec(function (err, users) {
+        if (err) {
+            return res.status(400).send({
+                message: errorHandler.getErrorMessage(err)
+            });
+        }
+        else {
             res.jsonp(users);
         }
     });
@@ -126,15 +154,17 @@ exports.search = function(req, res) {
 
 
 /*
-* user middleware - SO
-* */
-exports.userByUsername = function(req, res, next, username) {
-User.findOne({
-    username: username
-}).exec(function(err, user) {
-    if (err) return next(err);
-    if (!user) return next(new Error('Failed to load User ' + username));
-    req.readUser = user;
-    next();
-});
+ * user middleware - SO
+ * */
+exports.userByUsername = function (req, res, next, username) {
+    User.findOne({
+        username: username
+    }).exec(function (err, user) {
+        if (err) return next(err);
+        if (!user) return next(new Error('Failed to load User ' + username));
+        req.readUser = user;
+        next();
+    });
+
+
 };

@@ -3,9 +3,7 @@
     <h1>Models</h1>
   </div>
   <div class="list-group">
-    <a data-ng-repeat="model in vm.models"
-       data-ui-sref="models.view({ modelId: model._id })"
-       class="list-group-item">
+    <a data-ng-repeat="model in vm.models" data-ui-sref="models.view({ modelId: model._id })" class="list-group-item">
       <small class="list-group-item-text">
         Posted on
         <span data-ng-bind="model.created | date:'mediumDate'"></span>

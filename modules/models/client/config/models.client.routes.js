@@ -23,7 +23,7 @@
           pageTitle: 'Models List'
         }
       })
-      .state('models.search', {
+      .state('models.filter', {
         url: '/:field/:value',
         templateUrl: 'modules/models/client/views/list-models.client.view.html',
         controller: 'ModelsListController',

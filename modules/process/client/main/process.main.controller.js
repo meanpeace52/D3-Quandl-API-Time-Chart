@@ -24,7 +24,7 @@ angular.module('process')
           });
 
         function getDatasets() {
-          UsersFactory.finduserdatasets(vm.user)
+          UsersFactory.userData('datasets', vm.user)
             .then(function(datasets) {
               vm.usersDatasets = datasets;
               Process.setUsersDatasets(datasets);

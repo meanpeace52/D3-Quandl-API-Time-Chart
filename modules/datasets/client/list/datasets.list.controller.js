@@ -1,13 +1,27 @@
 'use strict';
 
 //datasets List Controller
-angular.module('datasets').controller('DatasetsListController',
-    ['$state', '$sce', '$modal', 'Authentication', 'Datasets',
-    function ($state, $sce, $modal, Authentication, Datasets) {
+angular.module('datasets').controller('DatasetsListController', ['$state', '$stateParams', '$sce', '$modal', 'Authentication', 'Datasets',
+    function ($state, $stateParams, $sce, $modal, Authentication, Datasets) {
         var vm = this;
 
         vm.authentication = Authentication;
         vm.loadingResults = false;
+
+        vm.filterData = function (field, value) {
+            Datasets.find(field, value).then(function (posts) {
+                vm.posts = posts;
+                vm.loadingResults = false;
+            }, function (err) {
+                vm.loadingResults = false;
+            });
+        };
+
+        vm.state = $state.current.name;
+
+        if (vm.state === 'datasets.filter') {
+            vm.filterData($stateParams.field, $stateParams.value);
+        }
 
         vm.search = function () {
             vm.loadingResults = true;
@@ -40,16 +54,15 @@ angular.module('datasets').controller('DatasetsListController',
                 });
         };
 
-    	vm.showData = function (dataset) {
-    		var modalInstance = $modal.open({
-    			templateUrl: 'modules/datasets/client/detail/datasets.detail.modal.html',
-    			controller: 'DatasetsDetailModalController',
-    			controllerAs: 'DatasetDetailModal',
-    			size: 'md',
-    			resolve: {
-    				viewingDataset: dataset
-    			}
-    		});
-    	};
+        vm.showData = function (dataset) {
+            var modalInstance = $modal.open({
+                templateUrl: 'modules/datasets/client/detail/datasets.detail.modal.html',
+                controller: 'DatasetsDetailModalController',
+                controllerAs: 'DatasetDetailModal',
+                size: 'md',
+                resolve: {
+                    viewingDataset: dataset
+                }
+            });
+        };
 }]);
-

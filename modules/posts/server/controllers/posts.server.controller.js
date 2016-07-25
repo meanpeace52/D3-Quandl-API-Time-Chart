@@ -100,11 +100,11 @@ exports.delete = function (req, res) {
  */
 exports.list = function (req, res) {
 
-    var options = {};
+    var options;
 
     if (req.params.hasOwnProperty('field')) {
-        var field = req.params.field;
-        options[field] = req.params.value;
+        options = {};
+        options[req.params.field] = req.params.value;
     }
 
     Post.find(options).sort('-created').populate('user', 'displayName').exec(function (err, posts) {
@@ -116,8 +116,10 @@ exports.list = function (req, res) {
         else {
             posts.forEach(function (post, index, array) {
                 trimPostIfPaid(req.user, post);
+                if (index === array.length - 1) {
+                    res.json(posts);
+                }
             });
-            res.json(posts);
         }
     });
 };

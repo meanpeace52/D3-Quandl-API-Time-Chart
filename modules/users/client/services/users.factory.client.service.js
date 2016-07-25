@@ -5,9 +5,9 @@ angular.module('users')
         function ($resource, $http) {
 
             return {
-                search: search, 
+                search: search,
                 finduser: finduser,
-                finduserdatasets: finduserdatasets
+                userData: userData
             };
 
             function search(q) {
@@ -28,14 +28,15 @@ angular.module('users')
                 });
             }
 
-            function finduserdatasets(user) {
+            function userData(data, username) {
                 return $http({
-                    url: 'api/datasets/user/' + user.username,
+                    url: 'api/' + data + '/username/' + username,
                     method: 'GET'
                 }).then(function (res) {
                     return res.data;
                 }).catch(function (err) {
-                    console.log('error finding user datasets', err);
-                });   
+                    console.log('error finding user', err);
+                });
             }
+
     }]);
