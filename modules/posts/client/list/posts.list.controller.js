@@ -2,7 +2,7 @@
 
 //posts List Controller
 angular.module('posts')
-    .controller('postsListController', ['$scope', '$stateParams', '$state',
+    .controller('postsListController', ['$scope', '$stateParams', '$state','Authentication','posts',
             function ($scope, $stateParams, $state, Authentication, posts) {
             var vm = this;
 
@@ -30,6 +30,7 @@ angular.module('posts')
                 }
                 vm.posts = [];
                 posts.search(field, value).then(function (posts) {
+                    console.log('posts: ', posts);
                     vm.posts = posts;
                     vm.loadingResults = false;
                 }, function (err) {
