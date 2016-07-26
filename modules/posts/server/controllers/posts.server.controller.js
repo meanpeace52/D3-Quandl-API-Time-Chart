@@ -10,7 +10,8 @@ var path = require('path'),
 
 // trims sensitive paid Post data if user hasn't paid for it
 function trimPostIfPaid(user, post) {
-    if (post.users.indexOf(user._id) !== -1) {
+    
+    if (!user || post.users.indexOf(user._id) !== -1) {
         delete post.content;
         delete post.models;
         delete post.datasets;

@@ -14,7 +14,7 @@
     vm.models = ModelsService.query();
 
     if ($state.current === 'models.filter') {
-          var params = $stateParams;
+      var params = $stateParams;
       var field = params.field;
       var value = params.value;
       ModelsService.find({
