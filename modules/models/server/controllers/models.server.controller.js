@@ -11,7 +11,7 @@ var path = require('path'),
 /**
  * List models
  */
-exports.list = function(req, res) {
+exports.list = function (req, res) {
     Model.find({})
         .sort('-created')
         .populate('user', 'displayName')
@@ -20,17 +20,20 @@ exports.list = function(req, res) {
                 return res.status(400).send({
                     message: errorHandler.getErrorMessage(err)
                 });
-            } else {
+            }
+            else {
                 res.json(models);
             }
-    });
+        });
 };
 
 /**
  * List by user id
  */
-exports.listByUserId = function(req, res) {
-    Model.find({ user: req.params.userId })
+exports.listByUserId = function (req, res) {
+    Model.find({
+            user: req.params.userId
+        }).populate('user')
         .limit(100)
         .sort('-created')
         .exec(function (err, models) {
@@ -38,7 +41,8 @@ exports.listByUserId = function(req, res) {
                 return res.status(400).send({
                     message: errorHandler.getErrorMessage(err)
                 });
-            } else {
+            }
+            else {
                 res.json(models);
             }
         });
@@ -47,31 +51,37 @@ exports.listByUserId = function(req, res) {
 /**
  * Create a model
  */
-exports.create = function(req, res) {
-    new Model(req.body.model)
-        .save(function(err, model) {
-            if (err) {
-                res.status(400).send({
-                  message: errorHandler.getErrorMessage(err)
-                });
-            } else {
-                res.json(model);
-            }
-        });
+exports.create = function (req, res) {
+    var modelFields = req.body;
+    modelFields.user = req.user._id;
+    var model = new Model(req.body);
+    model.save(function (err, model) {
+        if (err) {
+            res.status(400).send({
+                message: errorHandler.getErrorMessage(err)
+            });
+        }
+        else {
+            res.json(model);
+        }
+    });
 };
 
 /**
  * Get model by id
  */
-exports.read = function(req, res) {
-    Model.findOne({_id: req.params.modelId})
+exports.read = function (req, res) {
+    Model.findOne({
+            _id: req.params.modelId
+        })
         .populate('user', 'displayName')
-        .exec(function(err, model) {
+        .exec(function (err, model) {
             if (err) {
                 res.status(400).send({
-                  message: errorHandler.getErrorMessage(err)
+                    message: errorHandler.getErrorMessage(err)
                 });
-            } else {
+            }
+            else {
                 res.json(model);
             }
         });
@@ -80,13 +90,16 @@ exports.read = function(req, res) {
 /**
  * Update a model by id
  */
-exports.update = function(req, res) {
-    Model.update({_id: req.params.modelId}, req.body.model, function(err, _res) {
+exports.update = function (req, res) {
+    Model.update({
+        _id: req.params.modelId
+    }, req.body.model, function (err, _res) {
         if (err) {
             res.status(400).send({
-              message: errorHandler.getErrorMessage(err)
+                message: errorHandler.getErrorMessage(err)
             });
-        } else {
+        }
+        else {
             res.json(req.body.model);
         }
     });
@@ -95,13 +108,16 @@ exports.update = function(req, res) {
 /**
  * Delete a model by id
  */
-exports.delete = function(req, res) {
-    Model.remove({_id: req.params.modelId}, function(err, model) {
+exports.delete = function (req, res) {
+    Model.remove({
+        _id: req.params.modelId
+    }, function (err, model) {
         if (err) {
             res.status(400).send({
-              message: errorHandler.getErrorMessage(err)
+                message: errorHandler.getErrorMessage(err)
             });
-        } else {
+        }
+        else {
             res.json(model);
         }
     });

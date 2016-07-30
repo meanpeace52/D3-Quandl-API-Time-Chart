@@ -4,21 +4,22 @@ angular.module('users').controller('UsersProfilePageController', ['$state', '$sc
     function ($state, $scope, $modal, $http, $location, $stateParams, Users, UsersFactory, Authentication, Datasets) {
         var vm = this;
 
-
         vm.user = Authentication.user;
+        
+        vm.ownership = UsersFactory.ownership();
 
         vm.userData = [];
 
         vm.menuItems = [{
             title: 'Posts',
-            state: 'users.profilepage({data: "posts", username: UsersProfilePage.user.username})'
+            state: 'users.profilepage.posts({field: "user", value: UsersProfilePage.user._id})'
                 }, {
             title: 'Models',
-            state: 'users.profilepage({data: "models", username: UsersProfilePage.user.username})'
+            state: 'users.profilepage.models({field: "user", value: UsersProfilePage.user._id})'
                 }, {
-            title: 'Datasets',
-            state: 'users.profilepage({data: "data", username: UsersProfilePage.user.username})'
-            }];
+            title: 'Data',
+            state: 'users.profilepage.data({field: "user", value: UsersProfilePage.user._id})'
+                }];
             
         vm.userData = function () {
             var data = $stateParams.data||'posts';
@@ -26,11 +27,7 @@ angular.module('users').controller('UsersProfilePageController', ['$state', '$sc
                 vm.userData = res;
             });
         };
-
-        vm.isCurrentUser = function () {
-            return ($stateParams.username === vm.user.username);
-        };
-
+        
         vm.addToUser = function (dataset) {
             Datasets.addToUserApiCall(dataset)
                 .then(function (data) {

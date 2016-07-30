@@ -98,15 +98,26 @@ angular.module('users').config(['$stateProvider',
                 templateUrl: MODULE_PATH + 'views/list/users.list.client.view.html'
             })
             .state('users.profilepage', {
-                url: '/:username/:data',
-                params: {
-                    data: {
-                        squash: true
-                    }
-                },
+                url: '/:username',
                 controller: 'UsersProfilePageController',
                 controllerAs: 'UsersProfilePage',
                 templateUrl: MODULE_PATH + 'views/profilepage/users.profilepage.client.view.html'
+            }).state('users.profilepage.posts', {
+                url: '/posts/:field/:value',
+                controller: 'postsListController',
+                controllerAs: 'postsList',
+                templateUrl: 'modules/posts/client/list/posts.list.html'
+            }).state('users.profilepage.models', {
+                url: '/models/:field/:value',
+                controller: 'ModelsListController',
+                controllerAs: 'vm',
+                templateUrl: 'modules/models/client/views/list-models.client.view.html'
+            }).state('users.profilepage.data', {
+                url: '/data/:field/:value',
+                controller: 'DatasetsListController',
+                controllerAs: 'DatasetsList',
+                templateUrl: 'modules/datasets/client/list/datasets.list.html'
             });
+            
     }
 ]);

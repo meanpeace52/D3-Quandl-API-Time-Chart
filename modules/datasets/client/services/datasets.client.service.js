@@ -6,13 +6,14 @@ angular.module('datasets')
 
             return {
                 crud: crud(),
+                user: user,
                 search: search,
+                filter: filter,
                 addToUserApiCall: addToUserApiCall,
                 getDatasetWithS3: getDatasetWithS3,
                 saveCustom: saveCustom,
                 mergeColumns: mergeColumns,
-                insert: insert,
-                filter: filter
+                insert: insert
             };
 
             function crud() {
@@ -25,8 +26,15 @@ angular.module('datasets')
                 });
             }
             
-            function filter(field, value) {
+            function user(username) {
                  return $http({
+                    url: 'api/datasets/user/' + username,
+                    method: 'GET'
+                });   
+            }
+
+            function filter(field, value) {
+                return $http({
                     url: 'api/datasets/filter/' + field + '/' + value,
                     method: 'GET'
                 });
@@ -53,12 +61,12 @@ angular.module('datasets')
             }
 
             function getDatasetWithS3(datasetId) {
-            	return $http({
-            		url: 'api/datasets/' + datasetId + '/withs3',
-            		method: 'GET'
-            	}).then(function(res) {
+                return $http({
+                    url: 'api/datasets/' + datasetId + '/withs3',
+                    method: 'GET'
+                }).then(function (res) {
                     return res.data;
-				}, function (err) {
+                }, function (err) {
                     console.error(err);
                 });
             }
@@ -68,33 +76,33 @@ angular.module('datasets')
                     url: '/api/datasets/saveCustom',
                     data: dataset,
                     method: 'POST'
-                }).then(function(res) {
+                }).then(function (res) {
                     return res.data;
                 }, function (err) {
                     console.log(err);
                 });
             }
 
-            function mergeColumns (data) {
+            function mergeColumns(data) {
                 return $http({
                     url: '/api/datasets/merge',
                     data: data,
                     method: 'POST'
-                }).then(function(res) {
+                }).then(function (res) {
                     return res.data;
                 }, function (err) {
                     console.error(err);
                 });
             }
 
-            function insert (data) {
-              return $http({
-                url: '/api/datasets/insert',
-                data: data,
-                method: 'POST'
-              }).then(function(res) {
-                return res.data;
-              });
+            function insert(data) {
+                return $http({
+                    url: '/api/datasets/insert',
+                    data: data,
+                    method: 'POST'
+                }).then(function (res) {
+                    return res.data;
+                });
             }
         }
     ]);

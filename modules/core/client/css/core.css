@@ -82,5 +82,5 @@ a:hover .header-profile-image {
 /* for posts.create.html */
 .list-inline .glyphicon {
     cursor: pointer;
-    margin-right: 0.5em;
+    margin: 0 0.5em;
 }

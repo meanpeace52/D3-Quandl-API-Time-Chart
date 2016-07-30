@@ -6,10 +6,10 @@
     <form name="vm.form.modelForm" class="form-horizontal" ng-submit="vm.save(vm.form.modelForm.$valid)" novalidate>
       <fieldset>
         <div class="form-group" show-errors>
-          <label class="control-label" for="name">Name</label>
-          <input name="name" type="text" ng-model="vm.model.name" id="name" class="form-control" placeholder="Name" required>
-          <div ng-messages="vm.form.modelForm.name.$error" role="alert">
-            <p class="help-block error-text" ng-message="required">Model name is required.</p>
+          <label class="control-label" for="title">Title</label>
+          <input name="title" type="text" ng-model="vm.model.title" id="title" class="form-control" placeholder="title" required>
+          <div ng-messages="vm.form.modelForm.title.$error" role="alert">
+            <p class="help-block error-text" ng-message="required">Model title is required.</p>
           </div>
         </div>
         <div class="form-group">

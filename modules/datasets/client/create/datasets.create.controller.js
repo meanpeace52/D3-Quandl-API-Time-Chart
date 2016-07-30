@@ -1,14 +1,13 @@
 'use strict';
 
 //Posts Create Controller
-angular.module('posts')
-    .controller('PostsCreateController',
-        ['$scope', '$state', 'Authentication', 'Posts',
-            function ($scope, $state, Authentication, Posts) {
+angular.module('datasets')
+    .controller('DatasetsCreateController',
+        ['$scope', '$state', 'Authentication', 'Datasets',
+            function ($scope, $state, Authentication, Datasets) {
                 var vm = this;
 
                 vm.authentification = Authentication;
-                vm.post = new Posts();
 
                 // Create new Post
                 vm.create = function (isValid) {
@@ -21,8 +20,8 @@ angular.module('posts')
                     }
 
                     // Redirect after save
-                    vm.post.$save(function (response) {
-                        $state.go('posts.detail', { postId: response._id });
+                    vm.dataset.$save(function (response) {
+                        $state.go('datasets.detail', { datasetId: response._id });
 
                     }, function (errorResponse) {
                         vm.error = errorResponse.data.message;

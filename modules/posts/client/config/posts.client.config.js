@@ -22,6 +22,6 @@ angular.module('posts')
 
         }
     ]).constant('postOptions', {
-        subjects: ['finance', 'sports', 'social-science'],
+        subjects: ['finance', 'sports', 'social science'],
         access: ['public','private','paid']
     });

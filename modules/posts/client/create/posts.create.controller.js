@@ -15,7 +15,7 @@ angular.module('posts')
 
             // Create new post
 
-            vm.models = ['test'];
+            vm.post = {};
 
             vm.create = function (isValid) {
 
@@ -26,7 +26,7 @@ angular.module('posts')
 
                     return false;
                 }
-
+                console.log('vm.post: ', vm.post);
                 posts.create(vm.post).then(function (response) {
                     $state.go('posts.detail', {
                         postId: response._id
@@ -38,61 +38,114 @@ angular.module('posts')
 
             vm.modal = function (data) {
 
-                var options;
+                if (!vm.post.hasOwnProperty(data)) {
+                    vm.post[data] = [];
+                }
+
+                // array of IDS for model/datasets already selected from modal
+                var selectedData = vm.post[data].map(function (data) {
+                    return data._id;
+                });
+
+                var controller = function ($scope, $modalInstance, Models, Datasets, Authentication) {
+
+                    var vm = this;
+
+                    vm.modal = true; // disables/enables modal features to reuse list view for models/datasets
+
+                    //disables item selection if already selected
+                    vm.selectedData = selectedData;
+                    
+                    vm.ok = function (data) {
+                        //passes info back to parent controller
+                        $modalInstance.close(data);
+                    };
+
+                    vm.cancel = function () {
+                        $modalInstance.dismiss('cancel');
+                    };
+                    
+                    if (data === 'models') {
+
+                        Models.filter('user', Authentication.user._id)
+                            .then(function (res) {
+                                    vm.loadingResults = false;
+                                    vm.models = res.data;
+                                },
+                                function (error) {
+                                    vm.loadingResults = false;
+                                });
+                    }
+                    else if (data === 'datasets') {
+
+                        Datasets.user(Authentication.user.username)
+                            .then(function (res) {
+                                    vm.list = res.data;
+                                    vm.loadingResults = false;
+                                },
+                                function (error) {
+                                    vm.loadingResults = false;
+                                });
+                    }
+                };
+
+                var options = {
+                    controller: controller
+                };
 
                 if (data === 'models') {
-                    options = {
-                        templateUrl: 'modules/models/client/views/list-models.client.view.html',
-                        controller: 'ModelsListController',
-                        controllerAs: 'vm',
-                        resolve: {
-                            modalState: function () {
-                                vm.modalState = 'models.search({username: vm.authentification.user._id}';
-                            }
-                        }
-                    };
+                    options.templateUrl = 'modules/models/client/views/list-models.client.view.html';
+                    options.controllerAs = 'vm';
                 }
 
                 else if (data === 'datasets') {
-                    options = {
-                        templateUrl: 'modules/datasets/client/list/datasets.list.html',
-                        controller: 'DatasetsListController',
-                        controllerAs: 'DataSetsList',
-                        resolve: {
-                            modalState: function () {
-                                vm.modalState = 'datasets.list({field: "username", value: vm.authentification.user._id})';
-                            }
-                        }
-                    };
+                    options.templateUrl = 'modules/datasets/client/list/datasets.list.html';
+                    options.controllerAs = 'DatasetsList';
                 }
 
-                $uibModal.open(options).result.then(function (res) {
-                    vm.post[data].push(data);
+                $uibModal.open(options).result.then(function (selection) {
+                    vm.post[data].push(selection);
                 });
 
             };
 
-            // Create file uploader instance
-            vm.uploader = new FileUploader({
-                url: 'api/user/files',
+            vm.pdfs = [];
+
+            // IMPORTANT : fileuploader must be kept on $scope because of bug with controllerAs
+            $scope.uploader = new FileUploader({
+                url: 'api/users/files'
             });
 
             // Called after the user selected a new picture file
-            vm.uploader.onAfterAddingFile = function (fileItem) {
+            $scope.uploader.onAfterAddingFile = function (fileItem) {
                 if ($window.FileReader) {
                     var fileReader = new FileReader();
                     fileReader.readAsDataURL(fileItem._file);
-
-                    fileReader.onload = function (fileReaderEvent) {
+                    fileReader.onload = function (event) {
                         $timeout(function () {
-                            vm.imageURL = fileReaderEvent.target.result;
+                            var pdfData = {
+                                name: fileItem.file.name,
+                                file: event.target.result
+                            };
+                            $scope.upload(pdfData);
                         }, 0);
                     };
                 }
             };
 
+            $scope.upload = function (file) {
+                // Clear messages
+                vm.success = vm.error = null;
+
+                // Start upload
+                $scope.uploader.uploadAll();
+
+                vm.pdfs.push(file);
+
+            };
+
             // Called after the user has successfully uploaded a new picture
-            vm.uploader.onSuccessItem = function (fileItem, response, status, headers) {
+            $scope.uploader.onSuccessItem = function (fileItem, response, status, headers) {
                 // Show success message
                 vm.success = true;
 
@@ -100,25 +153,18 @@ angular.module('posts')
                 vm.cancelUpload();
             };
 
-            vm.uploader.onErrorItem = function (fileItem, response, status, headers) {
+            $scope.uploader.onErrorItem = function (fileItem, response, status, headers) {
                 // Clear upload buttons
-                vm.cancelUpload();
+                $scope.cancelUpload();
 
                 // Show error message
                 vm.error = response.message;
             };
 
-            vm.upload = function () {
-                // Clear messages
-                vm.success = vm.error = null;
-
-                // Start upload
-                vm.uploader.uploadAll();
-            };
 
             // Cancel the upload process
-            vm.cancelUpload = function () {
-                vm.uploader.clearQueue();
+            $scope.cancelUpload = function () {
+                $scope.uploader.clearQueue();
             };
 
-            }]);
+                }]);

@@ -67,7 +67,7 @@
           modelResolve: getModel
         },
         data: {
-          pageTitle: 'Model {{ postResolve.name }}'
+          pageTitle: 'Model {{ modelResolve.name }}'
         }
       });
   }

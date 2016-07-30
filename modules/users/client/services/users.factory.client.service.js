@@ -1,13 +1,14 @@
 'use strict';
 
 angular.module('users')
-    .factory('UsersFactory', ['$resource', '$http',
-        function ($resource, $http) {
+    .factory('UsersFactory', ['$resource', '$http', '$stateParams', 'Authentication',
+        function ($resource, $http, $stateParams, Authentication) {
 
             return {
                 search: search,
                 finduser: finduser,
-                userData: userData
+                userData: userData,
+                ownership: ownership
             };
 
             function search(q) {
@@ -37,6 +38,19 @@ angular.module('users')
                 }).catch(function (err) {
                     console.log('error finding user', err);
                 });
+            }
+
+            function ownership() {
+                if ($stateParams.field === 'user') {
+                    if ($stateParams.value == Authentication.user._id) {
+                        return true;
+                    }
+                    else {
+                        return false;
+                    }
+                } else {
+                    return false;
+                }
             }
 
     }]);

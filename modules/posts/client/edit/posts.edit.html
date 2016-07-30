@@ -1,35 +1,115 @@
 <section>
     <div class="page-header">
-        <h1>Edit Post</h1>
+        <span class="h1">Edit Post</span>
+        <span>
+        <span data-ng-if="postsEdit.post.access === 'paid'" class="pull-right glyphicon glyphicon-usd" title="For Sale"></span>
+        <span data-ng-if="postsEdit.pdfs.length" class="pull-right glyphicon glyphicon-file" title="PDFs attached"></span>
+        <span data-ng-if="postsEdit.post.datasets.length" class="pull-right glyphicon glyphicon-list" title="Datasets Attached"></span>
+        <span data-ng-if="postsEdit.post.models.length" class="pull-right glyphicon glyphicon-stats" title="Models Attached"></span>
+        </span>
     </div>
     <div class="col-md-12">
-        <form name="postForm" class="form-horizontal"
-              ng-submit="postsEdit.update(postForm.$valid)" novalidate>
+        <form name="postCreate" class="form-horizontal" ng-submit="postsEdit.update(postCreate.$valid)" novalidate>
             <fieldset>
-                <div class="form-group" show-errors>
-                    <label for="title">Title</label>
-                    <input name="title" type="text"
-                           ng-model="postsEdit.post.title" id="title"
-                           class="form-control"
-                           placeholder="Title" required>
-                    <div ng-messages="postForm.title.$error" role="alert">
-                        <p class="help-block error-text" ng-message="required">Post title is required.</p>
+                <div class="form-group">
+                    <label for="subject-dropdown">Subject</label>
+                    <div class="btn-group" dropdown>
+                        <button id="subject-dropdown" class="btn btn-default text-capitalize" type="button" dropdown-toggle>
+                                  {{postsEdit.post.subject||'select'}} <span class="caret"></span>
+                        </button>
+                        <ul class="dropdown-menu" role="menu" aria-labelledby="subject-dropdown">
+                            <li role="menuitem" ng-repeat="subject in postsEdit.postOptions.subjects">
+                                <a href="#" data-ng-click="postsEdit.post.subject=subject" class="text-capitalize">{{subject}}</a>
+                            </li>
+                        </ul>
+                    </div>
+                    <label for="access-dropdown">Access</label>
+                    <div class="btn-group" dropdown>
+                        <button id="access-dropdown" class="btn btn-default text-capitalize" type="button" dropdown-toggle>
+                                  {{postsEdit.post.access||'select'}} <span class="caret"></span>
+                        </button>
+                        <ul class="dropdown-menu" role="menu" aria-labelledby="access-dropdown">
+                            <li role="menuitem" ng-repeat="access in postsEdit.postOptions.access">
+                                <a href="#" data-ng-click="postsEdit.post.access=access" class="text-capitalize">{{access}}</a>
+                            </li>
+                        </ul>
                     </div>
                 </div>
                 <div class="form-group">
-                    <label for="content">Content</label>
-                    <textarea name="content"
-                              ng-model="postsEdit.post.content" id="content" class="form-control"
-                              cols="30"
-                              rows="10" placeholder="Content"></textarea>
+                    <label for="model-list">Models</label>
+                    <button data-ng-click="postsEdit.modal('models')" class="btn btn-default text-capitalize" type="button" dropdown-toggle>
+                        Add Model
+                    </button>
+                    <ul data-ng-if="postsEdit.post.models" class="list-inline">
+                        <li data-ng-repeat="model in postsEdit.post.models track by $index" class="badge text-capitalize">
+                            <span data-ng-click="postsEdit.post.models.splice($index, 1)" class="glyphicon glyphicon-remove" href="#"></span>
+                            <a href="#" class="h5">{{model.title}}</a>
+                        </li>
+                    </ul>
                 </div>
                 <div class="form-group">
-                    <input type="submit" value="Update" class="btn btn-default">
+                    <label for="dataset-list">Datasets</label>
+                    <button data-ng-click="postsEdit.modal('datasets')" class="btn btn-default text-capitalize" type="button" dropdown-toggle>
+                        Add Datasets
+                    </button>
+                    <ul data-ng-if="postsEdit.post.datasets" class="list-inline">
+                        <li data-ng-repeat="dataset in postsEdit.datasets track by $index" class="badge text-capitalize">
+                            <span data-ng-click="postsEdit.datasets.splice($index, 1)" class="glyphicon glyphicon-remove" href="#"></span>
+                            <a href="#" class="h5">{{dataset.title}}</a>
+                        </li>
+                    </ul>
+                </div>
+                <div class="form-group">
+                    <span ng-hide="postCreate.uploader.queue.length">
+                        <span class="btn btn-default btn-file">
+                          Add PDF 
+                          <input type="file" nv-file-select uploader="uploader" multiple="multiple"/>
+                         </span>
+                    </span>
+                    <span ng-show="postsEdit.uploader.queue.length">
+                         <span class="btn btn-default btn-file">
+                          Upload files
+                          </span>
+                    </span>
+
+                    <ul class="list-inline">
+                        <li ng-repeat="file in postsEdit.pdfs track by $index" class="badge">
+                            <span class="glyphicon glyphicon-file"></span> {{file.name}}
+                            <span ng-click="postsEdit.pdfs.splice($index,1)" class="glyphicon glyphicon-remove"></span>
+                        </li>
+                    </ul>
+                </div>
+                <div class="text-center form-group" ng-show="postCreate.uploader.queue.length">
+                    <button class="btn btn-primary" ng-click="postCreate.upload();">Upload</button>
+                    <button class="btn btn-default" ng-click="postCreate.cancelUpload();">Cancel</button>
+                </div>
+                <div ng-show="success" class="text-center text-success">
+                    <strong>File uploaded sucessfully</strong>
+                </div>
+                <div ng-show="error" class="text-center text-danger">
+                    <strong ng-bind="error"></strong>
+                </div>
+                <div class="form-group" show-errors>
+                    <label for="title">Title</label>
+                    <input name="title" type="text" ng-model="postsEdit.post.title" id="title" class="form-control" placeholder="Title" required>
+                    <div ng-if="postCreate.title.$error && postCreate.title.$dirty" ng-messages="postCreate.title.$error" role="alert">
+                        <p class="help-block error-text" ng-message="required">A post title is required.</p>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="content">Content</label>
+                    <textarea name="content" ng-model="postsEdit.post.content" id="content" class="form-control" cols="30" rows="10" placeholder="Content"></textarea>
+                </div>
+                <div class="form-group">
+                    <input type="submit" class="btn btn-default">
                 </div>
                 <div ng-show="postsEdit.error" class="text-danger">
                     <strong>{{postsEdit.error}}</strong>
                 </div>
+
             </fieldset>
         </form>
     </div>
 </section>
+

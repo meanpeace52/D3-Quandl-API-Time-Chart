@@ -1,7 +1,20 @@
-#post-menu li.active {
+li a:visited {
+    text-decoration: none;
+}
+
+li.active {
     border-bottom: 2px solid navy;
 }
 
-#post-menu li.active > a {
+li.active > a {
     font-weight: bold;
+}
+
+.badge {
+    margin: 0.5em;
+}
+
+.page-header .glyphicon {
+    margin-right: 1em;
+    margin-left: 2em;
 }

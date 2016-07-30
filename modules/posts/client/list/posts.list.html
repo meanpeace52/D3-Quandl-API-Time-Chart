@@ -1,31 +1,34 @@
 <section ng-controller="postsListController">
-    <div class="page-header" data-ng-class="{'text-center': (postsList.state === 'home')}">
-        
-        <span data-ng-hide="postsList.state === 'home'" class="h1">Posts</span>
-        
-        <ul id="post-menu" data-ng-if="postsList.state === 'home'" class="list-inline">
-            <li data-ng-repeat="item in postsList.menuItems" data-ui-sref-active="active" data-ng-class="{active: item === postsList.subject}">
-                <a href="" data-ng-click="postsList.search('subject', item)" data-ng-bind="item" class="text-capitalize"></a>
-            </li>
-        </ul>
-        <a data-ng-hide="postsList.state === 'home'" data-ui-sref="posts.create" class="h3 pull-right">Create Post</a>
-        
+    <div class="page-header">
+        <div class="row">
+            <div class="col-md-12 text-center">
+                <span data-ng-hide="postsList.state === 'home'" class="h1 pull-left">Posts</span>
+                <ul data-ng-if="postsList.menuItems && postsList.state !== 'posts.search'" id="post-menu" class="list-inline">
+                    <li data-ng-repeat="item in postsList.menuItems" data-ui-sref-active="active" data-ng-class="{active: item === postsList.value}">
+                        <a href="" data-ng-click="postsList.getPosts(postsList.field, item)" data-ng-bind="item" class="text-capitalize"></a>
+                    </li>
+                </ul>
+                <a data-ng-if="postsList.ownership" data-ui-sref="posts.create" class="h3 pull-right">Create Post</a>
+            </div>
+        </div>
     </div>
-    
-    <section>
-        <div class="list-group">
-            <a data-ng-repeat="post in postsList.posts | limitTo: postsList.postLimit" data-ui-sref="posts.detail({postId: post._id})" class="list-group-item">
-                <small class="list-group-item-text">
+    <div class="list-group">
+        <a data-ng-repeat="post in postsList.posts | limitTo: postsList.postLimit" data-ui-sref="posts.detail({postId: post._id})" class="list-group-item">
+            <small class="list-group-item-text">
                 Posted on
                 <span>{{post.created | date:'mediumDate'}}</span>
                 by
-                <span data-ng-if="post.user">{{post.user.displayName}}</span>
+                <span data-ng-if="post.user"><span class="capitalize">{{post.user.displayName}}</span> in <span class="capitalize">{{post.subject}}</span></span>
                 <span data-ng-if="!post.user">Deleted User</span>
             </small>
-                <h4 class="list-group-item-heading">{{post.title}}</h4>
-                <p class="list-group-item-text">{{post.content}}</p>
-            </a>
-        </div>
-    </section>
+            <h4 class="list-group-item-heading">{{post.title}}
+             <span data-ng-if="post.access === 'paid'" class="pull-right glyphicon glyphicon-usd" title="For Sale"></span>
+        <span data-ng-if="post.pdfs.length" class="pull-right glyphicon glyphicon-file" title="PDFs attached"></span>
+        <span data-ng-if="post.datasets.length" class="pull-right glyphicon glyphicon-list" title="Datasets Attached"></span>
+        <span data-ng-if="post.models.length" class="pull-right glyphicon glyphicon-stats" title="Models Attached"></span>
+            </h4>
+            <p class="list-group-item-text">{{post.content}}</p>
+        </a>
+    </div>
 
 </section>

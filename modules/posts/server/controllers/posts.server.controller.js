@@ -22,10 +22,13 @@ function trimPostIfPaid(user, post) {
 /**
  * Create a post
  */
+ 
 exports.create = function (req, res) {
     var post = new Post(req.body);
-    post.user = req.user;
-
+    post.user = req.user._id;
+    if (req.body.files) {
+        
+    }
     post.save(function (err) {
         if (err) {
             return res.status(400).send({

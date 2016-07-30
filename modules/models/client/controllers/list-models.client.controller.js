@@ -5,28 +5,28 @@
     .module('models')
     .controller('ModelsListController', ModelsListController);
 
-  ModelsListController.$inject = ['ModelsService', '$state', '$stateParams'];
+  ModelsListController.$inject = ['$state', '$stateParams','Models','ModelsService', 'UsersFactory'];
 
-  function ModelsListController(ModelsService, $state, $stateParams) {
+  function ModelsListController($state, $stateParams, Models, ModelsService, UsersFactory) {
 
     var vm = this;
 
     vm.models = ModelsService.query();
-
+    
+    vm.ownership = UsersFactory.ownership();
+    
     if ($state.current === 'models.filter') {
-      var params = $stateParams;
-      var field = params.field;
-      var value = params.value;
-      ModelsService.find({
-          field: value
-        })
-        .success(function (response) {
-          vm.models = response.data;
+      var field = $stateParams.field;
+      var value = $stateParams.value;
+      vm.loadingResults = true;
+      Models.filter(field, value)
+        .then(function (models) {
+          vm.models = models;
           vm.loadingResults = false;
-        })
-        .error(function (error) {
+        }, function (error) {
           vm.loadingResults = false;
         });
     }
+    
   }
 })();

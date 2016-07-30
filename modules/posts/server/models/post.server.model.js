@@ -42,11 +42,6 @@ var postSchema = new Schema({
         type: Schema.ObjectId,
         ref: 'Datasets'
     }],
-    attachments: {
-        type: Array,
-        default: [],
-        trim: false
-    },
     user: {
         type: Schema.ObjectId,
         ref: 'User'
@@ -55,6 +50,11 @@ var postSchema = new Schema({
         type: Schema.ObjectId,
         ref: 'User'
     }],
+    attachments: {
+        type: Array,
+        default: [],
+        trim: false
+    },
     access: {
         type: String,
         enum: ['public', 'paid', 'private'],

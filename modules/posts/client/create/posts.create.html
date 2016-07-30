@@ -1,9 +1,15 @@
 <section>
     <div class="page-header">
-        <h1>New Post</h1>
+        <span class="h1">New Post</span>
+        <span>
+        <span data-ng-if="postsCreate.post.access === 'paid'" class="pull-right glyphicon glyphicon-usd" title="For Sale"></span>
+        <span data-ng-if="postsCreate.pdfs.length" class="pull-right glyphicon glyphicon-file" title="PDFs attached"></span>
+        <span data-ng-if="postsCreate.post.datasets.length" class="pull-right glyphicon glyphicon-list" title="Datasets Attached"></span>
+        <span data-ng-if="postsCreate.post.models.length" class="pull-right glyphicon glyphicon-stats" title="Models Attached"></span>
+        </span>
     </div>
     <div class="col-md-12">
-        <form name="postForm" class="form-horizontal" ng-submit="postsCreate.create(postForm.$valid)" novalidate>
+        <form name="postCreate" class="form-horizontal" ng-submit="postsCreate.create(postCreate.$valid)" novalidate>
             <fieldset>
                 <div class="form-group">
                     <label for="subject-dropdown">Subject</label>
@@ -35,9 +41,9 @@
                         Add Model
                     </button>
                     <ul data-ng-if="postsCreate.post.models" class="list-inline">
-                        <li data-ng-repeat="model in postsCreate.models track by $index" class="badge text-capitalize">
-                            <span data-ng-click="postsCreate.models.splice($index)" class="glyphicon glyphicon-remove" href="#"></span>
-                            <a href="#" class="h5">{{model}}</a>
+                        <li data-ng-repeat="model in postsCreate.post.models track by $index" class="badge text-capitalize">
+                            <span data-ng-click="postsCreate.post.models.splice($index, 1)" class="glyphicon glyphicon-remove" href="#"></span>
+                            <a href="#" class="h5">{{model.title}}</a>
                         </li>
                     </ul>
                 </div>
@@ -48,20 +54,34 @@
                     </button>
                     <ul data-ng-if="postsCreate.post.datasets" class="list-inline">
                         <li data-ng-repeat="dataset in postsCreate.datasets track by $index" class="badge text-capitalize">
-                            <span data-ng-click="postsCreate.datasets.splice($index)" class="glyphicon glyphicon-remove" href="#"></span>
-                            <a href="#" class="h5">{{dataset}}</a>
+                            <span data-ng-click="postsCreate.datasets.splice($index, 1)" class="glyphicon glyphicon-remove" href="#"></span>
+                            <a href="#" class="h5">{{dataset.title}}</a>
                         </li>
                     </ul>
                 </div>
-                <div class="form-group" ng-hide="postForm.uploader.queue.length">
-                    <img ng-if="postForm.imageURL" ng-src="postForm.imageURL" class="img-thumbnail">
-                    <span class="btn btn-default btn-file">
-                      Upload PDF <input type="file" nv-file-select uploader="postForm.uploader">
-                      </span>
+                <div class="form-group">
+                    <span ng-hide="postCreate.uploader.queue.length">
+                        <span class="btn btn-default btn-file">
+                          Add PDF 
+                          <input type="file" nv-file-select uploader="uploader" multiple="multiple"/>
+                         </span>
+                    </span>
+                    <span ng-show="postsCreate.uploader.queue.length">
+                         <span class="btn btn-default btn-file">
+                          Upload files
+                          </span>
+                    </span>
+
+                    <ul class="list-inline">
+                        <li ng-repeat="file in postsCreate.pdfs track by $index" class="badge">
+                            <span class="glyphicon glyphicon-file"></span> {{file.name}}
+                            <span ng-click="postsCreate.pdfs.splice($index,1)" class="glyphicon glyphicon-remove"></span>
+                        </li>
+                    </ul>
                 </div>
-                <div class="text-center form-group" ng-show="postForm.uploader.queue.length">
-                    <button class="btn btn-primary" ng-click="postForm.upload();">Upload</button>
-                    <button class="btn btn-default" ng-click="postForm.cancelUpload();">Cancel</button>
+                <div class="text-center form-group" ng-show="postCreate.uploader.queue.length">
+                    <button class="btn btn-primary" ng-click="postCreate.upload();">Upload</button>
+                    <button class="btn btn-default" ng-click="postCreate.cancelUpload();">Cancel</button>
                 </div>
                 <div ng-show="success" class="text-center text-success">
                     <strong>File uploaded sucessfully</strong>
@@ -72,7 +92,7 @@
                 <div class="form-group" show-errors>
                     <label for="title">Title</label>
                     <input name="title" type="text" ng-model="postsCreate.post.title" id="title" class="form-control" placeholder="Title" required>
-                    <div ng-if="postForm.title.$error && postForm.title.$dirty" ng-messages="postForm.title.$error" role="alert">
+                    <div ng-if="postCreate.title.$error && postCreate.title.$dirty" ng-messages="postCreate.title.$error" role="alert">
                         <p class="help-block error-text" ng-message="required">A post title is required.</p>
                     </div>
                 </div>

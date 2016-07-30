@@ -2,35 +2,36 @@
 
 //posts List Controller
 angular.module('posts')
-    .controller('postsListController', ['$scope', '$stateParams', '$state','Authentication','posts',
-            function ($scope, $stateParams, $state, Authentication, posts) {
+    .controller('postsListController', ['$scope', '$stateParams', '$state', 'Authentication', 'posts', 'UsersFactory',
+            function ($scope, $stateParams, $state, Authentication, posts, UsersFactory) {
             var vm = this;
 
             vm.authentication = Authentication;
 
-            vm.postLimit = 10;
-
-            // for conditional in posts.list.html to minimize view files
             vm.state = $state.current.name;
 
-            if (vm.state === 'posts.list') {
-                posts.list().then(function (posts) {
-                    vm.posts = posts;
-                    console.log('posts: ', vm.posts);
+            vm.ownership = UsersFactory.ownership();
 
-                }, function (err) {
-                    vm.loadingResults = false;
-                    console.log('err: ', err);
-                });
-            }
+            vm.postLimit = 10;
+            
+            vm.posts = [];
 
-            vm.search = function (field, value) {
-                if (vm.state === 'home') {
-                    vm.subject = value;
-                }
+            vm.getPosts = function (field, value) {
                 vm.posts = [];
-                posts.search(field, value).then(function (posts) {
-                    console.log('posts: ', posts);
+                var getPosts;
+
+                if (!field) {
+                    // lists all posts if no filter
+                    getPosts = posts.list();
+                }
+                else {
+                    // assign field
+                    vm.field = field;
+                    vm.value = value;
+                    getPosts = posts.search(field, value);
+                }
+
+                getPosts.then(function (posts) {
                     vm.posts = posts;
                     vm.loadingResults = false;
                 }, function (err) {
@@ -38,19 +39,20 @@ angular.module('posts')
                 });
             };
 
-            if (vm.state === 'posts.search') {
-                vm.search($stateParams.field, $stateParams.value);
-            }
-
-            // nested page in home state
-            if (vm.state === 'home') {
-
-                vm.postLimit = 3;
-
-                vm.menuItems = ['finance', 'sports', 'social science'];
-
-                vm.search('subject', 'finance');
-
+            if (vm.state === 'posts.list') {
+                vm.menuItems = ['finance', 'sports', 'soshsci'];
+                vm.getPosts('subject',vm.menuItems[0]);
             }
             
+            if (vm.state === 'posts.search'||vm.state === 'users.profilepage.posts') {
+                vm.getPosts($stateParams.field, $stateParams.value);
+            }
+
+            if (vm.state === 'home') {
+                vm.postLimit = 3;
+                vm.menuItems = ['trending', 'in the news', 'rising'];
+                vm.getPosts('trending', vm.menuItems[0]);
+            }
+            
+
             }]);

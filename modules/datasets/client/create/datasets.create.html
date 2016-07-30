@@ -1,35 +1,35 @@
 <section>
     <div class="page-header">
-        <h1>New Post</h1>
+        <h1>New Dataset</h1>
     </div>
     <div class="col-md-12">
-        <form name="postForm" class="form-horizontal"
-              ng-submit="PostsCreate.create(postForm.$valid)"
+        <form name="datasetsForm" class="form-horizontal"
+              ng-submit="DatasetsCreate.create(datasetsForm.$valid)"
               novalidate>
             <fieldset>
                 <div class="form-group" show-errors>
                     <label for="title">Title</label>
                     <input name="title" type="text"
-                           ng-model="PostsCreate.post.title" id="title"
+                           ng-model="DatasetsCreate.datasets.title" id="title"
                            class="form-control" placeholder="Title"
                            required>
-                    <div ng-if="postForm.title.$error && postForm.title.$dirty"
-                         ng-messages="postForm.title.$error" role="alert">
-                        <p class="help-block error-text" ng-message="required">Post title is required.</p>
+                    <div ng-if="datasetsForm.title.$error && datasetsForm.title.$dirty"
+                         ng-messages="datasetsForm.title.$error" role="alert">
+                        <p class="help-block error-text" ng-message="required">Dataset title is required.</p>
                     </div>
                 </div>
                 <div class="form-group">
                     <label for="content">Content</label>
                     <textarea name="content"
-                              ng-model="PostsCreate.post.content" id="content" class="form-control"
+                              ng-model="DatasetsCreate.datasets.content" id="content" class="form-control"
                               cols="30" rows="10"
                               placeholder="Content"></textarea>
                 </div>
                 <div class="form-group">
                     <input type="submit" class="btn btn-default">
                 </div>
-                <div ng-show="PostsCreate.error" class="text-danger">
-                    <strong>{{PostsCreate.error}}</strong>
+                <div ng-show="DatasetsCreate.error" class="text-danger">
+                    <strong>{{DatasetsCreate.error}}</strong>
                 </div>
             </fieldset>
         </form>

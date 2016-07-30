@@ -20,7 +20,7 @@ angular.module('posts')
                     templateUrl: MODULE_PATH + 'list/posts.list.html',
                 })
                 .state('posts.search', {
-                    url: '/:field/:value',
+                    url: '/search/:field/:value',
                     controller: 'postsListController',
                     controllerAs: 'postsList',
                     templateUrl: MODULE_PATH + 'list/posts.list.html'

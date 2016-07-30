@@ -3,10 +3,12 @@
         <span class="h1 text-capitalize">{{UsersProfilePage.user.displayName}}</span>
     </div>
     <ul class="nav nav-tabs" data-tabs="tabs">
-        <li data-ng-repeat="item in UsersProfilePage.menuItems" data-ui-sref="{{item.state}}" data-ui-sref-active="active"><a data-ng-bind="item.title" data-toggle="tab" href=""></a></li>
-
-    <ui-view="data" />
-
+        <li data-ng-repeat="item in UsersProfilePage.menuItems" data-ui-sref="{{item.state}}" data-ui-sref-active="active">
+            <a data-ng-bind="item.title" data-toggle="tab" href=""></a>
+        </li>
+    </ul>
+    <ui-view/>
+    
     <!--
     <div class="list-group">
         <div data-ng-repeat="item in UsersProfilePage.userData" class="list-group-item">
@@ -26,4 +28,5 @@
         </div>
     </div>
     -->
+    
 </div>

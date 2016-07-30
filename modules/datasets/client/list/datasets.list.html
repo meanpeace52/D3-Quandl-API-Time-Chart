@@ -3,7 +3,7 @@
         <h1>Datasets</h1>
     </div>
 
-    <form class="datasets-search-container" ng-submit="DatasetsList.search()" data-ng-if="DatasetsList.state!=='datasets.filter'">
+    <form ng-if="!DatasetsList.modal" ng-submit="DatasetsList.search()" class="datasets-search-container" >
 	    <input class="form-control" type="text" ng-model="DatasetsList.q">
 	    <button 
 	    	ng-click="DatasetsList.search()" 
@@ -19,24 +19,28 @@
 	</form>
 
     <div class="list-group">
-        <div data-ng-repeat="dataset in DatasetsList.searchResults" class="list-group-item">
+        <span data-ng-repeat="dataset in DatasetsList.list track by $index" class="list-group-item">
             <small class="list-group-item-text">
                 Title:
-                <span data-ng-bind-html="DatasetsList.showTitle (dataset.title)"></span>
+                <span data-ng-bind="dataset.title" ng-class="{'active': DatasetsList.showTitle (dataset.title)}"></span>
                 Source:
                 <span ng-bind="dataset.source"></span>
                 <span ng-bind="dataset.user.displayName"></span>
 
             </small>
-            <h4 class="list-group-item-heading" ng-bind="dataset.name"></h4>
+            <span class="h4 list-group-item-heading" ng-bind="dataset.name"></span>
+            <span ng-if="!Datasetslist.modal">
             <button class="btn btn-secondary" ng-click="DatasetsList.addToUser(dataset)">Save to my LAB</button>
-            <a class="btn btn-primary" ng-click="DatasetsList.showData(dataset)">View </a>
-        </div>
+            <a class="btn btn-primary" ng-click="DatasetsList.showData(dataset)" class-"pull-right">View </a>
+            </span>
+            <button ng-if="DatasetsList.modal" ng-click="vm.ok(dataset)" data-ng-disabled="vm.selectedData.indexOf(dataset._id) !== -1"   class="btn btn-small btn-default pull-right">Select</button>
+        </span>
+    </div>
 
     </div>
     <div class="alert alert-warning text-center"
-         ng-hide="!DatasetsList.searchResults.$resolved || DatasetsList.searchResults.length">
-        No Datasets yet, why don't you <a href="/datasets/create">create one</a>?
+         ng-show="!DatasetsList.list.length && !DatasetsList.loadingResults">
+        No datasets found.
     </div>
 </section>
 

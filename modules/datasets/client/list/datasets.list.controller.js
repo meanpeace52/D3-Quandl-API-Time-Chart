@@ -6,9 +6,9 @@ angular.module('datasets').controller('DatasetsListController', ['$state', '$sta
         var vm = this;
 
         vm.authentication = Authentication;
-        vm.loadingResults = false;
 
         vm.filterData = function (field, value) {
+            vm.loadingResults = true;
             Datasets.filter(field, value).then(function (res) {
                 vm.posts = res;
                 vm.loadingResults = false;
@@ -18,7 +18,7 @@ angular.module('datasets').controller('DatasetsListController', ['$state', '$sta
         };
 
         vm.state = $state.current.name;
-
+        
         if (vm.state === 'datasets.filter') {
             vm.filterData($stateParams.field, $stateParams.value);
         }
@@ -27,7 +27,7 @@ angular.module('datasets').controller('DatasetsListController', ['$state', '$sta
             vm.loadingResults = true;
             Datasets.search(vm.q)
                 .success(function (response) {
-                    vm.searchResults = response;
+                    vm.list = response;
                     vm.loadingResults = false;
                 })
                 .error(function (error) {
