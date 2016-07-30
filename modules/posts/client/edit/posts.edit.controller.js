@@ -97,7 +97,7 @@ angular.module('posts')
                     vm.post[data].push(selection);
                 });
 
-            }
+            };
 
             vm.pdfs = [];
 
