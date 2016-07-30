@@ -47,7 +47,7 @@ angular.module('core')
             
             Menus.addMenuItem('sidebar', {
               title: 'My Models',
-              state: 'users.profilepage.models({field: "user", value: UsersProfilePage.user._id, username: user.username})',
+              state: 'users.profilepage.models({field: "user", value: user._id, username: user.username})',
               faIcon: 'fa-cogs',
               roles: ['user'],
               position: 3
