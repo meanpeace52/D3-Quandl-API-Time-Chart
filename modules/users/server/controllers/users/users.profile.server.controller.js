@@ -13,18 +13,18 @@ var _ = require('lodash'),
     User = mongoose.model('User'),
     s3 = require('s3'),
     client = s3.createClient({
-    maxAsyncS3: 20, // this is the default
-    s3RetryCount: 3, // this is the default
-    s3RetryDelay: 1000, // this is the default
-    multipartUploadThreshold: 20971520, // this is the default (20 MB)
-    multipartUploadSize: 15728640, // this is the default (15 MB)
-    s3Options: {
-        accessKeyId: 'AKIAI356G25CALROLSGA',
-        secretAccessKey: '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'
-            // any other options are passed to new AWS.S3()
-            // See: http://docs.aws.amazon.com/AWSJavaScriptSDK/latest/AWS/Config.html#constructor-property
-    }
-});
+        maxAsyncS3: 20, // this is the default
+        s3RetryCount: 3, // this is the default
+        s3RetryDelay: 1000, // this is the default
+        multipartUploadThreshold: 20971520, // this is the default (20 MB)
+        multipartUploadSize: 15728640, // this is the default (15 MB)
+        s3Options: {
+            accessKeyId: 'AKIAI356G25CALROLSGA',
+            secretAccessKey: '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'
+                // any other options are passed to new AWS.S3()
+                // See: http://docs.aws.amazon.com/AWSJavaScriptSDK/latest/AWS/Config.html#constructor-property
+        }
+    });
 
 
 /**
@@ -166,40 +166,31 @@ exports.userByUsername = function (req, res, next, username) {
 };
 
 exports.uploadFile = function (req, res) {
-
-    var params = {
+    var uploader = client.uploadFile({
         localFile: req.file.path,
-
         s3Params: {
-            Bucket: 'pdfs',
-            Key: req.file.path,
+            ContentType: req.file.mimetype,
+            Bucket: 'theorylab-pdfs',
+            Key: req.user._id.toString() + '/' + req.file.originalname
         }
-    };
+    });
 
-    var uploader = client.uploadFile(params);
-    
     uploader.on('error', function (err) {
-        console.error('unable to upload:', err.stack);
-        return res.status(400).send({
+        return res.status(500).send({
             message: errorHandler.getErrorMessage(err)
         });
     });
-    uploader.on('progress', function () {});
     uploader.on('end', function () {
-        var user = req.user;
-        user.files.push({
-            name: req.file.originalname,
-            file: path
-        });
+        req.user.files.push(req.file.originalname);
         req.user.save(function (saveError, user) {
             if (saveError) {
-                return res.status(400).send({
+                return res.status(500).send({
                     message: errorHandler.getErrorMessage(saveError)
                 });
             }
             else {
-                res.json(user);
-
+                res.json(req.file.originalname);
+                fs.unlink(req.file.path);
             }
         });
     });

@@ -6,7 +6,7 @@ angular.module('posts').factory('posts', ['$resource', '$http', '$state',
         var posts = {};
 
         posts.crud = function () {
-            return $resource('/api/posts/:postId', {
+            return $resource('api/posts/:postId', {
                 postId: '@_id'
             }, {
                 update: {
@@ -33,7 +33,7 @@ angular.module('posts').factory('posts', ['$resource', '$http', '$state',
         
         posts.search = function (field, value) {
             var search = field + '/' + value;
-            return $http.get('/api/posts/search/' + search).then(function (res) {
+            return $http.get('api/posts/search/' + search).then(function (res) {
                 return res.data;
             }, function (err) {
                 return err.data;

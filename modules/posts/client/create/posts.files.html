@@ -1,0 +1,29 @@
+<section ng-controller="postsCreateController">
+    <div class="page-header">
+        <span class="h1">Files</span>
+        <span ng-hide="vm.uploader.queue.length" class="pull-right">
+            <span class="btn btn-default btn-file">
+              Add PDF 
+              <input type="file" nv-file-select uploader="uploader" multiple="multiple"/>
+             </span>
+        </span>
+    </div>
+    <div class="list-group">
+        <a data-ng-repeat="file in vm.user.files track by $index" data-ng-click="vm.ok(file)" class="list-group-item">
+            <h4 class="list-group-item-heading">
+                {{file}}
+            </h4>
+        </a>
+    </div>
+    <div class="text-center form-group" ng-show="vm.uploader.queue.length">
+        <button class="btn btn-primary" ng-click="vm.upload();">Upload</button>
+        <button class="btn btn-default" ng-click="vm.cancelUpload();">Cancel</button>
+    </div>
+    <div ng-show="success" class="text-center text-success">
+        <strong>File uploaded sucessfully</strong>
+    </div>
+    <div ng-show="error" class="text-center text-danger">
+        <strong ng-bind="error"></strong>
+    </div>
+
+</section>

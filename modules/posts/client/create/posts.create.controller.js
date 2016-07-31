@@ -7,7 +7,7 @@ angular.module('posts')
 
             var vm = this;
 
-            vm.authentification = Authentication;
+            vm.user = Authentication.user;
 
             vm.error = null;
 
@@ -56,6 +56,8 @@ angular.module('posts')
                     //disables item selection if already selected
                     vm.selectedData = selectedData;
                     
+                    vm.user = Authentication.user;
+
                     vm.ok = function (data) {
                         //passes info back to parent controller
                         $modalInstance.close(data);
@@ -64,7 +66,7 @@ angular.module('posts')
                     vm.cancel = function () {
                         $modalInstance.dismiss('cancel');
                     };
-                    
+
                     if (data === 'models') {
 
                         Models.filter('user', Authentication.user._id)
@@ -102,14 +104,16 @@ angular.module('posts')
                     options.templateUrl = 'modules/datasets/client/list/datasets.list.html';
                     options.controllerAs = 'DatasetsList';
                 }
+                else if (data === 'files') {
+                    options.templateUrl = 'modules/posts/client/create/posts.files.html';
+                    options.controllerAs = 'vm';
+                }
 
                 $uibModal.open(options).result.then(function (selection) {
                     vm.post[data].push(selection);
                 });
 
             };
-
-            vm.pdfs = [];
 
             // IMPORTANT : fileuploader must be kept on $scope because of bug with controllerAs
             $scope.uploader = new FileUploader({
@@ -140,17 +144,23 @@ angular.module('posts')
                 // Start upload
                 $scope.uploader.uploadAll();
 
-                vm.pdfs.push(file);
-
             };
+
+            // Cancel the upload process
+            $scope.cancelUpload = function () {
+                $scope.uploader.clearQueue();
+            };
+
 
             // Called after the user has successfully uploaded a new picture
             $scope.uploader.onSuccessItem = function (fileItem, response, status, headers) {
                 // Show success message
                 vm.success = true;
-
+                
+                vm.user.files.push(fileItem.file.name);
                 // Clear upload buttons
-                vm.cancelUpload();
+                $scope.cancelUpload();
+
             };
 
             $scope.uploader.onErrorItem = function (fileItem, response, status, headers) {
@@ -159,12 +169,6 @@ angular.module('posts')
 
                 // Show error message
                 vm.error = response.message;
-            };
-
-
-            // Cancel the upload process
-            $scope.cancelUpload = function () {
-                $scope.uploader.clearQueue();
             };
 
                 }]);

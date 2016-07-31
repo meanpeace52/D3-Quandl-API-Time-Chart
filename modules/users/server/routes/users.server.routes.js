@@ -6,9 +6,9 @@ module.exports = function (app) {
 
   var multer = require('multer');
   var upload = multer({
-    dest: './s3-cache'
+    dest: 's3-cache/'
   });
-
+  
   // Setting up the users profile api
   app.route('/api/users/search').get(users.search);
   app.route('/api/users/me').get(users.me);

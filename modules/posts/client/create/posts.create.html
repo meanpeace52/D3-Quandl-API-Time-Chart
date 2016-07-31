@@ -3,7 +3,7 @@
         <span class="h1">New Post</span>
         <span>
         <span data-ng-if="postsCreate.post.access === 'paid'" class="pull-right glyphicon glyphicon-usd" title="For Sale"></span>
-        <span data-ng-if="postsCreate.pdfs.length" class="pull-right glyphicon glyphicon-file" title="PDFs attached"></span>
+        <span data-ng-if="postsCreate.post.files.length" class="pull-right glyphicon glyphicon-file" title="PDFs attached"></span>
         <span data-ng-if="postsCreate.post.datasets.length" class="pull-right glyphicon glyphicon-list" title="Datasets Attached"></span>
         <span data-ng-if="postsCreate.post.models.length" class="pull-right glyphicon glyphicon-stats" title="Models Attached"></span>
         </span>
@@ -60,35 +60,18 @@
                     </ul>
                 </div>
                 <div class="form-group">
-                    <span ng-hide="postCreate.uploader.queue.length">
-                        <span class="btn btn-default btn-file">
+                    <label for="files-list">PDFs</label>
+                        <span class="btn btn-default btn-file" ng-click="postsCreate.modal('files')">
                           Add PDF 
-                          <input type="file" nv-file-select uploader="uploader" multiple="multiple"/>
                          </span>
-                    </span>
-                    <span ng-show="postsCreate.uploader.queue.length">
-                         <span class="btn btn-default btn-file">
-                          Upload files
-                          </span>
-                    </span>
-
                     <ul class="list-inline">
-                        <li ng-repeat="file in postsCreate.pdfs track by $index" class="badge">
-                            <span class="glyphicon glyphicon-file"></span> {{file.name}}
-                            <span ng-click="postsCreate.pdfs.splice($index,1)" class="glyphicon glyphicon-remove"></span>
+                        <li ng-repeat="file in postsCreate.post.files track by $index" class="badge">
+                            <span class="glyphicon glyphicon-file"></span> {{file}}
+                            <span ng-click="postsCreate.post.files.splice($index,1)" class="glyphicon glyphicon-remove"></span>
                         </li>
                     </ul>
                 </div>
-                <div class="text-center form-group" ng-show="postCreate.uploader.queue.length">
-                    <button class="btn btn-primary" ng-click="postCreate.upload();">Upload</button>
-                    <button class="btn btn-default" ng-click="postCreate.cancelUpload();">Cancel</button>
-                </div>
-                <div ng-show="success" class="text-center text-success">
-                    <strong>File uploaded sucessfully</strong>
-                </div>
-                <div ng-show="error" class="text-center text-danger">
-                    <strong ng-bind="error"></strong>
-                </div>
+                
                 <div class="form-group" show-errors>
                     <label for="title">Title</label>
                     <input name="title" type="text" ng-model="postsCreate.post.title" id="title" class="form-control" placeholder="Title" required>

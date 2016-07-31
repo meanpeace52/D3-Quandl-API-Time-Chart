@@ -50,10 +50,9 @@ var postSchema = new Schema({
         type: Schema.ObjectId,
         ref: 'User'
     }],
-    attachments: {
+    files: {
         type: Array,
         default: [],
-        trim: false
     },
     access: {
         type: String,

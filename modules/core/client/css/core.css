@@ -77,6 +77,13 @@ a:hover .header-profile-image {
 
 .list-inline .badge {
     padding: 0.6em 1em;
+    color: #333;
+    background-color: #fff;
+    border: 1px solid #adadad;
+}
+
+.list-inline .badge a {
+    text-decoration: none;
 }
 
 /* for posts.create.html */
