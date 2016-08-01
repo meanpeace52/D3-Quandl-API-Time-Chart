@@ -4,13 +4,7 @@
 angular.module('datasets')
     .run(['Menus',
         function (Menus) {
-            // Add the datasets dropdown item
-            Menus.addMenuItem('topbar', {
-                title: 'Datasets',
-                state: 'datasets.list',
-                roles: ['user'],
-                position: 2
-            });
+
 
 /*
             // Add the dropdown list item
