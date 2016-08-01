@@ -5,6 +5,18 @@ angular.module('users').config(['$stateProvider',
     function ($stateProvider) {
         var MODULE_PATH = 'modules/users/client/';
         // Users state routing
+
+        var profileParams = {
+            field: {
+                value: '',
+                squash: true
+            },
+            value: {
+                value: '',
+                squash: true
+            }
+        };
+        
         $stateProvider
             .state('settings', {
                 abstract: true,
@@ -103,21 +115,24 @@ angular.module('users').config(['$stateProvider',
                 controllerAs: 'UsersProfilePage',
                 templateUrl: MODULE_PATH + 'views/profilepage/users.profilepage.client.view.html'
             }).state('users.profilepage.posts', {
-                url: '/posts/:field/:value',
+                url: '/posts',
+                params: profileParams,
                 controller: 'postsListController',
                 controllerAs: 'postsList',
                 templateUrl: 'modules/posts/client/list/posts.list.html'
             }).state('users.profilepage.models', {
-                url: '/models/:field/:value',
+                url: '/models',
+                params: profileParams,
                 controller: 'ModelsListController',
                 controllerAs: 'vm',
                 templateUrl: 'modules/models/client/views/list-models.client.view.html'
             }).state('users.profilepage.data', {
-                url: '/data/:field/:value',
+                url: '/data',
+                params: profileParams,
                 controller: 'DatasetsListController',
                 controllerAs: 'DatasetsList',
                 templateUrl: 'modules/datasets/client/list/datasets.list.html'
             });
-            
+
     }
 ]);

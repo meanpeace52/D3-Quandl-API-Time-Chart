@@ -33,15 +33,15 @@ angular.module(ApplicationConfiguration.applicationModuleName, ApplicationConfig
         
         // Check authentication before changing state
         $rootScope.$on('$stateChangeStart', function (event, toState, toParams, fromState, fromParams) {
-            if (toState.data) {
+            if (toState.data && toState.data.hasOwnProperty('roles')) {
                 
                 var allowed = false;
                 
-                if (toState.data.hasOwnProperty('roles') && toState.data.roles.length) {
+                if (toState.data.roles.length) {
                     toState.data.roles.forEach(function (role) {
                         if (Authentication.user.roles !== undefined && Authentication.user.roles.indexOf(role) !== -1) {
                             allowed = true;
-                            return true;
+                            return;
                         }
                     });
                 }

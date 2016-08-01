@@ -8,7 +8,7 @@
     </div>
   </div>
   <div class="list-group">
-    <a data-ng-repeat="model in vm.models track by $index" class="list-group-item">
+    <a data-ng-repeat="model in vm.models track by $index" class="list-group-item" data-ui-sref="models.view({modelId: model._id})">
       <small class="list-group-item-text">
         Posted on <span data-ng-bind="model.created | date:'mediumDate'"></span> by
     <span data-ng-if="model.user" data-ng-bind="model.user.displayName"></span>

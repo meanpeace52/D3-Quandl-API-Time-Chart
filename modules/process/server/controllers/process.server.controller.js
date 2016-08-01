@@ -11,7 +11,7 @@ var path = require('path'),
 /**
  * List processes
  */
-exports.list = function(req, res) {
+exports.list = function (req, res) {
     Process.find({})
         .sort('-created')
         .populate('user', 'displayName')
@@ -20,17 +20,20 @@ exports.list = function(req, res) {
                 return res.status(400).send({
                     message: errorHandler.getErrorMessage(err)
                 });
-            } else {
+            }
+            else {
                 res.json(datasets);
             }
-    });
+        });
 };
 
 /**
  * List by user id
  */
-exports.listByUserId = function(req, res) {
-    Process.find({ user: req.params.userId })
+exports.listByUserId = function (req, res) {
+    Process.find({
+            user: req.params.userId
+        })
         .limit(100)
         .sort('-created')
         .exec(function (err, processes) {
@@ -38,7 +41,8 @@ exports.listByUserId = function(req, res) {
                 return res.status(400).send({
                     message: errorHandler.getErrorMessage(err)
                 });
-            } else {
+            }
+            else {
                 res.json(processes);
             }
         });
@@ -47,14 +51,15 @@ exports.listByUserId = function(req, res) {
 /**
  * Create a process
  */
-exports.create = function(req, res) {
+exports.create = function (req, res) {
     new Process(req.body.process)
-        .save(function(err, process) {
+        .save(function (err, process) {
             if (err) {
                 res.status(400).send({
-                  message: errorHandler.getErrorMessage(err)
+                    message: errorHandler.getErrorMessage(err)
                 });
-            } else {
+            }
+            else {
                 res.json(process);
             }
         });
@@ -63,15 +68,18 @@ exports.create = function(req, res) {
 /**
  * Get process by id
  */
-exports.read = function(req, res) {
-    Process.findOne({_id: req.params.processId})
+exports.read = function (req, res) {
+    Process.findOne({
+            _id: req.params.processId
+        })
         .populate('user', 'displayName')
-        .exec(function(err, process) {
+        .exec(function (err, process) {
             if (err) {
                 res.status(400).send({
-                  message: errorHandler.getErrorMessage(err)
+                    message: errorHandler.getErrorMessage(err)
                 });
-            } else {
+            }
+            else {
                 res.json(process);
             }
         });
@@ -80,13 +88,16 @@ exports.read = function(req, res) {
 /**
  * Update a process by id
  */
-exports.update = function(req, res) {
-    Process.update({_id: req.params.processId}, req.body.process, function(err, _res) {
+exports.update = function (req, res) {
+    Process.update({
+        _id: req.params.processId
+    }, req.body.process, function (err, _res) {
         if (err) {
             res.status(400).send({
-              message: errorHandler.getErrorMessage(err)
+                message: errorHandler.getErrorMessage(err)
             });
-        } else {
+        }
+        else {
             res.json(req.body.process);
         }
     });
@@ -95,13 +106,16 @@ exports.update = function(req, res) {
 /**
  * Delete a process by id
  */
-exports.delete = function(req, res) {
-    Process.remove({_id: req.params.processId}, function(err, process) {
+exports.delete = function (req, res) {
+    Process.remove({
+        _id: req.params.processId
+    }, function (err, process) {
         if (err) {
             res.status(400).send({
-              message: errorHandler.getErrorMessage(err)
+                message: errorHandler.getErrorMessage(err)
             });
-        } else {
+        }
+        else {
             res.json(process);
         }
     });

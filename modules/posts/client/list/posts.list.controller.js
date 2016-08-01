@@ -38,6 +38,8 @@ angular.module('posts')
                     vm.loadingResults = false;
                 });
             };
+            
+            console.log('vm.field, vm', vm.field, vm);
 
             if (vm.state === 'posts.list') {
                 vm.menuItems = ['finance', 'sports', 'soshsci'];
