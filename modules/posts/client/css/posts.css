@@ -2,19 +2,26 @@ li a:visited {
     text-decoration: none;
 }
 
-li.active {
-    border-bottom: 2px solid navy;
-}
-
-li.active > a {
-    font-weight: bold;
-}
-
 .badge {
     margin: 0.5em;
 }
 
-.page-header .glyphicon {
-    margin-right: 1em;
-    margin-left: 2em;
+.page-header a {
+    text-decoration: none;
+}
+
+.page-header li {
+    margin: 2.25em 2.25em 2.5em 0em;
+}
+
+.page-header li.active {
+    border-bottom: 3px solid #337ab7;
+}
+
+.page-header.glyphicon {
+    margin: 0 1.5em
+}
+
+.list-group-item .glyphicon {
+    margin: 0 1.5em;
 }
