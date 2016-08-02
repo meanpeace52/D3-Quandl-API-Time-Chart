@@ -8,26 +8,15 @@ var path = require('path'),
     Post = mongoose.model('post'),
     errorHandler = require(path.resolve('./modules/core/server/controllers/errors.server.controller'));
 
-// trims sensitive paid Post data if user hasn't paid for it
-function trimPostIfPaid(user, post) {
-    
-    if (!user || post.users.indexOf(user._id) !== -1) {
-        delete post.content;
-        delete post.models;
-        delete post.datasets;
-    }
-    return post;
-}
-
 /**
  * Create a post
  */
- 
+
 exports.create = function (req, res) {
     var post = new Post(req.body);
     post.user = req.user._id;
     if (req.body.files) {
-        
+
     }
     post.save(function (err) {
         if (err) {
@@ -59,6 +48,47 @@ exports.read = function (req, res) {
             res.json(post);
         });
 };
+
+/**
+ * List of posts
+ */
+
+exports.list = function (req, res) {
+
+    var options;
+
+    if (req.params.field) {
+        options = {};
+        options[req.params.field] = req.params.value;
+    }
+
+    Post.find(options).sort('-created').populate('user', 'displayName').exec(function (err, posts) {
+        if (err) {
+            return res.status(400).send({
+                message: errorHandler.getErrorMessage(err)
+            });
+        }
+        else {
+            posts.forEach(function (post, index, array) {
+                trimPostIfPaid(req.user, post);
+                if (index === array.length - 1) {
+                    res.json(posts);
+                }
+            });
+        }
+    });
+};
+
+
+// trims sensitive paid Post data if user hasn't paid for it
+function trimPostIfPaid(user, post) {
+    if (post.access === 'paid') {
+        if (!user || user._id !== post.user || post.users.indexOf(user._id) === -1) {
+            post.content = undefined;
+        }
+    }
+    return post;
+}
 
 /**
  * Update a post
@@ -95,35 +125,6 @@ exports.delete = function (req, res) {
         }
         else {
             res.json(post);
-        }
-    });
-};
-
-/**
- * List of posts
- */
-exports.list = function (req, res) {
-
-    var options;
-
-    if (req.params.field) {
-        options = {};
-        options[req.params.field] = req.params.value;
-    }
-
-    Post.find(options).sort('-created').populate('user', 'displayName').exec(function (err, posts) {
-        if (err) {
-            return res.status(400).send({
-                message: errorHandler.getErrorMessage(err)
-            });
-        }
-        else {
-            posts.forEach(function (post, index, array) {
-                trimPostIfPaid(req.user, post);
-                if (index === array.length - 1) {
-                    res.json(posts);
-                }
-            });
         }
     });
 };
