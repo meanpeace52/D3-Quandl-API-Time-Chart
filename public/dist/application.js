@@ -70,20 +70,17 @@ angular.module(ApplicationConfiguration.applicationModuleName, ApplicationConfig
         
         // Check authentication before changing state
         $rootScope.$on('$stateChangeStart', function (event, toState, toParams, fromState, fromParams) {
-            if (toState.data) {
+            if (toState.data && toState.data.hasOwnProperty('roles')) {
+                
                 var allowed = false;
-                console.log(toState.data, Authentication.user.roles);
+                
                 if (toState.data.roles.length) {
                     toState.data.roles.forEach(function (role) {
                         if (Authentication.user.roles !== undefined && Authentication.user.roles.indexOf(role) !== -1) {
                             allowed = true;
-                            return true;
+                            return;
                         }
                     });
-                }
-                
-                else {
-                    allowed = true;
                 }
                 
                 if (!allowed) {
@@ -165,16 +162,20 @@ ApplicationConfiguration.registerModule('core.admin.routes', ['ui.router']);
 // Use Applicaion configuration module to register a new module
 ApplicationConfiguration.registerModule('datasets', ['datatables']);
 
-(function (app) {
-  'use strict';
+'use strict';
 
-  app.registerModule('models');
-})(ApplicationConfiguration);
+// Use Applicaion configuration module to register a new module
+ApplicationConfiguration.registerModule('models', []);
 
 'use strict';
 
 // Use Applicaion configuration module to register a new module
 ApplicationConfiguration.registerModule('posts');
+
+'use strict';
+
+// Use Applicaion configuration module to register a new module
+ApplicationConfiguration.registerModule('process', ['users', 'datasets', 'models', 'datatables', 'ui.bootstrap', 'dndLists', 'ui.router.modal']);
 
 'use strict';
 
@@ -385,8 +386,18 @@ angular.module('core').config(['$stateProvider', '$urlRouterProvider',
         // Home state routing
         $stateProvider
             .state('home', {
+
                 url: '/',
-                templateUrl: 'modules/core/client/views/home.client.view.html'
+                views: {
+                    '': {
+                        templateUrl: 'modules/core/client/views/home.client.view.html',
+                    },
+                    'posts@home': {
+                        templateUrl: 'modules/posts/client/list/posts.list.html',
+                        controller: 'postsListController',
+                        controllerAs: 'postsList',
+                    }
+                }
             })
             .state('not-found', {
                 url: '/not-found',
@@ -474,20 +485,52 @@ angular.module('core').controller('HeaderController', ['$rootScope', '$scope', '
 
         // Get the  menu
         $scope.menu = Menus.getMenu('topbar');
-        
-         Menus.addMenuItem('topbar', {
-                title: 'Home',
-                state: 'home',
-                roles: ['*'],
-                position: 0
-            });
-            
-         Menus.addMenuItem('topbar', {
+
+        Menus.addMenuItem('topbar', {
+            title: 'Home',
+            state: 'home',
+            roles: ['*'],
+            position: 0
+        });
+
+        Menus.addMenuItem('topbar', {
             title: 'Finance',
-            state: 'finance',
+            state: 'posts.search({field: "subject", value: "finance"})',
             roles: ['*'],
             position: 1
         });
+
+        // Add the datasets dropdown item
+        Menus.addMenuItem('topbar', {
+            title: 'Datasets',
+            state: 'datasets.list',
+            roles: ['user'],
+            position: 2
+        });
+
+
+        Menus.addMenuItem('topbar', {
+            title: 'Models',
+            state: 'models.list',
+            roles: ['user'],
+            position: 3
+        });
+
+        // Add the posts dropdown item
+        Menus.addMenuItem('topbar', {
+            title: 'Posts',
+            state: 'posts.list',
+            roles: ['user'],
+            position: 3
+        });
+
+        Menus.addMenuItem('topbar', {
+            title: 'Users',
+            state: 'users.list',
+            roles: ['user'],
+            position: 5
+        });
+
 
         // Toggle the menu items
         $scope.isCollapsed = false;
@@ -509,11 +552,10 @@ angular.module('core').controller('HeaderController', ['$rootScope', '$scope', '
 
 'use strict';
 
-angular.module('core').controller('HomeController', ['$scope', 'Authentication',
-    function ($scope, Authentication) {
+angular.module('core').controller('HomeController', ['$scope', 'Authentication','posts',
+    function ($scope, Authentication, posts) {
         // This provides Authentication context.
         $scope.authentication = Authentication;
-        
     }
 ]);
 
@@ -521,60 +563,58 @@ angular.module('core').controller('HomeController', ['$scope', 'Authentication',
 
 angular.module('core')
   .controller('SideBarCtrl', ['$rootScope', '$scope', 'Authentication', 'Menus',
-		function ($rootScope,$scope,Authentication,Menus) {
+		function ($rootScope, $scope, Authentication, Menus) {
 
-			$scope.authentication = Authentication;
-			$scope.user = Authentication.user;
-			$scope.sidebarMenu = Menus.getMenu('sidebar');
+      $scope.authentication = Authentication;
+      $scope.user = Authentication.user;
+      $scope.sidebarMenu = Menus.getMenu('sidebar');
 
-			// Add the Lab sidebar item
+      // Add the Lab sidebar item
       Menus.addMenuItem('sidebar', {
-          title: 'Lab',
-          state: 'datasets.list',
-          type: 'item',
-          faIcon: 'fa-flask',
-          roles: ['user'],
-          position: 0
+        title: 'Lab',
+        state: 'lab.process',
+        type: 'item',
+        faIcon: 'fa-flask',
+        roles: ['user'],
+        position: 0
       });
 
-			// Add the Posts sidebar item
-      Menus.addMenuItem('sidebar', {
-          title: 'My Posts',
-          state: 'posts.list',
-          faIcon: 'fa-file',
-          roles: ['user'],
-          position: 1
-      });
+      // Add the Posts sidebar item
 
-      // Add the My Models sidebar item
-      Menus.addMenuItem('sidebar', {
-          title: 'My Models',
-          state: 'models.list',
-          faIcon: 'fa-cogs',
-          roles: ['user'],
-          position: 3
-      });
+      $scope.$watch(
+        function () {
+          return Authentication.user;
+        },
+        function (newVal) {
+          if (newVal && newVal.hasOwnProperty('_id')) {
+            $rootScope.isToggleSideBar = true;
 
-
-			$scope.$watch(
-				function () {
-					return Authentication.user;
-				},
-				function (newVal) {
-					if (newVal && newVal.hasOwnProperty('username')) {
-						$rootScope.isToggleSideBar = true;
-						Menus.removeMenuItem('sidebar','My Data');
-						// Add the My Data sidebar item
             Menus.addMenuItem('sidebar', {
-                title: 'My Data',
-                state: 'users.profilepage({ username: "'+newVal.username+'" })',
-                faIcon: 'fa-line-chart',
-                roles: ['user'],
-                position: 2
+              title: 'My Posts',
+              state: 'users.profilepage.posts({username: user.username})',
+              faIcon: 'fa-file',
+              roles: ['user'],
+              position: 1
             });
-
-					}
-				});
+            
+            // Add the My Data sidebar item
+            Menus.addMenuItem('sidebar', {
+              title: 'My Data',
+              state: 'users.profilepage.datasets({ username: user.username})',
+              faIcon: 'fa-line-chart',
+              roles: ['user'],
+              position: 2
+            });
+            
+            Menus.addMenuItem('sidebar', {
+              title: 'My Models',
+              state: 'users.profilepage.models({ username: user.username})',
+              faIcon: 'fa-cogs',
+              roles: ['user'],
+              position: 3
+            });
+          }
+        });
 
 		}
 ]);
@@ -806,8 +846,8 @@ angular.module('core').factory('authInterceptor', ['$q', '$injector',
 'use strict';
 
 //Menu service used for managing  menus
-angular.module('core').service('Menus', [
-    function () {
+angular.module('core').service('Menus', ['$stateParams','Authentication',
+    function ($stateParams, Authentication) {
         // Define a set of default roles
         this.defaultRoles = ['user', 'admin'];
 
@@ -980,6 +1020,7 @@ angular.module('core').service('Menus', [
         this.addMenu('sidebar', {
             roles: ['user']
         });
+
     }
 ]);
 
@@ -1030,13 +1071,7 @@ angular.module('core').service('Socket', ['Authentication', '$state', '$timeout'
 angular.module('datasets')
     .run(['Menus',
         function (Menus) {
-            // Add the datasets dropdown item
-            Menus.addMenuItem('topbar', {
-                title: 'Datasets',
-                state: 'datasets.list',
-                roles: ['user'],
-                position: 2
-            });
+
 
 /*
             // Add the dropdown list item
@@ -1092,9 +1127,15 @@ angular.module('datasets')
                     controllerAs: 'Workbench',
                     templateUrl: MODULE_PATH + 'workbench/datasets.workbench.html',
                     params: {
-						ds1: {squash: true, value: null},
-						ds2: {squash: true, value: null},
-					}
+                        ds1: {
+                            squash: true,
+                            value: null
+                        },
+                        ds2: {
+                            squash: true,
+                            value: null
+                        },
+                    }
                 })
                 .state('datasets.detail', {
                     url: '/:datasetId',
@@ -1117,14 +1158,13 @@ angular.module('datasets')
 'use strict';
 
 //Posts Create Controller
-angular.module('posts')
-    .controller('PostsCreateController',
-        ['$scope', '$state', 'Authentication', 'Posts',
-            function ($scope, $state, Authentication, Posts) {
+angular.module('datasets')
+    .controller('DatasetsCreateController',
+        ['$scope', '$state', 'Authentication', 'Datasets',
+            function ($scope, $state, Authentication, Datasets) {
                 var vm = this;
 
                 vm.authentification = Authentication;
-                vm.post = new Posts();
 
                 // Create new Post
                 vm.create = function (isValid) {
@@ -1137,8 +1177,8 @@ angular.module('posts')
                     }
 
                     // Redirect after save
-                    vm.post.$save(function (response) {
-                        $state.go('posts.detail', { postId: response._id });
+                    vm.dataset.$save(function (response) {
+                        $state.go('datasets.detail', { datasetId: response._id });
 
                     }, function (errorResponse) {
                         vm.error = errorResponse.data.message;
@@ -1216,6 +1256,53 @@ angular.module('datasets')
 
 'use strict';
 
+angular.module('datasets')
+    .directive('datasetTable', [function() {
+      var baseTpl = '   <table class="table table-striped table-bordered">';
+          baseTpl += '    <thead>';
+          baseTpl += '        {{#each columns}}';
+          baseTpl += '	        	<th>{{this}}<\/th>';
+          baseTpl += '        {{\/each}}';
+          baseTpl += '    <\/thead>';
+          baseTpl += '    <tbody>';
+          baseTpl += '      {{> rows}}';
+          baseTpl += '    <\/tbody>';
+          baseTpl += '  <\/table>';
+
+      var partial = '  {{#each rows}}';
+          partial += '    <tr>';
+          partial += '		  {{#each ..\/columns}}';
+          partial += '			  <td>{{lookup ..\/this this}}<\/td>';
+          partial += '		  {{\/each}}';
+          partial += '    <\/tr>';
+          partial += ' {{\/each}}';
+
+      var tpl = Handlebars.compile(baseTpl);
+      Handlebars.registerPartial('rows', partial);
+
+      return {
+        restrict: 'E',
+        scope: {
+          rows: '=',
+          columns: '='
+        },
+        link: function($scope, element) {
+          $scope.$watchGroup(['columns', 'rows'], function(newData) {
+            if (newData[0].length && newData[1].length) {
+              element.html(tpl({
+                columns: newData[0],
+                rows: newData[1]
+              }));
+            } else {
+              element.html('');
+            }
+          });
+        }
+      };
+    }]);
+
+'use strict';
+
 //Datasets Detail Controller
 angular.module('datasets')
     .controller('DatasetsEditController',
@@ -1232,7 +1319,7 @@ angular.module('datasets')
 				vm.rows = [];
 				vm.hasLoadedData = false;
 
-                UsersFactory.finduserdatasets(vm.user).then(function (usersDatasets) {
+                UsersFactory.userData('datasets', vm.user).then(function (usersDatasets) {
                 	vm.usersDatasets = usersDatasets;
                 });
 
@@ -1269,24 +1356,62 @@ angular.module('datasets')
 'use strict';
 
 //datasets List Controller
-angular.module('datasets').controller('DatasetsListController',
-    ['$state', '$sce', '$modal', 'Authentication', 'Datasets',
-    function ($state, $sce, $modal, Authentication, Datasets) {
+angular.module('datasets').controller('DatasetsListController', ['$state', '$stateParams', '$sce', '$modal', 'Authentication', 'Datasets','UsersFactory',
+    function ($state, $stateParams, $sce, $modal, Authentication, Datasets, UsersFactory) {
         var vm = this;
 
         vm.authentication = Authentication;
-        vm.loadingResults = false;
+
+        vm.resolved = false;
+        vm.loading = false;
+        
+        vm.ownership = UsersFactory.ownership();
+        
+        vm.load = function () {
+            vm.resolved = false;
+            vm.loading = true;
+        };
+
+        vm.loaded = function () {
+            vm.resolved = true;
+            vm.loading = false;
+        };
+
+        vm.filterData = function (field, value) {
+            vm.load();
+            Datasets.filter(field, value).then(function (res) {
+                vm.list = res.data;
+                vm.loaded();
+            }, function (err) {
+                vm.loaded();
+            });
+        };
+
+        vm.state = $state.current.name;
+        
+        if (vm.state === 'datasets.filter') {
+            vm.filterData($stateParams.field, $stateParams.value);
+        }
+
+        else if (vm.state === 'users.profilepage.datasets') {
+            vm.load();
+            Datasets.user($stateParams.username).then(function (res) {
+                vm.list = res.data;
+                vm.loaded();
+            }, function (err) {
+                vm.loaded();
+            });
+        }
 
         vm.search = function () {
-            vm.loadingResults = true;
+            vm.load();
             Datasets.search(vm.q)
                 .success(function (response) {
-                    vm.searchResults = response;
-                    vm.loadingResults = false;
+                    vm.list = response;
+                    vm.loaded();
                 })
                 .error(function (error) {
-                    console.log(error);
-                    vm.loadingResults = false;
+                    vm.loaded();
                 });
         };
 
@@ -1308,19 +1433,18 @@ angular.module('datasets').controller('DatasetsListController',
                 });
         };
 
-    	vm.showData = function (dataset) {
-    		var modalInstance = $modal.open({
-    			templateUrl: 'modules/datasets/client/detail/datasets.detail.modal.html',
-    			controller: 'DatasetsDetailModalController',
-    			controllerAs: 'DatasetDetailModal',
-    			size: 'md',
-    			resolve: {
-    				viewingDataset: dataset
-    			}
-    		});
-    	};
+        vm.showData = function (dataset) {
+            var modalInstance = $modal.open({
+                templateUrl: 'modules/datasets/client/detail/datasets.detail.modal.html',
+                controller: 'DatasetsDetailModalController',
+                controllerAs: 'DatasetDetailModal',
+                size: 'md',
+                resolve: {
+                    viewingDataset: dataset
+                }
+            });
+        };
 }]);
-
 
 'use strict';
 
@@ -1331,10 +1455,13 @@ angular.module('datasets')
             return {
                 crud: crud(),
                 search: search,
+                filter: filter,
                 addToUserApiCall: addToUserApiCall,
                 getDatasetWithS3: getDatasetWithS3,
                 saveCustom: saveCustom,
-                mergeColumns: mergeColumns
+                mergeColumns: mergeColumns,
+                insert: insert,
+                user: user
             };
 
             function crud() {
@@ -1346,7 +1473,20 @@ angular.module('datasets')
                     }
                 });
             }
+            
+            function user(username) {
+                 return $http({
+                    url: 'api/datasets/user/' + username,
+                    method: 'GET'
+                });   
+            }
 
+            function filter(field, value) {
+                return $http({
+                    url: 'api/datasets/filter/' + field + '/' + value,
+                    method: 'GET'
+                });
+            }
 
             function search(q) {
                 return $http({
@@ -1369,12 +1509,12 @@ angular.module('datasets')
             }
 
             function getDatasetWithS3(datasetId) {
-            	return $http({
-            		url: 'api/datasets/' + datasetId + '/withs3',
-            		method: 'GET'
-            	}).then(function(res) {
+                return $http({
+                    url: 'api/datasets/' + datasetId + '/withs3',
+                    method: 'GET'
+                }).then(function (res) {
                     return res.data;
-				}, function (err) {
+                }, function (err) {
                     console.error(err);
                 });
             }
@@ -1384,28 +1524,36 @@ angular.module('datasets')
                     url: '/api/datasets/saveCustom',
                     data: dataset,
                     method: 'POST'
-                }).then(function(res) {
+                }).then(function (res) {
                     return res.data;
                 }, function (err) {
                     console.log(err);
                 });
             }
 
-            function mergeColumns (data) {
+            function mergeColumns(data) {
                 return $http({
                     url: '/api/datasets/merge',
                     data: data,
                     method: 'POST'
-                }).then(function(res) {
+                }).then(function (res) {
                     return res.data;
                 }, function (err) {
                     console.error(err);
                 });
             }
+
+            function insert(data) {
+                return $http({
+                    url: '/api/datasets/insert',
+                    data: data,
+                    method: 'POST'
+                }).then(function (res) {
+                    return res.data;
+                });
+            }
         }
     ]);
-
-
 
 'use strict';
 
@@ -1730,14 +1878,14 @@ angular.module('datasets')
                     }
                 }
 
-                UsersFactory.finduserdatasets(vm.user).then(function (usersDatasets) {
+                UsersFactory.userData('datasets', vm.user).then(function (usersDatasets) {
                 	vm.usersDatasets = usersDatasets;
                 });
                 
 
                 // function checkForEmptyData () {
                         // var testData = [];
-                //     UsersFactory.finduserdatasets(vm.user).then(function (usersDatasets) {
+                //     UsersFactory.userData('datasets',vm.user).then(function (usersDatasets) {
                 //         vm.usersDatasets = usersDatasets;
                 //         var listIds = _.map(usersDatasets, function(elem) {
                 //             return elem._id;
@@ -1990,26 +2138,7 @@ angular.module('datasets')
 
   function menuConfig(Menus) {
     // Set top bar menu items
-    Menus.addMenuItem('topbar', {
-      title: 'Models',
-      state: 'models.list',
-      roles: ['user'],
-      position: 3
-    });
-    /*
-        // Add the dropdown list item
-        Menus.addSubMenuItem('topbar', 'models', {
-          title: 'List Models',
-          state: 'models.list'
-        });
 
-        // Add the dropdown create item
-        Menus.addSubMenuItem('topbar', 'models', {
-          title: 'Create Model',
-          state: 'models.create',
-          roles: ['user']
-        });
-    */
   }
 })();
 
@@ -2038,6 +2167,15 @@ angular.module('datasets')
           pageTitle: 'Models List'
         }
       })
+      .state('models.filter', {
+        url: '/:field/:value',
+        templateUrl: 'modules/models/client/views/list-models.client.view.html',
+        controller: 'ModelsListController',
+        controllerAs: 'vm',
+        data: {
+          pageTitle: 'Models List'
+        }
+      })
       .state('models.create', {
         url: '/create',
         templateUrl: 'modules/models/client/views/form-model.client.view.html',
@@ -2048,7 +2186,7 @@ angular.module('datasets')
         },
         data: {
           roles: ['user', 'admin'],
-          pageTitle : 'Models Create'
+          pageTitle: 'Models Create'
         }
       })
       .state('models.edit', {
@@ -2072,8 +2210,8 @@ angular.module('datasets')
         resolve: {
           modelResolve: getModel
         },
-        data:{
-          pageTitle: 'Model {{ postResolve.name }}'
+        data: {
+          pageTitle: 'Model {{ modelResolve.name }}'
         }
       });
   }
@@ -2100,12 +2238,59 @@ angular.module('datasets')
     .module('models')
     .controller('ModelsListController', ModelsListController);
 
-  ModelsListController.$inject = ['ModelsService'];
+  ModelsListController.$inject = ['$state', '$stateParams', 'Models', 'ModelsService', 'UsersFactory'];
 
-  function ModelsListController(ModelsService) {
+  function ModelsListController($state, $stateParams, Models, ModelsService, UsersFactory) {
+
     var vm = this;
 
-    vm.models = ModelsService.query();
+    vm.resolved = false;
+    vm.loading = false;
+    
+    vm.load = function() {
+      vm.resolved = false;
+      vm.loading = true;
+    };
+
+    vm.loaded = function () {
+      vm.resolved = true;
+      vm.loading = false;
+    };
+    
+    vm.state = $state.current.name;
+
+    vm.ownership = UsersFactory.ownership();
+
+    
+   vm.query = function() {
+      vm.load();
+      ModelsService.query().$promise.then(function (res) {
+        vm.loaded();
+        vm.list = res;
+      });
+    };
+
+    if ($state.current.name === 'models.filter') {
+      var field = $stateParams.field;
+      var value = $stateParams.value;
+      vm.load();
+      Models.filter(field, value)
+        .then(function (models) {
+          vm.list = models;
+          vm.loaded();
+        }, function (error) {
+          vm.loaded();
+        });
+    }
+
+    else if ($state.current.name === 'users.profilepage.models') {
+      vm.load();
+      UsersFactory.userData('models', $stateParams.username).then(function (models) {
+        vm.list = models;
+        vm.loaded();
+      });
+    }
+
   }
 })();
 
@@ -2163,6 +2348,17 @@ angular.module('datasets')
   }
 })();
 
+'use strict';
+
+angular.module('models')
+  .factory('Models', ['$http', function ($http) {
+    return {
+      filter: function (field, value) {
+        return $http.get('api/models/' + field + '/' + value);
+      }
+    };
+    }]);
+
 //Models service used to communicate Models REST endpoints
 (function () {
   'use strict';
@@ -2190,32 +2386,12 @@ angular.module('datasets')
 angular.module('posts')
     .run(['Menus', 'Authentication',
         function (Menus, Authentication) {
-            
-            // Add the posts dropdown item
-            Menus.addMenuItem('topbar', {
-                title: 'Posts',
-                state: 'posts.list',
-                roles: ['user'],
-                position: 3
-            });
-/*
-            // Add the dropdown list item
-            Menus.addSubMenuItem('topbar', 'posts', {
-                title: 'List posts',
-                state: 'posts.list'
-            });
 
-            // Add the dropdown create item
-            Menus.addSubMenuItem('topbar', 'posts', {
-                title: 'Create posts',
-                state: 'posts.create',
-                roles: ['user']
-            });
-            
-*/
         }
-    ]);
-
+    ]).constant('postOptions', {
+        subjects: ['finance', 'sports', 'social science'],
+        access: ['public','private','paid']
+    });
 'use strict';
 
 // Setting up route
@@ -2233,6 +2409,12 @@ angular.module('posts')
                 })
                 .state('posts.list', {
                     url: '',
+                    controller: 'postsListController',
+                    controllerAs: 'postsList',
+                    templateUrl: MODULE_PATH + 'list/posts.list.html',
+                })
+                .state('posts.search', {
+                    url: '/search/:field/:value',
                     controller: 'postsListController',
                     controllerAs: 'postsList',
                     templateUrl: MODULE_PATH + 'list/posts.list.html'
@@ -2261,85 +2443,386 @@ angular.module('posts')
                         roles: ['user', 'admin']
                     }
                 });
-        }
-    ]);
+                    }
+                ]);
 
 'use strict';
 
 //posts Create Controller
 angular.module('posts')
-    .controller('postsCreateController',
-        ['$scope', '$state', 'Authentication', 'Posts',
-            function ($scope, $state, Authentication, Posts) {
-                var vm = this;
+    .controller('postsCreateController', ['$scope', '$state', 'Authentication', 'posts', 'postOptions', '$uibModal', '$window', '$timeout', 'FileUploader',
+            function ($scope, $state, Authentication, posts, postOptions, $uibModal, $window, $timeout, FileUploader) {
 
-                vm.authentification = Authentication;
-                vm.post = new Posts();
+            var vm = this;
 
-                // Create new post
-                vm.create = function (isValid) {
-                    vm.error = null;
+            vm.user = Authentication.user;
 
-                    if (!isValid) {
-                        $scope.$broadcast('show-errors-check-validity', 'postForm');
+            vm.error = null;
 
-                        return false;
-                    }
+            vm.postOptions = postOptions;
 
-                    // Redirect after save
-                    vm.post.$save(function (response) {
-                        $state.go('posts.detail', { postId: response._id });
+            // Create new post
 
-                    }, function (errorResponse) {
-                        vm.error = errorResponse.data.message;
+            vm.post = {};
+
+            vm.create = function (isValid) {
+
+                vm.error = null;
+
+                if (!isValid) {
+                    $scope.$broadcast('show-errors-check-validity', 'postForm');
+
+                    return false;
+                }
+
+                posts.create(vm.post).then(function (response) {
+                    $state.go('posts.detail', {
+                        postId: response._id
                     });
+                }, function (err) {
+                    vm.error = err.message;
+                });
+            };
+
+            vm.modal = function (data) {
+
+                if (!vm.post.hasOwnProperty(data)) {
+                    vm.post[data] = [];
+                }
+
+                // array of IDS for model/datasets already selected from modal
+                var selectedData = vm.post[data].map(function (data) {
+                    return data._id;
+                });
+
+                var controller = function ($scope, $modalInstance, Models, Datasets, Authentication) {
+
+                    var vm = this;
+
+                    vm.modal = true; // disables/enables modal features to reuse list view for models/datasets
+
+                    //disables item selection if already selected
+                    vm.selectedData = selectedData;
+
+                    vm.user = Authentication.user;
+
+                    vm.ok = function (data) {
+                        //passes info back to parent controller
+                        $modalInstance.close(data);
+                    };
+
+                    vm.cancel = function () {
+                        $modalInstance.dismiss('cancel');
+                    };
+
+                    if (data === 'models') {
+
+                        Models.filter('user', Authentication.user._id)
+                            .then(function (res) {
+                                    vm.list = res.data;
+                                },
+                                function (error) {
+                                }).finally(function() {
+                                    vm.loading = false;
+                                    vm.resolved = true;
+                                });
+                    }
+                    else if (data === 'datasets') {
+
+                        Datasets.user(Authentication.user.username)
+                           .then(function (res) {
+                                    vm.list = res.data;
+                                },
+                                function (error) {
+                                }).finally(function() {
+                                    vm.loading = false;
+                                    vm.resolved = true;
+                                });
+                    }
                 };
-            }]);
+
+                var options = {
+                    controller: controller
+                };
+
+                if (data === 'models') {
+                    options.templateUrl = 'modules/models/client/views/list-models.client.view.html';
+                    options.controllerAs = 'vm';
+                }
+
+                else if (data === 'datasets') {
+                    options.templateUrl = 'modules/datasets/client/list/datasets.list.html';
+                    options.controllerAs = 'DatasetsList';
+                }
+                else if (data === 'files') {
+                    options.templateUrl = 'modules/posts/client/create/posts.modal.html';
+                    options.controllerAs = 'vm';
+                }
+
+                $uibModal.open(options).result.then(function (selection) {
+                    vm.post[data].push(selection);
+                });
+
+            };
+
+            // IMPORTANT : fileuploader must be kept on $scope because of bug with controllerAs
+            $scope.uploader = new FileUploader({
+                url: 'api/users/files'
+            });
+
+            // Called after the user selected a new picture file
+            $scope.uploader.onAfterAddingFile = function (fileItem) {
+                if ($window.FileReader) {
+                    var fileReader = new FileReader();
+                    fileReader.readAsDataURL(fileItem._file);
+                    fileReader.onload = function (event) {
+                        $timeout(function () {
+                            var pdfData = {
+                                name: fileItem.file.name,
+                                file: event.target.result
+                            };
+                            $scope.upload(pdfData);
+                        }, 0);
+                    };
+                }
+            };
+
+            $scope.upload = function (file) {
+                // Clear messages
+                vm.success = vm.error = null;
+
+                // Start upload
+                $scope.uploader.uploadAll();
+
+            };
+
+            // Cancel the upload process
+            $scope.cancelUpload = function () {
+                $scope.uploader.clearQueue();
+            };
+
+
+            // Called after the user has successfully uploaded a new picture
+            $scope.uploader.onSuccessItem = function (fileItem, response, status, headers) {
+                // Show success message
+                vm.success = true;
+
+                vm.user.files.push(fileItem.file.name);
+                // Clear upload buttons
+                $scope.cancelUpload();
+
+            };
+
+            $scope.uploader.onErrorItem = function (fileItem, response, status, headers) {
+                // Clear upload buttons
+                $scope.cancelUpload();
+
+                // Show error message
+                vm.error = response.message;
+            };
+
+                }]);
 
 'use strict';
 
 //posts Detail Controller
 angular.module('posts')
-    .controller('postsDetailController',
-        ['$stateParams', 'Authentication', 'posts',
+    .controller('postsDetailController', ['$stateParams', 'Authentication', 'posts',
             function ($stateParams, Authentication, posts) {
-                var vm = this;
 
-                vm.authentication = Authentication;
-
-                vm.post = posts.get({
-                    postId: $stateParams.postId
-                });
-
-                console.log(vm.authentication);
-                console.log(vm.post);
-
-            }]);
+            var vm = this;
+            
+            vm.authentication = Authentication;
+            
+            vm.post = posts.crud.get({
+                postId: $stateParams.postId
+            });
+            
+ }]);
 
 'use strict';
 
 //posts Edit Controller
 angular.module('posts')
-    .controller('postsEditController',
-        ['$scope', '$state', '$stateParams', 'Authentication', 'posts',
-            function ($scope, $state, $stateParams, Authentication, posts) {
-                var vm = this;
+    .controller('postsEditController', ['$scope', '$state', '$stateParams', 'Authentication', 'posts', '$uibModal', '$window', '$timeout', 'FileUploader', 'postOptions',
+            function ($scope, $state, $stateParams, Authentication, posts, $uibModal, $window, $timeout, FileUploader, postOptions) {
+            var vm = this;
 
-                vm.authentication = Authentication;
+            vm.user = Authentication.user;
 
-                vm.post = posts.get({
+            vm.error = null;
+
+            vm.postOptions = postOptions;
+
+            vm.get = function () {
+                posts.crud.get({
                     postId: $stateParams.postId
+                }).$promise.then(function (res) {
+                    vm.post = res;
+                }, function (err) {
+                    vm.error = err;
+                });
+            };
+
+            vm.get();
+
+            vm.update = function (isValid) {
+
+                vm.error = null;
+
+                if (!isValid) {
+                    $scope.$broadcast('show-errors-check-validity', 'postForm');
+
+                    return false;
+                }
+                posts.crud.update({
+                    postId: $stateParams.postId,
+                    update: vm.post
+                }).then(function (response) {
+                    $state.go('posts.detail', {
+                        postId: response._id
+                    });
+                }, function (err) {
+                    vm.error = err.message;
+                });
+            };
+
+            vm.modal = function (data) {
+
+                if (!vm.post.hasOwnProperty(data)) {
+                    vm.post[data] = [];
+                }
+
+                // array of IDS for model/datasets already selected from modal
+                var selectedData = vm.post[data].map(function (data) {
+                    return data._id;
                 });
 
-                vm.update = function () {
+                var controller = function ($scope, $modalInstance, Models, Datasets, Authentication) {
 
-                    vm.post.$update(function () {
-                        $state.go('posts.detail', { postId: vm.post._id });
+                    var vm = this;
 
-                    }, function (errorResponse) {
-                        vm.error = errorResponse.data.message;
-                    });
+                    vm.modal = true; // disables/enables modal features to reuse list view for models/datasets
+
+                    //disables item selection if already selected
+                    vm.selectedData = selectedData;
+
+                    vm.user = Authentication.user;
+
+                    vm.ok = function (data) {
+                        //passes info back to parent controller
+                        $modalInstance.close(data);
+                    };
+
+                    vm.cancel = function () {
+                        $modalInstance.dismiss('cancel');
+                    };
+
+                    if (data === 'models') {
+
+                        Models.filter('user', Authentication.user._id)
+                            .then(function (res) {
+                                    vm.loadingResults = false;
+                                    vm.models = res.data;
+                                },
+                                function (error) {
+                                    vm.loadingResults = false;
+                                });
+                    }
+                    else if (data === 'datasets') {
+
+                        Datasets.user(Authentication.user.username)
+                            .then(function (res) {
+                                    vm.list = res.data;
+                                    vm.loadingResults = false;
+                                },
+                                function (error) {
+                                    vm.loadingResults = false;
+                                });
+                    }
                 };
+
+                var options = {
+                    controller: controller
+                };
+
+                if (data === 'models') {
+                    options.templateUrl = 'modules/models/client/views/list-models.client.view.html';
+                    options.controllerAs = 'vm';
+                }
+
+                else if (data === 'datasets') {
+                    options.templateUrl = 'modules/datasets/client/list/datasets.list.html';
+                    options.controllerAs = 'DatasetsList';
+                }
+                else if (data === 'files') {
+                    options.templateUrl = 'modules/posts/client/create/posts.modal.html';
+                    options.controllerAs = 'vm';
+                }
+
+                $uibModal.open(options).result.then(function (selection) {
+                    if (selection) {
+                    vm.post[data].push(selection);
+                    }
+                });
+
+            };
+
+            // IMPORTANT : fileuploader must be kept on $scope because of bug with controllerAs
+            $scope.uploader = new FileUploader({
+                url: 'api/users/files'
+            });
+
+            // Called after the user selected a new picture file
+            $scope.uploader.onAfterAddingFile = function (fileItem) {
+                if ($window.FileReader) {
+                    var fileReader = new FileReader();
+                    fileReader.readAsDataURL(fileItem._file);
+                    fileReader.onload = function (event) {
+                        $timeout(function () {
+                            var pdfData = {
+                                name: fileItem.file.name,
+                                file: event.target.result
+                            };
+                            $scope.upload(pdfData);
+                        }, 0);
+                    };
+                }
+            };
+
+            $scope.upload = function (file) {
+                // Clear messages
+                vm.success = vm.error = null;
+
+                // Start upload
+                $scope.uploader.uploadAll();
+
+            };
+
+            // Cancel the upload process
+            $scope.cancelUpload = function () {
+                $scope.uploader.clearQueue();
+            };
+
+
+            // Called after the user has successfully uploaded a new picture
+            $scope.uploader.onSuccessItem = function (fileItem, response, status, headers) {
+                // Show success message
+                vm.success = true;
+
+                vm.user.files.push(fileItem.file.name);
+                // Clear upload buttons
+                $scope.cancelUpload();
+
+            };
+
+            $scope.uploader.onErrorItem = function (fileItem, response, status, headers) {
+                // Clear upload buttons
+                $scope.cancelUpload();
+
+                // Show error message
+                vm.error = response.message;
+            };
 
             }]);
 
@@ -2347,22 +2830,105 @@ angular.module('posts')
 
 //posts List Controller
 angular.module('posts')
-    .controller('postsListController',
-        ['$scope', '$state', 'Authentication', 'posts',
-            function ($scope, $state, Authentication, posts) {
-                var vm = this;
+    .controller('postsListController', ['$scope', '$stateParams', '$state', 'Authentication', 'posts', 'UsersFactory',
+            function ($scope, $stateParams, $state, Authentication, posts, UsersFactory) {
+            var vm = this;
 
-                vm.authentication = Authentication;
-                vm.posts = posts.query();
+            vm.authentication = Authentication;
+
+            vm.state = $state.current.name;
+
+            vm.ownership = UsersFactory.ownership();
+
+            vm.postLimit = 10;
+
+            vm.resolved = false;
+            vm.loading = false;
+
+            vm.load = function () {
+                vm.resolved = false;
+                vm.loading = true;
+            };
+
+            vm.loaded = function () {
+                vm.resolved = true;
+                vm.loading = false;
+            };
+
+            vm.getPosts = function (field, value) {
+                vm.load();
+
+                vm.list = [];
+                var getPosts;
+
+                if (!field) {
+                    // lists all posts if no filter
+                    getPosts = posts.list();
+                }
+                else {
+                    vm.field = field;
+                    vm.value = value;
+                    if (vm.field !== 'title') {
+                        vm.query = ''; // remove query if a title was searched but category selected
+                    }
+                    getPosts = posts.search(field, value);
+                }
+
+                getPosts.then(function (posts) {
+                    vm.list = posts;
+                    vm.loaded();
+                }, function (err) {
+                    vm.loaded();
+                });
+            };
+
+
+            vm.search = function () {
+                vm.field = 'title';
+                if (vm.query) {
+                    vm.getPosts(vm.field, vm.query);
+                }
+                else {
+                    vm.getPosts();
+                }
+
+            };
+
+            // set view based on state
+
+            if (vm.state === 'posts.list') { // topbar view
+                vm.menuItems = ['finance', 'sports', 'soshsci'];
+                vm.field = 'subject';
+            }
+
+            if (vm.state === 'posts.search') {
+                vm.getPosts($stateParams.field, $stateParams.value);
+            }
+
+            if (vm.state === 'users.profilepage.posts') {
+                vm.load();
+                UsersFactory.userData('posts', $stateParams.username).then(function (res) {
+                    vm.list = res;
+                    vm.loaded();
+                });
+            }
+
+            if (vm.state === 'home') {
+                vm.postLimit = 3;
+                vm.menuItems = ['trending', 'in the news', 'rising'];
+                vm.getPosts('trending', vm.menuItems[0]);
+            }
 
             }]);
 
 'use strict';
-
 //posts service used for communicating with the posts REST endpoints
-angular.module('posts')
-    .factory('posts', ['$resource',
-        function ($resource) {
+angular.module('posts').factory('posts', ['$resource', '$http', '$state',
+    function ($resource, $http, $state) {
+
+        var posts = {};
+
+        posts.crud = function () {
             return $resource('api/posts/:postId', {
                 postId: '@_id'
             }, {
@@ -2370,8 +2936,853 @@ angular.module('posts')
                     method: 'PUT'
                 }
             });
+        }();
+
+        posts.create = function (content) {
+            return $http.post('/api/posts', content).then(function (res) {
+                return res.data;
+            }, function (err) {
+                return err.data;
+            });
+        };
+        
+        posts.list = function() {
+            return $http.get('/api/posts').then(function(res) {
+                return res.data;      
+            }, function(err) {
+                return err.data;
+            });
+        };
+        
+        posts.search = function (field, value) {
+            var search = field + '/' + value;
+            return $http.get('/api/posts/search/' + search).then(function (res) {
+                return res.data;
+            }, function (err) {
+                return err.data;
+            });
+        };
+
+        return posts;
+    }
+]);
+
+'use strict';
+
+// Setting up route
+angular.module('process')
+    .config(['$stateProvider',
+        function ($stateProvider) {
+            var MODULE_PATH = 'modules/process/client/';
+
+            // datasets state routing
+            $stateProvider
+                .state('lab', {
+                  url: '/lab',
+                  abstract: true,
+                  template: '<ui-view/>'
+                })
+                .state('lab.process', {
+                  url: '/process',
+                  controller: 'ProcessMainController',
+                  controllerAs: 'ProcessMain',
+                  templateUrl: MODULE_PATH + 'main/process.main.html',
+                  params: { data: null }
+                })
+                .state('lab.process.popup', {
+                  url: '/:type',
+                  modal: true,
+                  size: 'lg',
+                  // common way around to use angular-ui modals with
+                  // the router having nested states
+                  template: '<div ui-view="modal"></div>',
+                  resolve: {
+                    // parameters to be shared by all the child states
+                    // including the modal and the states for task options
+                    processService: 'Process',
+                    usersDatasets: ["processService", function(processService) {
+                      return processService.getUsersDatasets();
+                    }],
+                    selectedDataset: ["processService", function(processService) {
+                      return processService.getSelectedDataset();
+                    }],
+                    process: ["processService", function(processService) {
+                      return processService.getSelectedProcess();
+                    }]
+                  },
+                  views: {
+                    'modal@': {
+                      templateUrl: MODULE_PATH + 'modal/process.modal.html',
+                      controller: 'ProcessModalController',
+                      controllerAs: 'ProcessModal'
+                    }
+                  }
+                })
+                .state('lab.process.popup.taskoptions', {
+                  url: '/taskoptions',
+                  template: '<ui-view/>'
+                })
+                .state('lab.process.popup.taskoptions.merge', {
+                  url: '/merge',
+                  templateUrl: MODULE_PATH + 'tasks/tasks.merge.html',
+                  controller: 'MergeTaskOptionsController',
+                  controllerAs: 'MergeTaskOptions',
+                  params: { options: {} }
+                })
+                .state('lab.process.popup.taskoptions.linearregression', {
+                  url: '/linearregression',
+                  templateUrl: MODULE_PATH + 'tasks/tasks.linearregression.html',
+                  controller: 'LROptionsController',
+                  controllerAs: 'LROptions',
+                  params: { options: {} }
+                });
         }
     ]);
+
+'use strict';
+
+angular.module('process')
+    .controller('ProcessMainController',
+        ['$state', '$stateParams', '$q', '$uibModal', 'Datasets', 'UsersFactory', 'Authentication', 'Tasks', 'Process', 'Deployr',
+            function ($state, $stateParams, $q, $uibModal, Datasets, UsersFactory, Authentication, Tasks, Process, Deployr) {
+                var vm = this;
+                var runningTask = null;
+
+        vm.alerts = [];
+        vm.user = Authentication.user;
+        vm.showLoader = false;
+        vm.showProcessLoader = false;
+        vm.selectedDataset = '';
+        vm.dataset = {
+          rows: [],
+          columns: []
+        };
+        vm.process = null;
+
+        Process.getByUser(vm.user._id)
+          .then(function(processes) {
+            vm.usersProcesses = processes;
+          });
+
+        function getDatasets() {
+          UsersFactory.userData('datasets', vm.user)
+            .then(function(datasets) {
+              vm.usersDatasets = datasets;
+              Process.setUsersDatasets(datasets);
+            });
+        }
+
+        getDatasets();
+
+        vm.onDatasetChange = function(dataset, resetOptions) {
+          // re-initialize table data
+          vm.dataset.rows = [];
+          vm.dataset.columns = [];
+
+          // invalidate any dataset specific options
+          if (resetOptions && vm.process && vm.process.tasks) {
+            vm.process.tasks.forEach(function(task) {
+              if (task.datasetChanged) {
+                task.datasetChanged(task.options);
+              }
+            });
+          }
+
+          // Persist selected dataset
+          Process.setSelectedDataset(dataset);
+          vm.selectedDataset = dataset.title;
+          vm.showLoader = true;
+          Datasets.getDatasetWithS3(dataset._id)
+          .then(function (data) {
+            vm.showLoader = false;
+            vm.dataset.columns = data.columns;
+            vm.dataset.rows = data.rows;
+          });
+        };
+
+        // The Lab page has received data from the process modal.
+        // the update in state unfortunately requires a reload which
+        // resets the state of the controller. Until a better solution
+        // is implemented, going with restoring the previous state for now.
+        if ($stateParams.data && $stateParams.data.process) {
+
+          // re-append script property from the original task,
+          // as some of the nested properties are functions which
+          // are automatically stripped when sent as route params
+          $stateParams.data.process.tasks.forEach(function(task) {
+            var originalTask = Tasks.getSubtaskByTitle(task.title);
+            if (originalTask) {
+              task = _.extend(task, {
+                script: originalTask.script,
+                validate: originalTask.validate,
+                datasetChanged: originalTask.datasetChanged
+              });
+            }
+          });
+
+          if ($stateParams.data.type === 'create') {
+            Process.setSelectedProcess(_.extend($stateParams.data.process, {
+              user: vm.user._id
+            }));
+          } else {
+            Process.setSelectedProcess(
+              _.extend(Process.getSelectedProcess(), $stateParams.data.process)
+            );
+          }
+
+          vm.process = Process.getSelectedProcess();
+
+          var selectedDataset = Process.getSelectedDataset();
+          if (selectedDataset) {
+            vm.selectedDataset = selectedDataset.title;
+            vm.onDatasetChange(selectedDataset);
+          }
+        }
+
+        // If the lab page has been opened up by clicking the "edit"
+        // button on a dataset from "My Data" page, pre-select
+        // the dataset
+        if ($stateParams.data && $stateParams.data.dataset) {
+          vm.onDatasetChange($stateParams.data.dataset);
+        }
+
+        vm.openModal = function(type) {
+          if (!vm.selectedDataset && (vm.dataset.rows.length || vm.dataset.columns.length)) {
+            return alert('Please save the dataset before proceeding');
+          } else if (!vm.selectedDataset) {
+            return alert('Please select a datatset!');
+          }
+          $state.go('lab.process.popup', {type: type}, {
+            reload: 'lab.process.popup'
+          });
+        };
+
+        vm.onProcessChange = function(process) {
+          if (vm.process && vm.process._id && process._id && vm.process._id === process._id) {
+            return;
+          }
+          vm.process = _.cloneDeep(process);
+          vm.process.tasks = vm.process.tasks.map(function(task) {
+            var originalTask = Tasks.getSubtaskByTitle(task.title);
+            return originalTask || task;
+          });
+          Process.setSelectedProcess(vm.process);
+        };
+
+        vm.saveProcess = function() {
+          var process = _.clone(vm.process);
+          process.tasks = process.tasks.map(function(task) {
+            return _.pick(task, ['title', 'slug']);
+          });
+          if (process._id) {
+            Process.update(process)
+              .then(function(process) {
+                alert('updated!');
+                var index = _.findIndex(vm.usersProcesses, {_id: process._id});
+                vm.usersProcesses[index] = process;
+              });
+          } else {
+            Process.create(process)
+              .then(function(process) {
+                alert('created!');
+                vm.usersProcesses.push(process);
+              });
+          }
+        };
+
+        function getRowsFromResult(result, columns) {
+          return _.zip.apply(_, result[0].value.map(function(obj) {
+          	return obj.value;
+          })).map(function(rowValues) {
+            var row = {};
+            rowValues.forEach(function(rowValue, i) {
+              row[columns[i]] = rowValue;
+            });
+            return row;
+          });
+        }
+
+        function process(dataset, tasks, deferred, results) {
+          if (!deferred) deferred = $q.defer();
+          if (!results) results = [];
+          runningTask = Deployr.run(dataset, tasks[0]);
+          runningTask.promise().then(function(res) {
+            var result = res.result.generatedObjects;
+            if (tasks[0].returnType === 'dataset') {
+              if (!result.length) {
+                return deferred.reject('one of the tasks returned empty dataset!');
+              }
+              var _dataset = {
+                columns: result[0].value.map(function(obj) {
+                  return obj.name;
+                })
+              };
+              _dataset.rows = getRowsFromResult(result, _dataset.columns);
+              results.push(_dataset);
+              if (typeof tasks[1] !== 'undefined') {
+                return process(_dataset, _.drop(tasks), deferred, results);
+              }
+            } else {
+              results.push(result);
+            }
+            return deferred.resolve(results);
+          }).error(function(error) {
+            deferred.reject(error);
+          });
+          return deferred.promise;
+        }
+
+        vm.performProcess = function() {
+          var invalidTasks = vm.process.tasks.filter(function(task) {
+            return task.validate && !task.validate(task.options);
+          });
+          if (invalidTasks.length) {
+            return alert('Please select the required options for the tasks present in the process!');
+          }
+          vm.showProcessLoader = true;
+          process(vm.dataset, vm.process.tasks.filter(function(task) {
+            return task.script;
+          }))
+            .then(function(results) {
+              var modalInstance = $uibModal.open({
+                controller: 'ModelModalController',
+                controllerAs: 'ModelModal',
+                templateUrl: 'modules/process/client/model/model.modal.html',
+                size: 'md',
+                backdrop: true,
+                resolve: {
+                  selectedDataset: function() {
+                    return Process.getSelectedDataset();
+                  },
+                  tasks: function() {
+                    return vm.process.tasks;
+                  },
+                  results: function() {
+                    return results;
+                  }
+                }
+              });
+              modalInstance.result.then(function(model) {
+                vm.alerts.push({
+                  type: 'success',
+                  msg: 'The result has been successfully saved!'
+                });
+                getDatasets();
+              });
+            })
+            .catch(function(err) {
+              console.log('error', err);
+              if (err instanceof Error) {
+                alert(err.message || err);
+              }
+            })
+            .finally(function() {
+              vm.showProcessLoader = false;
+            });
+        };
+
+        vm.cancelProcess = function() {
+          if (runningTask) {
+            runningTask.cancel(true);
+            runningTask = null;
+          }
+        };
+
+        vm.closeAlert = function(index) {
+          vm.alerts.splice(index, 1);
+        };
+
+    }]);
+
+'use strict';
+
+angular.module('process')
+    .controller('ProcessModalController',
+        ['$state', '$stateParams', '$timeout', 'Tasks', 'process',
+          function ($state, $stateParams, $timeout, Tasks, process) {
+            var baseStateUrl = 'lab.process.popup.taskoptions';
+            var vm = this;
+
+        vm.process = _.defaults($stateParams.type !== 'create' ? _.cloneDeep(process || {}) : {}, {
+          title: '',
+          tasks: []
+        });
+        vm.type = $stateParams.type;
+        vm.tasks = Tasks.getTasks();
+        vm.tasks.forEach(function(task, i) {
+          task.status = {
+            open: i === 0
+          };
+          task.subtasks.forEach(function(subtask) {
+            subtask.color = task.color;
+          });
+        });
+
+        // we only have title and slug in the received process
+        // therefore, appending returnTypes from the tasks static array
+        vm.process.tasks.forEach(function(task) {
+          task.returnType = _.compact(vm.tasks.map(function(_task) {
+            return _.find(_task.subtasks, {title: task.title});
+          }))[0].returnType;
+        });
+
+        vm.showPlaceholderArrow = true;
+
+
+        // save current task options before closing the modal,
+        // or showing options for another task
+        function updateTaskOptions() {
+          if ($state.params && $state.params.options) {
+            var slug = $state.current.url.slice(1);
+            var task = _.find(vm.process.tasks, function(task) {
+              return task.slug === slug;
+            });
+            if (task) {
+              task.options = $state.params.options;
+            }
+          }
+        }
+
+        function showTaskOptions(task) {
+          if (task.slug) {
+            $state.go(baseStateUrl + '.' + task.slug, {options: task.options});
+          } else {
+            $state.go('lab.process.popup');
+          }
+        }
+
+        // disable drag if this task is already dropped
+        vm.disableDrag = function(task) {
+          return _.find(vm.process.tasks, {title: task.title});
+        };
+
+        // 1. Set a boolean indicating if the task is of type dataset or
+        // model.
+        // 2. disallow any task with return type "model" to be dropped
+        // in between other tasks
+        // 3. disallow any task to be added next to a task having return
+        // type "model".
+        vm.onDrag = function(event, index, type) {
+          $timeout(function() {
+            vm.showPlaceholderArrow = type === 'dataset';
+          }, 0);
+          return !((type === 'model' && index <= vm.process.tasks.length - 1) ||
+                  ((_.last(vm.process.tasks) || {}).returnType === 'model' && index >= vm.process.tasks.length));
+        };
+
+        vm.onCopy = function(event, index, task) {
+          if (!_.find(vm.process.tasks, {title: task.title})) {
+            updateTaskOptions();
+            vm.process.tasks.splice(index, 0, task);
+            showTaskOptions(vm.process.tasks[index]);
+          }
+          return true;
+        };
+
+        vm.onTaskClick = function(task) {
+          showTaskOptions(task);
+        };
+
+        vm.ok = function() {
+          updateTaskOptions();
+          $state.go('lab.process', {
+            data: {
+              process: vm.process,
+              type: $stateParams.type
+            }
+          }, {
+            reload: true
+          });
+        };
+
+        vm.cancel = function() {
+          $state.go('lab.process', $stateParams);
+        };
+    }]);
+
+'use strict';
+
+angular.module('process')
+    .controller('ModelModalController',
+        ['$uibModalInstance', '$state', '$stateParams', '$q', 'Authentication', 'Datasets', 'Models', 'selectedDataset', 'tasks', 'results',
+          function ($uibModalInstance, $state, $stateParams, $q, Authentication, Datasets, Models, selectedDataset, tasks, results) {
+            var vm = this;
+
+        vm.model = null;
+        vm.dataset = null;
+        vm.tasks = tasks;
+        vm.saving = false;
+
+        var lastResult = _.last(results);
+        if (Array.isArray(lastResult)) {
+          vm.model = {
+            type: 'Linear Regression',
+            equation: 'Some equation',
+            output: lastResult
+          };
+          vm.dataset = _.last(_.dropRight(results));
+        } else {
+          vm.dataset = lastResult;
+        }
+
+        function getDataset() {
+          var deferred = $q.defer();
+          if (!vm.dataset) {
+            deferred.resolve(selectedDataset._id);
+          } else {
+            Datasets.insert({
+              selectedDataset: selectedDataset,
+              title: vm.dataset.title,
+              rows: vm.dataset.rows,
+              columns: vm.dataset.columns
+            })
+            .then(function(dataset) {
+              deferred.resolve(dataset);
+            }, function(err) {
+              deferred.reject(err);
+            });
+          }
+          return deferred.promise;
+        }
+
+        vm.save = function() {
+          vm.saving = true;
+          getDataset()
+            .then(function(dataset) {
+              if (vm.model) {
+                return Models.create({
+                  title: vm.model.title,
+                  type: vm.model.type,
+                  dataset: dataset._id,
+                  y: _.last(tasks).options.yColIndex,
+                  model: lastResult,
+                  user: Authentication.user._id,
+                  access: vm.model.access
+                });
+              }
+              return null;
+            })
+            .then(function(model) {
+              $uibModalInstance.close(model);
+            })
+            .catch(function(err) {
+              //TODO: rollback if model fails and dataset has been saved
+              console.error('error saving model', err);
+              var message = '';
+              if (err instanceof Error) {
+                message = err.message;
+              } else if (err.data && err.data.message) {
+                message = err.data.message;
+              }
+              alert('Failed with error: ' + (message || err));
+            })
+            .finally(function() {
+              vm.saving = false;
+            });
+        };
+
+        vm.discard = function() {
+          $uibModalInstance.dismiss();
+        };
+
+    }]);
+
+'use strict';
+
+angular.module('process')
+    .factory('Deployr', ['$q', function($q) {
+
+      var dBroker = rbroker.discreteTaskBroker({
+        host: 'http://52.73.208.190:7400',
+        cors: true,
+        maxConcurrentTaskLimit: 1,
+        credentials: {
+          username: 'testuser',
+          password: 'cFYmFTBcwAPNPxCVvmas5W2b'
+        }
+      });
+
+      return {
+        run: function(dataset, task) {
+          return dBroker.submit(rbroker.discreteTask({
+            filename: task.script.filename,
+            directory: task.script.directory,
+            author: 'testuser',
+            rinputs: task.script.rInputsFn(dataset.columns, dataset.rows, task.options),
+            routputs: task.script.routputs
+          }));
+        },
+        runExternal: function(task) {
+
+        },
+        runCode: function(task) {
+
+        }
+      };
+    }]);
+
+'use strict';
+
+angular.module('process')
+    .factory('Process', ['$http', function($http) {
+      var currentProcess = null;
+      var selectedDataset = null;
+      var usersDatasets = null;
+
+      return {
+        setUsersDatasets: function(datasets) {
+          usersDatasets = datasets;
+        },
+        getUsersDatasets: function() {
+          return usersDatasets;
+        },
+        setSelectedDataset: function(dataset) {
+          selectedDataset = dataset;
+        },
+        getSelectedDataset: function() {
+          return selectedDataset;
+        },
+        setSelectedProcess: function(process) {
+          currentProcess = process;
+        },
+        getSelectedProcess: function() {
+          return currentProcess;
+        },
+        getByUser: function(userId) {
+          return $http({
+            url: 'api/process/user/' + userId,
+            method: 'GET'
+          }).then(function(res) {
+              return res.data;
+          }, function (err) {
+              console.log(err);
+          });
+        },
+        create: function(process) {
+          return $http({
+            url: 'api/process',
+            method: 'POST',
+            data: {
+              process: process
+            }
+          }).then(function(res) {
+              return res.data;
+          }, function (err) {
+              console.log(err);
+          });
+        },
+        update: function(process) {
+          return $http({
+            url: 'api/process/' + process._id,
+            method: 'PUT',
+            data: {
+              process: process
+            }
+          }).then(function(res) {
+            return res.data;
+          }, function(err) {
+            console.log(err);
+          });
+        },
+        remove: function(process) {
+          return $http({
+            url: 'api/process/' + process._id,
+            method: 'DELETE'
+          }).then(function(res) {
+              return res.data;
+          }, function (err) {
+              console.log(err);
+          });
+        }
+      };
+    }]);
+
+'use strict';
+
+angular.module('process')
+    .factory('Tasks', [function() {
+
+      var SCRIPT_TYPE = {
+        DEPLOYR: 'deployr',
+        CODE: 'code',
+        EXTERNAL: 'external'
+      };
+
+      var SCRIPT_RETURN_TYPE = {
+        DATASET: 'dataset',
+        MODEL: 'model'
+      };
+
+      var dataFrameInput = function(name, columns, rows) {
+        // filter out empty rows
+        rows = rows.filter(function(row) {
+          return _.every(columns.map(function(column) { return row[column]; }));
+        });
+        return [rbroker.RInput.dataframe(name, columns.map(function(column) {
+          return rbroker.RInput.characterVector(column, rows.map(function(row) {
+            return row[column].toString();
+          }));
+        }))];
+      };
+
+      /*
+       * If a task is supposed to render any options when
+       * selected, a route with name `lab.process.taskoptions.${slug}`
+       * must be registered.
+       */
+      var tasks = [{
+        title: 'Summaries',
+        color: 'blue',
+        subtasks: []
+      }, {
+        title: 'Join',
+        color: 'green',
+        subtasks: [{
+          title: 'Merge (Drag me)',
+          slug: 'merge',
+          returnType: SCRIPT_RETURN_TYPE.DATASET,
+          options: {
+            dataset1: '',
+            dataset2: '',
+            dataset1Key: '',
+            dataset2Key: '',
+            mergeType: ''
+          }
+        }]
+      }, {
+        title: 'Transforms',
+        color: 'yellow',
+        subtasks: [{
+          title: 'Standardize dates',
+          returnType: SCRIPT_RETURN_TYPE.DATASET,
+        }, {
+          title: 'Sub-sample (rows)',
+          returnType: SCRIPT_RETURN_TYPE.DATASET,
+        }, {
+          title: 'Missing data imputation',
+          returnType: SCRIPT_RETURN_TYPE.DATASET,
+          validate: function() {
+            return true;
+          },
+          script: {
+            type: SCRIPT_TYPE.DEPLOYR,
+            directory: 'root',
+            filename: 'LRtest.R',
+            rInputsFn: dataFrameInput.bind(null, 'datasetwithNA'),
+            routputs: ['dataset']
+          }
+        }, {
+          title: 'Convert factors',
+          returnType: SCRIPT_RETURN_TYPE.DATASET,
+        }]
+      }, {
+        title: 'Exploratory',
+        color: 'pink',
+        subtasks: [{
+          title: 'PCA',
+          returnType: SCRIPT_RETURN_TYPE.DATASET,
+        }, {
+          title: 'K-means',
+          returnType: SCRIPT_RETURN_TYPE.DATASET,
+        }]
+      }, {
+        title: 'Econometric',
+        color: 'orange',
+        subtasks: []
+      }, {
+        title: 'MODEL IT!',
+        subtasks: [{
+          title: 'Linear Regression',
+          slug: 'linearregression',
+          returnType: SCRIPT_RETURN_TYPE.MODEL,
+          options: {
+            yColIndex: ''
+          },
+          validate: function(options) {
+            return !isNaN(parseInt(options.yColIndex));
+          },
+          datasetChanged: function(options) {
+            options.yColIndex = '';
+          },
+          script: {
+            type: SCRIPT_TYPE.DEPLOYR,
+            directory: 'root',
+            filename: 'LRtest6.R',
+            rInputsFn: function(columns, rows, options) {
+              return [rbroker.RInput.numeric('Ycolindex', parseInt(options.yColIndex) + 1)]
+                .concat(dataFrameInput('dataset', columns, rows));
+            },
+            routputs: ['coefficients', 'interceptSE', 'x', 'xSE']
+          }
+        }]
+      }];
+
+      var taskOptions = [];
+
+      return {
+        SCRIPT_TYPE: SCRIPT_TYPE,
+        SCRIPT_RETURN_TYPE: SCRIPT_RETURN_TYPE,
+        getTasks: function() {
+          return tasks;
+        },
+        getSubtaskByTitle: function(title) {
+          return _.compact(tasks.map(function(task) {
+            return _.find(task.subtasks, {title: title});
+          }))[0];
+        }
+      };
+    }]);
+
+'use strict';
+
+angular.module('process')
+    .controller('LROptionsController', ['$stateParams', 'Datasets', 'selectedDataset', function($stateParams, Datasets, selectedDataset) {
+
+      var vm = this;
+
+      vm.options = $stateParams.options || {};
+
+      if (selectedDataset) {
+        Datasets.getDatasetWithS3(selectedDataset._id)
+        .then(function (data) {
+          vm.columns = data.columns;
+        });
+      }
+
+    }]);
+
+'use strict';
+
+angular.module('process')
+    .controller('MergeTaskOptionsController', ['$stateParams', 'Datasets', 'usersDatasets', 'selectedDataset', function($stateParams, Datasets, usersDatasets, selectedDataset) {
+
+      var vm = this;
+
+      vm.options = $stateParams.options || {};
+      vm.options.dataset1 = selectedDataset;
+
+      vm.usersDatasets = usersDatasets;
+      vm.dataset1 = selectedDataset;
+
+      if (selectedDataset) {
+        Datasets.getDatasetWithS3(vm.dataset1._id)
+        .then(function (data) {
+          vm.dataset1Keys = data.columns;
+        });
+      }
+
+      vm.onDatasetChange = function() {
+        Datasets.getDatasetWithS3(vm.options.dataset2._id)
+        .then(function (data) {
+          vm.dataset2Keys = data.columns;
+        });
+      };
+
+      if (vm.options.dataset2) {
+        vm.onDatasetChange();
+      }
+
+    }]);
 
 'use strict';
 
@@ -2406,31 +3817,6 @@ angular.module('users').config(['$httpProvider',
 
 'use strict';
 
-// Configuring the users module
-angular.module('users')
-    .run(['Menus',
-        function (Menus) {
-            // Add the users dropdown item
-            //remove user role here if want non-logged in users to be able to see menu to search users
-            Menus.addMenuItem('topbar', {
-                title: 'Users',
-                state: 'users.list',
-                roles: ['user'],
-                position: 5
-            });
-/*
-            // Add the dropdown list item
-            Menus.addSubMenuItem('topbar', 'users', {
-                title: 'List Users',
-                state: 'users.list'
-            });
-*/
-
-        }
-    ]);
-
-'use strict';
-
 // Setting up route
 angular.module('users').config(['$stateProvider',
     function ($stateProvider) {
@@ -2445,101 +3831,113 @@ angular.module('users').config(['$stateProvider',
                     roles: ['user', 'admin']
                 }
             })
-
             .state('settings.profile', {
                 url: '/profile',
                 templateUrl: 'modules/users/client/views/settings/edit-profile.client.view.html'
             })
 
-            .state('settings.password', {
-                url: '/password',
-                templateUrl: 'modules/users/client/views/settings/change-password.client.view.html'
-            })
+        .state('settings.password', {
+            url: '/password',
+            templateUrl: 'modules/users/client/views/settings/change-password.client.view.html'
+        })
 
-            .state('settings.accounts', {
-                url: '/accounts',
-                templateUrl: 'modules/users/client/views/settings/manage-social-accounts.client.view.html'
-            })
+        .state('settings.accounts', {
+            url: '/accounts',
+            templateUrl: 'modules/users/client/views/settings/manage-social-accounts.client.view.html'
+        })
 
-            .state('settings.picture', {
-                url: '/picture',
-                templateUrl: 'modules/users/client/views/settings/change-profile-picture.client.view.html'
-            })
+        .state('settings.picture', {
+            url: '/picture',
+            templateUrl: 'modules/users/client/views/settings/change-profile-picture.client.view.html'
+        })
 
-            .state('authentication', {
-                abstract: true,
-                url: '/authentication',
-                templateUrl: 'modules/users/client/views/authentication/authentication.client.view.html',
-                controller: 'AuthenticationController'
-            })
+        .state('authentication', {
+            abstract: true,
+            url: '/authentication',
+            templateUrl: 'modules/users/client/views/authentication/authentication.client.view.html',
+            controller: 'AuthenticationController'
+        })
 
-            .state('authentication.signup', {
-                url: '/signup',
-                templateUrl: 'modules/users/client/views/authentication/signup.client.view.html',
-                controller: 'AuthenticationController'
-            })
+        .state('authentication.signup', {
+            url: '/signup',
+            templateUrl: 'modules/users/client/views/authentication/signup.client.view.html',
+            controller: 'AuthenticationController'
+        })
 
-            .state('authentication.signin', {
-                url: '/signin?err',
-                templateUrl: 'modules/users/client/views/authentication/signin.client.view.html',
-                controller: 'AuthenticationController'
-            })
+        .state('authentication.signin', {
+            url: '/signin?err',
+            templateUrl: 'modules/users/client/views/authentication/signin.client.view.html',
+            controller: 'AuthenticationController'
+        })
 
-            .state('password', {
-                abstract: true,
-                url: '/password',
-                template: '<ui-view/>'
-            })
+        .state('password', {
+            abstract: true,
+            url: '/password',
+            template: '<ui-view/>'
+        })
 
-            .state('password.forgot', {
-                url: '/forgot',
-                templateUrl: 'modules/users/client/views/password/forgot-password.client.view.html'
-            })
+        .state('password.forgot', {
+            url: '/forgot',
+            templateUrl: 'modules/users/client/views/password/forgot-password.client.view.html'
+        })
 
-            .state('password.reset', {
-                abstract: true,
-                url: '/reset',
-                template: '<ui-view/>'
-            })
+        .state('password.reset', {
+            abstract: true,
+            url: '/reset',
+            template: '<ui-view/>'
+        })
 
-            .state('password.reset.invalid', {
-                url: '/invalid',
-                templateUrl: 'modules/users/client/views/password/reset-password-invalid.client.view.html'
-            })
+        .state('password.reset.invalid', {
+            url: '/invalid',
+            templateUrl: 'modules/users/client/views/password/reset-password-invalid.client.view.html'
+        })
 
-            .state('password.reset.success', {
-                url: '/success',
-                templateUrl: 'modules/users/client/views/password/reset-password-success.client.view.html'
-            })
+        .state('password.reset.success', {
+            url: '/success',
+            templateUrl: 'modules/users/client/views/password/reset-password-success.client.view.html'
+        })
 
-            .state('password.reset.form', {
-                url: '/:token',
-                templateUrl: 'modules/users/client/views/password/reset-password.client.view.html'
-            })
+        .state('password.reset.form', {
+            url: '/:token',
+            templateUrl: 'modules/users/client/views/password/reset-password.client.view.html'
+        })
 
-            .state('users', {
+        .state('users', {
                 abstract: true,
                 url: '/users',
                 template: '<ui-view/>'
-                
+
             })
             .state('users.list', {
                 url: '',
                 controller: 'UsersListController',
                 controllerAs: 'UsersList',
                 templateUrl: MODULE_PATH + 'views/list/users.list.client.view.html'
-                })
+            })
             .state('users.profilepage', {
                 url: '/:username',
                 controller: 'UsersProfilePageController',
                 controllerAs: 'UsersProfilePage',
-                templateUrl: MODULE_PATH + 'views/profilepage/users.profilepage.client.view.html'      
-                })
-            ;
+                templateUrl: MODULE_PATH + 'views/profilepage/users.profilepage.client.view.html',
+            }).state('users.profilepage.posts', {
+                url: '/posts',
+                controller: 'postsListController',
+                controllerAs: 'postsList',
+                templateUrl: 'modules/posts/client/list/posts.list.html',
+            }).state('users.profilepage.models', {
+                url: '/models',
+                controller: 'ModelsListController',
+                controllerAs: 'vm',
+                templateUrl: 'modules/models/client/views/list-models.client.view.html'
+            }).state('users.profilepage.datasets', {
+                url: '/data',
+                controller: 'DatasetsListController',
+                controllerAs: 'DatasetsList',
+                templateUrl: 'modules/datasets/client/list/datasets.list.html'
+            });
             
     }
 ]);
-
 'use strict';
 
 angular.module('users').controller('AuthenticationController',
@@ -2857,32 +4255,31 @@ angular.module('users').controller('SettingsController', ['$scope', 'Authenticat
 
 //users List Controller
 angular.module('users')
-    .controller('UsersListController',
-        ['$state', '$sce', 'Authentication', 'Users', 'UsersFactory',
+    .controller('UsersListController', ['$state', '$sce', 'Authentication', 'Users', 'UsersFactory',
             function ($state, $sce, Authentication, Users, UsersFactory) {
-                var vm = this;
+            var vm = this;
 
-                vm.authentication = Authentication;
+            vm.authentication = Authentication;
 
-                vm.search = function () {
-                    UsersFactory.search(vm.q)
-                        .success(function (response) {
-                            vm.users = response;
-                        })
-                        .error(function (error) {
-                            console.log(error);
-                        });
-                };
+            vm.search = function () {
+                UsersFactory.search(vm.q)
+                    .success(function (response) {
+                        vm.users = response;
+                    })
+                    .error(function (error) {
+                        console.log(error);
+                    });
+            };
 
-                vm.showTitle = function (title) {
-                    var q = vm.q,
-                        matcher = new RegExp(q, 'gi');
-                    var highlightedTitle = title.replace(matcher, '<span class="matched">$&</span>');
-                    console.log(highlightedTitle);
-                    return $sce.trustAsHtml(highlightedTitle);
-                };
+            vm.showTitle = function (title) {
+                var q = vm.q,
+                    matcher = new RegExp(q, 'gi');
+                var highlightedTitle = title.replace(matcher, '<span class="matched">$&</span>');
+                console.log(highlightedTitle);
+                return $sce.trustAsHtml(highlightedTitle);
+            };
 
-                /*vm.addToUser = function (dataset) {
+            /*vm.addToUser = function (dataset) {
                     users.addToUserApiCall()
                         .success(function (response) {
                             console.log(response);
@@ -2894,34 +4291,33 @@ angular.module('users')
 */
             }]);
 
-
-
 'use strict';
 
-angular.module('users').controller('UsersProfilePageController', 
-    ['$scope', '$modal', '$http', '$location', '$stateParams', 'Users', 'UsersFactory', 'Authentication', 'Datasets', 
-    function($scope, $modal, $http, $location, $stateParams, Users, UsersFactory, Authentication, Datasets) {
+angular.module('users').controller('UsersProfilePageController', ['$state', '$scope', '$modal', '$http', '$location', '$stateParams', 'Users', 'UsersFactory', 'Authentication', 'Datasets',
+    function ($state, $scope, $modal, $http, $location, $stateParams, Users, UsersFactory, Authentication, Datasets) {
+        
         var vm = this;
 
-        vm.authentication = Authentication;
         vm.user = Authentication.user;
-        vm.usersData = [];
-        vm.usersDatasets = [];
-
-        vm.isCurrentUser = function () {
-      		return ($stateParams.username === vm.user.username);
-        };
         
-        UsersFactory.finduser($stateParams.username)
-            .then(function(user) {
-                vm.userData = user;
-                return user;
-            })
-            .then(UsersFactory.finduserdatasets.bind(UsersFactory))
-            .then(function(usersDatasets) {
-                vm.usersDatasets = usersDatasets;
-            });
+        vm.username = $stateParams.username;
+        
+        vm.params = $stateParams;
+        
+        vm.ownership = UsersFactory.ownership();
 
+        vm.menuItems = [{
+            title: 'Posts',
+            state: 'users.profilepage.posts({user: UsersProfilePage.params.username})'
+                }, {
+            title: 'Models',
+            state: 'users.profilepage.models({user: UsersProfilePage.params.username})'
+                }, {
+            title: 'Data',
+            state: 'users.profilepage.datasets({user: UsersProfilePage.params.username})'
+                }];
+            
+            
         vm.addToUser = function (dataset) {
             Datasets.addToUserApiCall(dataset)
                 .then(function (data) {
@@ -2931,7 +4327,7 @@ angular.module('users').controller('UsersProfilePageController',
                     console.log(error);
                 });
         };
-    
+
         vm.showEditModal = function (dataset) {
             var modalInstance = $modal.open({
                 templateUrl: 'modules/datasets/client/detail/datasets.detail.modal.html',
@@ -3045,7 +4441,7 @@ angular.module('users').factory('Authentication', ['$window',
     var auth = {
       user: $window.user
     };
-
+    
     return auth;
   }
 ]);
@@ -3115,13 +4511,14 @@ angular.module('users').factory('Users', ['$resource',
 'use strict';
 
 angular.module('users')
-    .factory('UsersFactory', ['$resource', '$http',
-        function ($resource, $http) {
+    .factory('UsersFactory', ['$resource', '$http', '$stateParams', 'Authentication',
+        function ($resource, $http, $stateParams, Authentication) {
 
             return {
-                search: search, 
+                search: search,
                 finduser: finduser,
-                finduserdatasets: finduserdatasets
+                userData: userData,
+                ownership: ownership
             };
 
             function search(q) {
@@ -3142,14 +4539,25 @@ angular.module('users')
                 });
             }
 
-            function finduserdatasets(user) {
+            function userData(model, username) {
                 return $http({
-                    url: 'api/datasets/user/' + user.username,
+                    url: 'api/users/' + username + '/models/' + model,
                     method: 'GET'
                 }).then(function (res) {
+                    console.log('userdata: ', res);
                     return res.data;
                 }).catch(function (err) {
-                    console.log('error finding user datasets', err);
-                });   
+                    console.log('error finding user', err);
+                });
             }
+
+            function ownership() {
+                if ($stateParams.username === Authentication.user.username) {
+                    return true;
+                }
+                else {
+                    return false;
+                }
+            }
+
     }]);

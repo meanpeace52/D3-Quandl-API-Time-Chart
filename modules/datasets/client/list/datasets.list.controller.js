@@ -1,15 +1,17 @@
 'use strict';
 
 //datasets List Controller
-angular.module('datasets').controller('DatasetsListController', ['$state', '$stateParams', '$sce', '$modal', 'Authentication', 'Datasets',
-    function ($state, $stateParams, $sce, $modal, Authentication, Datasets) {
+angular.module('datasets').controller('DatasetsListController', ['$state', '$stateParams', '$sce', '$modal', 'Authentication', 'Datasets','UsersFactory',
+    function ($state, $stateParams, $sce, $modal, Authentication, Datasets, UsersFactory) {
         var vm = this;
 
         vm.authentication = Authentication;
 
         vm.resolved = false;
         vm.loading = false;
-
+        
+        vm.ownership = UsersFactory.ownership();
+        
         vm.load = function () {
             vm.resolved = false;
             vm.loading = true;
@@ -31,7 +33,7 @@ angular.module('datasets').controller('DatasetsListController', ['$state', '$sta
         };
 
         vm.state = $state.current.name;
-
+        
         if (vm.state === 'datasets.filter') {
             vm.filterData($stateParams.field, $stateParams.value);
         }

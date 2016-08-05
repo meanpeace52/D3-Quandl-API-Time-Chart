@@ -27,11 +27,11 @@ var postSchema = new Schema({
     },
     subject: {
         type: String,
-        enum: ['','finance', 'social science', 'sports', 'other',],
+        enum: ['','finance', 'social science', 'sports', 'other'],
         default: '',
         trim: true
     },
-    tags: [{
+    mediaType: [{
         type: String,
     }],
     models: [{

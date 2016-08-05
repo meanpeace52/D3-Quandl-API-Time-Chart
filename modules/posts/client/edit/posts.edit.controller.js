@@ -27,12 +27,14 @@ angular.module('posts')
             vm.update = function (isValid) {
 
                 vm.error = null;
-
+                /**
                 if (!isValid) {
                     $scope.$broadcast('show-errors-check-validity', 'postForm');
-
                     return false;
                 }
+                
+                **/
+
                 posts.crud.update({
                     postId: $stateParams.postId,
                     update: vm.post
@@ -43,18 +45,25 @@ angular.module('posts')
                 }, function (err) {
                     vm.error = err.message;
                 });
+                
             };
 
             vm.modal = function (data) {
+
+                // array of IDS for model/datasets already selected from modal
+                var selectedData = [];
 
                 if (!vm.post.hasOwnProperty(data)) {
                     vm.post[data] = [];
                 }
 
-                // array of IDS for model/datasets already selected from modal
-                var selectedData = vm.post[data].map(function (data) {
-                    return data._id;
-                });
+                else {
+                    angular.forEach(vm.post[data], function (e) {
+                        if (e._id) {
+                            selectedData.push(e._id);
+                        }
+                    });
+                }
 
                 var controller = function ($scope, $modalInstance, Models, Datasets, Authentication) {
 
@@ -80,23 +89,23 @@ angular.module('posts')
 
                         Models.filter('user', Authentication.user._id)
                             .then(function (res) {
-                                    vm.loadingResults = false;
-                                    vm.models = res.data;
+                                    vm.list = res.data;
                                 },
-                                function (error) {
-                                    vm.loadingResults = false;
-                                });
+                                function (error) {}).finally(function () {
+                                vm.loading = false;
+                                vm.resolved = true;
+                            });
                     }
                     else if (data === 'datasets') {
 
                         Datasets.user(Authentication.user.username)
                             .then(function (res) {
                                     vm.list = res.data;
-                                    vm.loadingResults = false;
                                 },
-                                function (error) {
-                                    vm.loadingResults = false;
-                                });
+                                function (error) {}).finally(function () {
+                                vm.loading = false;
+                                vm.resolved = true;
+                            });
                     }
                 };
 
@@ -119,9 +128,7 @@ angular.module('posts')
                 }
 
                 $uibModal.open(options).result.then(function (selection) {
-                    if (selection) {
                     vm.post[data].push(selection);
-                    }
                 });
 
             };
@@ -182,4 +189,4 @@ angular.module('posts')
                 vm.error = response.message;
             };
 
-            }]);
+    }]);

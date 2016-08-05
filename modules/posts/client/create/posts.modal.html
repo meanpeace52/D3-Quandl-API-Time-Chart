@@ -1,9 +1,9 @@
-<section ng-controller="postsCreateController" class="container-fluid post-modal">
+<section class="modal-view">
     <div class="page-header">
         <span class="h1">Files</span>
         <span ng-hide="vm.uploader.queue.length" class="pull-right">
             <span class="btn btn-default btn-file">
-              Add PDF 
+              Add PDF
               <input type="file" nv-file-select uploader="uploader"/>
              </span>
         </span>
@@ -13,7 +13,7 @@
             <span class="h4 list-group-item-heading">
                 {{file.name}}
             </span>
-            <a class="btn btn-sm btn-default pull-right" ng-disabled="vm.selectedData.indexOf(file) !== -1" ng-click="vm.ok(file)">Select</a>
+            <a class="btn btn-sm btn-default pull-right" ng-disabled="vm.selectedData.indexOf(file._id) !== -1" ng-click="vm.ok(file)">Select</a>
         </div>
     </div>
     <div class="text-center form-group" ng-show="vm.uploader.queue.length">

@@ -2,6 +2,7 @@ body {
     font-family: 'Open Sans', sans-serif;
 }
 
+
 /*.content {
     margin-top: 50px;
 }*/
@@ -51,12 +52,12 @@ a:hover .header-profile-image {
 
 .navbar-toggle--sidebar {
     margin-left: 15px;
-} 
+}
 
 @media (min-width: 768px) {
     .navbar-toggle--sidebar {
         margin-left: 0;
-    }  
+    }
 }
 
 .header-carousel--home {
@@ -70,24 +71,26 @@ a:hover .header-profile-image {
     object-position: center;
 }
 
-.list-inline {
-    display: inline-block;
-    margin-left: 2em;
+.page-header {
+    margin-top: 0.5em;
 }
 
-.list-inline .badge {
-    padding: 0.6em 1em;
-    color: #333;
-    background-color: #fff;
-    border: 1px solid #adadad;
+.page-header .header-secondary-title {
+    margin-top: 1.5em;
 }
 
-.list-inline .badge a {
-    text-decoration: none;
+.modal-view {
+    padding: 1em;
 }
 
-/* for posts.create.html */
-.list-inline .glyphicon {
-    cursor: pointer;
-    margin: 0 0.5em;
+.modal-view .page-header {
+    border-bottom: 0 !important;
+}
+.modal-view .list-group {
+    max-height: 20em;
+    overflow-y: auto;
+}
+
+.modal-view .list-group-item {
+    padding-bottom: 1.2em;
 }

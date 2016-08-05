@@ -71,4 +71,6 @@ mongod
 *.ntvs*
 *.njsproj
 *.sln
+
 s3-cache/
+.s3-cache/

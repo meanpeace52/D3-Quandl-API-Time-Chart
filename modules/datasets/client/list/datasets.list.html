@@ -1,14 +1,14 @@
-<section>
-    <div class="page-header">
-        <h1>Datasets</h1>
+<section ng-class="{'modal-view' : DatasetsList.modal}">
+    <div class="row">
+        <div class="col-md-12 page-header">
+            <span class="h2 pull-left">Datasets</span>
+            <a ng-if="DatasetsList.ownership" data-ui-sref="datasets.create" class="h4 pull-right header-secondary-title">Create Dataset</a>
+        </div>
     </div>
 
-    <form ng-if="!DatasetsList.modal && DatasetsList.state !== 'users.profilepage.datasets'" ng-submit="DatasetsList.search()" class="datasets-search-container" >
-	    <input class="form-control" type="text" ng-model="DatasetsList.q">
-	    <button 
-	    	ng-click="DatasetsList.search()" 
-	    	class="btn btn-secondary pull-right" 
-	    	type="button">
+    <form ng-if="DatasetsList.state === 'datasets.list'" ng-submit="DatasetsList.search()" class="datasets-search-container">
+        <input class="form-control" type="text" ng-model="DatasetsList.q">
+        <button ng-click="DatasetsList.search()" class="btn btn-secondary" type="button">
 	    	<i 
 	    		ng-hide="DatasetsList.loading" 
 	    		class="glyphicon glyphicon-search"></i>
@@ -16,31 +16,28 @@
 	    		ng-show="DatasetsList.loading" 
 	    		class="glyphicon glyphicon-hourglass"></i>
 	    </button>
-	</form>
+    </form>
 
     <div class="list-group">
         <span data-ng-repeat="dataset in DatasetsList.list track by $index" class="list-group-item">
             <small class="list-group-item-text">
                 Title:
-                <span data-ng-bind="dataset.title" ng-class="{'active': DatasetsList.showTitle (dataset.title)}"></span>
-                Source:
-                <span ng-bind="dataset.source"></span>
-                <span ng-bind="dataset.user.displayName"></span>
+                <span data-ng-bind="dataset.title" ng-class="{'active': DatasetsList.showTitle (dataset.title)}"></span> Source:
+        <span ng-bind="dataset.source"></span>
+        <span ng-bind="dataset.user.displayName"></span>
 
-            </small>
-            <span class="h4 list-group-item-heading" ng-bind="dataset.name"></span>
-            <span ng-if="!Datasetslist.modal">
+        </small>
+        <span class="h4 list-group-item-heading" ng-bind="dataset.name"></span>
+        <span ng-if="!Datasetslist.modal">
                 <button class="btn btn-secondary" ng-click="DatasetsList.addToUser(dataset)">Save to my LAB</button>
                 <a class="btn btn-primary" ng-click="DatasetsList.showData(dataset)" class-"pull-right">View </a>
             </span>
-            <button ng-if="DatasetsList.modal" ng-click="vm.ok(dataset)" data-ng-disabled="vm.selectedData.indexOf(dataset._id) !== -1"   class="btn btn-small btn-default pull-right">Select</button>
+        <button ng-if="DatasetsList.modal" ng-click="vm.ok(dataset)" data-ng-disabled="vm.selectedData.indexOf(dataset._id) !== -1" class="btn btn-small btn-default pull-right">Select</button>
         </span>
     </div>
 
     </div>
-    <div class="alert alert-warning text-center"
-         ng-show="!DatasetsList.list.length && DatasetsList.resolved">
+    <div class="alert alert-warning text-center" ng-show="!DatasetsList.list.length && DatasetsList.resolved">
         No datasets found.
     </div>
 </section>
-
