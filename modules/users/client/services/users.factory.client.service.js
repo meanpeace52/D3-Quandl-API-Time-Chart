@@ -42,14 +42,10 @@ angular.module('users')
             }
 
             function ownership() {
-                if ($stateParams.field === 'user') {
-                    if ($stateParams.value == Authentication.user._id) {
-                        return true;
-                    }
-                    else {
-                        return false;
-                    }
-                } else {
+                if ($stateParams.username === Authentication.user.username) {
+                    return true;
+                }
+                else {
                     return false;
                 }
             }
