@@ -6,6 +6,10 @@ li a:visited {
     margin: 0.5em;
 }
 
+.page-header {
+    margin-top: 1em;
+}
+
 .page-header a {
     text-decoration: none;
 }
@@ -19,9 +23,22 @@ li a:visited {
 }
 
 .page-header .glyphicon {
-    margin: 0 1.5em
+    margin-left: 1.5em;
+    margin-right: 1.5em;
 }
 
 .list-group-item .glyphicon {
-    margin: 0 1.5em;
+    margin-left: 1.5em;
+    margin-right: 1.5em;
+}
+
+/** name .post-modal because .modal is taken and prevents modal from showing. **/
+
+.post-modal .list-group {
+    max-height: 20em;
+    overflow-y: scroll;
+}
+
+.list-group-item {
+    padding-bottom: 1.2em;
 }

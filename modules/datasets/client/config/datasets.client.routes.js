@@ -19,12 +19,6 @@ angular.module('datasets')
                     controllerAs: 'DatasetsList',
                     templateUrl: MODULE_PATH + 'list/datasets.list.html'
                 })
-                .state('datasets.filter', {
-                    url: '/:field/:value',
-                    templateUrl: MODULE_PATH + 'list/datasets.list.html',
-                    controller: 'DatasetsListController',
-                    controllerAs: 'DatasetsList'
-                })
                 .state('datasets.create', {
                     url: '/create',
                     controller: 'DatasetsCreateController',

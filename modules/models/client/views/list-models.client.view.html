@@ -7,19 +7,38 @@
       </div>
     </div>
   </div>
+   <form ng-if="!vm.modal && vm.state !== 'users.profilepage.models'" ng-submit="vm.search()" class="datasets-search-container">
+      <input class="form-control" type="text" ng-model="vm.q">
+      <button ng-click="vm.search()" class="btn btn-secondary pull-right" type="button">
+	    	<i 
+	    		ng-hide="vm.loading" 
+	    		class="glyphicon glyphicon-search"></i>
+	    	<i 
+	    		ng-show="vm.loading" 
+	    		class="glyphicon glyphicon-hourglass"></i>
+	    </button>
+    </form>
+
   <div class="list-group">
-    <a data-ng-repeat="model in vm.models track by $index" class="list-group-item" data-ui-sref="models.view({modelId: model._id})">
+    <a data-ng-if="!vm.modal" data-ng-repeat="model in vm.list track by $index" class="list-group-item" data-ui-sref="models.view({modelId: model._id})">
       <small class="list-group-item-text">
         Posted on <span data-ng-bind="model.created | date:'mediumDate'"></span> by
     <span data-ng-if="model.user" data-ng-bind="model.user.displayName"></span>
     <span data-ng-if="!model.user">Deleted User</span>
     </small>
-      <button ng-if="vm.modal" ng-click="vm.ok(model)" data-ng-disabled="vm.selectedData.indexOf(model._id) !== -1" class="btn btn-small btn-default pull-right">Select</button>
       <h4 class="list-group-item-heading" data-ng-bind="model.title"></h4>
     </a>
+    <a data-ng-if="vm.modal" data-ng-repeat="model in vm.list track by $index" class="list-group-item">
+      <small class="list-group-item-text">
+        Posted on <span data-ng-bind="model.created | date:'mediumDate'"></span> by
+    <span data-ng-if="model.user" data-ng-bind="model.user.displayName"></span>
+    <span data-ng-if="!model.user">Deleted User</span>
+    </small>
+      <h4 class="list-group-item-heading" data-ng-bind="model.title"></h4>
+      <button ng-click="vm.ok(model)" data-ng-disabled="vm.selectedData.indexOf(model._id) !== -1" class="btn btn-small btn-default pull-right">Select</button>
+    </a>
   </div>
-     <div class="alert alert-warning text-center"
-         ng-show="!vm.models.length && !vm.models.loadingResults">
-        No models found.
-    </div>
+  <div class="alert alert-warning text-center" ng-show="!vm.list.length && vm.resolved">
+    No models found.
+  </div>
 </section>

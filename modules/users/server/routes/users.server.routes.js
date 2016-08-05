@@ -19,9 +19,10 @@ module.exports = function (app) {
   app.route('/api/users/files/:file').get(users.getFile);
   app.route('/api/users/files').post(upload.single('file'), users.uploadFile); // todo make main file route
   app.route('/api/users/:username').get(users.read);
+  app.route('/api/users/:username/models/:model').get(users.models);
+
 
   // Finish by binding the user middleware
-  app.param('file', users.getFile);
   app.param('username', users.userByUsername);
 
 };

@@ -30,7 +30,7 @@ angular.module('core')
 
             Menus.addMenuItem('sidebar', {
               title: 'My Posts',
-              state: 'users.profilepage.posts({data: "posts", field: "user", value: user._id, username: user.username})',
+              state: 'users.profilepage.posts({username: user.username})',
               faIcon: 'fa-file',
               roles: ['user'],
               position: 1
@@ -39,7 +39,7 @@ angular.module('core')
             // Add the My Data sidebar item
             Menus.addMenuItem('sidebar', {
               title: 'My Data',
-              state: 'users.profilepage.data({field: "user", value: user._id, username: user.username})',
+              state: 'users.profilepage.datasets({ username: user.username})',
               faIcon: 'fa-line-chart',
               roles: ['user'],
               position: 2
@@ -47,7 +47,7 @@ angular.module('core')
             
             Menus.addMenuItem('sidebar', {
               title: 'My Models',
-              state: 'users.profilepage.models({field: "user", value: user._id, username: user.username})',
+              state: 'users.profilepage.models({ username: user.username})',
               faIcon: 'fa-cogs',
               roles: ['user'],
               position: 3

@@ -171,17 +171,23 @@ exports.uploadFile = function (req, res) {
         s3Params: {
             ContentType: req.file.mimetype,
             Bucket: 'theorylab-pdfs',
-            Key: req.user._id.toString() + '/' + req.file.originalname
+            Key: req.file.filename
         }
     });
 
     uploader.on('error', function (err) {
-        return res.status(500).send({
+        res.status(500).send({
             message: errorHandler.getErrorMessage(err)
         });
+        fs.unlink(req.file.path);
     });
-    uploader.on('end', function () {
-        req.user.files.push(req.file.originalname);
+
+    uploader.on('end', function (file) {
+        var fileData = {
+            name: req.file.originalname,
+            _id: req.file.filename
+        };
+        req.user.files.push(fileData);
         req.user.save(function (saveError, user) {
             if (saveError) {
                 return res.status(500).send({
@@ -189,7 +195,7 @@ exports.uploadFile = function (req, res) {
                 });
             }
             else {
-                res.json(req.file.originalname);
+                res.json();
                 fs.unlink(req.file.path);
             }
         });
@@ -197,14 +203,14 @@ exports.uploadFile = function (req, res) {
 };
 
 
-exports.getFile = function (req, res, done) {
+exports.getFile = function (req, res) {
 
     var params = {
-        localFile: req.file.path,
+        localFile: req.params.file,
 
         s3Params: {
             Bucket: 'pdfs',
-            Key: req.file.path
+            Key: req.params.file
                 // other options supported by getObject
                 // See: http://docs.aws.amazon.com/AWSJavaScriptSDK/latest/AWS/S3.html#getObject-property
         }
@@ -218,6 +224,55 @@ exports.getFile = function (req, res, done) {
     });
     downloader.on('progress', function () {});
     downloader.on('end', function (file) {
-        res.json(file);
+        res.send(file);
+    });
+};
+
+// trims sensitive paid model data if user hasn't paid for it
+exports.trimIfPaid = function (user, models) {
+    for (var i = 0, len = models.length; i < len; i++) {
+        var model = models[i];
+
+        if (models.access === 'paid') {
+            if (!user || user._id !== model.user || models.users.indexOf(user._id) === -1) {
+                model.content = undefined;
+            }
+        }
+    }
+    return models;
+};
+
+exports.models = function (req, res) {
+    // get posts, datasets or models for a user
+
+    var model;
+
+    if (req.params.model === 'datasets') {
+        model = mongoose.model('Dataset');
+    }
+    else if (req.params.model === 'posts') {
+        model = mongoose.model('Post');
+    }
+    else if (req.params.model === 'models') {
+        model = mongoose.model('Model');
+    }
+    else {
+        return res.status(400).send({
+            message: errorHandler.getErrorMessage('Invalid model')
+        });
+    }
+
+    model.find({
+        user: req.readUser._id
+    }).populate('user', 'displayName').sort('-created').exec(function (err, models) {
+        if (err) {
+            return res.status(400).send({
+                message: errorHandler.getErrorMessage(err)
+            });
+        }
+        else {
+            models = exports.trimIfPaid(req.user, models);
+            res.json(models);
+        }
     });
 };

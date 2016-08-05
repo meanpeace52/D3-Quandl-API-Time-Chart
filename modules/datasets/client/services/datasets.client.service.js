@@ -6,14 +6,14 @@ angular.module('datasets')
 
             return {
                 crud: crud(),
-                user: user,
                 search: search,
                 filter: filter,
                 addToUserApiCall: addToUserApiCall,
                 getDatasetWithS3: getDatasetWithS3,
                 saveCustom: saveCustom,
                 mergeColumns: mergeColumns,
-                insert: insert
+                insert: insert,
+                user: user
             };
 
             function crud() {

@@ -26,7 +26,7 @@ angular.module('posts')
 
                     return false;
                 }
-                console.log('vm.post: ', vm.post);
+
                 posts.create(vm.post).then(function (response) {
                     $state.go('posts.detail', {
                         postId: response._id
@@ -55,7 +55,7 @@ angular.module('posts')
 
                     //disables item selection if already selected
                     vm.selectedData = selectedData;
-                    
+
                     vm.user = Authentication.user;
 
                     vm.ok = function (data) {
@@ -105,7 +105,7 @@ angular.module('posts')
                     options.controllerAs = 'DatasetsList';
                 }
                 else if (data === 'files') {
-                    options.templateUrl = 'modules/posts/client/create/posts.files.html';
+                    options.templateUrl = 'modules/posts/client/create/posts.modal.html';
                     options.controllerAs = 'vm';
                 }
 
@@ -156,7 +156,7 @@ angular.module('posts')
             $scope.uploader.onSuccessItem = function (fileItem, response, status, headers) {
                 // Show success message
                 vm.success = true;
-                
+
                 vm.user.files.push(fileItem.file.name);
                 // Clear upload buttons
                 $scope.cancelUpload();

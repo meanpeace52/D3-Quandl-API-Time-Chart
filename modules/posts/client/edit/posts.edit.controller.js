@@ -6,22 +6,42 @@ angular.module('posts')
             function ($scope, $state, $stateParams, Authentication, posts, $uibModal, $window, $timeout, FileUploader, postOptions) {
             var vm = this;
 
-            vm.authentication = Authentication;
+            vm.user = Authentication.user;
 
-            vm.post = posts.crud.get({
-                postId: $stateParams.postId
-            });
+            vm.error = null;
 
             vm.postOptions = postOptions;
 
-            vm.update = function () {
+            vm.get = function () {
+                posts.crud.get({
+                    postId: $stateParams.postId
+                }).$promise.then(function (res) {
+                    vm.post = res;
+                }, function (err) {
+                    vm.error = err;
+                });
+            };
 
-                vm.post.$update(function () {
+            vm.get();
+
+            vm.update = function (isValid) {
+
+                vm.error = null;
+
+                if (!isValid) {
+                    $scope.$broadcast('show-errors-check-validity', 'postForm');
+
+                    return false;
+                }
+                posts.crud.update({
+                    postId: $stateParams.postId,
+                    update: vm.post
+                }).then(function (response) {
                     $state.go('posts.detail', {
-                        postId: vm.post._id
+                        postId: response._id
                     });
-                }, function (errorResponse) {
-                    vm.error = errorResponse.data.message;
+                }, function (err) {
+                    vm.error = err.message;
                 });
             };
 
@@ -94,12 +114,14 @@ angular.module('posts')
                     options.controllerAs = 'DatasetsList';
                 }
                 else if (data === 'files') {
-                    options.templateUrl = 'modules/posts/client/create/posts.files.html';
+                    options.templateUrl = 'modules/posts/client/create/posts.modal.html';
                     options.controllerAs = 'vm';
                 }
 
                 $uibModal.open(options).result.then(function (selection) {
+                    if (selection) {
                     vm.post[data].push(selection);
+                    }
                 });
 
             };

@@ -29,11 +29,12 @@ angular.module('users')
                 });
             }
 
-            function userData(data, username) {
+            function userData(model, username) {
                 return $http({
-                    url: 'api/' + data + '/username/' + username,
+                    url: 'api/users/' + username + '/models/' + model,
                     method: 'GET'
                 }).then(function (res) {
+                    console.log('userdata: ', res);
                     return res.data;
                 }).catch(function (err) {
                     console.log('error finding user', err);

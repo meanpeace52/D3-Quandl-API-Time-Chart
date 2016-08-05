@@ -5,7 +5,7 @@ var should = require('should'),
   path = require('path'),
   mongoose = require('mongoose'),
   User = mongoose.model('User'),
-  Post = mongoose.model('post'),
+  Post = mongoose.model('Post'),
   express = require(path.resolve('./config/lib/express'));
 
 /**

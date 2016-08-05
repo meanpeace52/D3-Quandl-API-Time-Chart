@@ -11,21 +11,33 @@ var path = require('path'),
     s3 = require('s3'),
     fs = require('fs'),
     json2csv = require('json2csv'),
-    _ = require('lodash');
+    _ = require('lodash'),
+    User = mongoose.model('User');
 
 
 /**
  * List by username
  */
 exports.listByUsername = function (req, res) {
-    Dataset.find({ user: req.readUser._id }).limit(100).sort('-created').exec(function (err, datasets) {
-        console.log(datasets);
+    User.findOne({username: req.params.username}, function (err, user) {
         if (err) {
             return res.status(400).send({
                 message: errorHandler.getErrorMessage(err)
             });
-        } else {
-            res.jsonp(datasets);
+        }
+        else {
+            Dataset.find({
+                user: user._id
+            }).limit(100).sort('-created').exec(function (err, datasets) {
+                if (err) {
+                    return res.status(400).send({
+                        message: errorHandler.getErrorMessage(err)
+                    });
+                }
+                else {
+                    res.jsonp(datasets);
+                }
+            });
         }
     });
 };
@@ -37,13 +49,16 @@ exports.listByUsername = function (req, res) {
  * @param res
  */
 exports.searchDataset = function (req, res) {
-    var query = { title: new RegExp(req.query.q, 'i') };
+    var query = {
+        title: new RegExp(req.query.q, 'i')
+    };
     Dataset.find(query).sort('-created').limit(10).populate('user', 'displayName').exec(function (err, datasets) {
         if (err) {
             return res.status(400).send({
                 message: errorHandler.getErrorMessage(err)
             });
-        } else {
+        }
+        else {
             res.jsonp(datasets);
         }
     });
@@ -75,30 +90,30 @@ function saveFileToS3(filePath, path, done) {
     });
 
     var params = {
-      localFile: './s3-cache/' + filePath,
+        localFile: './s3-cache/' + filePath,
 
-      s3Params: {
-        Bucket: 'datasetstl',
-        Key: path+filePath,
-      },
+        s3Params: {
+            Bucket: 'datasetstl',
+            Key: path + filePath,
+        },
     };
     var uploader = client.uploadFile(params);
-    uploader.on('error', function(err) {
-      console.error('unable to upload:', err.stack);
+    uploader.on('error', function (err) {
+        console.error('unable to upload:', err.stack);
     });
-    uploader.on('progress', function() {
-      console.log('progress', uploader.progressMd5Amount,
-                uploader.progressAmount, uploader.progressTotal);
+    uploader.on('progress', function () {
+        console.log('progress', uploader.progressMd5Amount,
+            uploader.progressAmount, uploader.progressTotal);
     });
-    uploader.on('end', function() {
-      if (typeof done === 'function') done();
-      console.log('done uploading');
+    uploader.on('end', function () {
+        if (typeof done === 'function') done();
+        console.log('done uploading');
     });
 
 }
 
 exports.create = function (req, res) {
-    Dataset.findById(req.body._id).exec(function(err, entry) {
+    Dataset.findById(req.body._id).exec(function (err, entry) {
         if (err) {
             console.log('error retreiving the entry', err);
             return res.status(400).send({
@@ -106,12 +121,13 @@ exports.create = function (req, res) {
             });
         }
 
-        saveDatasetCopy(req.user, entry, function(err, result) {
+        saveDatasetCopy(req.user, entry, function (err, result) {
             if (err) {
                 return res.status(400).send({
                     message: errorHandler.getErrorMessage(err)
                 });
-            } else {
+            }
+            else {
                 res.json(result);
             }
         });
@@ -149,11 +165,11 @@ exports.merge = function (req, res) {
 
                 for (var j = 0; j < params_count; j++) {
 
-                    if(data.columns[splice_i] == req.body.datasets[0].cols[j]) flag = true;
+                    if (data.columns[splice_i] == req.body.datasets[0].cols[j]) flag = true;
 
                 }
 
-                if(flag === false) {
+                if (flag === false) {
 
                     for (var r = 0; r < rows_count; r++) {
 
@@ -162,9 +178,10 @@ exports.merge = function (req, res) {
                     }
                     data.columns.splice(splice_i, 1);
 
-                } else {
+                }
+                else {
 
-                    path += '_'+i;
+                    path += '_' + i;
                     splice_i++;
 
                 }
@@ -176,8 +193,8 @@ exports.merge = function (req, res) {
             Dataset.findById(req.body.datasets[1].id, function (err, one2) {
 
                 var p1_2 = one2.s3reference.split('/'),
-                p2_2 = p1_2[7].split('.');
-                path += '_'+p2_2[0];
+                    p2_2 = p1_2[7].split('.');
+                path += '_' + p2_2[0];
 
                 DatasetS3Service.readWithS3(one2.s3reference).then(function (data2) {
 
@@ -192,11 +209,11 @@ exports.merge = function (req, res) {
 
                         for (var j = 0; j < params_count; j++) {
 
-                            if(data2.columns[splice_i] == req.body.datasets[1].cols[j]) flag = true;
+                            if (data2.columns[splice_i] == req.body.datasets[1].cols[j]) flag = true;
 
                         }
 
-                        if(flag === false) {
+                        if (flag === false) {
 
                             for (var r = 0; r < rows_count; r++) {
 
@@ -205,9 +222,10 @@ exports.merge = function (req, res) {
                             }
                             data2.columns.splice(splice_i, 1);
 
-                        } else {
+                        }
+                        else {
 
-                            path += '_'+i2;
+                            path += '_' + i2;
                             splice_i++;
 
                         }
@@ -221,7 +239,7 @@ exports.merge = function (req, res) {
                     var out = [],
                         columns = [];
 
-                    if(req.body.params.type === 0 || req.body.params.type === 1) {
+                    if (req.body.params.type === 0 || req.body.params.type === 1) {
 
                         for (var k = 0; k < data_len; k++) {
 
@@ -229,7 +247,7 @@ exports.merge = function (req, res) {
 
                             for (var l = 0; l < data2_len; l++) {
 
-                                if(data.rows[k][req.body.datasets[0].primary] == data2.rows[l][req.body.datasets[1].primary]) {
+                                if (data.rows[k][req.body.datasets[0].primary] == data2.rows[l][req.body.datasets[1].primary]) {
 
                                     var pre_obj1 = {};
                                     flag_left = true;
@@ -239,14 +257,15 @@ exports.merge = function (req, res) {
                                         for (var j1_col = 0; j1_col < col2_len; j1_col++) {
 
 
-                                            if(data.columns[i1_col] == req.body.datasets[0].primary && data2.columns[j1_col] !== req.body.datasets[1].primary) {
+                                            if (data.columns[i1_col] == req.body.datasets[0].primary && data2.columns[j1_col] !== req.body.datasets[1].primary) {
 
                                                 pre_obj1[data.columns[i1_col]] = data.rows[k][data.columns[i1_col]];
 
-                                            } else if(data2.columns[j1_col] !== req.body.datasets[0].primary && data2.columns[j1_col] !== req.body.datasets[1].primary) {
+                                            }
+                                            else if (data2.columns[j1_col] !== req.body.datasets[0].primary && data2.columns[j1_col] !== req.body.datasets[1].primary) {
 
-                                                pre_obj1[data.columns[i1_col]+'A'] = data.rows[k][data.columns[i1_col]];
-                                                pre_obj1[data2.columns[j1_col]+'B'] = data2.rows[l][data2.columns[j1_col]];
+                                                pre_obj1[data.columns[i1_col] + 'A'] = data.rows[k][data.columns[i1_col]];
+                                                pre_obj1[data2.columns[j1_col] + 'B'] = data2.rows[l][data2.columns[j1_col]];
 
                                             }
 
@@ -258,13 +277,13 @@ exports.merge = function (req, res) {
 
                                 }
 
-                                if(req.body.params.type === 0 && k === 0) {
+                                if (req.body.params.type === 0 && k === 0) {
 
                                     var flag_inner = false;
 
                                     for (var ii = 0; ii < data_len; ii++) {
 
-                                        if(data.rows[ii][req.body.datasets[0].primary] == data2.rows[l][req.body.datasets[1].primary]) {
+                                        if (data.rows[ii][req.body.datasets[0].primary] == data2.rows[l][req.body.datasets[1].primary]) {
 
                                             flag_inner = true;
 
@@ -272,7 +291,7 @@ exports.merge = function (req, res) {
 
                                     }
 
-                                    if(flag_inner === false) {
+                                    if (flag_inner === false) {
 
                                         var pre_obj2 = {};
 
@@ -280,14 +299,15 @@ exports.merge = function (req, res) {
 
                                             for (var j2_col = 0; j2_col < col2_len; j2_col++) {
 
-                                                if(data2.columns[j2_col] == req.body.datasets[0].primary && data.columns[i2_col] !== req.body.datasets[1].primary) {
+                                                if (data2.columns[j2_col] == req.body.datasets[0].primary && data.columns[i2_col] !== req.body.datasets[1].primary) {
 
                                                     pre_obj2[data2.columns[j2_col]] = data2.rows[l][data2.columns[j2_col]];
 
-                                                } else if(data.columns[i2_col] !== req.body.datasets[0].primary && data.columns[i2_col] !== req.body.datasets[1].primary) {
+                                                }
+                                                else if (data.columns[i2_col] !== req.body.datasets[0].primary && data.columns[i2_col] !== req.body.datasets[1].primary) {
 
-                                                    pre_obj2[data.columns[i2_col]+'A'] = null;
-                                                    pre_obj2[data2.columns[j2_col]+'B'] = data2.rows[l][data2.columns[j2_col]];
+                                                    pre_obj2[data.columns[i2_col] + 'A'] = null;
+                                                    pre_obj2[data2.columns[j2_col] + 'B'] = data2.rows[l][data2.columns[j2_col]];
 
                                                 }
 
@@ -303,7 +323,7 @@ exports.merge = function (req, res) {
 
                             }
 
-                            if(flag_left === false) {
+                            if (flag_left === false) {
 
                                 var pre_obj3 = {};
 
@@ -311,14 +331,15 @@ exports.merge = function (req, res) {
 
                                     for (var j3_col = 0; j3_col < col2_len; j3_col++) {
 
-                                        if(data.columns[i3_col] == req.body.datasets[0].primary && data2.columns[j3_col] !== req.body.datasets[1].primary) {
+                                        if (data.columns[i3_col] == req.body.datasets[0].primary && data2.columns[j3_col] !== req.body.datasets[1].primary) {
 
                                             pre_obj3[data.columns[i3_col]] = data.rows[k][data.columns[i3_col]];
 
-                                        } else if(data2.columns[j3_col] !== req.body.datasets[0].primary && data2.columns[j3_col] !== req.body.datasets[1].primary) {
+                                        }
+                                        else if (data2.columns[j3_col] !== req.body.datasets[0].primary && data2.columns[j3_col] !== req.body.datasets[1].primary) {
 
-                                            pre_obj3[data.columns[i3_col]+'A'] = data.rows[k][data.columns[i3_col]];
-                                            pre_obj3[data2.columns[j3_col]+'B'] = null;
+                                            pre_obj3[data.columns[i3_col] + 'A'] = data.rows[k][data.columns[i3_col]];
+                                            pre_obj3[data2.columns[j3_col] + 'B'] = null;
 
                                         }
 
@@ -340,27 +361,34 @@ exports.merge = function (req, res) {
                         columns.push(key);
                     }
 
-                    out.sort(function(a, b) {
+                    out.sort(function (a, b) {
                         return (a[req.body.datasets[0].primary] > b[req.body.datasets[0].primary]) ? 1 : -1;
                     });
 
                     out.splice(0, 1);
 
-                    if(req.body.params.action == 'show') {
+                    if (req.body.params.action == 'show') {
 
-                        res.json({ rows: out, columns: columns });
+                        res.json({
+                            rows: out,
+                            columns: columns
+                        });
 
-                    } else if(req.body.params.action == 'insert') {
+                    }
+                    else if (req.body.params.action == 'insert') {
 
-                        json2csv({ data: out, fields: columns }, function(err, csv) {
+                        json2csv({
+                            data: out,
+                            fields: columns
+                        }, function (err, csv) {
 
-                            csv = csv.replace(/"/ig,'');
+                            csv = csv.replace(/"/ig, '');
                             var name = (new Date().getTime()).toString(16);
                             fs.writeFileSync('./s3-cache/' + name + '.csv', csv);
 
-                            saveFileToS3(name + '.csv', p1[4]+'/'+p1[5]+'/'+p1[6]+'/');
+                            saveFileToS3(name + '.csv', p1[4] + '/' + p1[5] + '/' + p1[6] + '/');
                             var dataset = new Dataset();
-                            dataset.s3reference = 'https://s3.amazonaws.com/datasetstl/'+p1[4]+'/'+p1[5]+'/'+p1[6]+'/'+name+'.csv';
+                            dataset.s3reference = 'https://s3.amazonaws.com/datasetstl/' + p1[4] + '/' + p1[5] + '/' + p1[6] + '/' + name + '.csv';
                             dataset.user = one.user;
                             dataset.title = req.body.params.title;
                             dataset.notice = req.body.params.notice;
@@ -370,7 +398,8 @@ exports.merge = function (req, res) {
                                     return res.status(400).send({
                                         message: errorHandler.getErrorMessage(err)
                                     });
-                                } else {
+                                }
+                                else {
                                     res.json(dataset);
                                 }
 
@@ -418,11 +447,11 @@ exports.saveCustom = function (req, res) {
 
                 for (var j = 0; j < params_count; j++) {
 
-                    if(data.columns[splice_i] == req.body.columns[j]) flag = true;
+                    if (data.columns[splice_i] == req.body.columns[j]) flag = true;
 
                 }
 
-                if(flag === false) {
+                if (flag === false) {
 
                     for (var r = 0; r < rows_count; r++) {
 
@@ -431,10 +460,11 @@ exports.saveCustom = function (req, res) {
                     }
                     data.columns.splice(splice_i, 1);
 
-                } else {
+                }
+                else {
 
                     splice_i++;
-                    path += '_'+i;
+                    path += '_' + i;
 
                 }
 
@@ -442,22 +472,29 @@ exports.saveCustom = function (req, res) {
 
             data.rows.splice(0, 1);
 
-            if(req.body.action == 'show') {
+            if (req.body.action == 'show') {
 
-                res.json({ rows: data.rows, columns: data.columns });
+                res.json({
+                    rows: data.rows,
+                    columns: data.columns
+                });
 
-            } else if(req.body.action == 'insert') {
+            }
+            else if (req.body.action == 'insert') {
 
-                json2csv({ data: data.rows, fields: data.columns }, function(err, csv) {
+                json2csv({
+                    data: data.rows,
+                    fields: data.columns
+                }, function (err, csv) {
 
-                    csv = csv.replace(/"/ig,'');
+                    csv = csv.replace(/"/ig, '');
 
                     fs.writeFileSync('./s3-cache/' + path + '.csv', csv);
 
-                    saveFileToS3(path + '.csv', p1[4]+'/'+p1[5]+'/'+p1[6]+'/');
+                    saveFileToS3(path + '.csv', p1[4] + '/' + p1[5] + '/' + p1[6] + '/');
 
                     var dataset = new Dataset();
-                    dataset.s3reference = 'https://s3.amazonaws.com/datasetstl/'+p1[4]+'/'+p1[5]+'/'+p1[6]+'/'+path+'.csv';
+                    dataset.s3reference = 'https://s3.amazonaws.com/datasetstl/' + p1[4] + '/' + p1[5] + '/' + p1[6] + '/' + path + '.csv';
                     dataset.user = one.user;
                     dataset.title = req.body.title;
                     dataset.notice = req.body.notice;
@@ -467,7 +504,8 @@ exports.saveCustom = function (req, res) {
                             return res.status(400).send({
                                 message: errorHandler.getErrorMessage(err)
                             });
-                        } else {
+                        }
+                        else {
                             res.json(dataset);
                         }
 
@@ -497,7 +535,8 @@ exports.update = function (req, res) {
             return res.status(400).send({
                 message: errorHandler.getErrorMessage(err)
             });
-        } else {
+        }
+        else {
             res.json(dataset);
         }
     });
@@ -514,7 +553,8 @@ exports.delete = function (req, res) {
             return res.status(400).send({
                 message: errorHandler.getErrorMessage(err)
             });
-        } else {
+        }
+        else {
             res.json(dataset);
         }
     });
@@ -529,7 +569,8 @@ exports.list = function (req, res) {
             return res.status(400).send({
                 message: errorHandler.getErrorMessage(err)
             });
-        } else {
+        }
+        else {
             res.json(datasets);
         }
     });
@@ -541,7 +582,9 @@ exports.readWithS3 = function (req, res) {
     DatasetS3Service.readWithS3(dataset.s3reference).then(function (data) {
         res.json(data);
     }).catch(function (err) {
-        res.status(400).json({ error: 'error reading file' });
+        res.status(400).json({
+            error: 'error reading file'
+        });
     });
 };
 
@@ -558,31 +601,34 @@ exports.datasetByID = function (req, res, next, id) {
     });
 };
 
-exports.insert = function(req, res) {
-  var selectedDataset = req.body.selectedDataset,
-      p1 = selectedDataset.s3reference.split('/'),
-      path = (new Date().getTime()).toString(16);
+exports.insert = function (req, res) {
+    var selectedDataset = req.body.selectedDataset,
+        p1 = selectedDataset.s3reference.split('/'),
+        path = (new Date().getTime()).toString(16);
 
-  json2csv({ data: req.body.rows, fields: req.body.columns }, function(err, csv) {
-    if (err) {
-      return res.status(400).send({
-          message: errorHandler.getErrorMessage(err)
-      });
-    }
-    fs.writeFileSync('./s3-cache/' + path + '.csv', csv);
-    saveFileToS3(path + '.csv', p1[4]+'/'+p1[5]+'/'+p1[6]+'/', function() {
-      var dataset = new Dataset();
-      dataset.s3reference = 'https://s3.amazonaws.com/datasetstl/'+p1[4]+'/'+p1[5]+'/'+p1[6]+'/'+path+'.csv';
-      dataset.title = req.body.title;
-      dataset.user = req.user._id;
-      dataset.save(function(err, dataset) {
+    json2csv({
+        data: req.body.rows,
+        fields: req.body.columns
+    }, function (err, csv) {
         if (err) {
-          return res.status(400).send({
-              message: errorHandler.getErrorMessage(err)
-          });
+            return res.status(400).send({
+                message: errorHandler.getErrorMessage(err)
+            });
         }
-        return res.status(201).json(dataset);
-      });
+        fs.writeFileSync('./s3-cache/' + path + '.csv', csv);
+        saveFileToS3(path + '.csv', p1[4] + '/' + p1[5] + '/' + p1[6] + '/', function () {
+            var dataset = new Dataset();
+            dataset.s3reference = 'https://s3.amazonaws.com/datasetstl/' + p1[4] + '/' + p1[5] + '/' + p1[6] + '/' + path + '.csv';
+            dataset.title = req.body.title;
+            dataset.user = req.user._id;
+            dataset.save(function (err, dataset) {
+                if (err) {
+                    return res.status(400).send({
+                        message: errorHandler.getErrorMessage(err)
+                    });
+                }
+                return res.status(201).json(dataset);
+            });
+        });
     });
-  });
 };

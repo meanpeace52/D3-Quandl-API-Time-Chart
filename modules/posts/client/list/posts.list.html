@@ -1,19 +1,32 @@
 <section ng-controller="postsListController">
-    <div class="page-header">
+    <div class="page-header" style="margin-top: 0;">
         <div class="row">
             <div class="col-md-12" ng-class="{'text-center' : postsList.state === 'home'}">
                 <span data-ng-hide="postsList.state === 'home'" class="h1 pull-left">Posts</span>
-                <ul data-ng-if="postsList.menuItems && postsList.state !== 'posts.search'" id="post-menu" class="list-inline">
+                <ul data-ng-if="postsList.menuItems" id="post-menu" class="list-inline">
                     <li data-ng-repeat="item in postsList.menuItems" data-ui-sref-active="active" data-ng-class="{'active': item === postsList.value}">
                         <a href="" data-ng-click="postsList.getPosts(postsList.field, item)" data-ng-bind="item" class="text-capitalize h4"></a>
                     </li>
                 </ul>
                 <a data-ng-if="postsList.ownership" data-ui-sref="posts.create" class="h3 pull-right">Create Post</a>
             </div>
+            <hr>
         </div>
     </div>
+     <form ng-if="!postsList.modal && postsList.state === 'posts.list'" ng-submit="postsList.search()" class="datasets-search-container">
+            <input class="form-control" type="text" ng-model="postsList.query">
+            <button ng-click="postsList.search()" class="btn btn-secondary" type="button">
+            	    	<i 
+            	    		ng-hide="postsList.loading" 
+            	    		class="glyphicon glyphicon-search"></i>
+            	    	<i 
+            	    		ng-show="postsList.loading" 
+            	    		class="glyphicon glyphicon-hourglass"></i>
+            	    </button>
+        </form>
+
     <div class="list-group">
-        <a data-ng-repeat="post in postsList.posts | limitTo: postsList.postLimit" data-ui-sref="posts.detail({postId: post._id})" class="list-group-item">
+        <a data-ng-repeat="post in postsList.list | limitTo: postsList.postLimit" data-ui-sref="posts.detail({postId: post._id})" class="list-group-item">
             <small class="list-group-item-text">
                 Posted on
                 <span>{{post.created | date:'mediumDate'}}</span>
@@ -29,6 +42,10 @@
             </h4>
             <p class="list-group-item-text">{{post.content}}</p>
         </a>
+    </div>
+     <div class="alert alert-warning text-center"
+         ng-show="!postsList.list.length && postsList.resolved">
+        No Posts found.
     </div>
 
 </section>

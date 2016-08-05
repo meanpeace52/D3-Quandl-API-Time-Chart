@@ -66,7 +66,7 @@
                          </span>
                     <ul class="list-inline">
                         <li ng-repeat="file in postsCreate.post.files track by $index" class="badge">
-                            <span class="glyphicon glyphicon-file"></span> {{file}}
+                            <span class="glyphicon glyphicon-file"></span> {{file.name}}
                             <span ng-click="postsCreate.post.files.splice($index,1)" class="glyphicon glyphicon-remove"></span>
                         </li>
                     </ul>

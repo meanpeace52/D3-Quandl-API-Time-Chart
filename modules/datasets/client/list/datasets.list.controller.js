@@ -7,32 +7,54 @@ angular.module('datasets').controller('DatasetsListController', ['$state', '$sta
 
         vm.authentication = Authentication;
 
+        vm.resolved = false;
+        vm.loading = false;
+
+        vm.load = function () {
+            vm.resolved = false;
+            vm.loading = true;
+        };
+
+        vm.loaded = function () {
+            vm.resolved = true;
+            vm.loading = false;
+        };
+
         vm.filterData = function (field, value) {
-            vm.loadingResults = true;
+            vm.load();
             Datasets.filter(field, value).then(function (res) {
-                vm.posts = res;
-                vm.loadingResults = false;
+                vm.list = res.data;
+                vm.loaded();
             }, function (err) {
-                vm.loadingResults = false;
+                vm.loaded();
             });
         };
 
         vm.state = $state.current.name;
-        
+
         if (vm.state === 'datasets.filter') {
             vm.filterData($stateParams.field, $stateParams.value);
         }
 
+        else if (vm.state === 'users.profilepage.datasets') {
+            vm.load();
+            Datasets.user($stateParams.username).then(function (res) {
+                vm.list = res.data;
+                vm.loaded();
+            }, function (err) {
+                vm.loaded();
+            });
+        }
+
         vm.search = function () {
-            vm.loadingResults = true;
+            vm.load();
             Datasets.search(vm.q)
                 .success(function (response) {
                     vm.list = response;
-                    vm.loadingResults = false;
+                    vm.loaded();
                 })
                 .error(function (error) {
-                    console.log(error);
-                    vm.loadingResults = false;
+                    vm.loaded();
                 });
         };
 

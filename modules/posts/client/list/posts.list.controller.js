@@ -13,11 +13,24 @@ angular.module('posts')
             vm.ownership = UsersFactory.ownership();
 
             vm.postLimit = 10;
-            
-            vm.posts = [];
+
+            vm.resolved = false;
+            vm.loading = false;
+
+            vm.load = function () {
+                vm.resolved = false;
+                vm.loading = true;
+            };
+
+            vm.loaded = function () {
+                vm.resolved = true;
+                vm.loading = false;
+            };
 
             vm.getPosts = function (field, value) {
-                vm.posts = [];
+                vm.load();
+
+                vm.list = [];
                 var getPosts;
 
                 if (!field) {
@@ -25,29 +38,51 @@ angular.module('posts')
                     getPosts = posts.list();
                 }
                 else {
-                    // assign field
                     vm.field = field;
                     vm.value = value;
+                    if (vm.field !== 'title') {
+                        vm.query = ''; // remove query if a title was searched but category selected
+                    }
                     getPosts = posts.search(field, value);
                 }
 
                 getPosts.then(function (posts) {
-                    vm.posts = posts;
-                    vm.loadingResults = false;
+                    vm.list = posts;
+                    vm.loaded();
                 }, function (err) {
-                    vm.loadingResults = false;
+                    vm.loaded();
                 });
             };
-            
-            console.log('vm.field, vm', vm.field, vm);
 
-            if (vm.state === 'posts.list') {
+
+            vm.search = function () {
+                vm.field = 'title';
+                if (vm.query) {
+                    vm.getPosts(vm.field, vm.query);
+                }
+                else {
+                    vm.getPosts();
+                }
+
+            };
+
+            // set view based on state
+
+            if (vm.state === 'posts.list') { // topbar view
                 vm.menuItems = ['finance', 'sports', 'soshsci'];
-                vm.getPosts('subject',vm.menuItems[0]);
+                vm.field = 'subject';
             }
-            
-            if (vm.state === 'posts.search'||vm.state === 'users.profilepage.posts') {
+
+            if (vm.state === 'posts.search') {
                 vm.getPosts($stateParams.field, $stateParams.value);
+            }
+
+            if (vm.state === 'users.profilepage.posts') {
+                vm.load();
+                UsersFactory.userData('posts', $stateParams.username).then(function (res) {
+                    vm.list = res;
+                    vm.loaded();
+                });
             }
 
             if (vm.state === 'home') {
@@ -55,6 +90,5 @@ angular.module('posts')
                 vm.menuItems = ['trending', 'in the news', 'rising'];
                 vm.getPosts('trending', vm.menuItems[0]);
             }
-            
 
             }]);

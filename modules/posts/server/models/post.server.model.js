@@ -66,4 +66,4 @@ var postSchema = new Schema({
     }
 });
 
-mongoose.model('post', postSchema);
+mongoose.model('Post', postSchema);

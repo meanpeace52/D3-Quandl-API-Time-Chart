@@ -5,7 +5,7 @@
  */
 var path = require('path'),
     mongoose = require('mongoose'),
-    Post = mongoose.model('post'),
+    Post = mongoose.model('Post'),
     errorHandler = require(path.resolve('./modules/core/server/controllers/errors.server.controller'));
 
 /**
@@ -55,14 +55,17 @@ exports.read = function (req, res) {
 
 exports.list = function (req, res) {
 
-    var options;
+    var search = {};
 
     if (req.params.field) {
-        options = {};
-        options[req.params.field] = req.params.value;
+        var field = req.params.field;
+        var value = req.params.value;
+        search[field] = value;
     }
 
-    Post.find(options).sort('-created').populate('user', 'displayName').exec(function (err, posts) {
+    console.log('search: ', search);
+    
+    Post.find(search).sort('-created').populate('user', 'displayName').exec(function (err, posts) {
         if (err) {
             return res.status(400).send({
                 message: errorHandler.getErrorMessage(err)
