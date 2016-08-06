@@ -21,26 +21,22 @@ angular.module('posts')
 
                 vm.error = null;
 
+                // hard-coded because post.access dropdown menu is not an input element
+                vm.post.access ? vm.accessError = null : vm.accessError = 'Please select an access option for your post.';
+
                 if (!isValid) {
                     $scope.$broadcast('show-errors-check-validity', 'postForm');
-
-                    return false;
                 }
-                
-                else if (!vm.post.access) {
-                    vm.error = 'Please select an access option for your post.';
-                    return false;
-                } 
-                
+
                 else {
-            
-                posts.create(vm.post).then(function (response) {
-                    $state.go('posts.detail', {
-                        postId: response._id
+
+                    posts.create(vm.post).then(function (response) {
+                        $state.go('posts.detail', {
+                            postId: response._id
+                        });
+                    }, function (err) {
+                        vm.error = err;
                     });
-                }, function (err) {
-                    vm.error = err.message;
-                });
                 }
             };
 
@@ -48,7 +44,7 @@ angular.module('posts')
 
                 // array of IDS for model/datasets already selected from modal
                 var selectedData = [];
-                
+
                 if (!vm.post.hasOwnProperty(data)) {
                     vm.post[data] = [];
                 }
