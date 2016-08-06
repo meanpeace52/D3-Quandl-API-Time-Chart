@@ -7,7 +7,7 @@ angular.module('posts').factory('posts', ['$resource', '$http', '$state',
 
         posts.crud = function () {
             return $resource('api/posts/:postId', {
-                postId: '@_id'
+                postId: '@postId'
             }, {
                 update: {
                     method: 'PUT'

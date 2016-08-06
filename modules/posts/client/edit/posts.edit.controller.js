@@ -34,18 +34,17 @@ angular.module('posts')
                 }
                 
                 **/
-
                 posts.crud.update({
-                    postId: $stateParams.postId,
-                    update: vm.post
-                }).then(function (response) {
+                    post: vm.post,
+                    postId: $stateParams.postId
+                }).$promise.then(function (response) {
                     $state.go('posts.detail', {
                         postId: response._id
                     });
                 }, function (err) {
                     vm.error = err.message;
                 });
-                
+
             };
 
             vm.modal = function (data) {

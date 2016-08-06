@@ -15,9 +15,6 @@ var path = require('path'),
 exports.create = function (req, res) {
     var post = new Post(req.body);
     post.user = req.user._id;
-    if (req.body.files) {
-
-    }
     post.save(function (err) {
         if (err) {
             return res.status(400).send({
@@ -98,9 +95,6 @@ function trimPostIfPaid(user, post) {
  */
 exports.update = function (req, res) {
     var post = req.post;
-
-    post.title = req.body.title;
-    post.content = req.body.content;
 
     post.save(function (err) {
         if (err) {

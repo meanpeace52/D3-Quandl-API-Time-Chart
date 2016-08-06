@@ -15,7 +15,6 @@ module.exports = function (app) {
     
     app.route('/api/posts/search/:field/:value').all(postsPolicy.isAllowed)
         .get(posts.list);
-        
     app.param('field', posts.list);
     app.param('value', posts.list);
         

@@ -71,20 +71,22 @@ exports.isAllowed = function (req, res, next) {
     var roles = (req.user) ? req.user.roles : ['guest'];
 
     // If an post is being processed and the current user created it then allow any manipulation
-    if (req.post && req.user && req.post.user && req.post.user.id === req.user.id) {
+    if (req.post.user._id.toString() === req.user._id.toString()) {
         return next();
     }
-
+    
     // Check for user roles
     acl.areAnyRolesAllowed(roles, req.route.path, req.method.toLowerCase(), function (err, isAllowed) {
         if (err) {
             // An authorization error occurred.
             return res.status(500).send('Unexpected authorization error');
-        } else {
+        }
+        else {
             if (isAllowed) {
                 // Access granted! Invoke next middleware
                 return next();
-            } else {
+            }
+            else {
                 return res.status(403).json({
                     message: 'User is not authorized'
                 });
