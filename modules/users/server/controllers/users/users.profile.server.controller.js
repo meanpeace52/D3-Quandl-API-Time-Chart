@@ -264,7 +264,7 @@ exports.models = function (req, res) {
 
     model.find({
         user: req.readUser._id
-    }).populate('user', 'displayName').sort('-created').exec(function (err, models) {
+    }).populate('user', 'username').sort('-created').exec(function (err, models) {
         if (err) {
             return res.status(400).send({
                 message: errorHandler.getErrorMessage(err)

@@ -15,6 +15,8 @@ angular.module('users').controller('UsersProfilePageController', ['$state', '$sc
 
         vm.isCurrentUser = vm.user.username === vm.username;
 
+        vm.loading = true;
+
         vm.founduser = false;
 
         vm.menuItems = [{
@@ -34,11 +36,18 @@ angular.module('users').controller('UsersProfilePageController', ['$state', '$sc
                     if (user){
                         vm.externaluser = user;
                         vm.founduser = true;
+                        vm.loading = false;
                     }
+                    else{
+                        vm.loading = false;
+                    }
+                }, function(){
+                    vm.loading = false;
                 });
         }
         else{
             vm.founduser = true;
+            vm.loading = false;
         }
             
             

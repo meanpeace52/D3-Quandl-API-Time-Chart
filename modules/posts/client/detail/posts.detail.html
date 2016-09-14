@@ -12,7 +12,7 @@
             <div ng-if="!postsDetail.notfound">
                 <span ng-if="!postsDetail.post.user">Unknown User -</span>
                 <span ng-if="postsDetail.post.user"><a href="/users/{{ postsDetail.post.user.username }}/posts">{{
-                    postsDetail.post.user.displayName | capitalize }}</a> - </span> <span>{{postsDetail.post.created | date:'mediumDate'}}</span>
+                    postsDetail.post.user.username }}</a> - </span> <span>{{postsDetail.post.created | date:'mediumDate'}}</span>
                 <span> - <a href="/posts/search/subject/{{postsDetail.post.subject}}">{{postsDetail.post.subject |
                     capitalize }}</a></span>
                 <span class="pull-right" ng-if="postsDetail.authentication.user._id === postsDetail.post.user._id">
@@ -45,7 +45,7 @@
                             <li ng-repeat="dataset in postsDetail.post.datasets" class="row">
                                 {{ dataset.title }}
                                 <button class="btn btn-default pull-right" ng-click="postsDetail.showData(dataset)">View</button>
-                                <button class="btn btn-primary pull-right" ng-click="postsDetail.addToUser(dataset)">Save to Lab</button>
+                                <button class="btn btn-primary pull-right" ng-show="dataset.user != postsDetail.post.user._id" ng-click="postsDetail.addToUser(dataset)">Save to Lab</button>
                             </li>
                         </ul>
                     </div>

@@ -11,7 +11,6 @@
         </div>
     </div>
     <div class="row text-right" style="padding-right: 15px;">
-        <label>Icon meanings: </label>
         <span class="glyphicon glyphicon-usd legend-icon" title="For Sale"></span> For Sale
         <span class="glyphicon glyphicon-file legend-icon" title="PDFs attached"></span> PDF's Attached
         <span class="glyphicon glyphicon-list legend-icon" title="Datasets Attached"></span> Datasets Attached
@@ -27,13 +26,13 @@
         </div>
     </form>
     <div class="list-group">
-        <div data-ng-repeat="post in postsList.list | limitTo: postsList.postLimit" class="list-group-item">
+        <div data-ng-repeat="post in postsList.list | limitTo: postsList.postLimit" data-ui-sref="posts.detail({postId: post._id})" class="list-group-item posts">
             <small class="list-group-item-text">
                 <span ng-if="!post.user">Unknown User -</span>
-                <span ng-if="post.user"><a href="/users/{{ post.user.username }}/posts">{{ post.user.displayName | capitalize }}</a> - </span> <span>{{post.created | date:'mediumDate'}}</span>
-                <span ng-if="post.subject"> - <a href="/posts/search/subject/{{post.subject}}">{{post.subject | capitalize }}</a></span>
+                <span ng-if="post.user">{{ post.user.username }} - </span> <span>{{post.created | date:'mediumDate'}}</span>
+                <span ng-if="post.subject"> - {{post.subject | capitalize }}</span>
             </small>
-            <h4 class="list-group-item-heading"><a data-ui-sref="posts.detail({postId: post._id})">{{post.title}}</a>
+            <h4 class="list-group-item-heading">{{post.title}}
                 <span data-ng-if="post.access === 'paid'" class="pull-right glyphicon glyphicon-usd" title="For Sale"></span>
                 <span data-ng-if="post.files.length" class="pull-right glyphicon glyphicon-file" title="PDFs attached"></span>
                 <span data-ng-if="post.datasets.length" class="pull-right glyphicon glyphicon-list" title="Datasets Attached"></span>

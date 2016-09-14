@@ -113,3 +113,15 @@ a:hover .header-profile-image {
     margin-left: 10px !important;
     margin-right: 5px !important;
 }
+
+.content{
+    margin-top: 0 !important;
+}
+
+.posts.list-group-item{
+    cursor: pointer;
+}
+
+.posts.list-group-item:hover{
+    background: #eee;
+}

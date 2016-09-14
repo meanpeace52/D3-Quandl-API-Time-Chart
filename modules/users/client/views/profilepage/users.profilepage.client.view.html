@@ -1,11 +1,11 @@
 <div class="col-md-12">
-    <div class="alert alert-danger text-center" ng-if="!UsersProfilePage.founduser">
+    <div class="alert alert-danger text-center" ng-if="!UsersProfilePage.founduser && !UsersProfilePage.loading">
         Could not find user.
     </div>
-    <div ng-if="UsersProfilePage.founduser">
+    <div ng-if="UsersProfilePage.founduser && !UsersProfilePage.loading">
         <div class="page-header">
             <span class="h1 text-capitalize" ng-if="UsersProfilePage.isCurrentUser">My Profile</span>
-            <span class="h1" ng-if="!UsersProfilePage.isCurrentUser">{{UsersProfilePage.externaluser.displayName | capitalize }} ({{UsersProfilePage.externaluser.username }})</span>
+            <span class="h1" ng-if="!UsersProfilePage.isCurrentUser">{{UsersProfilePage.externaluser.username }}</span>
         </div>
         <ul class="nav nav-tabs" data-tabs="tabs">
             <li data-ng-repeat="item in UsersProfilePage.menuItems" data-ui-sref="{{item.state}}" data-ui-sref-active="active">

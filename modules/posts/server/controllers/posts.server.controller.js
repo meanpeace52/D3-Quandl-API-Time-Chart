@@ -37,7 +37,7 @@ exports.read = function (req, res) {
         })
         .populate('models')
         .populate('datasets')
-        .populate('user', 'displayName username')
+        .populate('user', 'username')
         .exec(function (err, post) {
             if (err) {
                 res.status(400).send({
@@ -67,7 +67,7 @@ exports.list = function (req, res) {
     
     Post.find(search)
         .sort('-created')
-        .populate('user', 'displayName username')
+        .populate('user', 'username')
         .lean()
         .exec(function (err, posts) {
             if (err) {
@@ -144,7 +144,7 @@ exports.postByID = function (req, res, next, id) {
         });
     }
 
-    Post.findById(id).populate('user', 'displayName username').exec(function (err, post) {
+    Post.findById(id).populate('user', 'username').exec(function (err, post) {
         if (err) {
             return next(err);
         }

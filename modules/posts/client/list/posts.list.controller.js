@@ -92,5 +92,4 @@ angular.module('posts')
                 vm.menuItems = ['trending', 'in the news', 'rising'];
                 vm.getPosts('trending', vm.menuItems[0]);
             }
-
-            }]);
+}]);
