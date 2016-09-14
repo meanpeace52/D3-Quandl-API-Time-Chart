@@ -5,6 +5,7 @@
  */
 var path = require('path'),
     mongoose = require('mongoose'),
+    _ = require('lodash'),
     Post = mongoose.model('Post'),
     errorHandler = require(path.resolve('./modules/core/server/controllers/errors.server.controller'));
 
@@ -34,7 +35,9 @@ exports.read = function (req, res) {
     Post.findOne({
             _id: req.params.postId
         })
-        .populate('user', 'displayName')
+        .populate('models')
+        .populate('datasets')
+        .populate('user', 'displayName username')
         .exec(function (err, post) {
             if (err) {
                 res.status(400).send({
@@ -62,21 +65,29 @@ exports.list = function (req, res) {
 
     console.log('search: ', search);
     
-    Post.find(search).sort('-created').populate('user', 'displayName').exec(function (err, posts) {
-        if (err) {
-            return res.status(400).send({
-                message: errorHandler.getErrorMessage(err)
-            });
-        }
-        else {
-            posts.forEach(function (post, index, array) {
-                trimPostIfPaid(req.user, post);
-                if (index === array.length - 1) {
-                    res.json(posts);
-                }
-            });
-        }
-    });
+    Post.find(search)
+        .sort('-created')
+        .populate('user', 'displayName username')
+        .lean()
+        .exec(function (err, posts) {
+            if (err) {
+                return res.status(400).send({
+                    message: errorHandler.getErrorMessage(err)
+                });
+            }
+            else {
+                posts = _.filter(posts, function(post){
+                    if (post.access === 'private' && post.user != req.user._id){
+                        return false;
+                    }
+                    return true;
+                });
+                posts.forEach(function (post, index, array) {
+                    trimPostIfPaid(req.user, post);
+                });
+                res.json(posts);
+            }
+        });
 };
 
 
@@ -94,16 +105,12 @@ function trimPostIfPaid(user, post) {
  * Update a post
  */
 exports.update = function (req, res) {
-    var post = req.post;
-
-    post.save(function (err) {
-        if (err) {
-            return res.status(400).send({
-                message: errorHandler.getErrorMessage(err)
-            });
+    Post.findOneAndUpdate({ _id : req.body.post._id }, req.body.post, function(err, doc){
+        if (err){
+            res.status(err.status).json(err);
         }
-        else {
-            res.json(post);
+        else{
+            res.json(doc);
         }
     });
 };
@@ -121,7 +128,7 @@ exports.delete = function (req, res) {
             });
         }
         else {
-            res.json(post);
+            res.json({ success : true });
         }
     });
 };
@@ -137,7 +144,7 @@ exports.postByID = function (req, res, next, id) {
         });
     }
 
-    Post.findById(id).populate('user', 'displayName').exec(function (err, post) {
+    Post.findById(id).populate('user', 'displayName username').exec(function (err, post) {
         if (err) {
             return next(err);
         }

@@ -7,6 +7,8 @@ module.exports = {
         lib: {
             css: [
                 BOWER_PATH + 'bootstrap/dist/css/bootstrap.css',
+                BOWER_PATH + 'angular-loading-bar/dist/loading-bar.css',
+                BOWER_PATH + 'angular-toastr/dist/angular-toastr.css',
                 // BOWER_PATH + 'bootstrap/dist/css/bootstrap-theme.css',
                 BOWER_PATH + 'startbootstrap-simple-sidebar-1.0.5/css/simple-sidebar.css',
                 BOWER_PATH + 'angularjs-slider/dist/rzslider.css',
@@ -24,6 +26,8 @@ module.exports = {
                 BOWER_PATH + 'angular-resource/angular-resource.js',
                 BOWER_PATH + 'angular-animate/angular-animate.js',
                 BOWER_PATH + 'angular-messages/angular-messages.js',
+                BOWER_PATH + 'angular-loading-bar/dist/loading-bar.js',
+                BOWER_PATH + 'angular-toastr/dist/angular-toastr.tpls.js',
                 BOWER_PATH + 'angular-ui-router/release/angular-ui-router.js',
                 BOWER_PATH + 'angular-ui-utils/ui-utils.js',
                 BOWER_PATH + 'angular-bootstrap/ui-bootstrap-tpls.js',

@@ -2,11 +2,13 @@
 
 module.exports = {
   app: {
-    title: 'MEAN.JS',
-    description: 'Full-Stack JavaScript with MongoDB, Express, AngularJS, and Node.js',
+    title: 'Theory Lab',
+    description: '',
     keywords: 'mongodb, express, angularjs, node.js, mongoose, passport',
     googleAnalyticsTrackingID: process.env.GOOGLE_ANALYTICS_TRACKING_ID || 'GOOGLE_ANALYTICS_TRACKING_ID'
   },
+  s3AccessKeyId: 'AKIAI356G25CALROLSGA',
+  s3SecretAccessKey: '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',
   port: process.env.PORT || 3000,
   templateEngine: 'swig',
   // Session Cookie settings

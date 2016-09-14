@@ -141,7 +141,7 @@ angular.module('datasets')
                     }
                 }
 
-                UsersFactory.userData('datasets', vm.user).then(function (usersDatasets) {
+                UsersFactory.userData('datasets', vm.user.username).then(function (usersDatasets) {
                 	vm.usersDatasets = usersDatasets;
                 });
                 

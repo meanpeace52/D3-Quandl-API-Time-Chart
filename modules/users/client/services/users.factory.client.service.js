@@ -1,12 +1,13 @@
 'use strict';
 
 angular.module('users')
-    .factory('UsersFactory', ['$resource', '$http', '$stateParams', 'Authentication',
-        function ($resource, $http, $stateParams, Authentication) {
+    .factory('UsersFactory', ['$resource', '$http', '$stateParams', '$q', 'Authentication',
+        function ($resource, $http, $stateParams, $q, Authentication) {
 
             return {
                 search: search,
                 finduser: finduser,
+                finduserpromise: finduserpromise,
                 userData: userData,
                 ownership: ownership
             };
@@ -27,6 +28,20 @@ angular.module('users')
                 }).catch(function (err) {
                     console.log('error finding user', err);
                 });
+            }
+
+            function finduserpromise(username){
+                var dfd = $q.defer();
+
+                $http.get('api/users/' + username)
+                    .success(function (data, status, headers, config) {
+                        dfd.resolve(data);
+                    })
+                    .error(function (data, status, headers, config) {
+                        dfd.reject(data);
+                    });
+
+                return dfd.promise;
             }
 
             function userData(model, username) {

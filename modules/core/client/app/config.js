@@ -15,7 +15,9 @@ var ApplicationConfiguration = (function () {
         'pascalprecht.translate',
         'ui.bootstrap',
         'ui.router',
-        'ui.utils'
+        'ui.utils',
+        'angular-loading-bar',
+        'toastr'
     ];
 
     // Add a new vertical module

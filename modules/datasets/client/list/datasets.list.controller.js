@@ -6,11 +6,13 @@ angular.module('datasets').controller('DatasetsListController', ['$state', '$sta
         var vm = this;
 
         vm.authentication = Authentication;
+        vm.user = Authentication.user;
 
         vm.resolved = false;
         vm.loading = false;
         
         vm.ownership = UsersFactory.ownership();
+        vm.showCreate = $state.current.name == 'datasets.list';
         
         vm.load = function () {
             vm.resolved = false;

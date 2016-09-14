@@ -9,74 +9,112 @@
         </span>
     </div>
     <div class="col-md-12">
-        <form name="postCreate" class="form-horizontal" ng-submit="postsCreate.create(postCreate.$valid)" novalidate>
+        <form name="form" class="form-horizontal" ng-submit="postsCreate.create(form)" novalidate>
             <fieldset>
+                <div class="form-group row" style="margin-left: -30px;">
+                    <div class="col-md-6">
+                        <label for="subject">Subject</label>
+                        <select name="subject" id="subject" ng-model="postsCreate.post.subject" class="form-control" ng-options="subject as (subject | capitalize) for subject in postsCreate.postOptions.subjects">
+                            <option value="">- Select Category -</option>
+                        </select>
+                        <!--<div class="btn-group" dropdown>
+                            <button id="subject-dropdown" class="btn btn-default text-capitalize" type="button" dropdown-toggle>
+                                {{postsCreate.post.subject||'select'}} <span class="caret"></span>
+                            </button>
+                            <ul class="dropdown-menu" role="menu" aria-labelledby="subject-dropdown">
+                                <li role="menuitem" ng-repeat="subject in postsCreate.postOptions.subjects">
+                                    <a href="#" data-ng-click="postsCreate.post.subject=subject" class="text-capitalize">{{subject}}</a>
+                                </li>
+                            </ul>
+                        </div>-->
+                    </div>
+                    <div class="col-md-6">
+                        <label for="access">Access</label>
+                        <select name="access" id="access" ng-model="postsCreate.post.access" class="form-control" ng-options="access as (access | capitalize) for access in postsCreate.postOptions.access">
+                            <option value="">- Select Access -</option>
+                        </select>
+                        <!--<div class="btn-group" dropdown>
+                            <button id="access-dropdown" class="btn btn-default text-capitalize" type="button" dropdown-toggle>
+                                {{postsCreate.post.access||'select'}} <span class="caret"></span>
+                            </button>
+                            <ul class="dropdown-menu" role="menu" aria-labelledby="access-dropdown">
+                                <li role="menuitem" ng-repeat="access in postsCreate.postOptions.access">
+                                    <a href="#" data-ng-click="postsCreate.post.access=access" class="text-capitalize">{{access}}</a>
+                                </li>
+                            </ul>
+                        </div>-->
+                        <span class="error-text text-danger" ng-show="form.accessError" ng-hide="postsCreate.post.access">{{postsCreate.accessError}}</span>
+                    </div>
+                </div>
                 <div class="form-group">
-                    <label for="subject-dropdown">Subject</label>
-                    <div class="btn-group" dropdown>
-                        <button id="subject-dropdown" class="btn btn-default text-capitalize" type="button" dropdown-toggle>
-                                  {{postsCreate.post.subject||'select'}} <span class="caret"></span>
+                    <div class="row col-md-12">
+                        <label>Models</label>
+                        <p ng-show="!postsCreate.post.models || postsCreate.post.models.length === 0">No models linked.</p>
+                        <div ng-show="postsCreate.post.models.length">
+                            <ul data-ng-if="postsCreate.post.models" class="list-inline">
+                                <li data-ng-repeat="model in postsCreate.post.models track by $index" class="badge text-capitalize">
+                                    <span data-ng-click="postsCreate.post.models.splice($index, 1)" class="glyphicon glyphicon-remove" href="#"></span>
+                                    <a href="#" class="h5">{{model.title}}</a>
+                                </li>
+                            </ul>
+                            <br/>
+                        </div>
+                        <select name="model" id="model" ng-model="postsCreate.model" class="form-control" ng-options="model as model.title for model in postsCreate.models">
+                            <option value="">- Select Model -</option>
+                        </select>
+                        <button ng-show="postsCreate.model" data-ng-click="postsCreate.addModel(postsCreate.model)" class="btn btn-default text-capitalize" type="button" dropdown-toggle>
+                            Add Model
                         </button>
-                        <ul class="dropdown-menu" role="menu" aria-labelledby="subject-dropdown">
-                            <li role="menuitem" ng-repeat="subject in postsCreate.postOptions.subjects">
-                                <a href="#" data-ng-click="postsCreate.post.subject=subject" class="text-capitalize">{{subject}}</a>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Datasets</label>
+                    <p ng-show="!postsCreate.post.datasets || postsCreate.post.datasets.length === 0">No datasets linked.</p>
+                    <div ng-show="postsCreate.post.datasets.length">
+                        <ul data-ng-if="postsCreate.post.datasets" class="list-inline">
+                            <li data-ng-repeat="dataset in postsCreate.post.datasets track by $index" class="badge text-capitalize">
+                                <span data-ng-click="postsCreate.post.datasets.splice($index, 1)" class="glyphicon glyphicon-remove" href="#"></span>
+                                <a href="#" class="h5">{{dataset.title}}</a>
+                            </li>
+                        </ul><br/>
+                    </div>
+                    <select name="dataset" id="dataset" ng-model="postsCreate.dataset" class="form-control" ng-options="dataset as dataset.title for dataset in postsCreate.datasets">
+                        <option value="">- Select Dataset -</option>
+                    </select>
+                    <button ng-show="postsCreate.dataset" data-ng-click="postsCreate.addDataset(postsCreate.dataset)" class="btn btn-default text-capitalize" type="button" dropdown-toggle>
+                        Add Dataset
+                    </button>
+                </div>
+                <div class="form-group">
+                    <label>PDFs</label>
+                    <p ng-show="!postsCreate.post.files || postsCreate.post.files.length === 0">No PDF files linked.</p>
+                    <div ng-show="postsCreate.post.files.length">
+                        <ul class="list-inline">
+                            <li ng-repeat="file in postsCreate.post.files track by $index" class="badge">
+                                <span class="glyphicon glyphicon-file"></span> {{file.name}}
+                                <span ng-click="postsCreate.post.files.splice($index,1)" class="glyphicon glyphicon-remove"></span>
                             </li>
                         </ul>
+                        <br/>
                     </div>
-                    <label for="access-dropdown">Access</label>
-                    <div class="btn-group" dropdown>
-                        <button id="access-dropdown" class="btn btn-default text-capitalize" type="button" dropdown-toggle>
-                                  {{postsCreate.post.access||'select'}} <span class="caret"></span>
-                        </button>
-                        <ul class="dropdown-menu" role="menu" aria-labelledby="access-dropdown">
-                            <li role="menuitem" ng-repeat="access in postsCreate.postOptions.access">
-                                <a href="#" data-ng-click="postsCreate.post.access=access" class="text-capitalize">{{access}}</a>
-                            </li>
-                        </ul>
-                    </div>
-                    <span class="error-text text-danger" ng-show="postsCreate.accessError" ng-hide="postsCreate.post.access">{{postsCreate.accessError}}</span>
-                </div>
-                <div class="form-group">
-                    <label for="model-list">Models</label>
-                    <button data-ng-click="postsCreate.modal('models')" class="btn btn-default text-capitalize" type="button" dropdown-toggle>
-                        Add Model
+                    <select ng-model="existingFile" class="form-control" ng-options="file as file.name for file in postsCreate.user.files">
+                        <option value="">- Existing Files -</option>
+                    </select>
+                    <button class="btn btn-default" ng-show="existingFile" ng-click="postsCreate.addExistingFile(existingFile)">
+                        Select existing PDF
                     </button>
-                    <ul data-ng-if="postsCreate.post.models" class="list-inline">
-                        <li data-ng-repeat="model in postsCreate.post.models track by $index" class="badge text-capitalize">
-                            <span data-ng-click="postsCreate.post.models.splice($index, 1)" class="glyphicon glyphicon-remove" href="#"></span>
-                            <a href="#" class="h5">{{model.title}}</a>
-                        </li>
-                    </ul>
-                </div>
-                <div class="form-group">
-                    <label for="dataset-list">Datasets</label>
-                    <button data-ng-click="postsCreate.modal('datasets')" class="btn btn-default text-capitalize" type="button" dropdown-toggle>
-                        Add Datasets
-                    </button>
-                    <ul data-ng-if="postsCreate.post.datasets" class="list-inline">
-                        <li data-ng-repeat="dataset in postsCreate.datasets track by $index" class="badge text-capitalize">
-                            <span data-ng-click="postsCreate.datasets.splice($index, 1)" class="glyphicon glyphicon-remove" href="#"></span>
-                            <a href="#" class="h5">{{dataset.title}}</a>
-                        </li>
-                    </ul>
-                </div>
-                <div class="form-group">
-                    <label for="files-list">PDFs</label>
-                    <span class="btn btn-default btn-file" ng-click="postsCreate.modal('files')">
-                          Add PDF 
+                    <span ng-hide="vm.uploader.queue.length">
+                        <span class="btn btn-default btn-file">
+                          Upload new PDF
+                          <input type="file" nv-file-select uploader="uploader"/>
                          </span>
-                    <ul class="list-inline">
-                        <li ng-repeat="file in postsCreate.post.files track by $index" class="badge">
-                            <span class="glyphicon glyphicon-file"></span> {{file.name}}
-                            <span ng-click="postsCreate.post.files.splice($index,1)" class="glyphicon glyphicon-remove"></span>
-                        </li>
-                    </ul>
+                    </span>
                 </div>
 
                 <div class="form-group" show-errors>
                     <label for="title">Title</label>
                     <input name="title" type="text" ng-model="postsCreate.post.title" id="title" class="form-control" placeholder="Title" required>
-                    <div ng-if="postCreate.title.$error && postCreate.title.$dirty" ng-messages="postCreate.title.$error" role="alert">
+                    <div ng-if="form.title.$error && !postsCreate.submitted" ng-messages="form.title.$error" role="alert">
                         <p class="help-block error-text" ng-message="required">A post title is required.</p>
                     </div>
                 </div>
@@ -88,8 +126,8 @@
                 <div class="form-group">
                     <input type="submit" class="btn btn-default">
                 </div>
-                <div ng-show="postsCreate.error" class="text-danger">
-                    <strong>{{postsCreate.error}}</strong>
+                <div ng-show="form.error" class="text-danger">
+                    <strong>{{form.error}}</strong>
                 </div>
 
             </fieldset>

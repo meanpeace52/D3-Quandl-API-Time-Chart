@@ -1,7 +1,7 @@
 'use strict';
 //posts service used for communicating with the posts REST endpoints
-angular.module('posts').factory('posts', ['$resource', '$http', '$state',
-    function ($resource, $http, $state) {
+angular.module('posts').factory('posts', ['$resource', '$http', '$state', '$q',
+    function ($resource, $http, $state, $q) {
 
         var posts = {};
 
@@ -16,11 +16,17 @@ angular.module('posts').factory('posts', ['$resource', '$http', '$state',
         }();
 
         posts.create = function (content) {
-            return $http.post('/api/posts', content).then(function (res) {
-                return res.data;
-            }, function (err) {
-                return err.data;
-            });
+            var dfd = $q.defer();
+
+            $http.post('/api/posts', content)
+                .success(function (data, status, headers, config) {
+                    dfd.resolve(data);
+                })
+                .error(function (data, status, headers, config) {
+                    dfd.reject(data);
+                });
+
+            return dfd.promise;
         };
         
         posts.list = function() {

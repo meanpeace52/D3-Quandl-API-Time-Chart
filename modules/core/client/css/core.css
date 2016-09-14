@@ -94,3 +94,22 @@ a:hover .header-profile-image {
 .modal-view .list-group-item {
     padding-bottom: 1.2em;
 }
+
+.tab-content{
+    padding: 15px;
+}
+
+.tab-content li{
+    margin: 5px 0;
+    padding-bottom: 10px;
+}
+
+.tab-content li button{
+    margin-top: -5px;
+    margin-left: 10px;
+}
+
+.legend-icon{
+    margin-left: 10px !important;
+    margin-right: 5px !important;
+}

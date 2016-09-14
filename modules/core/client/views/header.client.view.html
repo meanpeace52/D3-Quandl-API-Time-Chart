@@ -13,7 +13,7 @@
     <nav class="collapse navbar-collapse" collapse="!isCollapsed" role="navigation">
         <ul class="nav navbar-nav" data-ng-if="authentication.user">
             <li data-ng-repeat="item in menu.items | orderBy: 'position'" data-ng-if="item.shouldRender(authentication.user);" data-ng-switch="item.type"  data-ui-sref-active="active">
-                <a data-ui-sref="{{item.state}}" data-ng-bind="item.title"></a> 
+                <a data-ui-sref="{{item.state}}" data-ng-bind="item.title"></a>
             </li>
         </ul>
         <ul class="nav navbar-nav navbar-right" data-ng-hide="authentication.user">
@@ -26,7 +26,7 @@
                 <a class="dropdown-toggle user-header-dropdown-toggle" dropdown-toggle role="button"> <img data-ng-src="{{authentication.user.profileImageURL}}" alt="{{authentication.user.displayName}}" class="header-profile-image" /> <span data-ng-bind="authentication.user.displayName"></span> <b class="caret"></b> </a>
                 <ul class="dropdown-menu"
                     role="menu">
-                    <li data-ui-sref-active="active"> <a data-ui-sref="users.profilepage({username: authentication.user.username})">My Datasets</a> </li>
+                    <li data-ui-sref-active="active"> <a data-ui-sref="users.profilepage.datasets({username: authentication.user.username})">My Datasets</a> </li>
                     <li data-ui-sref-active="active"> <a data-ui-sref="settings.profile">Edit Profile</a> </li>
                     <li data-ui-sref-active="active"> <a data-ui-sref="settings.picture">Change Profile Picture</a> </li>
                     <li data-ui-sref-active="active" data-ng-show="authentication.user.provider === 'local'"> <a data-ui-sref="settings.password">Change Password</a> </li>

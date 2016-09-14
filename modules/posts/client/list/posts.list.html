@@ -7,37 +7,40 @@
                     <a href="" data-ng-click="postsList.getPosts(postsList.field, item)" data-ng-bind="item" class="text-capitalize h4"></a>
                 </li>
             </ul>
-            <a data-ng-if="postsList.ownership" data-ui-sref="posts.create" class="h4 pull-right header-secondary-title">Create Post</a>
+            <a data-ng-if="postsList.ownership || postsList.showCreate" data-ui-sref="posts.create" class="h4 pull-right header-secondary-title">Create Post</a>
         </div>
     </div>
+    <div class="row text-right" style="padding-right: 15px;">
+        <label>Icon meanings: </label>
+        <span class="glyphicon glyphicon-usd legend-icon" title="For Sale"></span> For Sale
+        <span class="glyphicon glyphicon-file legend-icon" title="PDFs attached"></span> PDF's Attached
+        <span class="glyphicon glyphicon-list legend-icon" title="Datasets Attached"></span> Datasets Attached
+        <span class="glyphicon glyphicon-stats legend-icon" title="Models Attached"></span> Models Attached
+    </div>
     <form ng-if="!postsList.modal && postsList.state === 'posts.list'" ng-submit="postsList.search()" class="datasets-search-container">
-        <input class="form-control" type="text" ng-model="postsList.query">
-        <button ng-click="postsList.search()" class="btn btn-secondary" type="button">
-            	    	<i 
-            	    		ng-hide="postsList.loading" 
-            	    		class="glyphicon glyphicon-search"></i>
-            	    	<i 
-            	    		ng-show="postsList.loading" 
-            	    		class="glyphicon glyphicon-hourglass"></i>
-            	    </button>
+        <div class="row">
+            <input class="form-control" type="text" ng-model="postsList.query">
+            <button ng-click="postsList.search()" class="btn btn-secondary" type="button">
+                <i ng-hide="postsList.loading" class="glyphicon glyphicon-search"></i>
+                <i ng-show="postsList.loading" class="glyphicon glyphicon-hourglass"></i>
+            </button>
+        </div>
     </form>
     <div class="list-group">
-        <a data-ng-repeat="post in postsList.list | limitTo: postsList.postLimit" data-ui-sref="posts.detail({postId: post._id})" class="list-group-item">
+        <div data-ng-repeat="post in postsList.list | limitTo: postsList.postLimit" class="list-group-item">
             <small class="list-group-item-text">
-                Posted on
-                <span>{{post.created | date:'mediumDate'}}</span>
-                by
-                <span data-ng-if="post.user"><span class="capitalize">{{post.user.displayName}}</span> in <span class="capitalize">{{post.subject}}</span></span>
-                <span data-ng-if="!post.user">Deleted User</span>
+                <span ng-if="!post.user">Unknown User -</span>
+                <span ng-if="post.user"><a href="/users/{{ post.user.username }}/posts">{{ post.user.displayName | capitalize }}</a> - </span> <span>{{post.created | date:'mediumDate'}}</span>
+                <span ng-if="post.subject"> - <a href="/posts/search/subject/{{post.subject}}">{{post.subject | capitalize }}</a></span>
             </small>
-            <h4 class="list-group-item-heading">{{post.title}}
-             <span data-ng-if="post.access === 'paid'" class="pull-right glyphicon glyphicon-usd" title="For Sale"></span>
+            <h4 class="list-group-item-heading"><a data-ui-sref="posts.detail({postId: post._id})">{{post.title}}</a>
+                <span data-ng-if="post.access === 'paid'" class="pull-right glyphicon glyphicon-usd" title="For Sale"></span>
                 <span data-ng-if="post.files.length" class="pull-right glyphicon glyphicon-file" title="PDFs attached"></span>
                 <span data-ng-if="post.datasets.length" class="pull-right glyphicon glyphicon-list" title="Datasets Attached"></span>
                 <span data-ng-if="post.models.length" class="pull-right glyphicon glyphicon-stats" title="Models Attached"></span>
             </h4>
-            <p class="list-group-item-text">{{post.content}}</p>
-        </a>
+            <!--<p class="list-group-item-text">{{post.content}}</p>-->
+        </div>
     </div>
     <div class="alert alert-warning text-center" ng-show="!postsList.list.length && postsList.resolved">
         No Posts found.

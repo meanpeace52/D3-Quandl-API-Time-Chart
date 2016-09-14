@@ -3,14 +3,20 @@
 //posts Edit Controller
 angular.module('posts')
     .controller('postsEditController', ['$scope', '$state', '$stateParams', 'Authentication', 'posts', '$uibModal', '$window', '$timeout', 'FileUploader', 'postOptions',
-            function ($scope, $state, $stateParams, Authentication, posts, $uibModal, $window, $timeout, FileUploader, postOptions) {
+                'Models', 'Datasets', '$log', 'toastr',
+            function ($scope, $state, $stateParams, Authentication, posts, $uibModal, $window, $timeout, FileUploader, postOptions, Models, Datasets, $log, toastr) {
             var vm = this;
 
             vm.user = Authentication.user;
 
+            vm.submitted = false;
+
             vm.error = null;
 
             vm.postOptions = postOptions;
+
+            vm.post = {
+            };
 
             vm.get = function () {
                 posts.crud.get({
@@ -24,112 +30,49 @@ angular.module('posts')
 
             vm.get();
 
-            vm.update = function (isValid) {
-
+            vm.update = function (form) {
                 vm.error = null;
-                /**
-                if (!isValid) {
-                    $scope.$broadcast('show-errors-check-validity', 'postForm');
-                    return false;
-                }
-                
-                **/
-                posts.crud.update({
-                    post: vm.post,
-                    postId: $stateParams.postId
-                }).$promise.then(function (response) {
-                    $state.go('posts.detail', {
-                        postId: response._id
-                    });
-                }, function (err) {
-                    vm.error = err.message;
-                });
+                vm.submitted = true;
 
+                if (form.$valid){
+                    posts.crud.update({
+                        post: vm.post,
+                        postId: $stateParams.postId
+                    }).$promise.then(function (response) {
+                            $state.go('posts.detail', {
+                                postId: response._id
+                            });
+                            toastr.success('Post updated successfully.');
+                        }, function (err) {
+                            vm.error = err.message;
+                            toastr.error('An error occurred when trying to save the post. Please try again.');
+                        });
+                }
+                else{
+                    $scope.$broadcast('show-errors-check-validity', 'form');
+                    toastr.error('Please fix the errors before you can continue.');
+                }
             };
 
-            vm.modal = function (data) {
-
-                // array of IDS for model/datasets already selected from modal
-                var selectedData = [];
-
-                if (!vm.post.hasOwnProperty(data)) {
-                    vm.post[data] = [];
+            vm.addModel = function(model){
+                if (!vm.post.models){
+                    vm.post.models = [];
                 }
+                vm.post.models.push(model);
+            };
 
-                else {
-                    angular.forEach(vm.post[data], function (e) {
-                        if (e._id) {
-                            selectedData.push(e._id);
-                        }
-                    });
+            vm.addDataset = function(dataset){
+                if (!vm.post.datasets){
+                    vm.post.datasets = [];
                 }
+                vm.post.datasets.push(dataset);
+            };
 
-                var controller = function ($scope, $modalInstance, Models, Datasets, Authentication) {
-
-                    var vm = this;
-
-                    vm.modal = true; // disables/enables modal features to reuse list view for models/datasets
-
-                    //disables item selection if already selected
-                    vm.selectedData = selectedData;
-
-                    vm.user = Authentication.user;
-
-                    vm.ok = function (data) {
-                        //passes info back to parent controller
-                        $modalInstance.close(data);
-                    };
-
-                    vm.cancel = function () {
-                        $modalInstance.dismiss('cancel');
-                    };
-
-                    if (data === 'models') {
-
-                        Models.filter('user', Authentication.user._id)
-                            .then(function (res) {
-                                    vm.list = res.data;
-                                },
-                                function (error) {}).finally(function () {
-                                vm.loading = false;
-                                vm.resolved = true;
-                            });
-                    }
-                    else if (data === 'datasets') {
-
-                        Datasets.user(Authentication.user.username)
-                            .then(function (res) {
-                                    vm.list = res.data;
-                                },
-                                function (error) {}).finally(function () {
-                                vm.loading = false;
-                                vm.resolved = true;
-                            });
-                    }
-                };
-
-                var options = {
-                    controller: controller
-                };
-
-                if (data === 'models') {
-                    options.templateUrl = 'modules/models/client/views/list-models.client.view.html';
-                    options.controllerAs = 'vm';
+            vm.addExistingFile = function(existingFile){
+                if (!vm.post.files){
+                    vm.post.files = [];
                 }
-
-                else if (data === 'datasets') {
-                    options.templateUrl = 'modules/datasets/client/list/datasets.list.html';
-                    options.controllerAs = 'DatasetsList';
-                }
-                else if (data === 'files') {
-                    options.templateUrl = 'modules/posts/client/create/posts.modal.html';
-                    options.controllerAs = 'vm';
-                }
-
-                $uibModal.open(options).result.then(function (selection) {
-                    vm.post[data].push(selection);
-                });
-
+                vm.post.files.push(existingFile);
             };
 
             // IMPORTANT : fileuploader must be kept on $scope because of bug with controllerAs
@@ -174,10 +117,12 @@ angular.module('posts')
                 // Show success message
                 vm.success = true;
 
-                vm.user.files.push(fileItem.file.name);
+                if (!vm.post.files){
+                    vm.post.files = [];
+                }
+                vm.post.files.push({ name : response.file.name, _id : response.file._id });
                 // Clear upload buttons
                 $scope.cancelUpload();
-
             };
 
             $scope.uploader.onErrorItem = function (fileItem, response, status, headers) {
@@ -187,5 +132,21 @@ angular.module('posts')
                 // Show error message
                 vm.error = response.message;
             };
+
+            Models.filter('user', Authentication.user._id)
+                .then(function (res) {
+                    vm.models = res.data;
+                },
+                function (error) {
+
+                });
+
+            Datasets.user(Authentication.user.username)
+                .then(function (res) {
+                    vm.datasets = res.data;
+                },
+                function (error) {
+
+                });
 
     }]);

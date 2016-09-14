@@ -32,15 +32,15 @@ var postSchema = new Schema({
         trim: true
     },
     mediaType: [{
-        type: String,
+        type: String
     }],
     models: [{
         type: Schema.ObjectId,
-        ref: 'Models'
+        ref: 'Model'
     }],
     datasets: [{
         type: Schema.ObjectId,
-        ref: 'Datasets'
+        ref: 'Dataset'
     }],
     user: {
         type: Schema.ObjectId,

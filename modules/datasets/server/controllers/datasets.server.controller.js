@@ -8,6 +8,7 @@ var path = require('path'),
     errorHandler = require(path.resolve('./modules/core/server/controllers/errors.server.controller')),
     DatasetS3Service = require('../services/datasets.server.s3'),
     Dataset = mongoose.model('Dataset'),
+    config = require(path.resolve('./config/config')),
     s3 = require('s3'),
     fs = require('fs'),
     json2csv = require('json2csv'),
@@ -84,8 +85,8 @@ function saveFileToS3(filePath, path, done) {
         multipartUploadThreshold: 20971520,
         multipartUploadSize: 15728640,
         s3Options: {
-            accessKeyId: 'AKIAI356G25CALROLSGA',
-            secretAccessKey: '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'
+            accessKeyId: config.s3AccessKeyId,
+            secretAccessKey: config.s3SecretAccessKey
         }
     });
 

@@ -2,18 +2,18 @@
     <div class="row">
         <div class="col-md-12 page-header">
             <span class="h2 pull-left">Datasets</span>
-            <a ng-if="DatasetsList.ownership" data-ui-sref="datasets.create" class="h4 pull-right header-secondary-title">Create Dataset</a>
+            <a ng-if="DatasetsList.ownership || DatasetsList.showCreate" data-ui-sref="datasets.create" class="h4 pull-right header-secondary-title">Create Dataset</a>
         </div>
     </div>
 
     <form ng-if="DatasetsList.state === 'datasets.list'" ng-submit="DatasetsList.search()" class="datasets-search-container">
         <input class="form-control" type="text" ng-model="DatasetsList.q">
         <button ng-click="DatasetsList.search()" class="btn btn-secondary" type="button">
-	    	<i 
-	    		ng-hide="DatasetsList.loading" 
+	    	<i
+	    		ng-hide="DatasetsList.loading"
 	    		class="glyphicon glyphicon-search"></i>
-	    	<i 
-	    		ng-show="DatasetsList.loading" 
+	    	<i
+	    		ng-show="DatasetsList.loading"
 	    		class="glyphicon glyphicon-hourglass"></i>
 	    </button>
     </form>
@@ -29,8 +29,8 @@
         </small>
         <span class="h4 list-group-item-heading" ng-bind="dataset.name"></span>
         <span ng-if="!Datasetslist.modal">
-                <button class="btn btn-secondary" ng-click="DatasetsList.addToUser(dataset)">Save to my LAB</button>
-                <a class="btn btn-primary" ng-click="DatasetsList.showData(dataset)" class-"pull-right">View </a>
+                <button  data-ng-if="DatasetsList.user._id != dataset.user" class="btn btn-secondary" ng-click="DatasetsList.addToUser(dataset)">Save to my LAB</button>
+                <a class="btn btn-primary" ng-click="DatasetsList.showData(dataset)" class="pull-right">View </a>
             </span>
         <button ng-if="DatasetsList.modal" ng-click="vm.ok(dataset)" data-ng-disabled="vm.selectedData.indexOf(dataset._id) !== -1" class="btn btn-small btn-default pull-right">Select</button>
         </span>

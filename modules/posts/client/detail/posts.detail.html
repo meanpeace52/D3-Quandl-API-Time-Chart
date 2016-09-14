@@ -8,19 +8,63 @@
         </span>
     </div>
     <em class="text-muted">
-            Posted on
-            <span>{{postsDetail.post.created | date:'mediumDate'}}</span>
-            by
-            <span ng-if="postsDetail.post.user">{{postsDetail.post.user.displayName}} in <span class="capitalize">{{postsDetail.post.subject}}</span></span>
-            <span ng-if="!postsDetail.post.user">deleted user</span>
-            <span class="pull-right" ng-show="postsDetail.authentication.user._id === postsDetail.post.user._id">
-        <a class="btn btn-primary" ui-sref="posts.edit({postId: postsDetail.post._id})">
-            <i class="glyphicon glyphicon-edit"></i>
-        </a>
-        <a class="btn btn-primary" ng-click="postsDetail.remove();">
-            <i class="glyphicon glyphicon-trash"></i>
-        </a>
-        </span>
-        </em>
-    <p class="lead">{{postsDetail.post.content}}</p>
+            <h1 ng-if="postsDetail.notfound">Post Not Found</h1>
+            <div ng-if="!postsDetail.notfound">
+                <span ng-if="!postsDetail.post.user">Unknown User -</span>
+                <span ng-if="postsDetail.post.user"><a href="/users/{{ postsDetail.post.user.username }}/posts">{{
+                    postsDetail.post.user.displayName | capitalize }}</a> - </span> <span>{{postsDetail.post.created | date:'mediumDate'}}</span>
+                <span> - <a href="/posts/search/subject/{{postsDetail.post.subject}}">{{postsDetail.post.subject |
+                    capitalize }}</a></span>
+                <span class="pull-right" ng-if="postsDetail.authentication.user._id === postsDetail.post.user._id">
+                    <a class="btn btn-primary" ui-sref="posts.edit({postId: postsDetail.post._id})">
+                        <i class="glyphicon glyphicon-edit"></i>
+                    </a>
+                    <a class="btn btn-primary" ng-click="postsDetail.remove();">
+                        <i class="glyphicon glyphicon-trash"></i>
+                    </a>
+                </span>
+            </div>
+    </em>
+    <div class="row">
+        <div class="col-md-8">
+            <p class="lead">{{postsDetail.post.content}}</p>
+        </div>
+        <div class="col-md-4" ng-if="postsDetail.tabs.length > 0">
+            <hr/>
+            <label>Resources:</label>
+            <br/>
+            <ul class="nav nav-tabs" data-tabs="tabs">
+                <li data-ng-repeat="item in postsDetail.tabs" ng-class="{'active' : item == postsDetail.activeTab }" ng-click="postsDetail.changeTab(item)">
+                    <a data-ng-bind="item" data-toggle="tab" href=""></a>
+                </li>
+            </ul>
+            <div class="tab-content">
+                <div role="tabpanel" data-ng-repeat="item in postsDetail.tabs" ng-class="{'active' : item == postsDetail.activeTab }" class="tab-pane">
+                    <div ng-if="item == 'Datasets'">
+                        <ul class="list-unstyled">
+                            <li ng-repeat="dataset in postsDetail.post.datasets" class="row">
+                                {{ dataset.title }}
+                                <button class="btn btn-default pull-right" ng-click="postsDetail.showData(dataset)">View</button>
+                                <button class="btn btn-primary pull-right" ng-click="postsDetail.addToUser(dataset)">Save to Lab</button>
+                            </li>
+                        </ul>
+                    </div>
+                    <div ng-if="item == 'Files'">
+                        <ul class="list-unstyled">
+                            <li ng-repeat="file in postsDetail.post.files"><a href="https://theorylab-pdfs.s3.amazonaws.com/{{ file._id }}" target="_blank">{{ file.name }}</a></li>
+                        </ul>
+                    </div>
+                    <div ng-if="item == 'Models'">
+                        <ul class="list-unstyled">
+                            <li ng-repeat="model in postsDetail.post.models" class="row">
+                                {{ model.title }}
+                                <button class="btn btn-primary pull-right" ng-click="">Save to Lab</button>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
 </section>

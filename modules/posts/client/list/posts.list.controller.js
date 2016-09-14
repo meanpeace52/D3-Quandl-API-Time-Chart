@@ -2,8 +2,8 @@
 
 //posts List Controller
 angular.module('posts')
-    .controller('postsListController', ['$scope', '$stateParams', '$state', 'Authentication', 'posts', 'UsersFactory',
-            function ($scope, $stateParams, $state, Authentication, posts, UsersFactory) {
+    .controller('postsListController', ['$scope', '$stateParams', '$state', 'Authentication', 'posts', 'UsersFactory', 'postOptions',
+            function ($scope, $stateParams, $state, Authentication, posts, UsersFactory, postOptions) {
             var vm = this;
 
             vm.authentication = Authentication;
@@ -11,6 +11,8 @@ angular.module('posts')
             vm.state = $state.current.name;
 
             vm.ownership = UsersFactory.ownership();
+
+            vm.showCreate = $state.current.name == 'posts.list';
 
             vm.postLimit = 10;
 
@@ -69,7 +71,7 @@ angular.module('posts')
             // set view based on state
 
             if (vm.state === 'posts.list') { // topbar view
-                vm.menuItems = ['finance', 'sports', 'soshsci'];
+                vm.menuItems = postOptions.subjects;
                 vm.field = 'subject';
             }
 

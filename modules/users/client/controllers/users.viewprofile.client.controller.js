@@ -1,7 +1,7 @@
 'use strict';
 
-angular.module('users').controller('UsersProfilePageController', ['$state', '$scope', '$modal', '$http', '$location', '$stateParams', 'Users', 'UsersFactory', 'Authentication', 'Datasets',
-    function ($state, $scope, $modal, $http, $location, $stateParams, Users, UsersFactory, Authentication, Datasets) {
+angular.module('users').controller('UsersProfilePageController', ['$state', '$scope', '$modal', '$http', '$location', '$stateParams', '$log', 'Users', 'UsersFactory', 'Authentication', 'Datasets',
+    function ($state, $scope, $modal, $http, $location, $stateParams, $log, Users, UsersFactory, Authentication, Datasets) {
         
         var vm = this;
 
@@ -13,6 +13,10 @@ angular.module('users').controller('UsersProfilePageController', ['$state', '$sc
         
         vm.ownership = UsersFactory.ownership();
 
+        vm.isCurrentUser = vm.user.username === vm.username;
+
+        vm.founduser = false;
+
         vm.menuItems = [{
             title: 'Posts',
             state: 'users.profilepage.posts({user: UsersProfilePage.params.username})'
@@ -20,9 +24,22 @@ angular.module('users').controller('UsersProfilePageController', ['$state', '$sc
             title: 'Models',
             state: 'users.profilepage.models({user: UsersProfilePage.params.username})'
                 }, {
-            title: 'Data',
+            title: 'Datasets',
             state: 'users.profilepage.datasets({user: UsersProfilePage.params.username})'
                 }];
+
+        if (!vm.isCurrentUser){
+            UsersFactory.finduser($stateParams.username)
+                .then(function(user){
+                    if (user){
+                        vm.externaluser = user;
+                        vm.founduser = true;
+                    }
+                });
+        }
+        else{
+            vm.founduser = true;
+        }
             
             
         vm.addToUser = function (dataset) {
