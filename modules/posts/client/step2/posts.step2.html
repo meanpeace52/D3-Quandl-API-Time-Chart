@@ -1,0 +1,108 @@
+<section>
+    <div class="page-header">
+        <span class="h1">{{ postsStep2.newPost ? 'New' : 'Edit' }} Post</span>
+        <span>
+        <span data-ng-if="postsStep2.post.access === 'paid'" class="pull-right glyphicon glyphicon-usd" title="For Sale"></span>
+        <span data-ng-if="postsStep2.post.files.length" class="pull-right glyphicon glyphicon-file" title="PDFs attached"></span>
+        <span data-ng-if="postsStep2.post.datasets.length" class="pull-right glyphicon glyphicon-list" title="Datasets Attached"></span>
+        <span data-ng-if="postsStep2.post.models.length" class="pull-right glyphicon glyphicon-stats" title="Models Attached"></span>
+        </span>
+    </div>
+    <div class="col-md-12">
+        <div class="row">
+            <h2>Add Data, Models, and .pdf files to your Post for reproducible research</h2>
+            <p>Don't have any models or datasets yet? <a ui-sref="datasets.list">Find datasets</a> based on your interests, and then open them in your <a ui-sref="lab.process">Lab</a> to fit a predictive model to them! Or you can save what <a ui-sref="users.list">other users are working on as a starting point</a>.</p>
+        </div>
+        <form name="form" class="form-horizontal" ng-submit="postsStep2.update(form)" novalidate>
+            <div class="row">
+                <div class="col-md-3">
+                    <ul class="nav nav-pills nav-stacked">
+                        <li ng-class="{'active' : postsStep2.activeTab == 'Datasets' }" ng-click="postsStep2.activeTab = 'Datasets'">
+                            <a data-toggle="pill" href=""><span class="glyphicon glyphicon-list"></span> Datasets</a>
+                        </li>
+                        <li ng-class="{'active' : postsStep2.activeTab == 'Models' }" ng-click="postsStep2.activeTab = 'Models'">
+                            <a data-toggle="pill" href=""><span class="glyphicon glyphicon-stats"></span> Models</a>
+                        </li>
+                        <li ng-class="{'active' : postsStep2.activeTab == 'PDF' }" ng-click="postsStep2.activeTab = 'PDF'">
+                            <a data-toggle="pill" href=""><span class="glyphicon glyphicon-file"></span> PDF's</a>
+                        </li>
+                    </ul>
+                </div>
+                <div class="col-md-9">
+                    <div class="tab-content">
+                        <div class="tab-pane" ng-class="{'active' : postsStep2.activeTab == 'Datasets' }">
+                            <div class="row">
+                                <div class="col-md-9">
+                                    <select name="dataset" id="dataset" ng-model="postsStep2.dataset" class="form-control" ng-options="dataset as dataset.title for dataset in postsStep2.datasets">
+                                        <option value="">- Select Dataset -</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-3">
+                                    <button ng-show="postsStep2.dataset" data-ng-click="postsStep2.addDataset(postsStep2.dataset)" class="btn btn-default text-capitalize" type="button" dropdown-toggle>
+                                        Add Dataset
+                                    </button>
+                                </div>
+                            </div>
+                            <div ng-show="postsStep2.post.datasets.length">
+                                <ul data-ng-if="postsStep2.post.datasets" class="list-inline">
+                                    <li data-ng-repeat="dataset in postsStep2.post.datasets track by $index" class="badge text-capitalize">
+                                        <span data-ng-click="postsStep2.removeDataset(dataset)" class="glyphicon glyphicon-remove" href="#"></span>
+                                        <a href="#" class="h5">{{dataset.title}}</a><br/>
+                                    </li>
+                                </ul><br/>
+                            </div>
+                        </div>
+                        <div class="tab-pane" ng-class="{'active' : postsStep2.activeTab == 'Models' }">
+
+                        </div>
+                        <div class="tab-pane" ng-class="{'active' : postsStep2.activeTab == 'PDF' }">
+                            <div class="row">
+                                <div class="col-md-7">
+                                    <select ng-model="existingFile" class="form-control" ng-options="file as file.name for file in postsStep2.user.files">
+                                        <option value="">- Existing Files -</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-5">
+                                    <a href="" class="btn btn-default" ng-show="existingFile" ng-click="postsStep2.addExistingFile(existingFile)">
+                                        Select existing PDF
+                                    </a>
+                                    <span ng-hide="vm.uploader.queue.length">
+                                        <span class="btn btn-default btn-file">
+                                          Add PDF
+                                          <input type="file" nv-file-select uploader="uploader"/>
+                                         </span>
+                                    </span>
+                                </div>
+                            </div>
+                            <div ng-show="postsStep2.post.files.length">
+                                <ul class="list-inline">
+                                    <li ng-repeat="file in postsStep2.post.files track by $index" class="badge">
+                                        <span class="glyphicon glyphicon-file"></span> {{file.name}}
+                                        <span ng-click="postsStep2.removeFile(file)" class="glyphicon glyphicon-remove"></span>
+                                    </li>
+                                </ul>
+                                <br/>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <br/><br/>
+            <fieldset>
+                <div class="row">
+                    <div class="col-md-1">
+                        <button class="btn" ng-click="$event.preventDefault();postsStep2.back();">Back</button>
+                    </div>
+                    <div class="col-md-offset-10 col-md-1">
+                        <button type="submit" class="btn btn-primary pull-right">Submit</button>
+                    </div>
+                </div>
+                <div ng-show="form.error" class="text-danger">
+                    <strong>{{form.error}}</strong>
+                </div>
+
+            </fieldset>
+        </form>
+    </div>
+</section>

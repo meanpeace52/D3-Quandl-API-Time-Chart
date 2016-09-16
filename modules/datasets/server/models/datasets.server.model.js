@@ -17,10 +17,6 @@ var DatasetSchema = new Schema({
         index: { unique: true },
         trim: true
     },
-    index: {
-        type: String,
-        default: ''
-    },
     notice: {
         type: String,
         default: ''

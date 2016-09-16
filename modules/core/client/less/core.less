@@ -1,12 +1,16 @@
 body {
   font-family: 'Open Sans', sans-serif;
 }
+
+
 /*.content {
     margin-top: 50px;
 }*/
+
 .undecorated-link:hover {
   text-decoration: none;
 }
+
 [ng\:cloak],
 [ng-cloak],
 [data-ng-cloak],
@@ -15,12 +19,15 @@ body {
 .x-ng-cloak {
   display: none !important;
 }
+
 .ng-invalid.ng-dirty {
   border-color: #FA787E;
 }
+
 .ng-valid.ng-dirty {
   border-color: #78FA89;
 }
+
 .header-profile-image {
   opacity: 0.8;
   height: 28px;
@@ -28,45 +35,52 @@ body {
   border-radius: 50%;
   margin-right: 5px;
 }
+
 .open .header-profile-image,
 a:hover .header-profile-image {
   opacity: 1;
 }
+
 .user-header-dropdown-toggle {
   padding-top: 11px !important;
   padding-bottom: 11px !important;
 }
+
 .navbar-brand--with-margin {
   margin-right: 80px;
 }
+
 .navbar-toggle--sidebar {
   margin-left: 15px;
-}
-@media (min-width: 768px) {
-  .navbar-toggle--sidebar {
-    margin-left: 0;
+  @media (min-width: 768px){
+      margin-left: 0;
   }
 }
+
+
 .header-carousel--home {
   margin: 0 -15px;
 }
+
 .img--home-carousel {
   width: 100%;
   height: 300px !important;
-  -o-object-fit: cover;
-     object-fit: cover;
-  -o-object-position: center;
-     object-position: center;
+  object-fit: cover;
+  object-position: center;
 }
+
 .page-header {
   margin-top: 0.5em;
 }
+
 .page-header .header-secondary-title {
   margin-top: 1.5em;
 }
+
 .modal-view {
   padding: 1em;
 }
+
 .modal-view .page-header {
   border-bottom: 0 !important;
 }
@@ -74,41 +88,55 @@ a:hover .header-profile-image {
   max-height: 20em;
   overflow-y: auto;
 }
+
 .modal-view .list-group-item {
   padding-bottom: 1.2em;
 }
-.tab-content {
+
+.tab-content{
   padding: 15px;
 }
-.tab-content li {
+
+.tab-content li{
   margin: 5px 0;
   padding-bottom: 10px;
 }
-.tab-content li button {
+
+.tab-content li button{
   margin-top: -5px;
   margin-left: 10px;
 }
-.legend-icon {
+
+.legend-icon{
   margin-left: 10px !important;
   margin-right: 5px !important;
 }
-.content {
+
+.content{
   margin-top: 0 !important;
 }
-.posts.list-group-item {
+
+.posts.list-group-item{
   cursor: pointer;
 }
-.posts.list-group-item:hover {
-  background: #eee;
+
+.posts.list-group-item{
+  &:hover{
+    background: #eee;
+  }
 }
-form label {
-  font-size: 12px;
+
+form{
+  label{
+    font-size: 12px;
+  }
+  input, select, textarea{
+    font-size: 12px !important;
+  }
 }
-form input,
-form select,
-form textarea {
-  font-size: 12px !important;
-}
-.list-inline .badge {
-  display: block;
+
+.list-inline{
+  .badge{
+    display: block;
+  }
 }

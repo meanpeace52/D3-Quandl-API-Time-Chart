@@ -48,6 +48,24 @@ angular.module('posts')
                     data: {
                         roles: ['user', 'admin']
                     }
-                });
+                })
+                .state('posts.createstep2', {
+                    url: '/:postId/create/step2',
+                    controller: 'postsStep2Controller',
+                    controllerAs: 'postsStep2',
+                    templateUrl: MODULE_PATH + 'step2/posts.step2.html',
+                    data: {
+                        roles: ['user', 'admin']
                     }
-                ]);
+                })
+                .state('posts.editstep2', {
+                    url: '/:postId/edit/step2',
+                    controller: 'postsStep2Controller',
+                    controllerAs: 'postsStep2',
+                    templateUrl: MODULE_PATH + 'step2/posts.step2.html',
+                    data: {
+                        roles: ['user', 'admin']
+                    }
+                });
+        }
+    ]);

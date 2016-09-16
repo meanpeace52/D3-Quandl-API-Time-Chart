@@ -2,13 +2,18 @@
 
 //users List Controller
 angular.module('users')
-    .controller('UsersListController', ['$state', '$sce', 'Authentication', 'Users', 'UsersFactory',
-            function ($state, $sce, Authentication, Users, UsersFactory) {
+    .controller('UsersListController', ['$state', '$sce', 'Authentication', 'Users', 'UsersFactory', 'toastr',
+            function ($state, $sce, Authentication, Users, UsersFactory, toastr) {
             var vm = this;
 
             vm.authentication = Authentication;
 
             vm.search = function () {
+                if (!vm.q || vm.q === ''){
+                    toastr.error('You need to enter a value to search by.', 'Invalid input');
+                    return;
+                }
+
                 UsersFactory.search(vm.q)
                     .success(function (response) {
                         vm.users = response;

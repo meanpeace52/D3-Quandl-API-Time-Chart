@@ -1,18 +1,23 @@
 <section>
     <div class="page-header">
         <h1>Search User Profiles</h1>
+        <p>Enter an username to search by.</p>
     </div>
-    <input type="text" ng-model="UsersList.q">
-    <button ng-click="UsersList.search()" type="button">Search</button>
+    <div class="datasets-search-container">
+        <input class="form-control" type="text" ng-model="UsersList.q">
+        <button ng-click="UsersList.search()" class="btn btn-secondary" type="button">
+            <i ng-hide="postsList.loading" class="glyphicon glyphicon-search"></i>
+            <i ng-show="postsList.loading" class="glyphicon glyphicon-hourglass"></i>
+        </button>
+    </div>
 
     <div class="list-group">
-        <div data-ng-repeat="user in UsersList.users" class="list-group-item">
+        <a data-ng-repeat="user in UsersList.users" class="list-group-item" ui-sref="users.profilepage.posts({ username: user.username})">
             <small class="list-group-item-text">
-				Username: 
+				Username:
 				<span> {{user.username}} </span>
 			</small>
-            <a class="btn btn-primary" ui-sref="users.profilepage.posts({ username: user.username})">Go to user's page</a>
-        </div>
+        </a>
     </div>
 
 </section>

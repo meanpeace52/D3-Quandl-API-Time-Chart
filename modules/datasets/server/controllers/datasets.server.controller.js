@@ -53,7 +53,7 @@ exports.searchDataset = function (req, res) {
     var query = {
         title: new RegExp(req.query.q, 'i')
     };
-    Dataset.find(query).sort('-created').limit(10).populate('user', 'displayName').exec(function (err, datasets) {
+    Dataset.find(query).sort('-created').limit(10).populate('user', 'username').exec(function (err, datasets) {
         if (err) {
             return res.status(400).send({
                 message: errorHandler.getErrorMessage(err)

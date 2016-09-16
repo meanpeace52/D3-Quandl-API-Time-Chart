@@ -16,14 +16,13 @@
         <span class="glyphicon glyphicon-list legend-icon" title="Datasets Attached"></span> Datasets Attached
         <span class="glyphicon glyphicon-stats legend-icon" title="Models Attached"></span> Models Attached
     </div>
+    <br/>
     <form ng-if="!postsList.modal && postsList.state === 'posts.list'" ng-submit="postsList.search()" class="datasets-search-container">
-        <div class="row">
-            <input class="form-control" type="text" ng-model="postsList.query">
-            <button ng-click="postsList.search()" class="btn btn-secondary" type="button">
-                <i ng-hide="postsList.loading" class="glyphicon glyphicon-search"></i>
-                <i ng-show="postsList.loading" class="glyphicon glyphicon-hourglass"></i>
-            </button>
-        </div>
+        <input class="form-control" type="text" ng-model="postsList.query">
+        <button ng-click="postsList.search()" class="btn btn-secondary" type="button">
+            <i ng-hide="postsList.loading" class="glyphicon glyphicon-search"></i>
+            <i ng-show="postsList.loading" class="glyphicon glyphicon-hourglass"></i>
+        </button>
     </form>
     <div class="list-group">
         <div data-ng-repeat="post in postsList.list | limitTo: postsList.postLimit" data-ui-sref="posts.detail({postId: post._id})" class="list-group-item posts">
