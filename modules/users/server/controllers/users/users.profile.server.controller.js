@@ -171,7 +171,7 @@ exports.uploadFile = function (req, res) {
         s3Params: {
             ContentType: req.file.mimetype,
             Bucket: 'theorylab-pdfs',
-            Key: req.file.filename
+            Key: req.user.username + '/' + req.file.filename + '.pdf'
         }
     });
 
@@ -185,7 +185,7 @@ exports.uploadFile = function (req, res) {
     uploader.on('end', function (file) {
         var fileData = {
             name: req.file.originalname,
-            _id: req.file.filename
+            _id: req.user.username + '/' + req.file.filename + '.pdf'
         };
         req.user.files.push(fileData);
         req.user.save(function (saveError, user) {
@@ -205,27 +205,40 @@ exports.uploadFile = function (req, res) {
 
 exports.getFile = function (req, res) {
 
-    var params = {
-        localFile: req.params.file,
+    var localBucketFile = './s3-cache/files/' + req.query.file;
+    try{
+        fs.accessSync(localBucketFile);
+        fs.readFile(path.resolve('s3-cache/files') + '/' + req.query.file, function (err,data){
+            res.contentType("application/pdf");
+            res.send(data);
+        });
+    }
+    catch(e){
+        var params = {
+            localFile: localBucketFile,
 
-        s3Params: {
-            Bucket: 'pdfs',
-            Key: req.params.file
+            s3Params: {
+                Bucket: 'theorylab-pdfs',
+                Key: req.query.file
                 // other options supported by getObject
                 // See: http://docs.aws.amazon.com/AWSJavaScriptSDK/latest/AWS/S3.html#getObject-property
-        }
-    };
+            }
+        };
 
-    var downloader = client.downloadFile(params);
-    downloader.on('error', function (err) { // error to client
-        return res.status(400).send({
-            message: errorHandler.getErrorMessage(err)
+        var downloader = client.downloadFile(params);
+        downloader.on('error', function (err) { // error to client
+            return res.status(400).send({
+                message: errorHandler.getErrorMessage(err)
+            });
         });
-    });
-    downloader.on('progress', function () {});
-    downloader.on('end', function (file) {
-        res.send(file);
-    });
+        downloader.on('progress', function () {});
+        downloader.on('end', function (file) {
+            fs.readFile(path.resolve('s3-cache/files') + '/' + req.query.file , function (err,data){
+                res.contentType("application/pdf");
+                res.send(data);
+            });
+        });
+    }
 };
 
 // trims sensitive paid model data if user hasn't paid for it

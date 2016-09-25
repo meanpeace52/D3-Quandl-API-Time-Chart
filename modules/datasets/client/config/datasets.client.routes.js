@@ -14,7 +14,13 @@ angular.module('datasets')
                     template: '<ui-view/>'
                 })
                 .state('datasets.list', {
-                    url: '',
+                    url: '/',
+                    controller: 'DatasetsListController',
+                    controllerAs: 'DatasetsList',
+                    templateUrl: MODULE_PATH + 'list/datasets.list.html'
+                })
+                .state('datasets.search', {
+                    url: '/search/:search',
                     controller: 'DatasetsListController',
                     controllerAs: 'DatasetsList',
                     templateUrl: MODULE_PATH + 'list/datasets.list.html'
@@ -22,7 +28,7 @@ angular.module('datasets')
                 .state('datasets.create', {
                     url: '/create',
                     controller: 'DatasetsCreateController',
-                    controllerAs: 'DatasetsCreate',
+                    controllerAs: 'datasetsCreate',
                     templateUrl: MODULE_PATH + 'create/datasets.create.html',
                     data: {
                         roles: ['user', 'admin']
@@ -53,7 +59,7 @@ angular.module('datasets')
                 .state('datasets.edit', {
                     url: '/:datasetId/edit',
                     controller: 'DatasetsEditController',
-                    controllerAs: 'DatasetsEdit',
+                    controllerAs: 'datasetsEdit',
                     templateUrl: MODULE_PATH + 'edit/datasets.edit.html',
                     data: {
                         roles: ['user', 'admin']

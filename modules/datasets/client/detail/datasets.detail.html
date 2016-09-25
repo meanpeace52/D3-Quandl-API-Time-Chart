@@ -1,3 +1,50 @@
-<section>
-	Dataset detail
-</section>
+<div class="modal-header">
+    <h4 class="modal-title">
+        Dataset: {{ DatasetsDetail.dataset.title }}
+    </h4>
+</div>
+<div class="modal-body">
+    <div class="row">
+        <div class="col-md-1">
+            <button class="btn btn-danger btn-sm" onclick="history.back();">Back</button>
+        </div>
+
+        <div class="col-md-offset-10 col-md-1">
+            <button class="btn btn-success pull-right btn-sm" ng-if="DatasetsDetail.authentication.user._id != DatasetsDetail.viewingDataset.user._id && DatasetsDetail.authentication.user._id != DatasetsDetail.viewingDataset.user" ng-click="DatasetsDetail.addtoUser()">Save to My Lab</button>
+        </div>
+    </div>
+    <br/>
+    <div class="row" ng-show="DatasetsDetail.usersDatasets.length > 0">
+        <div class="graph col-md-6"> </div>
+        <div class="datasets-list col-md-6">
+            <select
+                ng-options="dataset as dataset.title for dataset in DatasetsDetail.usersDatasets track by dataset._id"
+                ng-model="DatasetsDetail.selectedDatasetOption"
+                ng-change="DatasetsDetail.mergeDataset()"></select>
+        </div>
+    </div>
+
+    <div data-ng-hide="DatasetsDetail.hasLoadedData"> Retrieving Data </div>
+
+    <div class="row">
+        <div class="col-md-6">
+            <p ng-show="DatasetsDetail.hasLoadedData">{{ DatasetsDetail.totalItems }} total records</p>
+            <dataset-table columns="DatasetsDetail.columns" rows="DatasetsDetail.rows"></dataset-table>
+            <ul ng-show="DatasetsDetail.hasLoadedData && DatasetsDetail.totalItems > DatasetsDetail.itemsPerPage" uib-pagination total-items="DatasetsDetail.totalItems" ng-model="DatasetsDetail.currentPage" items-per-page="DatasetsDetail.itemsPerPage" max-size="5" force-ellipses="true" boundary-links="true" ng-change="DatasetsDetail.pageChanged()"></ul>
+        </div>
+
+        <div class="col-md-6">
+            <!-- <h3>{{ DatasetDetailModal.selectedDatasetOption.title }}</h3> -->
+            <dataset-table columns="DatasetsDetail.selectedDatasetColumns" rows="DatasetsDetail.selectedDatasetRows"></dataset-table>
+        </div>
+    </div><!-- row -->
+    <div class="row">
+        <div class="col-md-1">
+            <button class="btn btn-danger btn-sm" ng-click="history.back();">Back</button>
+        </div>
+
+        <div class="col-md-offset-10 col-md-1">
+            <button class="btn btn-success pull-right btn-sm" ng-if="DatasetsDetail.authentication.user._id != DatasetsDetail.viewingDataset.user._id && DatasetsDetail.authentication.user._id != DatasetsDetail.viewingDataset.user" ng-click="DatasetsDetail.addtoUser()">Save to My Lab</button>
+        </div>
+    </div>
+</div>

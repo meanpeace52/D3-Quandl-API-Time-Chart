@@ -22,4 +22,6 @@ angular.module('datasets')
 */
             
         }
-    ]);
+    ]).constant('datasetOptions', {
+        access: ['public','private','paid']
+    });

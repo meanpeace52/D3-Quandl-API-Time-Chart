@@ -8,10 +8,10 @@
             data-ng-class="{ active: $state.includes(item.state), dropdown: item.type === 'dropdown' }"
             class="{{item.class}}" dropdown="item.type === 'dropdown'">
             <a ng-switch-default data-ui-sref="{{item.state}}" ui-sref-active="active">
-            	<i class="fa {{item.faIcon}}" aria-hidden="true" ng-if="item.faIcon"></i>
+            	<i class="fa {{item.faIcon}}" aria-hidden="true" ng-if="item.faIcon" uib-tooltip="{{item.title}}" tooltip-placement="right" tooltip-append-to-body="true"></i>
             	<span data-ng-bind="item.title"></span>
             </a>
         </li>
     </ul>
-    
+
 </div>

@@ -32,7 +32,7 @@ angular.module('datasets')
         },
         link: function($scope, element) {
           $scope.$watchGroup(['columns', 'rows'], function(newData) {
-            if (newData[0].length && newData[1].length) {
+            if (newData[0] && newData[1] && newData[0].length && newData[1].length) {
               element.html(tpl({
                 columns: newData[0],
                 rows: newData[1]

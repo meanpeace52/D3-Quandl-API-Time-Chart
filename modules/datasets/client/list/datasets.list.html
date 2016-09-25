@@ -6,7 +6,7 @@
         </div>
     </div>
 
-    <form ng-if="DatasetsList.state === 'datasets.list'" ng-submit="DatasetsList.search()" class="datasets-search-container">
+    <form ng-if="DatasetsList.state === 'datasets.list' || DatasetsList.state === 'datasets.search'" ng-submit="DatasetsList.search()" class="datasets-search-container">
         <input class="form-control" type="text" ng-model="DatasetsList.q">
         <button ng-click="DatasetsList.search()" class="btn btn-secondary" type="button">
 	    	<i
@@ -22,16 +22,16 @@
         <span data-ng-repeat="dataset in DatasetsList.list track by $index" class="list-group-item">
             <small class="list-group-item-text">
                 Title:
-                <span data-ng-bind="dataset.title" ng-class="{'active': DatasetsList.showTitle (dataset.title)}"></span> Source:
-        <span ng-bind="dataset.source"></span>
-        <span ng-bind="dataset.user.username"></span>
-
+                <span data-ng-bind="dataset.title" ng-class="{'active': DatasetsList.showTitle (dataset.title)}"></span> <span ng-if="DatasetsList.user._id != dataset.user">Source:
+                <span ng-bind="dataset.user.username"></span></span>
         </small>
         <span class="h4 list-group-item-heading" ng-bind="dataset.name"></span>
         <span ng-if="!Datasetslist.modal">
-                <button  data-ng-if="DatasetsList.user._id != dataset.user" class="btn btn-secondary" ng-click="DatasetsList.addToUser(dataset)">Save to my LAB</button>
-                <a class="btn btn-primary" ng-click="DatasetsList.showData(dataset)" class="pull-right">View </a>
-            </span>
+            <button data-ng-if="DatasetsList.user._id != dataset.user && DatasetsList.user._id != dataset.user._id" class="btn btn-secondary" ng-click="DatasetsList.addToUser(dataset)">Save to my LAB</button>
+            <a class="btn btn-primary" ui-sref="datasets.detail({datasetId: dataset._id})" class="pull-right">View</a>
+            <a data-ng-if="DatasetsList.user._id == dataset.user" class="btn btn-default" ui-sref="datasets.edit({datasetId:dataset._id})" class="pull-right">Edit</a>
+            <a data-ng-if="DatasetsList.user._id == dataset.user" class="btn btn-default" ng-click="DatasetsList.deleteDataset(dataset)" class="pull-right">Delete</a>
+        </span>
         <button ng-if="DatasetsList.modal" ng-click="vm.ok(dataset)" data-ng-disabled="vm.selectedData.indexOf(dataset._id) !== -1" class="btn btn-small btn-default pull-right">Select</button>
         </span>
     </div>

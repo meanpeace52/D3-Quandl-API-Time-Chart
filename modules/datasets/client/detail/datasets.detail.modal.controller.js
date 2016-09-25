@@ -3,10 +3,11 @@
 //Datasets Detail Controller
 angular.module('datasets')
     .controller('DatasetsDetailModalController',
-        ['$modalInstance', 'Datasets', 'viewingDataset',
-            function ($modalInstance, Datasets, viewingDataset) {
+        ['$modalInstance', 'Datasets', 'viewingDataset', 'toastr', '$log', 'Authentication',
+            function ($modalInstance, Datasets, viewingDataset, toastr, $log, Authentication) {
                 var vm = this;
                 vm.viewingDataset = viewingDataset;
+                vm.authentication = Authentication;
                 vm.columns = [];
                 vm.rows = [];
                 vm.hasLoadedData = false;
@@ -26,9 +27,15 @@ angular.module('datasets')
                 };
 
                 vm.addtoUser = function () {
-                    Datasets.addToUserApiCall(viewingDataset).then(function (dataset) {
-                        $modalInstance.close(true);
-                    });
+                    Datasets.addToUserApiCall(viewingDataset)
+                        .then(function (dataset) {
+                            $modalInstance.close(true);
+                            toastr.success('Dataset copied to your LAB.');
+                        })
+                        .catch(function (err) {
+                            $log.error(err);
+                            toastr.error('An error occurred while copying the dataset.');
+                        });
                 };
 
                 vm.mergeDataset = function () {

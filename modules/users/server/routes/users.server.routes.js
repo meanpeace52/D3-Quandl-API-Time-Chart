@@ -3,10 +3,28 @@
 module.exports = function (app) {
   // User Routes
   var users = require('../controllers/users.server.controller.js');
-
   var multer = require('multer');
-  var upload = multer({
-    dest: 's3-cache/'
+  var mkdirp = require('mkdirp');
+  var fs = require('fs');
+  var path = require('path');
+
+  function checkDirectorySync(directory) {
+    try {
+      fs.statSync(directory);
+    } catch(e) {
+      mkdirp.sync(directory);
+    }
+  }
+
+  var storage = multer.diskStorage({ //multers disk storage settings
+    destination: function (req, file, cb) {
+      var filepath = 's3-cache/files/' + req.user.username;
+      mkdirp.sync(path.resolve('./') + '/s3-cache/files/' + req.user.username);
+      cb(null, filepath);
+    }
+  }),
+  upload = multer({
+    storage : storage
   });
   
   // Setting up the users profile api
@@ -16,7 +34,7 @@ module.exports = function (app) {
   app.route('/api/users/accounts').delete(users.removeOAuthProvider);
   app.route('/api/users/password').post(users.changePassword);
   app.route('/api/users/picture').post(users.changeProfilePicture);
-  app.route('/api/users/files/:file').get(users.getFile);
+  app.route('/api/users/files').get(users.getFile);
   app.route('/api/users/files').post(upload.single('file'), users.uploadFile); // todo make main file route
   app.route('/api/users/:username').get(users.read);
   app.route('/api/users/:username/models/:model').get(users.models);

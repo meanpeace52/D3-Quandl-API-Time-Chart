@@ -34,6 +34,10 @@ var DatasetSchema = new Schema({
         type: Schema.ObjectId,
         ref: 'User'
     },
+    origDataset: {
+        type: Schema.ObjectId,
+        ref: 'Dataset'
+    },
     source: {
         type: String,
         default: ''
@@ -42,15 +46,17 @@ var DatasetSchema = new Schema({
         type: String,
         default: ''
     },
+    filename: {
+        type: String,
+        default: ''
+    },
     s3reference: {
         type: String,
         default: ''
     },
     access: {
-        type: [{
-            type: String,
-            enum: ['private']
-        }],
+        type: String,
+        enum: ['public', 'paid', 'private'],
         default: ['private']
     },
     mediatype: {

@@ -1,8 +1,9 @@
 'use strict';
 
 //datasets List Controller
-angular.module('datasets').controller('DatasetsListController', ['$state', '$stateParams', '$sce', '$modal', 'Authentication', 'Datasets','UsersFactory',
-    function ($state, $stateParams, $sce, $modal, Authentication, Datasets, UsersFactory) {
+angular.module('datasets').controller('DatasetsListController', ['$state', '$stateParams', '$sce', '$modal', 'Authentication',
+                                        'Datasets','UsersFactory', 'toastr', '$log',
+    function ($state, $stateParams, $sce, $modal, Authentication, Datasets, UsersFactory, toastr, $log) {
         var vm = this;
 
         vm.authentication = Authentication;
@@ -12,7 +13,8 @@ angular.module('datasets').controller('DatasetsListController', ['$state', '$sta
         vm.loading = false;
         
         vm.ownership = UsersFactory.ownership();
-        vm.showCreate = $state.current.name == 'datasets.list';
+        vm.showCreate = $state.current.name == 'datasets.list' || $state.current.name == 'datasets.search';
+        vm.myDatasets = $state.current.name == 'users.profilepage.datasets';
         
         vm.load = function () {
             vm.resolved = false;
@@ -22,6 +24,32 @@ angular.module('datasets').controller('DatasetsListController', ['$state', '$sta
         vm.loaded = function () {
             vm.resolved = true;
             vm.loading = false;
+        };
+
+        if ($stateParams.search){
+            vm.q = $stateParams.search;
+            Datasets.search(vm.q)
+                .success(function (response) {
+                    vm.list = response;
+                    vm.loaded();
+                })
+                .error(function (error) {
+                    vm.loaded();
+                });
+        }
+
+        vm.deleteDataset = function(dataset){
+            if (vm.user._id === dataset.user._id || vm.user._id === dataset.user){
+                Datasets.remove(dataset)
+                    .then(function(){
+                        vm.list = _.without(vm.list, dataset);
+                        toastr.success('Dataset deleted successfully.');
+                    })
+                    .catch(function(err){
+                        $log.error(err);
+                        toastr.error('Error deleting dataset.');
+                    });
+            }
         };
 
         vm.filterData = function (field, value) {
@@ -51,15 +79,12 @@ angular.module('datasets').controller('DatasetsListController', ['$state', '$sta
         }
 
         vm.search = function () {
-            vm.load();
-            Datasets.search(vm.q)
-                .success(function (response) {
-                    vm.list = response;
-                    vm.loaded();
-                })
-                .error(function (error) {
-                    vm.loaded();
-                });
+            if (vm.q && vm.q !== ''){
+                $state.go('datasets.search', { search : vm.q });
+            }
+            else{
+                toastr.error('You need to enter a word or phrases to search by.');
+            }
         };
 
         vm.showTitle = function (title) {
@@ -73,10 +98,11 @@ angular.module('datasets').controller('DatasetsListController', ['$state', '$sta
         vm.addToUser = function (dataset) {
             Datasets.addToUserApiCall(dataset)
                 .then(function (data) {
-                    console.log(data);
+                    toastr.success('Dataset copied to your LAB.');
                 })
-                .catch(function (error) {
-                    console.log(error);
+                .catch(function (err) {
+                    $log.error(err);
+                    toastr.error('An error occurred while copying the dataset.');
                 });
         };
 

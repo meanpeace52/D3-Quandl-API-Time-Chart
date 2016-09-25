@@ -140,3 +140,90 @@ form{
     display: block;
   }
 }
+
+.navbar-default {
+  .navbar-nav {
+    > li {
+      > a{
+        font-weight: bold;
+      }
+    }
+  }
+}
+
+#sidebar-wrapper{
+  left: 150px;
+  margin-left: -150px;
+}
+
+#wrapper {
+  padding-left: 65px;
+
+  .sidebar-brand{
+    display: none;
+  }
+
+  #sidebar-wrapper{
+    width: 65px;
+  }
+
+  .sidebar-nav li{
+    line-height: 55px;
+  }
+
+  .sidebar-nav li a{
+    padding-left: 20px;
+    i {
+      font-size: 24px;
+    }
+    span{
+      display: none;
+    }
+  }
+
+  &.toggled{
+    padding-left: 150px;
+
+    .sidebar-nav li{
+      line-height: 40px;
+    }
+
+    .sidebar-brand{
+      display: block;
+    }
+
+    .sidebar-nav li a{
+      padding-left: 20px;
+      i {
+        font-size: 12px;
+      }
+      span{
+        display: inline-block;
+      }
+    }
+
+    #sidebar-wrapper{
+      width: 150px;
+    }
+  }
+}
+
+.sidebar-nav > .sidebar-brand{
+  height: 50px !important;
+}
+
+.navbar-default .navbar-toggle{
+  border: none;
+}
+
+.navbar-brand--with-margin {
+  margin-right: -2px;
+}
+
+.sidebar-nav li:first-child{
+  color: rgb(144, 136, 133);
+}
+
+.tooltip {
+  z-index: 9999;
+}

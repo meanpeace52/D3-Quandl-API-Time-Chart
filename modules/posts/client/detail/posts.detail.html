@@ -51,7 +51,7 @@
                     </div>
                     <div ng-if="item == 'Files'">
                         <ul class="list-unstyled">
-                            <li ng-repeat="file in postsDetail.post.files"><a href="https://theorylab-pdfs.s3.amazonaws.com/{{ file._id }}" target="_blank">{{ file.name }}</a></li>
+                            <li ng-repeat="file in postsDetail.post.files"><a href="/api/users/files?file={{ file._id }}" target="_blank">{{ file.name }}</a></li>
                         </ul>
                     </div>
                     <div ng-if="item == 'Models'">

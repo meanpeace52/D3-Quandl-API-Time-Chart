@@ -4,32 +4,54 @@
     </div>
     <div class="col-md-12">
         <form name="datasetsForm" class="form-horizontal"
-              ng-submit="DatasetsCreate.create(datasetsForm.$valid)"
+              ng-submit="datasetsCreate.create(datasetsForm.$valid)"
               novalidate>
             <fieldset>
-                <div class="form-group" show-errors>
-                    <label for="title">Title</label>
-                    <input name="title" type="text"
-                           ng-model="DatasetsCreate.datasets.title" id="title"
-                           class="form-control" placeholder="Title"
-                           required>
-                    <div ng-if="datasetsForm.title.$error && datasetsForm.title.$dirty"
-                         ng-messages="datasetsForm.title.$error" role="alert">
-                        <p class="help-block error-text" ng-message="required">Dataset title is required.</p>
+                <div class="form-group row" show-errors>
+                    <div class="col-md-2">
+                        <label for="title">Title</label>
+                    </div>
+                    <div class="col-md-10">
+                        <input name="title" type="text"
+                               ng-model="datasetsCreate.dataset.title" id="title"
+                               class="form-control" placeholder="Title"
+                               required>
+                        <div ng-if="datasetsForm.title.$error && datasetsCreate.submitted" ng-messages="datasetsForm.title.$error" role="alert">
+                            <p class="help-block error-text" ng-message="required">Dataset title is required.</p>
+                        </div>
                     </div>
                 </div>
-                <div class="form-group">
-                    <label for="content">Content</label>
-                    <textarea name="content"
-                              ng-model="DatasetsCreate.datasets.content" id="content" class="form-control"
-                              cols="30" rows="10"
-                              placeholder="Content"></textarea>
+                <div class="form-group row" show-errors>
+                    <div class="col-md-2">
+                        <label for="access">Access</label>
+                    </div>
+                    <div class="col-md-10">
+                        <select name="access" id="access" ng-model="datasetsCreate.dataset.access" class="form-control" ng-options="access as (access | capitalize) for access in datasetsCreate.datasetOptions.access" required>
+                        </select>
+                        <div ng-if="datasetsForm.access.$error && datasetsCreate.submitted" ng-messages="datasetsForm.access.$error" role="alert">
+                            <p class="help-block error-text" ng-message="required">A access type is required.</p>
+                        </div>
+                    </div>
                 </div>
-                <div class="form-group">
-                    <input type="submit" class="btn btn-default">
+                <div class="form-group row">
+                    <div class="col-md-2">
+                        <label for="title">Dataset</label>
+                    </div>
+                    <div class="col-md-3">
+                        <span ng-hide="vm.uploader.queue.length">
+                            <span class="btn btn-default btn-file">
+                              Upload Dataset
+                              <input type="file" nv-file-select uploader="uploader"/>
+                             </span>
+                        </span>
+                        {{ datasetsCreate.dataset.filename }}
+                    </div>
                 </div>
-                <div ng-show="DatasetsCreate.error" class="text-danger">
-                    <strong>{{DatasetsCreate.error}}</strong>
+                <div class="form-group text-right">
+                    <input type="submit" class="btn btn-primary">
+                </div>
+                <div ng-show="datasetsCreate.error" class="text-danger">
+                    <strong>{{datasetsCreate.error}}</strong>
                 </div>
             </fieldset>
         </form>

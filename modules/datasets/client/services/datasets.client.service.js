@@ -1,11 +1,14 @@
 'use strict';
 
 angular.module('datasets')
-    .factory('Datasets', ['$resource', '$http',
-        function ($resource, $http) {
+    .factory('Datasets', ['$resource', '$http', '$q',
+        function ($resource, $http, $q) {
 
             return {
                 crud: crud(),
+                create: create,
+                update: update,
+                remove: remove,
                 search: search,
                 filter: filter,
                 addToUserApiCall: addToUserApiCall,
@@ -24,6 +27,48 @@ angular.module('datasets')
                         method: 'PUT'
                     }
                 });
+            }
+
+            function create(dataset){
+                var dfd = $q.defer();
+
+                $http.post('/api/datasets', dataset)
+                    .success(function (data, status, headers, config) {
+                        dfd.resolve(data);
+                    })
+                    .error(function (data, status, headers, config) {
+                        dfd.reject(data);
+                    });
+
+                return dfd.promise;
+            }
+
+            function update(dataset){
+                var dfd = $q.defer();
+
+                $http.put('/api/datasets/' + dataset._id, dataset)
+                    .success(function (data, status, headers, config) {
+                        dfd.resolve(data);
+                    })
+                    .error(function (data, status, headers, config) {
+                        dfd.reject(data);
+                    });
+
+                return dfd.promise;
+            }
+
+            function remove(dataset){
+                var dfd = $q.defer();
+
+                $http.delete('/api/datasets/' + dataset._id)
+                    .success(function (data, status, headers, config) {
+                        dfd.resolve(data);
+                    })
+                    .error(function (data, status, headers, config) {
+                        dfd.reject(data);
+                    });
+
+                return dfd.promise;
             }
             
             function user(username) {
@@ -48,16 +93,17 @@ angular.module('datasets')
             }
 
             function addToUserApiCall(dataset) {
-                return $http({
-                    url: 'api/datasets',
-                    data: dataset,
-                    method: 'POST'
-                }).then(function (res) {
-                    console.log('done saving to user', res);
-                    return res.data;
-                }).catch(function (err) {
-                    console.error('error saving to user', err);
-                });
+                var dfd = $q.defer();
+
+                return $http.post('api/datasets/copy', dataset)
+                    .success(function (data, status, headers, config) {
+                        dfd.resolve(data);
+                    })
+                    .error(function (data, status, headers, config) {
+                        dfd.reject(data);
+                    });
+
+                return dfd.promise;
             }
 
             function getDatasetWithS3(datasetId) {

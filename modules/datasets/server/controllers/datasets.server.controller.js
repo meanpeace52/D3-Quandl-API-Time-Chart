@@ -13,7 +13,20 @@ var path = require('path'),
     fs = require('fs'),
     json2csv = require('json2csv'),
     _ = require('lodash'),
-    User = mongoose.model('User');
+    User = mongoose.model('User'),
+    client = s3.createClient({
+        maxAsyncS3: 20, // this is the default
+        s3RetryCount: 3, // this is the default
+        s3RetryDelay: 1000, // this is the default
+        multipartUploadThreshold: 20971520, // this is the default (20 MB)
+        multipartUploadSize: 15728640, // this is the default (15 MB)
+        s3Options: {
+            accessKeyId: config.s3AccessKeyId,
+            secretAccessKey: config.s3SecretAccessKey
+            // any other options are passed to new AWS.S3()
+            // See: http://docs.aws.amazon.com/AWSJavaScriptSDK/latest/AWS/Config.html#constructor-property
+        }
+    });
 
 
 /**
@@ -51,7 +64,8 @@ exports.listByUsername = function (req, res) {
  */
 exports.searchDataset = function (req, res) {
     var query = {
-        title: new RegExp(req.query.q, 'i')
+        title: new RegExp(req.query.q, 'i'),
+        //access: { $in : [ 'public', 'paid' ]}
     };
     Dataset.find(query).sort('-created').limit(10).populate('user', 'username').exec(function (err, datasets) {
         if (err) {
@@ -70,25 +84,26 @@ exports.searchDataset = function (req, res) {
  */
 
 function saveDatasetCopy(user, entry, cb) {
-    var dataset = new Dataset(_.omit(entry.toObject(), '_id'));
-    dataset.user = user;
-    console.log('inside save', dataset);
-    dataset.save(cb);
+    if (entry.user && user._id === entry.user._id){
+        throw new Error('You can not copy your own dataset.');
+    }
+
+    DatasetS3Service.copyDatasetFile(user.username, entry.s3reference)
+        .then(function(path){
+            var dataset = new Dataset(_.omit(entry.toObject(), '_id'));
+            dataset.user = user;
+            dataset.created = new Date();
+            dataset.origDataset = entry._id;
+            dataset.s3reference = 'https://s3.amazonaws.com/datasetstl/' + path;
+            console.log('inside save', dataset);
+            dataset.save(cb);
+        })
+        .catch(function(err){
+            throw new Error(err);
+        });
 }
 
 function saveFileToS3(filePath, path, done) {
-
-    var client = s3.createClient({
-        maxAsyncS3: 20,
-        s3RetryCount: 3,
-        s3RetryDelay: 1000,
-        multipartUploadThreshold: 20971520,
-        multipartUploadSize: 15728640,
-        s3Options: {
-            accessKeyId: config.s3AccessKeyId,
-            secretAccessKey: config.s3SecretAccessKey
-        }
-    });
 
     var params = {
         localFile: './s3-cache/' + filePath,
@@ -110,11 +125,25 @@ function saveFileToS3(filePath, path, done) {
         if (typeof done === 'function') done();
         console.log('done uploading');
     });
-
 }
 
 exports.create = function (req, res) {
-    Dataset.findById(req.body._id).exec(function (err, entry) {
+    var dataset = new Dataset(req.body);
+    dataset.user = req.user._id;
+    dataset.save(function (err) {
+        if (err) {
+            return res.status(400).send({
+                message: errorHandler.getErrorMessage(err)
+            });
+        }
+        else {
+            res.json(dataset);
+        }
+    });
+};
+
+exports.copydataset = function (req, res) {
+    Dataset.findById(req.body._id).exec(function (err, dataset) {
         if (err) {
             console.log('error retreiving the entry', err);
             return res.status(400).send({
@@ -122,7 +151,7 @@ exports.create = function (req, res) {
             });
         }
 
-        saveDatasetCopy(req.user, entry, function (err, result) {
+        saveDatasetCopy(req.user, dataset, function (err, result) {
             if (err) {
                 return res.status(400).send({
                     message: errorHandler.getErrorMessage(err)
@@ -526,19 +555,12 @@ exports.saveCustom = function (req, res) {
  * Update a dataset
  */
 exports.update = function (req, res) {
-    var dataset = req.dataset;
-
-    dataset.title = req.body.title;
-    dataset.content = req.body.content;
-
-    Dataset.save(function (err) {
-        if (err) {
-            return res.status(400).send({
-                message: errorHandler.getErrorMessage(err)
-            });
+    Dataset.findOneAndUpdate({ _id : req.body._id }, req.body, function(err, doc){
+        if (err){
+            res.status(err.status).json(err);
         }
-        else {
-            res.json(dataset);
+        else{
+            res.json(doc);
         }
     });
 };
@@ -549,7 +571,7 @@ exports.update = function (req, res) {
 exports.delete = function (req, res) {
     var dataset = req.dataset;
 
-    Dataset.remove(function (err) {
+    dataset.remove(function (err) {
         if (err) {
             return res.status(400).send({
                 message: errorHandler.getErrorMessage(err)
@@ -631,5 +653,33 @@ exports.insert = function (req, res) {
                 return res.status(201).json(dataset);
             });
         });
+    });
+};
+
+exports.uploadFile = function (req, res) {
+    var uploader = client.uploadFile({
+        localFile: req.file.path,
+        s3Params: {
+            ContentType: req.file.mimetype,
+            Bucket: 'datasetstl',
+            Key: req.user.username + '/' + req.file.filename + '.csv'
+        }
+    });
+
+    uploader.on('error', function (err) {
+        res.status(500).send({
+            message: errorHandler.getErrorMessage(err)
+        });
+        fs.unlink(req.file.path);
+    });
+
+    uploader.on('end', function (file) {
+        var fileData = {
+            name: req.file.originalname,
+            _id: 'https://s3.amazonaws.com/datasetstl/' + req.user.username + '/' + req.file.filename + '.csv'
+        };
+
+        res.json(fileData);
+        fs.unlink(req.file.path);
     });
 };
