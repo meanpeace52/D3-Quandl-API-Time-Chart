@@ -8,10 +8,10 @@
       "NODE_ENV": "development"
     },
     "env_staging" : {
-       "NODE_ENV" : "production",
+      "NODE_ENV" : "development",
     },
     "env_production" : {
-       "NODE_ENV" : "production",
+      "NODE_ENV" : "production",
     },
   }],
   "deploy" : {
@@ -22,9 +22,9 @@
       "repo" : "git@bitbucket.org:shemaimme/rudolph-nd.git",
       "path" : "/home/deploy/rudolph-nd",
       "ssh_options": ["StrictHostKeyChecking=no", "PasswordAuthentication=no"],
-      "post-deploy" : "npm install && grunt build --force && ln -sf ../../shared/sslcerts config/sslcerts && pm2 startOrRestart ecosystem.json --env staging",
+      "post-deploy" : "npm install && ln -sf ../../shared/sslcerts config/sslcerts && pm2 startOrRestart ecosystem.json --env staging",
       "env"  : {
-        "NODE_ENV": "production"
+        "NODE_ENV": "development"
       }
     }
   }
