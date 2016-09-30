@@ -1,0 +1,32 @@
+{
+  "apps" : [{
+    "name"      : "webapp",
+    "script"    : "server.js",
+    "exec_mode" : "cluster",
+    "merge_logs"  : true,
+    "env"       : {
+      "NODE_ENV": "development"
+    },
+    "env_staging" : {
+      "NODE_ENV" : "development",
+    },
+    "env_production" : {
+      "NODE_ENV" : "production",
+    },
+  }],
+  "deploy" : {
+    "staging" : {
+      "user" : "deploy",
+      "host" : "23.20.9.114",
+      "ref"  : "origin/staging",
+      "repo" : "git@bitbucket.org:shemaimme/rudolph-nd.git",
+      "path" : "/home/deploy/rudolph-nd",
+      "ssh_options": ["StrictHostKeyChecking=no", "PasswordAuthentication=no"],
+      "post-deploy" : "npm install && ln -sf ../../shared/sslcerts config/sslcerts && pm2 startOrRestart ecosystem.json --env staging",
+      "env"  : {
+        "NODE_ENV": "development"
+      }
+    }
+  }
+}
+
