@@ -14,7 +14,7 @@ angular.module('datasets')
                 vm.hasLoadedData = false;
                 vm.totalItems = 0;
                 vm.currentPage = 1;
-                vm.itemsPerPage = 25;
+                vm.itemsPerPage = 50;
                 vm.pageChanged = function(){
                     vm.rows = _.chain(vm.origRows)
                         .slice(vm.itemsPerPage * (vm.currentPage - 1))
@@ -36,10 +36,9 @@ angular.module('datasets')
                         vm.hasLoadedData = true;
                     });
 
-                vm.addtoUser = function () {
+                vm.addtoUser = function (viewingDataset) {
                     Datasets.addToUserApiCall(viewingDataset)
                         .then(function (dataset) {
-                            $modalInstance.close(true);
                             toastr.success('Dataset copied to your LAB.');
                         })
                         .catch(function (err) {

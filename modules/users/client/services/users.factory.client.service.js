@@ -12,11 +12,8 @@ angular.module('users')
                 ownership: ownership
             };
 
-            function search(q) {
-                return $http({
-                    url: 'api/users/search?q=' + q,
-                    method: 'GET'
-                });
+            function search(q, itemsPerPage, currentPage) {
+                return $http.get('api/users/search?q=' + q + '&itemsPerPage=' + itemsPerPage + '&currentPage=' + currentPage);
             }
 
             function finduser(username) {

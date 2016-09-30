@@ -54,6 +54,29 @@
   <div class="loader" ng-show="ProcessMain.showLoader">
     <i class="spinner"></i>
   </div>
-
-  <dataset-table columns="ProcessMain.dataset.columns" rows="ProcessMain.dataset.rows"></dataset-table>
+    <div class="row">
+        <div class="col-md-12" ng-show="!ProcessMain.showLoader">
+            <p ng-show="!ProcessMain.showLoader && ProcessMain.selectedDataset != ''">{{ ProcessMain.totalItems }} total records</p>
+        </div>
+        <div class="col-md-3 pull-right" ng-show="!ProcessMain.showLoader && ProcessMain.selectedDataset != ''">
+            <label>Rows per page:</label>
+            <select ng-model="ProcessMain.itemsPerPage" ng-change="ProcessMain.pageChanged()" class="form-control">
+                <option>10</option>
+                <option>25</option>
+                <option selected>50</option>
+                <option>100</option>
+                <option>250</option>
+                <option>500</option>
+            </select>
+        </div>
+        <div class="col-md-6">
+            <ul ng-show="!ProcessMain.showLoader && ProcessMain.totalItems > ProcessMain.itemsPerPage" uib-pagination total-items="ProcessMain.totalItems" ng-model="ProcessMain.currentPage" items-per-page="ProcessMain.itemsPerPage" max-size="5" force-ellipses="true" boundary-links="true" ng-change="ProcessMain.pageChanged()"></ul>
+        </div>
+        <div class="col-md-12">
+          <dataset-table columns="ProcessMain.dataset.columns" rows="ProcessMain.dataset.rows"></dataset-table>
+        </div>
+        <div class="col-md-6">
+            <ul ng-show="!ProcessMain.showLoader && ProcessMain.totalItems > ProcessMain.itemsPerPage" uib-pagination total-items="ProcessMain.totalItems" ng-model="ProcessMain.currentPage" items-per-page="ProcessMain.itemsPerPage" max-size="5" force-ellipses="true" boundary-links="true" ng-change="ProcessMain.pageChanged()"></ul>
+        </div>
+    </div>
 </div>

@@ -30,7 +30,7 @@
 
   <!-- Fav Icon -->
   <link href="/favicon" rel="shortcut icon" type="image/x-icon">
-  
+
   <!-- Application CSS Files -->
   {% for cssFile in cssFiles %}<link rel="stylesheet" href="{{cssFile}}">{% endfor %}
 </head>
@@ -38,8 +38,8 @@
 <body class="ng-cloak" change-theme>
   <header data-ng-include="'/modules/core/client/views/header.client.view.html'" class="navbar navbar-fixed-top navbar-default"></header>
 
-  <div id="wrapper" toggle-sidebar>
-    <nav id="sidebar-wrapper" data-ng-include="'/modules/core/client/views/sidebar.client.view.html'"></nav>
+  <div id="wrapper" class="sidebar-wrapper-parent" toggle-sidebar>
+    <nav id="sidebar-wrapper" class="sidebar-wrapper" data-ng-include="'/modules/core/client/views/sidebar.client.view.html'"></nav>
     <section id="page-content-wrapper" class="content">
       <section is-need-container>
         {% block content %}{% endblock %}

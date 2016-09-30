@@ -85,9 +85,9 @@ angular.module('datasets')
                 });
             }
 
-            function search(q) {
+            function search(q, itemsPerPage, currentPage) {
                 return $http({
-                    url: 'api/datasets/search?q=' + q,
+                    url: 'api/datasets/search?q=' + q + '&itemsPerPage=' + itemsPerPage + '&currentPage=' + currentPage,
                     method: 'GET'
                 });
             }
@@ -95,7 +95,7 @@ angular.module('datasets')
             function addToUserApiCall(dataset) {
                 var dfd = $q.defer();
 
-                return $http.post('api/datasets/copy', dataset)
+                $http.post('api/datasets/copy', dataset)
                     .success(function (data, status, headers, config) {
                         dfd.resolve(data);
                     })

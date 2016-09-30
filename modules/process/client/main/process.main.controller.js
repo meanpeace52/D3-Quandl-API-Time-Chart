@@ -12,6 +12,11 @@ angular.module('process')
         vm.showLoader = false;
         vm.showProcessLoader = false;
         vm.selectedDataset = '';
+        vm.totalItems = 0;
+        vm.currentPage = 1;
+        vm.itemsPerPage = 50;
+        vm.origRows = [];
+
         vm.dataset = {
           rows: [],
           columns: []
@@ -33,10 +38,18 @@ angular.module('process')
 
         getDatasets();
 
+        vm.pageChanged = function(){
+          vm.dataset.rows = _.chain(vm.origRows)
+                              .slice(vm.itemsPerPage * (vm.currentPage - 1))
+                              .take(vm.itemsPerPage)
+                              .value();
+        };
+
         vm.onDatasetChange = function(dataset, resetOptions) {
           // re-initialize table data
           vm.dataset.rows = [];
           vm.dataset.columns = [];
+          vm.origRows = [];
 
           // invalidate any dataset specific options
           if (resetOptions && vm.process && vm.process.tasks) {
@@ -49,14 +62,16 @@ angular.module('process')
 
           // Persist selected dataset
           Process.setSelectedDataset(dataset);
-          vm.selectedDataset = dataset.title;
-          vm.showLoader = true;
-          Datasets.getDatasetWithS3(dataset._id)
-          .then(function (data) {
-            vm.showLoader = false;
-            vm.dataset.columns = data.columns;
-            vm.dataset.rows = data.rows;
-          });
+            vm.selectedDataset = dataset.title;
+            vm.showLoader = true;
+            Datasets.getDatasetWithS3(dataset._id)
+            .then(function (data) {
+              vm.showLoader = false;
+              vm.dataset.columns = data.columns;
+              vm.origRows = data.rows;
+              vm.totalItems = vm.origRows.length;
+              vm.dataset.rows = _.take(vm.origRows, vm.itemsPerPage);
+            });
         };
 
         // The Lab page has received data from the process modal.

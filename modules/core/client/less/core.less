@@ -1,3 +1,10 @@
+.transition (@transition) {
+  -webkit-transition: @transition;
+  -moz-transition:    @transition;
+  -ms-transition:     @transition;
+  -o-transition:      @transition;
+}
+
 body {
   font-family: 'Open Sans', sans-serif;
 }
@@ -151,20 +158,112 @@ form{
   }
 }
 
-#sidebar-wrapper{
-  left: 150px;
-  margin-left: -150px;
+// Simple Sidebar styling
+// _____________________________________________________________________________________________________________________
+.sidebar-wrapper-parent {
+  padding-left: 0;
+  .transition(all 0.5s ease);
 }
 
-#wrapper {
+.sidebar-wrapper-parent.toggled {
+  padding-left: 250px;
+}
+
+.sidebar-wrapper {
+  z-index: 1000;
+  position: fixed;
+  left: 250px;
+  width: 0;
+  height: 100%;
+  margin-left: -250px;
+  overflow-y: auto;
+  background: #474544;
+  .transition(all 0.5s ease);
+}
+
+.sidebar-wrapper-parent.toggled .sidebar-wrapper {
+  width: 250px;
+}
+
+/* Sidebar Styles */
+
+.sidebar-nav {
+  position: absolute;
+  top: 0;
+  width: 250px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.sidebar-nav li {
+  /*text-indent: 20px;*/
+  line-height: 40px;
+}
+
+.sidebar-nav li a {
+  display: block;
+  padding-left: 20px;
+  text-decoration: none;
+  color: #ffffff;
+  font-weight: 600;
+}
+
+.sidebar-nav li a:hover,
+.sidebar-nav li a.active  {
+  text-decoration: none;
+  color: #fff;
+}
+
+.sidebar-nav li a.active {
+  color: #198DC7;
+}
+
+.sidebar-nav li a:hover {
+  background: rgb(255,255,255);
+  background: rgba(255,255,255,0.2);
+}
+
+.sidebar-nav li a:active,
+.sidebar-nav li a:focus {
+  text-decoration: none;
+}
+
+.sidebar-nav li .fa {
+  margin-right: 5px;
+  min-width: 16px;
+  text-align: center;
+}
+
+.sidebar-nav > .sidebar-brand {
+  padding-left: 20px;
+  height: 65px;
+  line-height: 60px;
+  color: #fff;
+  font-weight: 600;
+}
+
+.sidebar-nav > .sidebar-brand a {
+  color: #999999;
+}
+
+.sidebar-nav > .sidebar-brand a:hover {
+  color: #fff;
+  background: none;
+}
+//______________________________________________________________________________________________________________________
+
+.sidebar-wrapper-parent {
   padding-left: 65px;
 
   .sidebar-brand{
     display: none;
   }
 
-  #sidebar-wrapper{
+  .sidebar-wrapper{
     width: 65px;
+    left: 150px;
+    margin-left: -150px;
   }
 
   .sidebar-nav li{
@@ -202,7 +301,7 @@ form{
       }
     }
 
-    #sidebar-wrapper{
+    .sidebar-wrapper{
       width: 150px;
     }
   }

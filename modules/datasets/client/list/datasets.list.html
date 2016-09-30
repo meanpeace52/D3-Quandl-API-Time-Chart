@@ -17,6 +17,22 @@
 	    		class="glyphicon glyphicon-hourglass"></i>
 	    </button>
     </form>
+    <div class="row" ng-if="DatasetsList.state === 'datasets.list' || DatasetsList.state === 'datasets.search'">
+        <div class="col-md-6">
+            <ul ng-show="DatasetsList.resolved && DatasetsList.totalItems > DatasetsList.itemsPerPage" uib-pagination total-items="DatasetsList.totalItems" ng-model="DatasetsList.currentPage" items-per-page="DatasetsList.itemsPerPage" max-size="5" force-ellipses="true" boundary-links="true" ng-change="DatasetsList.pageChanged()"></ul>
+        </div>
+        <div class="col-md-3 pull-right" ng-show="DatasetsList.resolved">
+            <label>Rows per page:</label>
+            <select ng-model="DatasetsList.itemsPerPage" ng-change="DatasetsList.pageChanged()" class="form-control">
+                <option>10</option>
+                <option>25</option>
+                <option selected>50</option>
+                <option>100</option>
+                <option>250</option>
+                <option>500</option>
+            </select>
+        </div>
+    </div>
 
     <div class="list-group">
         <span data-ng-repeat="dataset in DatasetsList.list track by $index" class="list-group-item">
@@ -35,8 +51,7 @@
         <button ng-if="DatasetsList.modal" ng-click="vm.ok(dataset)" data-ng-disabled="vm.selectedData.indexOf(dataset._id) !== -1" class="btn btn-small btn-default pull-right">Select</button>
         </span>
     </div>
-
-    </div>
+    <ul ng-show="DatasetsList.resolved && DatasetsList.totalItems > DatasetsList.itemsPerPage" uib-pagination total-items="DatasetsList.totalItems" ng-model="DatasetsList.currentPage" items-per-page="DatasetsList.itemsPerPage" max-size="5" force-ellipses="true" boundary-links="true" ng-change="DatasetsList.pageChanged()"></ul>
     <div class="alert alert-warning text-center" ng-show="!DatasetsList.list.length && DatasetsList.resolved">
         No datasets found.
     </div>

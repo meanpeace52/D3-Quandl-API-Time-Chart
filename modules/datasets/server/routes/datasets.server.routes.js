@@ -32,14 +32,15 @@ function mkdirParent(dirPath, mode, callback) {
             mkdirParent(dirPath, mode, callback);
         }
         //Manually run the callback since we used our own callback to do all these
-        callback && callback(error);
+        //callback && callback(error);
+        callback(error);
     });
-};
+}
 
 var storage = multer.diskStorage({ //multers disk storage settings
     destination: function (req, file, cb) {
-        mkdirp.sync(path.resolve('./') + '/s3-cache/datasets/' + req.user.username);
-        cb(null, 's3-cache/datasets/' + req.user.username );
+        mkdirp.sync(path.resolve('./')+'/s3-cache/datasets/'+req.user.username);
+        cb(null, 's3-cache/datasets/'+req.user.username);
     }
 }),
     upload = multer({

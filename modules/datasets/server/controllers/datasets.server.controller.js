@@ -11,6 +11,7 @@ var path = require('path'),
     config = require(path.resolve('./config/config')),
     s3 = require('s3'),
     fs = require('fs'),
+    async = require('async'),
     json2csv = require('json2csv'),
     _ = require('lodash'),
     User = mongoose.model('User'),
@@ -67,14 +68,44 @@ exports.searchDataset = function (req, res) {
         title: new RegExp(req.query.q, 'i'),
         //access: { $in : [ 'public', 'paid' ]}
     };
-    Dataset.find(query).sort('-created').limit(10).populate('user', 'username').exec(function (err, datasets) {
+    var count = 0;
+
+    async.parallel({
+        count : function(callback){
+            Dataset.count(query)
+                .exec(function(err, count){
+                    if (err){
+                        callback(err);
+                    }
+                    else{
+                        callback(null, count);
+                    }
+                });
+        },
+        datasets : function(callback){
+            Dataset.find(query)
+                .sort('-created')
+                .skip(req.query.itemsPerPage * (req.query.currentPage - 1))
+                .limit(req.query.itemsPerPage)
+                .populate('user', 'username')
+                .lean()
+                .exec(function (err, datasets) {
+                    if (err) {
+                        callback(err);
+                    }
+                    else {
+                        callback(null, datasets);
+                    }
+                });
+        }
+    }, function(err, results){
         if (err) {
             return res.status(400).send({
                 message: errorHandler.getErrorMessage(err)
             });
         }
         else {
-            res.jsonp(datasets);
+            res.jsonp({ count : results.count, datasets : results.datasets });
         }
     });
 };

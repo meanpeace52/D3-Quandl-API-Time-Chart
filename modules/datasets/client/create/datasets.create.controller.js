@@ -99,7 +99,7 @@ angular.module('datasets')
                     vm.success = true;
                     vm.dataset.s3reference = response._id;
                     vm.dataset.filename = response.name;
-                    toastr.success(response.name + ' uploaded successfully.')
+                    toastr.success(response.name + ' uploaded successfully.');
 
                     // Clear upload buttons
                     $scope.cancelUpload();

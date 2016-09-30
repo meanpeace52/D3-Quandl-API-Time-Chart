@@ -9,7 +9,7 @@
             <button class="btn btn-danger btn-sm" onclick="history.back();">Back</button>
         </div>
 
-        <div class="col-md-offset-10 col-md-1">
+        <div class="col-md-offset-10 col-md-1" ng-hide="!DatasetsDetail.hasLoadedData">
             <button class="btn btn-success pull-right btn-sm" ng-if="DatasetsDetail.authentication.user._id != DatasetsDetail.viewingDataset.user._id && DatasetsDetail.authentication.user._id != DatasetsDetail.viewingDataset.user" ng-click="DatasetsDetail.addtoUser()">Save to My Lab</button>
         </div>
     </div>
@@ -24,11 +24,22 @@
         </div>
     </div>
 
-    <div data-ng-hide="DatasetsDetail.hasLoadedData"> Retrieving Data </div>
-
+    <div class="loader" ng-hide="DatasetsDetail.hasLoadedData"><i class="spinner"></i></div>
     <div class="row">
         <div class="col-md-6">
             <p ng-show="DatasetsDetail.hasLoadedData">{{ DatasetsDetail.totalItems }} total records</p>
+            <div class="col-md-3 pull-right" ng-show="DatasetsDetail.hasLoadedData">
+                <label>Rows per page:</label>
+                <select ng-model="DatasetsDetail.itemsPerPage" ng-change="DatasetsDetail.pageChanged()" class="form-control">
+                    <option>10</option>
+                    <option>25</option>
+                    <option selected>50</option>
+                    <option>100</option>
+                    <option>250</option>
+                    <option>500</option>
+                </select>
+            </div>
+            <ul ng-show="DatasetsDetail.hasLoadedData && DatasetsDetail.totalItems > DatasetsDetail.itemsPerPage" uib-pagination total-items="DatasetsDetail.totalItems" ng-model="DatasetsDetail.currentPage" items-per-page="DatasetsDetail.itemsPerPage" max-size="5" force-ellipses="true" boundary-links="true" ng-change="DatasetsDetail.pageChanged()"></ul>
             <dataset-table columns="DatasetsDetail.columns" rows="DatasetsDetail.rows"></dataset-table>
             <ul ng-show="DatasetsDetail.hasLoadedData && DatasetsDetail.totalItems > DatasetsDetail.itemsPerPage" uib-pagination total-items="DatasetsDetail.totalItems" ng-model="DatasetsDetail.currentPage" items-per-page="DatasetsDetail.itemsPerPage" max-size="5" force-ellipses="true" boundary-links="true" ng-change="DatasetsDetail.pageChanged()"></ul>
         </div>
@@ -43,7 +54,7 @@
             <button class="btn btn-danger btn-sm" ng-click="history.back();">Back</button>
         </div>
 
-        <div class="col-md-offset-10 col-md-1">
+        <div class="col-md-offset-10 col-md-1" ng-hide="!DatasetsDetail.hasLoadedData">
             <button class="btn btn-success pull-right btn-sm" ng-if="DatasetsDetail.authentication.user._id != DatasetsDetail.viewingDataset.user._id && DatasetsDetail.authentication.user._id != DatasetsDetail.viewingDataset.user" ng-click="DatasetsDetail.addtoUser()">Save to My Lab</button>
         </div>
     </div>
