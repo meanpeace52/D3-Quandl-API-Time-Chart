@@ -4,11 +4,29 @@
         <p>Enter an username to search by.</p>
     </div>
     <div class="datasets-search-container">
-        <input class="form-control" type="text" ng-model="UsersList.q">
-        <button ng-click="UsersList.search()" class="btn btn-secondary" type="button">
-            <i ng-hide="postsList.loading" class="glyphicon glyphicon-search"></i>
-            <i ng-show="postsList.loading" class="glyphicon glyphicon-hourglass"></i>
-        </button>
+        <form ng-submit="UsersList.search()">
+            <input class="form-control" type="text" ng-model="UsersList.q">
+            <button type="submit" class="btn btn-secondary">
+                <i ng-hide="UsersList.loading" class="glyphicon glyphicon-search"></i>
+                <i ng-show="UsersList.loading" class="glyphicon glyphicon-hourglass"></i>
+            </button>
+        </form>
+    </div>
+    <div class="row">
+        <div class="col-md-6">
+            <ul ng-show="!UsersList.loading && UsersList.totalItems > UsersList.itemsPerPage" uib-pagination total-items="UsersList.totalItems" ng-model="UsersList.currentPage" items-per-page="UsersList.itemsPerPage" max-size="5" force-ellipses="true" boundary-links="true" ng-change="UsersList.pageChanged()"></ul>
+        </div>
+        <div class="col-md-3 pull-right" ng-show="!UsersList.loading && UsersList.totalItems > 0">
+            <label>Rows per page:</label>
+            <select ng-model="UsersList.itemsPerPage" ng-change="UsersList.pageChanged()" class="form-control">
+                <option>10</option>
+                <option>25</option>
+                <option selected>50</option>
+                <option>100</option>
+                <option>250</option>
+                <option>500</option>
+            </select>
+        </div>
     </div>
 
     <div class="list-group">
@@ -18,6 +36,11 @@
 				<span> {{user.username}} </span>
 			</small>
         </a>
+        <div class="alert alert-warning text-center" ng-show="!UsersList.users.length && !UsersList.loading && UsersList.q && UsersList.q != ''">
+            No users found.
+        </div>
     </div>
+
+    <ul ng-show="!UsersList.loading && UsersList.totalItems > UsersList.itemsPerPage" uib-pagination total-items="UsersList.totalItems" ng-model="UsersList.currentPage" items-per-page="UsersList.itemsPerPage" max-size="5" force-ellipses="true" boundary-links="true" ng-change="UsersList.pageChanged()"></ul>
 
 </section>

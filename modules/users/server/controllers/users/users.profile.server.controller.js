@@ -9,6 +9,7 @@ var _ = require('lodash'),
     errorHandler = require(path.resolve('./modules/core/server/controllers/errors.server.controller')),
     mongoose = require('mongoose'),
     multer = require('multer'),
+    async = require('async'),
     config = require(path.resolve('./config/config')),
     User = mongoose.model('User'),
     s3 = require('s3'),
@@ -135,19 +136,50 @@ exports.search = function (req, res) {
     var query = {
         username: new RegExp(req.query.q, 'i')
     };
-    User.find(query).sort('-created').select({
-        'username': 1,
-        '_id': 1
-    }).limit(10).exec(function (err, users) {
+
+    async.parallel({
+        users : function(callback){
+            User.find(query)
+                .sort('-created')
+                .select({
+                    'username': 1,
+                    '_id': 1
+                })
+                .skip(req.query.itemsPerPage * (req.query.currentPage - 1))
+                .limit(req.query.itemsPerPage)
+                .lean()
+                .exec(function (err, users) {
+                    if (err) {
+                        callback(err);
+                    }
+                    else {
+                        callback(null, users);
+                    }
+                });
+        },
+        count : function(callback){
+            User.count(query)
+                .exec(function(err, count){
+                    if (err){
+                        callback(err);
+                    }
+                    else{
+                        callback(null, count);
+                    }
+                });
+        }
+
+    }, function(err, results){
         if (err) {
             return res.status(400).send({
                 message: errorHandler.getErrorMessage(err)
             });
         }
         else {
-            res.jsonp(users);
+            res.jsonp({ users : results.users, count : results.count });
         }
     });
+
 };
 
 
@@ -209,7 +241,7 @@ exports.getFile = function (req, res) {
     try{
         fs.accessSync(localBucketFile);
         fs.readFile(path.resolve('s3-cache/files') + '/' + req.query.file, function (err,data){
-            res.contentType("application/pdf");
+            res.contentType('application/pdf');
             res.send(data);
         });
     }
@@ -234,7 +266,7 @@ exports.getFile = function (req, res) {
         downloader.on('progress', function () {});
         downloader.on('end', function (file) {
             fs.readFile(path.resolve('s3-cache/files') + '/' + req.query.file , function (err,data){
-                res.contentType("application/pdf");
+                res.contentType('application/pdf');
                 res.send(data);
             });
         });

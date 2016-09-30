@@ -21,15 +21,15 @@ angular.module('posts')
                 vm.post = response;
                 if (vm.post.datasets.length){
                     vm.tabs.push('Datasets');
-                    vm.activeTab = vm.activeTab == '' ? 'Datasets' : vm.activeTab;
+                    vm.activeTab = vm.activeTab === '' ? 'Datasets' : vm.activeTab;
                 }
                 if (vm.post.models.length){
                     vm.tabs.push('Models');
-                    vm.activeTab = vm.activeTab == '' ? 'Models' : vm.activeTab;
+                    vm.activeTab = vm.activeTab === '' ? 'Models' : vm.activeTab;
                 }
                 if (vm.post.files.length){
                     vm.tabs.push('Files');
-                    vm.activeTab = vm.activeTab == '' ? 'Files' : vm.activeTab;
+                    vm.activeTab = vm.activeTab === '' ? 'Files' : vm.activeTab;
                 }
             }, function (err) {
                 $log.error(err);

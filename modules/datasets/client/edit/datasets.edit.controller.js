@@ -3,8 +3,8 @@
 //Datasets Detail Controller
 angular.module('datasets')
     .controller('DatasetsEditController',
-        ['$stateParams', 'Datasets', 'UsersFactory', 'Authentication', 'datasetOptions', 'toastr', '$log', '$state',
-            function ($stateParams, Datasets, UsersFactory, Authentication, datasetOptions, toastr, $log, $state) {
+        ['$stateParams', 'Datasets', 'UsersFactory', 'Authentication', 'datasetOptions', 'toastr', '$log', '$state', '$scope',
+            function ($stateParams, Datasets, UsersFactory, Authentication, datasetOptions, toastr, $log, $state, $scope) {
                 var vm = this;
 
 				vm.authentication = Authentication;

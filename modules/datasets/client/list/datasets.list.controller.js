@@ -11,6 +11,13 @@ angular.module('datasets').controller('DatasetsListController', ['$state', '$sta
 
         vm.resolved = false;
         vm.loading = false;
+
+        vm.totalItems = 0;
+        vm.currentPage = 1;
+        vm.itemsPerPage = 50;
+        vm.pageChanged = function(){
+            loadSearchData();
+        };
         
         vm.ownership = UsersFactory.ownership();
         vm.showCreate = $state.current.name == 'datasets.list' || $state.current.name == 'datasets.search';
@@ -28,9 +35,14 @@ angular.module('datasets').controller('DatasetsListController', ['$state', '$sta
 
         if ($stateParams.search){
             vm.q = $stateParams.search;
-            Datasets.search(vm.q)
+            loadSearchData();
+        }
+
+        function loadSearchData(){
+            Datasets.search(vm.q, vm.itemsPerPage, vm.currentPage)
                 .success(function (response) {
-                    vm.list = response;
+                    vm.list = response.datasets;
+                    vm.totalItems = response.count;
                     vm.loaded();
                 })
                 .error(function (error) {
