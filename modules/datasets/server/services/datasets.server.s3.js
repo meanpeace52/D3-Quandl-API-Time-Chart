@@ -5,6 +5,7 @@ var Promise = require('bluebird'),
     csv = require('csv-to-json'),
     fs = require('fs'),
     path = require('path'),
+    mkdirp = require('mkdirp'),
     config = require(path.resolve('./config/config')),
     _ = require('lodash'),
     client = s3.createClient({
@@ -103,6 +104,8 @@ function copyDatasetFile(username, s3reference){
         //https://s3.amazonaws.com/datasetstl/
             filekey = 'datasets/' + username + '/' + filename + '.csv',
             filepath = path.resolve('./') + '/s3-cache/' + filekey;
+
+        mkdirp.sync(path.resolve('./')+'/s3-cache/datasets/' + username + '/');
 
         // Download file
         try {
