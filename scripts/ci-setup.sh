@@ -8,6 +8,7 @@ gem update --system
 gem install sass --version "=3.3.7"
 npm install --no-optional
 npm install gulp -g
+npm rebuild node-sass
 
 
 npm install -g http-server protractor
