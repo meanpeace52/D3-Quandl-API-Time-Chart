@@ -9,6 +9,9 @@ module.exports = {
   },
   s3AccessKeyId: 'AKIAI356G25CALROLSGA',
   s3SecretAccessKey: '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',
+  deployrHost: 'http://52.73.208.190:7400/',
+  deployrUsername: 'testuser',
+  deployrPassword: 'cFYmFTBcwAPNPxCVvmas5W2b',
   port: process.env.PORT || 3000,
   templateEngine: 'swig',
   // Session Cookie settings

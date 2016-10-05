@@ -1,20 +1,27 @@
 'use strict';
 
 angular.module('process')
-    .factory('Deployr', ['$q', function($q) {
+    .factory('Deployr', ['$q', '$http', function($q, $http) {
 
-      var dBroker = rbroker.discreteTaskBroker({
-        host: 'http://52.73.208.190:7400',
-        cors: true,
-        maxConcurrentTaskLimit: 1,
-        credentials: {
-          username: 'testuser',
-          password: 'cFYmFTBcwAPNPxCVvmas5W2b'
-        }
-      });
 
       return {
         run: function(dataset, task) {
+          var dfd = $q.defer();
+
+          $http.post('/api/deployr/run', {
+            filename: task.script.filename,
+            rinputs: task.script.rInputsFn(dataset.columns, dataset.rows, task.options),
+            routputs: task.script.routputs
+          })
+              .success(function (data, status, headers, config) {
+                dfd.resolve(data);
+              })
+              .error(function (data, status, headers, config) {
+                dfd.reject(data);
+              });
+
+          return dfd.promise;
+
           return dBroker.submit(rbroker.discreteTask({
             filename: task.script.filename,
             directory: task.script.directory,
