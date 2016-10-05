@@ -12,7 +12,7 @@ var path = require('path'),
  * List processes
  */
 exports.deployrRun = function (req, response) {
-    deployr.configure( { host: config.deployrHost, logging: true });
+    deployr.configure({ host: config.deployrHost, logging: true });
 
     deployr.io('/r/user/login')
         .data({ username: config.deployrUsername, password: config.deployrPassword })
