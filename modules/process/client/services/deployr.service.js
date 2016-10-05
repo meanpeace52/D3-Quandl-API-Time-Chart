@@ -2,8 +2,6 @@
 
 angular.module('process')
     .factory('Deployr', ['$q', '$http', function($q, $http) {
-
-
       return {
         run: function(dataset, task) {
           var dfd = $q.defer();
