@@ -30,7 +30,6 @@
 
   <!-- Fav Icon -->
   <link href="/favicon" rel="shortcut icon" type="image/x-icon">
-
   <!-- Application CSS Files -->
   {% for cssFile in cssFiles %}<link rel="stylesheet" href="{{cssFile}}">{% endfor %}
 </head>
@@ -50,6 +49,7 @@
   <!--Embedding The User Object-->
   <script type="text/javascript">
     var user = {{ user | json | safe }};
+    var stripe_pub_key = {{ stripe_pub | json | safe }};
   </script>
 
   <!--Load The Socket.io File-->

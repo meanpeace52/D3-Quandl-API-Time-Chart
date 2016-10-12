@@ -1,0 +1,18 @@
+<section class="row" ng-controller="InvoicesController">
+  <div class="col-xs-offset-1 col-xs-10 col-md-offset-2 col-md-8" >
+    <h3>My Invoices</h3>
+    <table class="table">
+      <tr>
+        <th>amount</th>
+        <th>date</th>
+        <th>paid</th>
+        <th>item</th>
+      <tr>
+      <tr ng-repeat="(key, invoice) in invoices">
+        <td>${{invoice.amount_due/100}}</td>
+        <td>{{invoice.date * 1000 | date:"MM/dd/yyyy"}}</td>
+        <td>{{invoice.paid}}</td>
+        <td><div ng-repeat="(key, line) in invoice.lines.data"> {{line.plan.name}} </div></td>
+      </tr>
+    </table>
+</section>

@@ -1,0 +1,53 @@
+<section class="row" ng-controller="MySubscriptionController">
+  <div class="col-xs-offset-1 col-xs-10 col-md-offset-4 col-md-6" >
+    <div class="well" ng-show="mySubscription">
+      <table class="table">
+        <td>{{mySubscription.plan.name}}</td>
+        <td>${{mySubscription.plan.amount/100}}</td>
+        <td>{{mySubscription.plan.created * 1000 | date:"MM/dd/yyyy"}}</td>
+      </table>
+    </div>
+    <form ng-show="showform" name="subscriptionForm" ng-submit="selectNewSubscription(subscriptionForm.$valid)" novalidate autocomplete="off">
+        <fieldset>
+          <div class="form-group " show-errors>
+            <label for="subscription">My subscription</label>
+            <select id="subscription" name="subscription" class="form-control"
+              ng-model="selected_plan"
+              ng-options="plan as plan.name for plan in plans track by plan.id"
+            >
+            </select>
+          </div>
+        </fieldset>
+        <div class="text-center form-group">
+          <button type="submit" class="btn btn-primary">Update My Plan</button>
+        </div>
+    </form>
+    <div ng-show="askforcc" class="animate-show">
+      <h3>Please enter your credit card info to continue</h3>
+      <form stripe-form="stripeCallback" ng-hide="confirmation">
+        <div class="form-group">
+          <input ng-model="name" placeholder="Name on card"  class="form-control input-lg" />
+        </div>
+        <div class="form-group">
+          <input ng-model="number" placeholder="Card Number" payments-validate="card"  payments-format="card" class="form-control input-lg" required />
+        </div>
+        <div class="form-group">
+        <div class="row">
+          <div class="col-sm-8">
+            <input ng-model="expiry" placeholder="Expiration" payments-validate="expiry"  payments-format="expiry" class="form-control input-lg" required />
+          </div>
+          <div class="col-sm-4">
+            <input ng-model="cvc" placeholder="CVC" payments-validate="cvc"  payments-format="cvc" class="form-control input-lg" required />
+          </div>
+        </div>
+        </div>
+        <div ng-show="carderror" class="text-center text-danger">
+          <strong ng-bind="carderror"></strong>
+        </div>
+        <button type="submit" class="btn btn-primary btn-lg">Submit</button>
+      </form>
+    </div>
+    <h3 ng-show="confirmation" ng-bind="confirmation"></h3>
+    <h3 ng-show="submitting" ng-bind="submitting"></h3>
+  </div>
+</section>

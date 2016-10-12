@@ -52,7 +52,9 @@ module.exports = {
                 BOWER_PATH + 'angular-drag-and-drop-lists/angular-drag-and-drop-lists.js',
                 BOWER_PATH + 'angular-ui-router-uib-modal/src/angular-ui-router-uib-modal.js',
                 BOWER_PATH + 'handlebars/handlebars.js',
-                BOWER_PATH + 'js-rbroker-framework/browser/rbroker.min.js'
+                BOWER_PATH + 'js-rbroker-framework/browser/rbroker.min.js',
+                BOWER_PATH + 'angular-payments/lib/angular-payments.min.js',
+                'https://js.stripe.com/v2/'
             ],
             tests: [BOWER_PATH + 'angular-mocks/angular-mocks.js']
         },

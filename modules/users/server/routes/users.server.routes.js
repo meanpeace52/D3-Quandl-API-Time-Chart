@@ -26,7 +26,17 @@ module.exports = function (app) {
   upload = multer({
     storage : storage
   });
-  
+
+
+  // billing and subscriptions
+  app.route('/api/users/subscribe').post(users.subscribeToPlan);
+  app.route('/api/users/invoices').get(users.getInvoices);
+  app.route('/api/users/billing').get(users.getBillingInfo);
+  app.route('/api/users/plans').get(users.getPlans);
+  app.route('/api/users/myplan').get(users.getMyPlan);
+  app.route('/api/users/mysubscription').get(users.getMySubscription);
+
+
   // Setting up the users profile api
   app.route('/api/users/search').get(users.search);
   app.route('/api/users/me').get(users.me);
@@ -38,6 +48,7 @@ module.exports = function (app) {
   app.route('/api/users/files').post(upload.single('file'), users.uploadFile); // todo make main file route
   app.route('/api/users/:username').get(users.read);
   app.route('/api/users/:username/models/:model').get(users.models);
+
 
 
   // Finish by binding the user middleware
