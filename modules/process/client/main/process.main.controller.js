@@ -179,30 +179,30 @@ angular.module('process')
         function process(dataset, tasks, deferred, results) {
           if (!deferred) deferred = $q.defer();
           if (!results) results = [];
-          runningTask = Deployr.run(dataset, tasks[0]);
-          runningTask.promise().then(function(res) {
-            var result = res.result.generatedObjects;
-            if (tasks[0].returnType === 'dataset') {
-              if (!result.length) {
-                return deferred.reject('one of the tasks returned empty dataset!');
-              }
-              var _dataset = {
-                columns: result[0].value.map(function(obj) {
-                  return obj.name;
-                })
-              };
-              _dataset.rows = getRowsFromResult(result, _dataset.columns);
-              results.push(_dataset);
-              if (typeof tasks[1] !== 'undefined') {
-                return process(_dataset, _.drop(tasks), deferred, results);
-              }
-            } else {
-              results.push(result);
-            }
-            return deferred.resolve(results);
-          }).error(function(error) {
-            deferred.reject(error);
-          });
+          Deployr.run(dataset, tasks[0])
+              .then(function(res) {
+                var result = res.deployr.response.workspace.objects;
+                if (tasks[0].returnType === 'dataset') {
+                  if (!result.length) {
+                    return deferred.reject('one of the tasks returned empty dataset!');
+                  }
+                  var _dataset = {
+                    columns: result[0].value.map(function(obj) {
+                      return obj.name;
+                    })
+                  };
+                  _dataset.rows = getRowsFromResult(result, _dataset.columns);
+                  results.push(_dataset);
+                  if (typeof tasks[1] !== 'undefined') {
+                    return process(_dataset, _.drop(tasks), deferred, results);
+                  }
+                } else {
+                  results.push(result);
+                }
+                return deferred.resolve(results);
+              }).catch(function(error) {
+                deferred.reject(error);
+              });
           return deferred.promise;
         }
 
