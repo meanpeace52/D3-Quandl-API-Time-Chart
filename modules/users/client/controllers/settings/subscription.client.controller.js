@@ -13,26 +13,32 @@ angular.module('users').controller('MySubscriptionController', ['$scope', 'Authe
         $scope.plans = response.data;
         for (var i = 0; i < $scope.plans.length; i++) {
           if(Authentication.user.plan == $scope.plans[i].id) $scope.selected_plan = $scope.plans[i];
+          break;
         }
+        if(!$scope.selected_plan) $scope.selected_plan = $scope.plans[0];
     }, function errorCallback(response) {
 
     });
 
+    $scope.getSubscription = function (){
+      $http({
+        method: 'GET',
+        url: '/api/users/mysubscription'
+      }).then(function successCallback(response) {
+          if(response.data.plan) {
+            $scope.mySubscription = response.data;
+          }else {
+            $scope.mySubscription = {free:true};
+          }
+      }, function errorCallback(response) {
 
-    $http({
-      method: 'GET',
-      url: '/api/users/mysubscription'
-    }).then(function successCallback(response) {
-        $scope.mySubscription = response.data;
-    }, function errorCallback(response) {
-
-    });
-
+      });
+    };
+    $scope.getSubscription();
 
     $scope.selectNewSubscription = function(){
       $scope.askforcc = true;
       $scope.showform = false;
-
     };
 
     $scope.stripeCallback = function (code, result) {
@@ -47,6 +53,7 @@ angular.module('users').controller('MySubscriptionController', ['$scope', 'Authe
             data: { plan: $scope.selected_plan , token: result.id}
           }).then(function successCallback(response) {
               $scope.confirmation = 'Awesome you successfully subscribed to a new plan : ' + $scope.selected_plan.name;
+              $scope.getSubscription();
               $scope.user.plan = $scope.selected_plan.id;
               $scope.submitting = null;
           }, function errorCallback(response) {
