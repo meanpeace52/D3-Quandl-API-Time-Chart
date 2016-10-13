@@ -2,7 +2,7 @@
 
 ;(function () {
  		
-  var toggleSidebar = function ($rootScope, $window) {
+  var toggleSidebar = function ($rootScope, $window, Authentication) {
       return {
           restrict: 'A',
           link: function (scope, element, attrs) {
@@ -29,11 +29,20 @@
               } 
             });
 
+            scope.$watch(function () {
+              return Authentication.user;
+            }, function (newValue) {
+              if (newValue) {
+                  element.addClass('signed-in');
+              } else {
+                  element.removeClass('signed-in');
+              }
+            });
           }
       };
   };
 
   angular.module('core')
-      .directive('toggleSidebar', ['$rootScope', '$window', toggleSidebar]);
+      .directive('toggleSidebar', ['$rootScope', '$window', 'Authentication', toggleSidebar]);
  
 })();

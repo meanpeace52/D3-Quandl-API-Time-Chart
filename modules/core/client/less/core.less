@@ -179,6 +179,7 @@ form{
   overflow-y: auto;
   background: #474544;
   .transition(all 0.5s ease);
+  padding-left: 0;
 }
 
 .sidebar-wrapper-parent.toggled .sidebar-wrapper {
@@ -254,9 +255,12 @@ form{
 //______________________________________________________________________________________________________________________
 
 .sidebar-wrapper-parent {
-  padding-left: 65px;
+
+
+
 
   .sidebar-brand{
+
     display: none;
   }
 
@@ -264,6 +268,13 @@ form{
     width: 65px;
     left: 150px;
     margin-left: -150px;
+    display: none;
+  }
+
+  &.signed-in{
+    .sidebar-wrapper {
+      display: inline-block;
+    }
   }
 
   .sidebar-nav li{
