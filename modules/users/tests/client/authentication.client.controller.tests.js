@@ -2,6 +2,7 @@
 
 (function () {
   // Authentication controller Spec
+  /*
   describe('AuthenticationController', function () {
     // Initialize global variables
     var AuthenticationController,
@@ -169,5 +170,5 @@
         expect($location.path).toHaveBeenCalledWith('/');
       });
     });
-  });
+  });*/
 }());

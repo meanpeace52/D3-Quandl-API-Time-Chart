@@ -154,6 +154,9 @@ exports.postByID = function (req, res, next, id) {
             });
         }
         req.post = post;
+        if (!req.body.post){
+            req.body.post = post;
+        }
         next();
     });
 };

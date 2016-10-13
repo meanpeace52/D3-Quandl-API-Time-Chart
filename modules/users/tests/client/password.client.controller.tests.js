@@ -2,6 +2,7 @@
 
 (function() {
   // Password controller Spec
+  /*
   describe('PasswordController', function() {
     // Initialize global variables
     var PasswordController,
@@ -194,5 +195,5 @@
         });
       });
     });
-  });
+  });*/
 }());
