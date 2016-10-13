@@ -23,10 +23,6 @@ angular.module('core').config(['$stateProvider', '$urlRouterProvider',
                     }
                 }
             })
-            .state('pricing', {
-                url: '/pricing',
-                templateUrl: 'modules/core/client/views/pricing.client.view.html',
-            })
             .state('not-found', {
                 url: '/not-found',
                 templateUrl: 'modules/core/client/views/404.client.view.html'

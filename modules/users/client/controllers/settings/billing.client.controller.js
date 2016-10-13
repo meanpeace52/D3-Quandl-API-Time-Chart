@@ -19,16 +19,12 @@ angular.module('users').controller('BillingController', ['$scope', 'Authenticati
     $scope.getPrice = function (data){
       if(data.id) $scope.selectedPlan = data;
       if(data.val) $scope.selectedPeriod = data;
-      console.log($scope.selectedPeriod);
-      console.log($scope.selectedPlan);
-      console.log(data);
       if($scope.plans){
         for (var i = 0; i < $scope.plans.length; i++) {
           var p = $scope.plans[i];
           if(p.id == $scope.selectedPlan.id && p.period == $scope.selectedPeriod.val ){
             $scope.price = p.price;
             $scope.stripe_plan_id = p.stripe_id;
-            console.log(p);
           }
         }
       }
