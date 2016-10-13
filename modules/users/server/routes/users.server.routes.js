@@ -32,6 +32,7 @@ module.exports = function (app) {
   app.route('/api/users/subscribe').post(users.subscribeToPlan);
   app.route('/api/users/invoices').get(users.getInvoices);
   app.route('/api/users/billing').get(users.getBillingInfo);
+  app.route('/api/users/billing').put(users.updateCreditCard);
   app.route('/api/users/plans').get(users.getPlans);
   app.route('/api/users/myplan').get(users.getMyPlan);
   app.route('/api/users/mysubscription').get(users.getMySubscription);

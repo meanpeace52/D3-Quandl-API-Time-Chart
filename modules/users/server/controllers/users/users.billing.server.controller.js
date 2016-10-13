@@ -14,9 +14,15 @@ var path = require('path'),
     errorHandler = require(path.resolve('./modules/core/server/controllers/errors.server.controller'));
 
 var plans = [
-      {name:'Premium', price:9.99,id:'premium',stripe_id:'premium', period:'monthly'},
-      {name:'Small Business', price:16.99,id:'small_business',stripe_id:'small_business', period:'monthly'},
-      {name:'Enterprise', price:29.99,id:'enterprise', stripe_id:'enterprise', period:'monthly'}
+      {name:'Premium', price:9.99,id:'premium',stripe_id:'premium', period:1},
+      {name:'Small Business', price:16.99,id:'small_business',stripe_id:'small_business', period:1},
+      {name:'Enterprise', price:29.99,id:'enterprise', stripe_id:'enterprise', period:1},
+      {name:'Premium', price:49,id:'premium',stripe_id:'premium', period:6},
+      {name:'Small Business', price:79,id:'small_business',stripe_id:'small_business', period:6},
+      {name:'Enterprise', price:99,id:'enterprise', stripe_id:'enterprise', period:6},
+      {name:'Premium', price:80,id:'premium',stripe_id:'premium', period:12},
+      {name:'Small Business', price:140,id:'small_business',stripe_id:'small_business', period:12},
+      {name:'Enterprise', price:180,id:'enterprise', stripe_id:'enterprise', period:12}
     ];
 
 
@@ -77,16 +83,7 @@ var plans = [
             if(err){
               res.status(400).json(err);
             } else {
-              for (var i = 0; i < customer.sources.data.length; i++) {
-                if(customer.sources.data[i].id == customer.default_source){
-                  var fields = ['last4','brand','country','exp_month','exp_year','funding','name'];
-                  var billing = {};
-                  for (var j = 0; j < fields.length; j++) {
-                    billing[fields[j]] = customer.sources.data[i][fields[j]];
-                  }
-                  res.json(billing);
-                }
-              }
+              res.json(returnCustomerBillingInfo(customer));
             }
           }
         );
@@ -94,6 +91,35 @@ var plans = [
         res.json([]);
       }
     };
+
+
+    /**
+     * Get a user's credit card
+     */
+    exports.updateCreditCard = function (req, res) {
+      var user = req.user;
+      if(user.stripe_customer){
+        stripe.customers.createSource(
+          user.stripe_customer,
+          {source: req.body.token },
+          function(err, card) {
+            if(err){
+              res.status(400).json(err);
+            } else {
+              stripe.customers.update(user.stripe_customer, {
+                default_source: card.id
+              }, function(err, customer) {
+                res.json(returnCustomerBillingInfo(customer));
+              });
+            }
+          }
+        );
+      }else{
+        res.status(400).json('no user or customer');
+      }
+    };
+
+
 
     /**
      * Get a user's invoices
@@ -117,8 +143,6 @@ var plans = [
     };
 
 
-
-
    /**
     * Subscribe a user to a plan
     */
@@ -139,7 +163,7 @@ var plans = [
                   if(user.stripe_subscription){
                     stripe.subscriptions.update(
                       user.stripe_subscription,
-                      { plan: req.body.plan.id },
+                      { plan: req.body.plan },
                       function(err, subscription) {
                         if(err){
                           res.status(400).json(err);
@@ -152,7 +176,7 @@ var plans = [
                     subscribeCustomerToPlan(
                       user.stripe_customer,
                       req.body.plan.stripe_id,
-                      req.body.plan.id,
+                      req.body.plan,
                       user,
                       function(err, subscription_id){
                         if(err){
@@ -178,7 +202,7 @@ var plans = [
                 subscribeCustomerToPlan(
                   customer_id,
                   req.body.plan.stripe_id,
-                  req.body.plan.id,
+                  req.body.plan,
                   user,
                   function(err, subscription_id){
                     if(err){
@@ -237,4 +261,17 @@ var plans = [
          });
         }
       });
+   }
+
+   function returnCustomerBillingInfo(customer){
+     for (var i = 0; i < customer.sources.data.length; i++) {
+       if(customer.sources.data[i].id == customer.default_source){
+         var fields = ['last4','brand','country','exp_month','exp_year','funding','name'];
+         var billing = {};
+         for (var j = 0; j < fields.length; j++) {
+           billing[fields[j]] = customer.sources.data[i][fields[j]];
+         }
+         return billing;
+       }
+     }
    }
