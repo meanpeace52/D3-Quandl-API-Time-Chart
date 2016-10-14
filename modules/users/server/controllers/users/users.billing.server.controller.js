@@ -180,7 +180,7 @@ var plans = [
                         if(err){
                           res.status(400).json(err);
                         } else {
-                          res.json(subscription_id);
+                          res.json(user_plan);
                         }
                       }
                     );
@@ -199,7 +199,7 @@ var plans = [
                         if(err){
                           res.status(400).json(err);
                         } else {
-                          res.json(subscription_id);
+                          res.json(user_plan);
                         }
                       }
                     );
@@ -225,7 +225,7 @@ var plans = [
                     if(err){
                       res.status(400).json(err);
                     } else {
-                      res.json(subscription_id);
+                      res.json(user_plan);
                     }
                   }
                 );

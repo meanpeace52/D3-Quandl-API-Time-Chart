@@ -43,6 +43,30 @@ angular.module('users')
           $scope.user = Authentication.user;
           BillingService.getPlans().then(function successCallback(response) {
             rPlans = response.data;
+            formatPlans();
+          }, function errorCallback(response) {
+
+          });
+
+
+          $scope.selectPlan = function(plan_id){
+            openCheckoutModal(plan_id, function(token, stripe_plan_id){
+              BillingService.subscribe(token, stripe_plan_id).then(function successCallback(response) {
+                for (var i = 0; i < rPlans.length; i++) {
+                  if(rPlans[i].stripe_id==stripe_plan_id){
+                    Authentication.user.plan = response.data;
+                    formatPlans();
+                    $location.path('settings/billing');
+                  }
+                }
+              }, function errorCallback(response) {
+
+              });
+            });
+          };
+
+          function formatPlans(){
+
             for (var i = 0; i < rPlans.length; i++) {
               if(rPlans[i].price/rPlans[i].period<plans[rPlans[i].id].from){
                 plans[rPlans[i].id].from = rPlans[i].price / rPlans[i].period;
@@ -56,26 +80,7 @@ angular.module('users')
               $scope.plans.push(plans[o]);
             }
             $scope.plans.sort(function(a,b) {return (a.from>b.from) ? 1 : ((b.from>a.from) ? -1 : 0);});
-          }, function errorCallback(response) {
-
-          });
-
-
-          $scope.selectPlan = function(plan_id){
-            openCheckoutModal(plan_id, function(token, stripe_plan_id){
-              BillingService.subscribe(token, stripe_plan_id).then(function successCallback(response) {
-                for (var i = 0; i < rPlans.length; i++) {
-                  if(rPlans[i].stripe_id==stripe_plan_id){
-                    Authentication.user.plan = rPlans[i].id;
-                    $location.path('settings/billing');
-                  }
-                }
-              }, function errorCallback(response) {
-
-              });
-            });
-          };
-
+          }
 
           function openCheckoutModal (plan_id, next){
             var modalInstance = $uibModal.open({

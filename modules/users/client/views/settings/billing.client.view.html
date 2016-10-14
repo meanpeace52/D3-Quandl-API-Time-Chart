@@ -85,18 +85,23 @@
       <uib-tab index="2" ng-show="invoices.length">
         <uib-tab-heading >Invoices</uib-tab-heading>
 
-        <table class="table">
+        <table class="table small">
           <tr>
             <th>amount</th>
             <th>date</th>
             <th>paid</th>
             <th>item</th>
+            <th>total</th>
           <tr>
           <tr ng-repeat="(key, invoice) in invoices">
-            <td>${{invoice.amount_due/100}}</td>
+            <td>${{invoice.amount_due/100 | number:2}}</td>
             <td>{{invoice.date * 1000 | date:"MM/dd/yyyy"}}</td>
-            <td>{{invoice.paid}}</td>
+            <td>
+              <span ng-if="invoice.paid" class="fa fa-check text-success"></span>
+              <span ng-if="!invoice.paid" class="fa fa-times text-danger"></span>
+            </td>
             <td><div ng-repeat="(key, line) in invoice.lines.data"> {{line.plan.name}} </div></td>
+            <td>${{invoice.total/100 | number:2}}</td>
           </tr>
         </table>
 
