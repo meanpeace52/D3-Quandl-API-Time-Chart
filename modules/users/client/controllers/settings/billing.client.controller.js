@@ -1,7 +1,7 @@
 'use strict';
 
-angular.module('users').controller('BillingController', ['$scope', 'Authentication','BillingService'  ,'$uibModal',
-  function ($scope, Authentication, BillingService,$uibModal) {
+angular.module('users').controller('BillingController', ['$scope','Authentication','BillingService','$uibModal',
+  function ($scope,Authentication,BillingService,$uibModal) {
     $scope.user = Authentication.user;
 
     $scope.getInvoices = getInvoices;
@@ -11,8 +11,8 @@ angular.module('users').controller('BillingController', ['$scope', 'Authenticati
     $scope.planId = $scope.user.plan;
     $scope.period = 1;
 
-    $scope.planOptions = [{id:'premium',name:"Premium"},{id:'small_business',name:"Small Business"},{id:"enterprise",name:"Enterprise"}];
-    $scope.periodOptions = [{val:12,name:"Yearly"},{val:6,name:"6 Months"},{val:1,name:"Monthly"}];
+    $scope.planOptions = [{id:'premium',name:'Premium'},{id:'small_business',name:'Small Business'},{id:'enterprise',name:'Enterprise'}];
+    $scope.periodOptions = [{val:12,name:'Yearly'},{val:6,name:'6 Months'},{val:1,name:'Monthly'}];
     $scope.selectedPlan = $scope.planOptions[0];
     $scope.selectedPeriod = $scope.periodOptions[0];
 
@@ -22,7 +22,7 @@ angular.module('users').controller('BillingController', ['$scope', 'Authenticati
       if($scope.plans){
         for (var i = 0; i < $scope.plans.length; i++) {
           var p = $scope.plans[i];
-          if(p.id == $scope.selectedPlan.id && p.period == $scope.selectedPeriod.val ){
+          if(p.id == $scope.selectedPlan.id && p.period == $scope.selectedPeriod.val){
             $scope.price = p.price;
             $scope.stripe_plan_id = p.stripe_id;
           }

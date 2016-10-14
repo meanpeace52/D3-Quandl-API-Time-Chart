@@ -44,18 +44,18 @@ angular.module('users')
           BillingService.getPlans().then(function successCallback(response) {
             rPlans = response.data;
             for (var i = 0; i < rPlans.length; i++) {
-              if(rPlans[i].price / rPlans[i].period < plans[rPlans[i].id].from ){
+              if(rPlans[i].price/rPlans[i].period<plans[rPlans[i].id].from){
                 plans[rPlans[i].id].from = rPlans[i].price / rPlans[i].period;
               }
             }
             $scope.plans = [];
             for (var o in plans) {
               plans[o].id = o;
-              if( !plans[o].color ) plans[o].color = 'default';
-              if( plans[o].id == $scope.user.plan ) plans[o].color = 'success';
+              if(!plans[o].color) plans[o].color = 'default';
+              if(plans[o].id==$scope.user.plan) plans[o].color = 'success';
               $scope.plans.push(plans[o]);
             }
-            $scope.plans.sort(function(a,b) {return (a.from > b.from) ? 1 : ((b.from > a.from) ? -1 : 0);} );
+            $scope.plans.sort(function(a,b) {return (a.from>b.from) ? 1 : ((b.from>a.from) ? -1 : 0);});
           }, function errorCallback(response) {
 
           });
@@ -65,7 +65,7 @@ angular.module('users')
             openCheckoutModal(plan_id, function(token, stripe_plan_id){
               BillingService.subscribe(token, stripe_plan_id).then(function successCallback(response) {
                 for (var i = 0; i < rPlans.length; i++) {
-                  if( rPlans[i].stripe_id == stripe_plan_id){
+                  if(rPlans[i].stripe_id==stripe_plan_id){
                     Authentication.user.plan = rPlans[i].id;
                     $location.path('settings/billing');
                   }
@@ -85,8 +85,8 @@ angular.module('users')
                 $scope.cancel = function(){
                   modalInstance.close();
                 };
-                $scope.planOptions = [{id:'premium',name:"Premium"},{id:'small_business',name:"Small Business"},{id:"enterprise",name:"Enterprise"}];
-                $scope.periodOptions = [{val:12,name:"Yearly"},{val:6,name:"6 Months"},{val:1,name:"Monthly"}];
+                $scope.planOptions = [{id:'premium',name:'Premium'},{id:'small_business',name:'Small Business'},{id:'enterprise',name:'Enterprise'}];
+                $scope.periodOptions = [{val:12,name:'Yearly'},{val:6,name:'6 Months'},{val:1,name:'Monthly'}];
                 for (var i = 0; i < $scope.planOptions.length; i++) {
                   if($scope.planOptions[i].id == plan_id) $scope.selectedPlan = $scope.planOptions[i];
                 }
@@ -99,7 +99,7 @@ angular.module('users')
                   if($scope.plans){
                     for (var i = 0; i < $scope.plans.length; i++) {
                       var p = $scope.plans[i];
-                      if(p.id == $scope.selectedPlan.id && p.period == $scope.selectedPeriod.val ){
+                      if(p.id == $scope.selectedPlan.id && p.period == $scope.selectedPeriod.val){
                         $scope.price = p.price;
                         $scope.stripe_plan_id = p.stripe_id;
                       }
