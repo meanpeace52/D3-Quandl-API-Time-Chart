@@ -14,15 +14,15 @@ var path = require('path'),
     errorHandler = require(path.resolve('./modules/core/server/controllers/errors.server.controller'));
 
 var plans = [
-      {name:'Premium', price:9.99,id:'premium',stripe_id:'premium', period:1},
-      {name:'Small Business', price:16.99,id:'small_business',stripe_id:'small_business', period:1},
-      {name:'Enterprise', price:29.99,id:'enterprise', stripe_id:'enterprise', period:1},
-      {name:'Premium', price:49,id:'premium',stripe_id:'premium', period:6},
-      {name:'Small Business', price:79,id:'small_business',stripe_id:'small_business', period:6},
-      {name:'Enterprise', price:99,id:'enterprise', stripe_id:'enterprise', period:6},
-      {name:'Premium', price:80,id:'premium',stripe_id:'premium', period:12},
-      {name:'Small Business', price:140,id:'small_business',stripe_id:'small_business', period:12},
-      {name:'Enterprise', price:180,id:'enterprise', stripe_id:'enterprise', period:12}
+      {name:'Premium', price:10,id:'premium',stripe_id:'premium_monthly', period:1},
+      {name:'Small Business', price:60,id:'small_business',stripe_id:'small_business_monthly', period:1},
+      {name:'Enterprise', price:200,id:'enterprise', stripe_id:'enterprise_monthly', period:1},
+      {name:'Premium', price:50,id:'premium',stripe_id:'premium6', period:6},
+      {name:'Small Business', price:290,id:'small_business',stripe_id:'small_business6', period:6},
+      {name:'Enterprise', price:950,id:'enterprise', stripe_id:'enterprise6', period:6},
+      {name:'Premium', price:80,id:'premium',stripe_id:'premium_yearly', period:12},
+      {name:'Small Business', price:450,id:'small_business',stripe_id:'small_business_yearly', period:12},
+      {name:'Enterprise', price:1400,id:'enterprise', stripe_id:'enterprise_yearly', period:12}
     ];
 
 
@@ -147,7 +147,16 @@ var plans = [
     * Subscribe a user to a plan
     */
     exports.subscribeToPlan = function (req, res) {
-      var user = req.user;
+      var user = req.user, stripe_plan, user_plan;
+      for (var i = 0; i < plans.length; i++) {
+        if(plans[i].stripe_id == req.body.plan){
+          stripe_plan = plans[i].stripe_id;
+          user_plan = plans[i].id;
+        }
+      }
+      if(!stripe_plan){
+        res.status(400).json('plan not found');
+      }
       if (user) {
         if(user.stripe_customer){
           stripe.customers.createSource(
@@ -161,22 +170,30 @@ var plans = [
                   default_source: card.id
                 }, function(err, customer) {
                   if(user.stripe_subscription){
-                    stripe.subscriptions.update(
+
+                    updateSubscription(
                       user.stripe_subscription,
-                      { plan: req.body.plan },
-                      function(err, subscription) {
+                      stripe_plan,
+                      user_plan,
+                      user,
+                      function(err, subscription_id){
                         if(err){
                           res.status(400).json(err);
                         } else {
-                          res.json(subscription.id);
+                          res.json(subscription_id);
                         }
                       }
                     );
+
+
+
+
+
                   }else{
                     subscribeCustomerToPlan(
                       user.stripe_customer,
-                      req.body.plan.stripe_id,
-                      req.body.plan,
+                      stripe_plan,
+                      user_plan,
                       user,
                       function(err, subscription_id){
                         if(err){
@@ -201,8 +218,8 @@ var plans = [
               } else {
                 subscribeCustomerToPlan(
                   customer_id,
-                  req.body.plan.stripe_id,
-                  req.body.plan,
+                  stripe_plan,
+                  user_plan,
                   user,
                   function(err, subscription_id){
                     if(err){
@@ -241,6 +258,33 @@ var plans = [
          }
       });
    }
+
+
+   function updateSubscription(subscription_id, plan_id, plan, user , next){
+     stripe.subscriptions.update(
+       subscription_id,
+       { plan: plan_id },
+       function(err, subscription) {
+         if(err){
+           next(err);
+         } else {
+           stripe.invoices.create({
+              customer: subscription.customer
+            }, function(err, invoice) {
+              user.plan = plan;
+              user.save(function (err) {
+                if (err) {
+                  next(err);
+                } else {
+                  next(err, subscription.id);
+                }
+              });
+           });
+         }
+      });
+   }
+
+
 
 
    function createCustomer(token, user, next){

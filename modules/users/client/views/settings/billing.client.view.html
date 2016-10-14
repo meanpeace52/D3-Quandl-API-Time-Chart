@@ -5,7 +5,7 @@
     <uib-tabset active="active" ng-show="mySubscription">
       <uib-tab index="0" >
         <uib-tab-heading>My Subscription</uib-tab-heading>
-        <div class="well">
+        <!--<div class="well">
           Change my plan
           <div class="row">
             <div class="col-sm-6">
@@ -33,27 +33,31 @@
               <button type="submit" class="btn btn-primary btn-block" ng-click="selectPlan()">Update Plan</button>
             </div>
           </div>
-        </div>
-        <h4 ng-show="confirmation" ng-bind="confirmation"></h4>
-        <h4 ng-show="submitting" ng-bind="submitting"></h4>
-        <h4 ng-show="carderror" ng-bind="carderror" class="text-danger"></h4>
+          <h4 ng-show="confirmation" ng-bind="confirmation"></h4>
+          <h4 ng-show="submitting" ng-bind="submitting"></h4>
+          <h4 ng-show="carderror" ng-bind="carderror" class="text-danger"></h4>
+        </div>-->
+
         <div class="well" ng-show="mySubscription.free">
           You are on the free plan
+          <hr>
+          <a href="/pricing" class="btn btn-primary btn-block btn-lg">Update your Subscription</a>
         </div>
-
-        <table class="table" ng-show="mySubscription.plan">
-          <tr>
-            <th>Plan</th>
-            <th>Price</th>
-            <th>Next Invoice</th>
-          </tr>
-          <tr>
-            <td>{{mySubscription.plan.name}}</td>
-            <td>${{mySubscription.plan.amount/100}} / {{mySubscription.plan.interval}}</td>
-            <td>{{mySubscription.current_period_end * 1000 | date:"MM/dd/yyyy"}}</td>
-          </tr>
-        </table>
-
+        <div ng-show="mySubscription.plan">
+          <table class="table">
+            <tr>
+              <th>Plan</th>
+              <th>Price</th>
+              <th>Next Invoice</th>
+            </tr>
+            <tr>
+              <td>{{mySubscription.plan.name}}</td>
+              <td>${{mySubscription.plan.amount/100}} / {{mySubscription.plan.interval}}</td>
+              <td>{{mySubscription.current_period_end * 1000 | date:"MM/dd/yyyy"}}</td>
+            </tr>
+          </table>
+          <a href="/pricing" class="btn btn-primary btn-block btn-lg">Update your Subscription</a>
+        </div>
       </uib-tab>
 
       <uib-tab index="1" ng-show="billing.last4">
