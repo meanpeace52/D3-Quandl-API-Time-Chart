@@ -101,6 +101,9 @@ a:hover .header-profile-image {
 .posts.list-group-item:hover {
   background: #eee;
 }
+.posts.list-group-item span.glyphicon {
+  margin-top: -7px;
+}
 form label {
   font-size: 12px;
 }
@@ -264,12 +267,12 @@ form textarea {
 .btn {
   font-weight: bold;
 }
-.list-group-item {
+.dataset.list-group-item {
   height: 46px;
   padding: 5px 15px;
 }
-.list-group-item a,
-.list-group-item button {
+.dataset.list-group-item a,
+.dataset.list-group-item button {
   margin-left: 5px;
 }
 .btn-secondary {
