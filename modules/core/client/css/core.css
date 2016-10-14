@@ -136,6 +136,7 @@ form textarea {
   -moz-transition: all 0.5s ease;
   -ms-transition: all 0.5s ease;
   -o-transition: all 0.5s ease;
+  padding-left: 0;
 }
 .sidebar-wrapper-parent.toggled .sidebar-wrapper {
   width: 250px;
@@ -195,9 +196,6 @@ form textarea {
   color: #fff;
   background: none;
 }
-.sidebar-wrapper-parent {
-  padding-left: 65px;
-}
 .sidebar-wrapper-parent .sidebar-brand {
   display: none;
 }
@@ -205,6 +203,10 @@ form textarea {
   width: 65px;
   left: 150px;
   margin-left: -150px;
+  display: none;
+}
+.sidebar-wrapper-parent.signed-in .sidebar-wrapper {
+  display: inline-block;
 }
 .sidebar-wrapper-parent .sidebar-nav li {
   line-height: 55px;

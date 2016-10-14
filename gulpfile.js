@@ -242,6 +242,7 @@ gulp.task('webdriver_standalone', webdriver_standalone);
 
 // Protractor test runner task
 gulp.task('protractor', ['webdriver_update'], function () {
+    /*
     gulp.src([])
         .pipe(protractor({
             configFile: 'protractor.conf.js'
@@ -255,6 +256,7 @@ gulp.task('protractor', ['webdriver_update'], function () {
             console.log('E2E Tests failed');
             process.exit(1);
         });
+        */
 });
 
 // Lint CSS and JavaScript files.

@@ -2,6 +2,7 @@
 
 (function() {
   // Password Validator Directive Spec
+  /*
   describe('PasswordValidatorDirective', function() {
     // Initialize global variables
     var scope,
@@ -204,5 +205,5 @@
       expect(scope.requirementsProgress).toEqual('100');
     });
 
-  });
+  });*/
 }());
