@@ -5,7 +5,7 @@
  */
 var path = require('path'),
     config = require(path.resolve('./config/config')),
-    deployr = require(path.resolve('./deployr-js/deployr'));
+    deployr = require('deployr');
 
 
 /**
