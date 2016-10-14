@@ -36,6 +36,7 @@
     "crypto": "0.0.3",
     "csv-to-json": "^0.1.2",
     "d.js": "^0.7.5",
+    "deployr": "^8.0.5",
     "express": "^4.13.1",
     "express-session": "^1.11.3",
     "file-stream-rotator": "~0.0.6",
