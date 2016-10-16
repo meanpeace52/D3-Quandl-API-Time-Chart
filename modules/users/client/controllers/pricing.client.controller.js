@@ -8,57 +8,72 @@ angular.module('users')
           var plans = {
             free:{name: 'Free',
               from: 0,
-              features:{
-                'Feature 1': 'no',
-                'Feature 2': 'no',
-                'Feature 3': 'no',
-              }
+              features:[
+                {name:'Feature 1', value:false},
+                {name:'Feature 2', value:false},
+                {name:'Feature 3', value:false},
+              ]
             },
             premium:{name:'Premium',
               from: 1000,
-              features:{
-                'Feature 1': 'ok',
-                'Feature 2': '20 GB',
-                'Feature 3': '1 widget',
-              }
+              features:[
+                {name:'Feature 1', value:true},
+                '2 GB Storage',
+                '1 widget',
+              ]
             },
             small_business:{name:'Small Business',
               from: 1000,
               color:'primary',
-              features:{
-                'Feature 1': 'ok',
-                'Feature 2': '50 GB',
-                'Feature 3': '2 widgets',
-              }
+              features:[
+                {name:'Feature 1', value:true},
+                '50 GB Storage',
+                '2 widgets',
+              ]
             },
             enterprise:{name:'Enterprise',
               from: 1000,
-              features:{
-                'Feature 1': 'ok',
-                'Feature 2': '100 GB',
-                'Feature 3': '5 widgets',
-              }
+              features:[
+                {name:'Feature 1', value:true},
+                '50 GB Storage',
+                '10 widgets',
+              ]
             }
           };
+
           $scope.user = Authentication.user;
 
-          BillingService.getPlans(function(plans){
-            rPlans = plans;
-            formatPlans();
-          });
+          $scope.planChoice = {};
 
-          $scope.selectPlan = function(plan_id){
-            BillingService.openSelectPlanModal(plan_id, function(){
-              formatPlans();
+          $scope.selectPlan = function(plan_id, period){
+            BillingService.openSelectPlanModal({ plan_id:plan_id, period:period, allow_choice:false }, function(){
+              getPlans();
               $location.path('settings/billing');
             });
           };
+
+
+          getPlans();
+          
+          function getPlans(){
+            BillingService.getPlans(function(plans){
+              rPlans = plans;
+              formatPlans();
+            });
+          };
+
+
+
 
           function formatPlans(){
             for (var i = 0; i < rPlans.length; i++) {
               if(rPlans[i].price/rPlans[i].period<plans[rPlans[i].id].from){
                 plans[rPlans[i].id].from = rPlans[i].price / rPlans[i].period;
+
+                $scope.planChoice[rPlans[i].id] = {stripe_id:false};
               }
+              if(!plans[rPlans[i].id].periods) plans[rPlans[i].id].periods = [];
+              plans[rPlans[i].id].periods.push({price : rPlans[i].price, period : rPlans[i].period});
             }
             $scope.plans = [];
             for (var o in plans) {

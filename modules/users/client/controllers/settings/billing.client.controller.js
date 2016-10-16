@@ -7,13 +7,13 @@ angular.module('users').controller('BillingController', ['$scope','Authenticatio
     $scope.getInvoices = getInvoices;
     $scope.getBillingInfo = getBillingInfo;
     $scope.getSubscription = getSubscription;
-    
+
     $scope.changeCreditCard = function (){
       BillingService.openCreditCardModal(getBillingInfo);
     };
 
     $scope.updateSubscription = function(){
-      BillingService.openSelectPlanModal(Authentication.user.plan, getSubscription);
+      BillingService.openSelectPlanModal({allow_choice:true,period:12,plan_id:Authentication.user.plan}, getSubscription);
     };
 
     getSubscription();

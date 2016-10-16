@@ -3,7 +3,7 @@
 </div>
 <div class="modal-body" id="modal-body">
   <div class="well">
-    <div class="row">
+    <div class="row" ng-if="allow_choice">
       <div class="col-sm-6">
         <select class="form-control"
             ng-model="selectedPlan"
@@ -21,6 +21,7 @@
     </div>
     <div class="row">
       <div class="col-sm-12 text-center">
+        <h2 ng-if="!allow_choice">{{selectedPlan.name}}</h2>
         <h3>${{price/selectedPeriod.val | number:2}} / monthly <small>Invoicing : ${{price}} / {{selectedPeriod.name}}</small></h3>
       </div>
     </div>

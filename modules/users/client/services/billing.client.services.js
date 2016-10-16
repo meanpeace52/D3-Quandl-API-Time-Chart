@@ -83,14 +83,14 @@ angular.module('users').factory('BillingService', ['$http', '$window','toastr', 
       }
     };
 
-    billing.openSelectPlanModal = function(plan_id, next){
+    billing.openSelectPlanModal = function(options, next){
       this.getPlans(function(plans){
         var modalInstance = $uibModal.open({
           templateUrl: 'modules/users/client/views/billing/subscribe.modal.client.html',
           controller: 'SubscribeModalController',
           resolve: {
             plans: function() {return plans;},
-            plan_id: function() {return plan_id;},
+            options: function() {return options;},
             next: function() {return next;},
           }
         });
