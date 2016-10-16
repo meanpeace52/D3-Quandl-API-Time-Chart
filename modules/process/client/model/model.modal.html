@@ -14,7 +14,7 @@
       <div ng-if="ModelModal.model">
         <p>Type: {{ModelModal.model.type}}</p>
         <p>Equation: {{ModelModal.model.equation}}</p>
-        <p>Full Summary Output: {{ModelModal.model.output}}</p>
+        <p>Full Summary Output: <pre ng-bind-html="ModelModal.model.output"></pre></p>
         <p>Error/Goodness of Fit Stats: N/A</p>
       </div>
       <div ng-if="!ModelModal.model">

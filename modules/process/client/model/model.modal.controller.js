@@ -12,16 +12,16 @@ angular.module('process')
         vm.saving = false;
 
         var lastResult = _.last(results);
-        if (Array.isArray(lastResult)) {
+        //if (Array.isArray(lastResult)) {
           vm.model = {
             type: 'Linear Regression',
             equation: 'Some equation',
-            output: lastResult
+            output: $(lastResult).filter('.printable').find('pre').html()
           };
-          vm.dataset = _.last(_.dropRight(results));
-        } else {
-          vm.dataset = lastResult;
-        }
+          //vm.dataset = _.last(_.dropRight(results));
+        //} else {
+        //  vm.dataset = lastResult;
+        //}
 
         function getDataset() {
           var deferred = $q.defer();

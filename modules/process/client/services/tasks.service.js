@@ -108,12 +108,12 @@ angular.module('process')
           script: {
             type: SCRIPT_TYPE.DEPLOYR,
             directory: 'root',
-            filename: 'LRtest6.R',
-            rInputsFn: function(columns, rows, options) {
-              return [rbroker.RInput.numeric('Ycolindex', parseInt(options.yColIndex) + 1)]
-                .concat(dataFrameInput('dataset', columns, rows));
-            },
-            routputs: ['coefficients', 'interceptSE', 'x', 'xSE']
+            filename: 'LRtest6S3.R',
+            rInputsFn: function(inputFile, options) {
+              //return [rbroker.RInput.numeric('Ycolindex', parseInt(options.yColIndex) + 1)]
+              //  .concat(dataFrameInput('dataset', columns, rows));
+              return [rbroker.RInput.numeric('Ycolindex', parseInt(options.yColIndex) + 1), rbroker.RInput.character('Inputfile', inputFile)];
+            }
           }
         }]
       }];

@@ -99,6 +99,9 @@ a:hover .header-profile-image {
 .posts.list-group-item:hover {
   background: #eee;
 }
+.posts.list-group-item span.glyphicon {
+  margin-top: -7px;
+}
 form label {
   font-size: 12px;
 }
@@ -258,4 +261,22 @@ form textarea {
 }
 .task-accordion i {
   margin-left: inherit;
+}
+.btn {
+  font-weight: bold;
+}
+.dataset.list-group-item {
+  height: 46px;
+  padding: 5px 15px;
+}
+.dataset.list-group-item a,
+.dataset.list-group-item button {
+  margin-left: 5px;
+}
+.btn-secondary {
+  background: #DDD;
+  border-radius: 4px;
+}
+.btn-secondary:hover {
+  background: #c4c4c4;
 }
