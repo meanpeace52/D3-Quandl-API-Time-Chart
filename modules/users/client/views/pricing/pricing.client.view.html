@@ -7,9 +7,9 @@
     <div class="col-md-3 col-xs-12 col-sm-6"  ng-repeat="(key, plan) in plans">
       <div class="panel panel-{{plan.color}} text-center">
         <div ng-if="plan.id != 'free'"><h3>{{plan.name}}</h3>
-        from $<span style="font-size:40px">{{plan.from | number:2}}</span></div>
+        from $<span style="font-size:40px">{{plan.from | number:2}}</span><br>/month<br><small>* based on a yearly plan</small></div>
         <div ng-if="plan.id == 'free'"><h3>{{plan.name}}</h3>
-        $<span style="font-size:40px">0</span></div>
+        $<span style="font-size:40px">0</span><br> Forever<br><small>&nbsp;</small></div>
          <ul class="list-group">
           <li ng-repeat="(fkey, feature) in plan.features" class="list-group-item">{{fkey}} :
             <span ng-if="feature=='ok'" class="fa fa-check text-success"></span>
@@ -63,37 +63,54 @@
 
         <h3>Enter your credit card info</h3>
         <hr>
-        <form stripe-form="stripeCallback" ng-hide="confirmation">
-          <div class="form-group">
-            <input ng-model="name" placeholder="Name on card"  class="form-control input-lg" />
-          </div>
-          <div class="form-group">
-            <input ng-model="number" placeholder="Card Number" payments-validate="card"  payments-format="card" class="form-control input-lg" required />
-          </div>
-          <div class="form-group">
-          <div class="row">
-            <div class="col-xs-8">
-              <input ng-model="expiry" placeholder="Expiration" payments-validate="expiry"  payments-format="expiry" class="form-control input-lg" required />
-            </div>
-            <div class="col-xs-4">
-              <input ng-model="cvc" placeholder="CVC" payments-validate="cvc"  payments-format="cvc" class="form-control input-lg" required />
-            </div>
-          </div>
-          </div>
-          <div ng-show="carderror" class="alert alert-danger">
-            <strong ng-bind="carderror"></strong>
-          </div>
 
-          <div class="row">
-            <div class="col-xs-6">
-                <a class="btn btn-default btn-block btn-lg" ng-click="cancel()">Cancel</a>
-            </div>
-            <div class="col-xs-6">
-              <button type="submit" class="btn btn-primary btn-block btn-lg">Submit</button>
-            </div>
-          </div>
+            <form name="form" stripe-form="stripeCallback" ng-submit="validate(form)"  novalidate >
+              <div class="panel panel-default">
+                <div class="panel-body">
+                  <div class="form-group">
+                    <input ng-model="name" placeholder="Name on card"  class="form-control input-lg" />
+                  </div>
+                  <div class="form-group" show-errors>
+                    <input ng-model="number" name="card" placeholder="Card Number" payments-validate="card"  payments-format="card" class="form-control input-lg" required />
+                    <div ng-if="form.card.$error && submitted" ng-messages="form.card.$error" role="alert">
+                      <p class="help-block error-text" ng-message="required">required</p>
+                    </div>
+                  </div>
 
-        </form>
+                  <div class="row">
+                    <div class="col-xs-8">
+                      <div class="form-group" show-errors>
+                        <input ng-model="expiry" name="expiry" placeholder="Expiration" payments-validate="expiry"  payments-format="expiry" class="form-control input-lg" required />
+                        <div ng-if="form.expiry.$error && submitted" ng-messages="form.expiry.$error" role="alert">
+                          <p class="help-block error-text" ng-message="required">required</p>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="col-xs-4">
+                      <div class="form-group" show-errors>
+                        <input ng-model="cvc" name="cvc" placeholder="CVC" payments-validate="cvc"  payments-format="cvc" class="form-control input-lg" required />
+                        <div ng-if="form.cvc.$error && submitted" ng-messages="form.cvc.$error" role="alert">
+                          <p class="help-block error-text" ng-message="required">required</p>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div ng-show="carderror" class="alert alert-danger">
+                    <strong ng-bind="carderror"></strong>
+                  </div>
+                </div>
+              </div>
+              <div class="row">
+                <div class="col-xs-6">
+                    <a class="btn btn-default btn-block btn-lg" ng-click="cancel()">Cancel</a>
+                </div>
+                <div class="col-xs-6">
+                  <button type="submit" class="btn btn-primary btn-block btn-lg">Submit</button>
+                </div>
+              </div>
+
+            </form>
+
       </div>
   </script>
 

@@ -51,7 +51,7 @@ var plans = [
           user.stripe_subscription,
           function(err, subscription) {
             if(err){
-              res.status(400).json(err);
+              res.status(400).json(err.message);
             } else {
               res.json(subscription);
             }
@@ -81,7 +81,7 @@ var plans = [
           user.stripe_customer,
           function(err, customer) {
             if(err){
-              res.status(400).json(err);
+              res.status(400).json(err.message);
             } else {
               res.json(returnCustomerBillingInfo(customer));
             }
@@ -104,7 +104,7 @@ var plans = [
           {source: req.body.token },
           function(err, card) {
             if(err){
-              res.status(400).json(err);
+              res.status(400).json(err.message);
             } else {
               stripe.customers.update(user.stripe_customer, {
                 default_source: card.id
@@ -131,7 +131,7 @@ var plans = [
           { limit: 100,customer:user.stripe_customer },
           function(err, invoices) {
             if(err){
-              res.status(400).json(err);
+              res.status(400).json(err.message);
             } else {
               res.json(invoices.data);
             }
@@ -164,7 +164,7 @@ var plans = [
             {source: req.body.token },
             function(err, card) {
               if(err){
-                res.status(400).json(err);
+                res.status(400).json(err.message);
               } else {
                 stripe.customers.update(user.stripe_customer, {
                   default_source: card.id
@@ -178,7 +178,7 @@ var plans = [
                       user,
                       function(err, subscription_id){
                         if(err){
-                          res.status(400).json(err);
+                          res.status(400).json(err.message);
                         } else {
                           res.json(user_plan);
                         }
@@ -197,7 +197,7 @@ var plans = [
                       user,
                       function(err, subscription_id){
                         if(err){
-                          res.status(400).json(err);
+                          res.status(400).json(err.message);
                         } else {
                           res.json(user_plan);
                         }
@@ -214,7 +214,7 @@ var plans = [
             user,
             function(err, customer_id){
               if(err){
-                res.status(400).json(err);
+                res.status(400).json(err.message);
               } else {
                 subscribeCustomerToPlan(
                   customer_id,
@@ -223,7 +223,7 @@ var plans = [
                   user,
                   function(err, subscription_id){
                     if(err){
-                      res.status(400).json(err);
+                      res.status(400).json(err.message);
                     } else {
                       res.json(user_plan);
                     }

@@ -41,7 +41,11 @@
         <div class="well" ng-show="mySubscription.free">
           You are on the free plan
           <hr>
-          <a href="/pricing" class="btn btn-primary btn-block btn-lg">Update your Subscription</a>
+          <div class="row">
+            <div class="col-sm-6"><a href="/pricing" class="btn btn-default btn-block btn-lg">Compare plans</a></div>
+            <div class="col-sm-6"><a ng-click="updateSubscription()" class="btn btn-primary btn-block btn-lg">Update your Subscription</a></div>
+          </div>
+
         </div>
         <div ng-show="mySubscription.plan">
           <table class="table">
@@ -56,7 +60,10 @@
               <td>{{mySubscription.current_period_end * 1000 | date:"MM/dd/yyyy"}}</td>
             </tr>
           </table>
-          <a href="/pricing" class="btn btn-primary btn-block btn-lg">Update your Subscription</a>
+          <div class="row">
+            <div class="col-sm-6"><a href="/pricing" class="btn btn-default btn-block btn-lg">Compare plans</a></div>
+            <div class="col-sm-6"><a ng-click="updateSubscription()" class="btn btn-primary btn-block btn-lg">Update your Subscription</a></div>
+          </div>
         </div>
       </uib-tab>
 
