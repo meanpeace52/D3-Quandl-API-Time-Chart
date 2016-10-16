@@ -3,12 +3,12 @@
 angular.module('process')
     .factory('Deployr', ['$q', '$http', function($q, $http) {
       return {
-        run: function(dataset, task) {
+        run: function(inputFile, task) {
           var dfd = $q.defer();
 
           $http.post('/api/deployr/run', {
             filename: task.script.filename,
-            rinputs: task.script.rInputsFn(dataset.columns, dataset.rows, task.options),
+            rinputs: task.script.rInputsFn(inputFile, task.options),
             routputs: task.script.routputs
           })
               .success(function (data, status, headers, config) {

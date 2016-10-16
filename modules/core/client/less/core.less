@@ -123,13 +123,15 @@ a:hover .header-profile-image {
   margin-top: 0 !important;
 }
 
-.posts.list-group-item{
-  cursor: pointer;
-}
-
-.posts.list-group-item{
-  &:hover{
-    background: #eee;
+.posts {
+  &.list-group-item {
+    cursor: pointer;
+    &:hover {
+      background: #eee;
+    }
+    span.glyphicon{
+      margin-top: -7px;
+    }
   }
 }
 
@@ -341,3 +343,26 @@ form{
 .task-accordion i{
   margin-left: inherit;
 }
+
+.btn{
+  font-weight: bold;
+}
+
+.dataset {
+  &.list-group-item {
+    height: 46px;
+    padding: 5px 15px;
+    a, button {
+      margin-left: 5px;
+    }
+  }
+}
+
+.btn-secondary{
+  background: #DDD;
+  border-radius: 4px;
+  &:hover{
+    background: darken(#DDD, 10%);
+  }
+}
+
