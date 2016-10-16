@@ -59,7 +59,7 @@ angular.module('users')
               rPlans = plans;
               formatPlans();
             });
-          };
+          }
 
           function formatPlans(){
             for (var i = 0; i < rPlans.length; i++) {
