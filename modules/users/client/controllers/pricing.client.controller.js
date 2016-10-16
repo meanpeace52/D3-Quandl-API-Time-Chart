@@ -52,9 +52,8 @@ angular.module('users')
             });
           };
 
-
           getPlans();
-          
+
           function getPlans(){
             BillingService.getPlans(function(plans){
               rPlans = plans;
@@ -62,14 +61,10 @@ angular.module('users')
             });
           };
 
-
-
-
           function formatPlans(){
             for (var i = 0; i < rPlans.length; i++) {
               if(rPlans[i].price/rPlans[i].period<plans[rPlans[i].id].from){
                 plans[rPlans[i].id].from = rPlans[i].price / rPlans[i].period;
-
                 $scope.planChoice[rPlans[i].id] = {stripe_id:false};
               }
               if(!plans[rPlans[i].id].periods) plans[rPlans[i].id].periods = [];
