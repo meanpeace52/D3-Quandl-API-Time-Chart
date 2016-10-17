@@ -198,7 +198,7 @@
             <div class="tab-content">
                 <div role="tabpanel" data-ng-repeat="item in home.tabs" ng-class="{'active' : item == home.activeTab }" class="tab-pane">
                     <div ng-if="item == 'Finance'">
-                        <div class="row">
+                        <div class="row finance-company-container">
                             <div class="col-md-offset-7 col-md-3">
                                 <form name="companyform" ng-submit="home.searchCompany(company)">
                                     <div class="inner-addon left-addon">

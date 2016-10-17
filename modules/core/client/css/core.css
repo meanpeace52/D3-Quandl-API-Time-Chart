@@ -276,7 +276,7 @@ form textarea {
   left: -20px;
 }
 .right-addon .glyphicon {
-  right: 0px;
+  right: 0;
 }
 /* add padding  */
 .left-addon input {
@@ -311,4 +311,7 @@ form textarea {
 }
 .btn-secondary:hover {
   background: #c4c4c4;
+}
+.finance-company-container {
+  margin-top: -56px;
 }

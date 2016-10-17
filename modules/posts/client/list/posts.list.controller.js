@@ -93,6 +93,7 @@ angular.module('posts')
                 });
             }
             else if (vm.state === 'home') {
+                vm.menuItems = ['trending', 'in the news', 'rising'];
                 vm.getPosts('subject', $scope.subject);
             }
 }]);
