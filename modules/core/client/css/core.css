@@ -261,7 +261,6 @@ form textarea {
 .tooltip {
   z-index: 9999;
 }
-<<<<<<< HEAD
 /* enable absolute positioning */
 .inner-addon {
   position: relative;
@@ -291,7 +290,7 @@ form textarea {
   right: 30px;
   top: 15px;
   z-index: 2;
-=======
+}
 .task-accordion i {
   margin-left: inherit;
 }
@@ -312,5 +311,4 @@ form textarea {
 }
 .btn-secondary:hover {
   background: #c4c4c4;
->>>>>>> origin/staging
 }
