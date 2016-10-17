@@ -32,7 +32,7 @@
 
         <div class="panel-body" ng-if="plan.id != 'free'">
           <button ng-if="planChoice[plan.id].period" class="btn btn-lg btn-default btn-block" ng-click="selectPlan(plan.id, planChoice[plan.id].period)">Sign Up</button>
-          <button ng-if="!planChoice[plan.id].period" class="btn btn-lg btn-default btn-block disabled" ng-click="selectPlan(plan.id, planChoice[plan.id].period)">Sign Up</button>
+          <button ng-if="!planChoice[plan.id].period" class="btn btn-lg btn-default btn-block disabled">Sign Up</button>
         </div>
 
       </div>
