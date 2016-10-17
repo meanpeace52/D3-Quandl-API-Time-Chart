@@ -123,13 +123,15 @@ a:hover .header-profile-image {
   margin-top: 0 !important;
 }
 
-.posts.list-group-item{
-  cursor: pointer;
-}
-
-.posts.list-group-item{
-  &:hover{
-    background: #eee;
+.posts {
+  &.list-group-item {
+    cursor: pointer;
+    &:hover {
+      background: #eee;
+    }
+    span.glyphicon{
+      margin-top: -7px;
+    }
   }
 }
 
@@ -179,6 +181,7 @@ form{
   overflow-y: auto;
   background: #474544;
   .transition(all 0.5s ease);
+  padding-left: 0;
 }
 
 .sidebar-wrapper-parent.toggled .sidebar-wrapper {
@@ -254,9 +257,12 @@ form{
 //______________________________________________________________________________________________________________________
 
 .sidebar-wrapper-parent {
-  padding-left: 65px;
+
+
+
 
   .sidebar-brand{
+
     display: none;
   }
 
@@ -264,6 +270,13 @@ form{
     width: 65px;
     left: 150px;
     margin-left: -150px;
+    display: none;
+  }
+
+  &.signed-in{
+    .sidebar-wrapper {
+      display: inline-block;
+    }
   }
 
   .sidebar-nav li{
@@ -327,6 +340,7 @@ form{
   z-index: 9999;
 }
 
+<<<<<<< HEAD
 /* enable absolute positioning */
 .inner-addon {
   position: relative;
@@ -353,3 +367,31 @@ form{
   top: 15px;
   z-index: 2;
 }
+=======
+.task-accordion i{
+  margin-left: inherit;
+}
+
+.btn{
+  font-weight: bold;
+}
+
+.dataset {
+  &.list-group-item {
+    height: 46px;
+    padding: 5px 15px;
+    a, button {
+      margin-left: 5px;
+    }
+  }
+}
+
+.btn-secondary{
+  background: #DDD;
+  border-radius: 4px;
+  &:hover{
+    background: darken(#DDD, 10%);
+  }
+}
+
+>>>>>>> origin/staging

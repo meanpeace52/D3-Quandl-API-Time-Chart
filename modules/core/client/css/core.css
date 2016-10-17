@@ -101,6 +101,9 @@ a:hover .header-profile-image {
 .posts.list-group-item:hover {
   background: #eee;
 }
+.posts.list-group-item span.glyphicon {
+  margin-top: -7px;
+}
 form label {
   font-size: 12px;
 }
@@ -138,6 +141,7 @@ form textarea {
   -moz-transition: all 0.5s ease;
   -ms-transition: all 0.5s ease;
   -o-transition: all 0.5s ease;
+  padding-left: 0;
 }
 .sidebar-wrapper-parent.toggled .sidebar-wrapper {
   width: 250px;
@@ -197,9 +201,6 @@ form textarea {
   color: #fff;
   background: none;
 }
-.sidebar-wrapper-parent {
-  padding-left: 65px;
-}
 .sidebar-wrapper-parent .sidebar-brand {
   display: none;
 }
@@ -207,6 +208,10 @@ form textarea {
   width: 65px;
   left: 150px;
   margin-left: -150px;
+  display: none;
+}
+.sidebar-wrapper-parent.signed-in .sidebar-wrapper {
+  display: inline-block;
 }
 .sidebar-wrapper-parent .sidebar-nav li {
   line-height: 55px;
@@ -256,6 +261,7 @@ form textarea {
 .tooltip {
   z-index: 9999;
 }
+<<<<<<< HEAD
 /* enable absolute positioning */
 .inner-addon {
   position: relative;
@@ -285,4 +291,26 @@ form textarea {
   right: 30px;
   top: 15px;
   z-index: 2;
+=======
+.task-accordion i {
+  margin-left: inherit;
+}
+.btn {
+  font-weight: bold;
+}
+.dataset.list-group-item {
+  height: 46px;
+  padding: 5px 15px;
+}
+.dataset.list-group-item a,
+.dataset.list-group-item button {
+  margin-left: 5px;
+}
+.btn-secondary {
+  background: #DDD;
+  border-radius: 4px;
+}
+.btn-secondary:hover {
+  background: #c4c4c4;
+>>>>>>> origin/staging
 }

@@ -1,0 +1,57 @@
+{
+  "name": "deployr",
+  "version": "8.0.5",
+  "description": "Simplified JavaScript client library for making requests to DeployR.",
+  "keywords": [
+    "deployr",
+    "deployr.io",
+    "ajax",
+    "R",
+    "api",
+    "simple"
+  ],
+  "author": "DeployR - Microsoft Corporation",
+  "contributors": [
+    "Sean Wells"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/microsoft/js-client-library.git"
+  },
+  "homepage": "http://go.microsoft.com/fwlink/?LinkID=698842",
+  "scripts": {
+    "start": "gulp start",
+    "build": "gulp"
+  },
+  "devDependencies": {
+    "browserify": "^13.0.1",
+    "gulp": "^3.9.1",
+    "gulp-connect": "^4.1.0",
+    "gulp-header": "^1.8.7",
+    "gulp-jshint": "^2.0.1",
+    "gulp-livereload": "^3.8.1",
+    "gulp-plumber": "^1.1.0",
+    "gulp-rename": "^1.2.2",    
+    "gulp-uglify": "^1.5.4",
+    "gulp-util": "^3.0.7",
+    "tape": "^4.6.0",
+    "vinyl-source-stream": "^1.1.0"
+  },
+  "dependencies": {
+    "d.js": "^0.7.3",    
+    "superagent": "^0.21.0",
+    "ws": "^0.4.32"
+  },
+  "main": "deployr.js",
+  "engines": {
+    "node": ">= 0.10.0"
+  },
+  "license": "Apache-2.0",
+  "bugs": {
+    "url": "https://github.com/microsoft/js-client-library/issues"
+  },
+  "directories": {
+    "example": "examples",
+    "test": "test"
+  }
+}

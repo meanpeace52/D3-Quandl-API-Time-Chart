@@ -5,7 +5,8 @@
  */
 
 var processPolicy = require('../policies/process.server.policy'),
-    process = require('../controllers/process.server.controller');
+    process = require('../controllers/process.server.controller'),
+    deployr = require('../controllers/deployr.server.controller');
 
 module.exports = function (app) {
 
@@ -22,4 +23,6 @@ module.exports = function (app) {
     app.route('/api/process/user/:userId').all(processPolicy.isAllowed)
         .get(process.listByUserId);
 
+    app.route('/api/deployr/run').all(processPolicy.isAllowed)
+        .post(deployr.deployrRun);
 };

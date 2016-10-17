@@ -2,8 +2,8 @@
 
 angular.module('process')
     .controller('ProcessMainController',
-        ['$state', '$stateParams', '$q', '$uibModal', 'Datasets', 'UsersFactory', 'Authentication', 'Tasks', 'Process', 'Deployr',
-            function ($state, $stateParams, $q, $uibModal, Datasets, UsersFactory, Authentication, Tasks, Process, Deployr) {
+        ['$state', '$stateParams', '$q', '$uibModal', 'Datasets', 'UsersFactory', 'Authentication', 'Tasks', 'Process', 'Deployr', 'toastr', '$log',
+            function ($state, $stateParams, $q, $uibModal, Datasets, UsersFactory, Authentication, Tasks, Process, Deployr, toastr, $log) {
                 var vm = this;
                 var runningTask = null;
 
@@ -21,6 +21,7 @@ angular.module('process')
           rows: [],
           columns: []
         };
+        vm.s3reference = '';
         vm.process = null;
 
         Process.getByUser(vm.user._id)
@@ -63,6 +64,7 @@ angular.module('process')
           // Persist selected dataset
           Process.setSelectedDataset(dataset);
             vm.selectedDataset = dataset.title;
+            vm.s3reference = dataset.s3reference.split('datasetstl')[1];
             vm.showLoader = true;
             Datasets.getDatasetWithS3(dataset._id)
             .then(function (data) {
@@ -176,33 +178,33 @@ angular.module('process')
           });
         }
 
-        function process(dataset, tasks, deferred, results) {
+        function process(inputFile, tasks, deferred, results) {
           if (!deferred) deferred = $q.defer();
           if (!results) results = [];
-          runningTask = Deployr.run(dataset, tasks[0]);
-          runningTask.promise().then(function(res) {
-            var result = res.result.generatedObjects;
-            if (tasks[0].returnType === 'dataset') {
-              if (!result.length) {
-                return deferred.reject('one of the tasks returned empty dataset!');
-              }
-              var _dataset = {
-                columns: result[0].value.map(function(obj) {
-                  return obj.name;
-                })
-              };
-              _dataset.rows = getRowsFromResult(result, _dataset.columns);
-              results.push(_dataset);
-              if (typeof tasks[1] !== 'undefined') {
-                return process(_dataset, _.drop(tasks), deferred, results);
-              }
-            } else {
-              results.push(result);
-            }
-            return deferred.resolve(results);
-          }).error(function(error) {
-            deferred.reject(error);
-          });
+          Deployr.run(inputFile, tasks[0])
+              .then(function(res) {
+                var result = res;
+                if (tasks[0].returnType === 'dataset') {
+                  if (!result.length) {
+                    return deferred.reject('one of the tasks returned empty dataset!');
+                  }
+                  var _dataset = {
+                    columns: result[0].value.map(function(obj) {
+                      return obj.name;
+                    })
+                  };
+                  _dataset.rows = getRowsFromResult(result, _dataset.columns);
+                  results.push(_dataset);
+                  if (typeof tasks[1] !== 'undefined') {
+                    return process(_dataset, _.drop(tasks), deferred, results);
+                  }
+                } else {
+                  results.push(result);
+                }
+                return deferred.resolve(results);
+              }).catch(function(error) {
+                deferred.reject(error);
+              });
           return deferred.promise;
         }
 
@@ -214,35 +216,42 @@ angular.module('process')
             return alert('Please select the required options for the tasks present in the process!');
           }
           vm.showProcessLoader = true;
-          process(vm.dataset, vm.process.tasks.filter(function(task) {
+          process(vm.s3reference, vm.process.tasks.filter(function(task) {
             return task.script;
           }))
             .then(function(results) {
-              var modalInstance = $uibModal.open({
-                controller: 'ModelModalController',
-                controllerAs: 'ModelModal',
-                templateUrl: 'modules/process/client/model/model.modal.html',
-                size: 'md',
-                backdrop: true,
-                resolve: {
-                  selectedDataset: function() {
-                    return Process.getSelectedDataset();
-                  },
-                  tasks: function() {
-                    return vm.process.tasks;
-                  },
-                  results: function() {
-                    return results;
-                  }
-                }
-              });
-              modalInstance.result.then(function(model) {
-                vm.alerts.push({
-                  type: 'success',
-                  msg: 'The result has been successfully saved!'
-                });
-                getDatasets();
-              });
+              if (results[0].status === 200){
+                  var modalInstance = $uibModal.open({
+                      controller: 'ModelModalController',
+                      controllerAs: 'ModelModal',
+                      templateUrl: 'modules/process/client/model/model.modal.html',
+                      size: 'md',
+                      backdrop: true,
+                      resolve: {
+                          selectedDataset: function() {
+                              return Process.getSelectedDataset();
+                          },
+                          tasks: function() {
+                              return vm.process.tasks;
+                          },
+                          results: function() {
+                              return [results[0].text];
+                          }
+                      }
+                  });
+                  modalInstance.result.then(function(model) {
+                      vm.alerts.push({
+                          type: 'success',
+                          msg: 'The result has been successfully saved!'
+                      });
+                      getDatasets();
+                  });
+              }
+              else{
+                  $log.debug(results);
+                  toastr.error('An error occurred while processing.');
+              }
+
             })
             .catch(function(err) {
               console.log('error', err);

@@ -44,6 +44,10 @@ exports.invokeRolesPolicies = function () {
                 {
                     resources: '/api/process/user/:userId',
                     permissions: ['get']
+                },
+                {
+                    resources: '/api/deployr/run',
+                    permissions: ['post']
                 }
             ]
         },
