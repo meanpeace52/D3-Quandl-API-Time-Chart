@@ -56,6 +56,14 @@ angular.module('posts')
                 });
             };
 
+            $scope.$on("$viewContentLoaded",function(event,viewName){ //listen for when the content is loaded into the view
+                if (viewName === 'posts-finance@home'){
+                    $scope.subject = 'finance';
+                }
+                else if (viewName === 'posts-soshsci@home') {
+                    $scope.subject = 'soshsci';
+                }
+            });
 
             vm.search = function () {
                 vm.field = 'title';
@@ -74,22 +82,17 @@ angular.module('posts')
                 vm.menuItems = postOptions.subjects;
                 vm.field = 'subject';
             }
-
-            if (vm.state === 'posts.search') {
+            else if (vm.state === 'posts.search') {
                 vm.getPosts($stateParams.field, $stateParams.value);
             }
-
-            if (vm.state === 'users.profilepage.posts') {
+            else if (vm.state === 'users.profilepage.posts') {
                 vm.load();
                 UsersFactory.userData('posts', $stateParams.username).then(function (res) {
                     vm.list = res;
                     vm.loaded();
                 });
             }
-
-            if (vm.state === 'home') {
-                vm.postLimit = 3;
-                vm.menuItems = ['trending', 'in the news', 'rising'];
-                vm.getPosts('trending', vm.menuItems[0]);
+            else if (vm.state === 'home') {
+                vm.getPosts('subject', $scope.subject);
             }
 }]);

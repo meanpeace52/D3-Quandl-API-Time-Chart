@@ -27,7 +27,7 @@ var postSchema = new Schema({
     },
     subject: {
         type: String,
-        enum: ['','finance', 'social science', 'other'],
+        enum: ['','finance', 'soshsci', 'other'],
         default: '',
         trim: true
     },

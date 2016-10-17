@@ -10,17 +10,10 @@ angular.module('core').controller('HeaderController', ['$rootScope', '$scope', '
         $scope.menu = Menus.getMenu('topbar');
 
         Menus.addMenuItem('topbar', {
-            title: 'Home',
+            title: 'TheoryLab',
             state: 'home',
             roles: ['*'],
             position: 0
-        });
-
-        Menus.addMenuItem('topbar', {
-            title: 'Finance',
-            state: 'posts.search({field: "subject", value: "finance"})',
-            roles: ['*'],
-            position: 1
         });
 
         // Add the datasets dropdown item
@@ -28,7 +21,7 @@ angular.module('core').controller('HeaderController', ['$rootScope', '$scope', '
             title: 'Datasets',
             state: 'datasets.list',
             roles: ['user'],
-            position: 2
+            position: 1
         });
 
 
@@ -36,22 +29,14 @@ angular.module('core').controller('HeaderController', ['$rootScope', '$scope', '
             title: 'Models',
             state: 'models.list',
             roles: ['user'],
-            position: 3
-        });
-
-        // Add the posts dropdown item
-        Menus.addMenuItem('topbar', {
-            title: 'Posts',
-            state: 'posts.list',
-            roles: ['user'],
-            position: 3
+            position: 2
         });
 
         Menus.addMenuItem('topbar', {
             title: 'Users',
             state: 'users.list',
             roles: ['user'],
-            position: 5
+            position: 3
         });
 
 
