@@ -23,7 +23,7 @@ module.exports = {
         directoryPath: process.cwd(),
         fileName: 'access.log',
         rotatingLogs: { // for more info on rotating logs - https://github.com/holidayextras/file-stream-rotator#usage
-          active: false, // activate to use rotating logs 
+          active: false, // activate to use rotating logs
           fileName: 'access-%DATE%.log', // if rotating logs are active, this fileName setting will be used
           frequency: 'daily',
           verbose: false
@@ -75,6 +75,10 @@ module.exports = {
         pass: process.env.MAILER_PASSWORD || 'MAILER_PASSWORD'
       }
     }
+  },
+  stripe:{
+    secret_key: process.env.STRIPE_SECRET || 'sk_test_HhURh1PDuU8KuJLk8ASmcjtU',
+    publishable_key: process.env.STRIPE_PUBLIC || 'pk_test_5gsED75zyGfKF9TlVIXo4adn',
   },
   seedDB: {
     seed: process.env.MONGO_SEED === 'true' ? true : false,
