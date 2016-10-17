@@ -7,6 +7,6 @@ angular.module('posts')
 
         }
     ]).constant('postOptions', {
-        subjects: ['finance', 'sports', 'social science'],
+        subjects: ['finance', 'social science'],
         access: ['public','private','paid']
     });
