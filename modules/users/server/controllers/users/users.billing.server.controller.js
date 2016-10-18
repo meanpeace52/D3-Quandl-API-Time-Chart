@@ -276,7 +276,7 @@ var plans = [
               User.findOne({stripe_customer: customer}, function(err, user){
                 if(err) return res.status('400').send({message:err.message});
 
-                sendEmail(user.email, 'You have a new invoice', invoice,
+                sendEmail(user.email, 'You have a new invoice', {invoice:invoice, name:user.firstName+' '+user.lastName},
                   'modules/users/server/templates/invoice-email', res, next);
               });
 
@@ -287,7 +287,7 @@ var plans = [
               User.findOne({stripe_customer: customer}, function(err, user){
                 if(err) return res.status('400').send({message:err.message});
 
-                sendEmail(user.email, 'Your payment failed', invoice,
+                sendEmail(user.email, 'Your payment failed', {invoice:invoice, name:user.firstName+' '+user.lastName},
                   'modules/users/server/templates/billing-failed-email', res, next);
               });
 
@@ -301,7 +301,7 @@ var plans = [
                 function(err, user){
                   if(err) return res.status('400').send({message:err.message});
 
-                  sendEmail(user.email, 'Your subscription was cancelled', customer,
+                  sendEmail(user.email, 'Your subscription was cancelled', {name:user.firstName+' '+user.lastName},
                     'modules/users/server/templates/subscription-cancelled-email', res, next);
               });
 
@@ -316,6 +316,7 @@ var plans = [
 
 
     function sendEmail(email, subject, merge, template, res, next) {
+      merge.appName = config.app.title;
       res.render(
         path.resolve(template),
         merge,
