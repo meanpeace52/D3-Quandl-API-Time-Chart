@@ -4,7 +4,9 @@
 angular.module('users')
     .controller('CreditCardModalController', ['$scope', '$uibModalInstance', 'BillingService', 'toastr', 'next',
     function($scope, $uibModalInstance, BillingService, toastr, next){
-
+      $scope.cancel = function(){
+        $uibModalInstance.close();
+      };
       $scope.validate = function(form){
         if (!form.$valid){
           $scope.submitted = true;

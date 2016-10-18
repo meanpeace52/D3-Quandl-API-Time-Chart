@@ -8,10 +8,14 @@ var path = require('path'),
     mongoose = require('mongoose'),
     _ = require('lodash'),
     User = mongoose.model('User'),
+    StripeEvent = mongoose.model('StripeEvent'),
     path = require('path'),
     config = require(path.resolve('./config/config')),
     stripe = require('stripe')(config.stripe.secret_key),
-    errorHandler = require(path.resolve('./modules/core/server/controllers/errors.server.controller'));
+    errorHandler = require(path.resolve('./modules/core/server/controllers/errors.server.controller')),
+    nodemailer = require('nodemailer');
+
+var smtpTransport = nodemailer.createTransport(config.mailer.options);
 
 var plans = [
       {name:'Premium', price:10,id:'premium',stripe_id:'premium_monthly', period:1},
@@ -51,7 +55,7 @@ var plans = [
           user.stripe_subscription,
           function(err, subscription) {
             if(err){
-              res.status(400).json(err.message);
+              res.status(err.status).send({message:err.message});
             } else {
               res.json(subscription);
             }
@@ -81,7 +85,7 @@ var plans = [
           user.stripe_customer,
           function(err, customer) {
             if(err){
-              res.status(400).json(err.message);
+              res.status(err.status).send({message:err.message});
             } else {
               res.json(returnCustomerBillingInfo(customer));
             }
@@ -98,13 +102,13 @@ var plans = [
      */
     exports.updateCreditCard = function (req, res) {
       var user = req.user;
-      if(user.stripe_customer){
+      if(user && user.stripe_customer){
         stripe.customers.createSource(
           user.stripe_customer,
           {source: req.body.token },
           function(err, card) {
             if(err){
-              res.status(400).json(err.message);
+              res.status(err.status).send({message:err.message});
             } else {
               stripe.customers.update(user.stripe_customer, {
                 default_source: card.id
@@ -115,7 +119,7 @@ var plans = [
           }
         );
       }else{
-        res.status(400).json('no user or customer');
+        res.status(400).send({message:'no user or customer'});
       }
     };
 
@@ -131,7 +135,7 @@ var plans = [
           { limit: 100,customer:user.stripe_customer },
           function(err, invoices) {
             if(err){
-              res.status(400).json(err.message);
+              res.status(err.status).send({message:err.message});
             } else {
               res.json(invoices.data);
             }
@@ -155,7 +159,7 @@ var plans = [
         }
       }
       if(!stripe_plan){
-        res.status(400).json('plan not found');
+        res.status(400).send({message:'plan not found'});
       }
       if (user) {
         if(user.stripe_customer){
@@ -164,13 +168,12 @@ var plans = [
             {source: req.body.token },
             function(err, card) {
               if(err){
-                res.status(400).json(err.message);
+                res.status(err.status).send({message:err.message});
               } else {
                 stripe.customers.update(user.stripe_customer, {
                   default_source: card.id
                 }, function(err, customer) {
                   if(user.stripe_subscription){
-
                     updateSubscription(
                       user.stripe_subscription,
                       stripe_plan,
@@ -178,17 +181,12 @@ var plans = [
                       user,
                       function(err, subscription_id){
                         if(err){
-                          res.status(400).json(err.message);
+                          res.status(err.status).send({message:err.message});
                         } else {
                           res.json(user_plan);
                         }
                       }
                     );
-
-
-
-
-
                   }else{
                     subscribeCustomerToPlan(
                       user.stripe_customer,
@@ -197,7 +195,7 @@ var plans = [
                       user,
                       function(err, subscription_id){
                         if(err){
-                          res.status(400).json(err.message);
+                          res.status(err.status).send({message:err.message});
                         } else {
                           res.json(user_plan);
                         }
@@ -214,7 +212,7 @@ var plans = [
             user,
             function(err, customer_id){
               if(err){
-                res.status(400).json(err.message);
+                res.status(err.status).send({message:err.message});
               } else {
                 subscribeCustomerToPlan(
                   customer_id,
@@ -223,7 +221,7 @@ var plans = [
                   user,
                   function(err, subscription_id){
                     if(err){
-                      res.status(400).json(err.message);
+                      res.status(err.status).send({message:err.message});
                     } else {
                       res.json(user_plan);
                     }
@@ -234,9 +232,107 @@ var plans = [
           );
         }
       } else {
-        res.status(400).json('user not logged in');
+        res.status(400).send({message:'user not logged in'});
       }
     };
+
+
+
+
+    /**
+     * stripe webhook listener
+     */
+
+    exports.getStripeWebhookEvent = function (req, res) {
+      var event_json;
+      try {
+          event_json = JSON.parse(req.body);
+      }
+      catch(err) {
+          return res.status('400').send({message:err.message});
+      }
+
+      stripe.events.retrieve(event_json.id, function(err, event) {
+        StripeEvent.findById(event_json.id, function(err,stripeEvent){
+          if(err) return res.status('400').send({message:err.message});
+          if (stripeEvent){
+            res.status(200).send('already processed');
+          } else{
+            var next = function(){
+              stripeEvent = new StripeEvent();
+              stripeEvent._id = event_json.id;
+              stripeEvent.data = event;
+              stripeEvent.save(function(err){
+                if(err) throw(err);
+                res.status(200).send('ok');
+              });
+            };
+            var customer, invoice;
+
+            if(event_json.type === 'invoice.payment_succeeded'){
+              customer = event_json.data.object.customer;
+              invoice = event_json.data.object;
+
+              User.findOne({stripe_customer: customer}, function(err, user){
+                if(err) return res.status('400').send({message:err.message});
+
+                sendEmail(user.email, 'You have a new invoice', invoice,
+                  'modules/users/server/templates/invoice-email', res, next);
+              });
+
+            } else if(event_json.type === 'invoice.payment_failed'){
+              customer = event_json.data.object.customer;
+              invoice = event_json.data.object;
+
+              User.findOne({stripe_customer: customer}, function(err, user){
+                if(err) return res.status('400').send({message:err.message});
+
+                sendEmail(user.email, 'Your payment failed', invoice,
+                  'modules/users/server/templates/billing-failed-email', res, next);
+              });
+
+            } else if(event_json.type === 'customer.subscription.deleted'){
+              customer = event_json.data;
+
+              User.findOneAndUpdate(
+                {stripe_customer: customer},
+                {plan:'free', stripe_subscription: null},
+                {new: false},
+                function(err, user){
+                  if(err) return res.status('400').send({message:err.message});
+
+                  sendEmail(user.email, 'Your subscription was cancelled', customer,
+                    'modules/users/server/templates/subscription-cancelled-email', res, next);
+              });
+
+            } else {
+              next();
+            }
+          }
+        });
+      });
+    };
+
+
+
+    function sendEmail(email, subject, merge, template, res, next) {
+      res.render(
+        path.resolve(template),
+        merge,
+        function (err, html) {
+          if(err) return next(err);
+          var mailOptions = {
+            to: email,
+            from: config.mailer.from,
+            subject: subject,
+            html: html
+          };
+          smtpTransport.sendMail(mailOptions, function (err) {
+            next(err);
+          });
+        });
+    }
+
 
     function subscribeCustomerToPlan(customer_id, plan_id, plan, user , next){
        stripe.subscriptions.create({

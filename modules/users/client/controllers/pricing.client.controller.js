@@ -2,8 +2,8 @@
 
 //users List Controller
 angular.module('users')
-    .controller('PricingController', ['$state','Authentication','BillingService','$scope','$uibModal','$location','toastr',
-        function ($state, Authentication, BillingService, $scope, $uibModal, $location, toastr) {
+    .controller('PricingController', ['$state','Authentication','BillingService','$scope','$uibModal','toastr',
+        function ($state, Authentication, BillingService, $scope, $uibModal, toastr) {
           var rPlans;
           var plans = {
             free:{name: 'Free',
@@ -48,7 +48,7 @@ angular.module('users')
           $scope.selectPlan = function(plan_id, period){
             BillingService.openSelectPlanModal({ plan_id:plan_id, period:period, allow_choice:false }, function(){
               getPlans();
-              $location.path('settings/billing');
+              $state.go('settings.billing');
             });
           };
 
