@@ -44,7 +44,7 @@ angular.module('datasets')
                         ds2: {
                             squash: true,
                             value: null
-                        },
+                        }
                     }
                 })
                 .state('datasets.detail', {
@@ -52,6 +52,7 @@ angular.module('datasets')
                     controller: 'DatasetsDetailController',
                     controllerAs: 'DatasetsDetail',
                     templateUrl: MODULE_PATH + 'detail/datasets.detail.html'
+                })
                 .state('datasets.edit', {
                     url: '/:datasetId/edit',
                     controller: 'DatasetsEditController',
