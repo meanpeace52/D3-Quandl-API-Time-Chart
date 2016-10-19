@@ -23,6 +23,9 @@ module.exports = function (app) {
         .get(posts.read)
         .put(posts.update)
         .delete(posts.delete);
+
+    app.route('/api/trackpostview/:postId').all(postsPolicy.isAllowed)
+        .post(posts.trackPostView);
         
     // Finish by binding the post middleware
     app.param('postId', posts.postByID);

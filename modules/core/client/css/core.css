@@ -261,6 +261,36 @@ form textarea {
 .tooltip {
   z-index: 9999;
 }
+/* enable absolute positioning */
+.inner-addon {
+  position: relative;
+}
+/* style icon */
+.inner-addon .glyphicon {
+  position: absolute;
+  padding: 10px;
+  pointer-events: none;
+}
+/* align icon */
+.left-addon .glyphicon {
+  left: -20px;
+}
+.right-addon .glyphicon {
+  right: 0;
+}
+/* add padding  */
+.left-addon input {
+  padding-left: 30px;
+}
+.right-addon input {
+  padding-right: 30px;
+}
+.home-posts-search {
+  position: absolute;
+  right: 30px;
+  top: 15px;
+  z-index: 2;
+}
 .task-accordion i {
   margin-left: inherit;
 }
@@ -281,4 +311,7 @@ form textarea {
 }
 .btn-secondary:hover {
   background: #c4c4c4;
+}
+.finance-company-container {
+  margin-top: -56px;
 }

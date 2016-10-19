@@ -15,11 +15,18 @@ angular.module('core').config(['$stateProvider', '$urlRouterProvider',
                 views: {
                     '': {
                         templateUrl: 'modules/core/client/views/home.client.view.html',
+                        controller: 'HomeController',
+                        controllerAs: 'home'
                     },
-                    'posts@home': {
+                    'posts-finance@home': {
                         templateUrl: 'modules/posts/client/list/posts.list.html',
                         controller: 'postsListController',
-                        controllerAs: 'postsList',
+                        controllerAs: 'postsList'
+                    },
+                    'posts-soshsci@home': {
+                        templateUrl: 'modules/posts/client/list/posts.list.html',
+                        controller: 'postsListController',
+                        controllerAs: 'postsList'
                     }
                 }
             })

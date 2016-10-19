@@ -27,7 +27,7 @@ var postSchema = new Schema({
     },
     subject: {
         type: String,
-        enum: ['','finance', 'social science', 'sports', 'other'],
+        enum: ['','finance', 'soshsci', 'other'],
         default: '',
         trim: true
     },
@@ -63,6 +63,13 @@ var postSchema = new Schema({
         type: Number,
         default: 0,
         trim: false
+    },
+    uniquepageviews: {
+        type: Number,
+        default: 0
+    },
+    featured: {
+        type: Boolean
     }
 });
 

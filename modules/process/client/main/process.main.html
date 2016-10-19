@@ -13,30 +13,30 @@
   </div>
   <div class="current-process">
     <div class="current-process-text" ng-if="!ProcessMain.showProcessLoader">
-      Current Selected Process: <span ng-if="ProcessMain.process">{{ProcessMain.process.title}}</span> <span ng-if="!ProcessMain.process">(EMPTY)</span>
+      Current Selected Workflow: <span ng-if="ProcessMain.process">{{ProcessMain.process.title}}</span> <span ng-if="!ProcessMain.process">(EMPTY)</span>
     </div>
     <div class="current-process-text" ng-if="ProcessMain.showProcessLoader">
-      <i class="fa fa-circle-o-notch fa-spin fa-3x fa-fw"></i> Processing {{ProcessMain.process.title}}</span>
+      <i class="fa fa-circle-o-notch fa-spin fa-3x fa-fw"></i> Running {{ProcessMain.process.title}}</span>
     </div>
     <button class="btn btn-default"
             ng-disabled="!ProcessMain.process || !ProcessMain.dataset.rows.length || !ProcessMain.dataset.columns.length"
             ng-if="!ProcessMain.showProcessLoader"
             ng-click="ProcessMain.performProcess()">
-      Perform Process
+      Perform Workflow
     </button>
     <button class="btn btn-default"
             ng-if="ProcessMain.showProcessLoader"
             ng-click="ProcessMain.cancelProcess()">
-      Cancel Process
+      Cancel Workflow
     </button>
     <button class="btn btn-default" ng-disabled="!ProcessMain.process" ng-click="ProcessMain.saveProcess()">Save</button>
     <button class="btn btn-default" ng-disabled="!ProcessMain.process" ng-click="ProcessMain.openModal('edit')">Edit</button>
   </div>
   <div class="pull-right">
-    <button class="btn btn-primary" ng-click="ProcessMain.openModal('create')">Create NEW Process</button>
+    <button class="btn btn-primary" ng-click="ProcessMain.openModal('create')">Create NEW Workflow</button>
     <div class="btn-group" uib-dropdown>
       <button id="dropdown-processes" class="btn btn-default" type="button" uib-dropdown-toggle>
-        Use Saved Process <span class="caret"></span>
+        Use Saved Workflow <span class="caret"></span>
       </button>
       <ul class="uib-dropdown-menu" role="menu" aria-labelledby="dropdown-processes">
         <li role="menuitem" ng-repeat="process in ProcessMain.usersProcesses">
@@ -51,7 +51,7 @@
 
 <div class="content">
   <uib-alert ng-repeat="alert in ProcessMain.alerts" type="{{alert.type}}" close="ProcessMain.closeAlert($index)">{{alert.msg}}</uib-alert>
-  <div class="loader" ng-show="ProcessMain.showLoader">
+  <div class="loader text-center" ng-show="ProcessMain.showLoader">
     <i class="spinner"></i>
   </div>
     <div class="row">

@@ -1,7 +1,8 @@
 <section>
     <div class="row">
         <div class="col-md-12 text-center page-header">
-            <span data-ng-hide="postsList.state === 'home'" class="h2 pull-left">Posts</span>
+            <span data-ng-show="postsList.state != 'home' && postsList.state != 'posts.search'" class="h2 pull-left">Posts</span>
+            <span data-ng-show="postsList.state === 'posts.search'" class="h2 pull-left">Posts search results matching "{{ postsList.value }}"</span>
             <ul data-ng-if="postsList.menuItems" class="list-inline">
                 <li data-ng-repeat="item in postsList.menuItems" data-ui-sref-active="active" data-ng-class="{'active': item === postsList.value}" class="list-item">
                     <a href="" data-ng-click="postsList.getPosts(postsList.field, item)" data-ng-bind="item" class="text-capitalize h4"></a>
