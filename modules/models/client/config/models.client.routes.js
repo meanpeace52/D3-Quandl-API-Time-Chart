@@ -41,7 +41,6 @@
           modelResolve: newModel
         },
         data: {
-          roles: ['user', 'admin'],
           pageTitle: 'Models Create'
         }
       })
@@ -54,7 +53,6 @@
           modelResolve: getModel
         },
         data: {
-          roles: ['user', 'admin'],
           pageTitle: 'Edit Model {{ modelResolve.name }}'
         }
       })
