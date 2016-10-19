@@ -56,7 +56,7 @@ angular.module('posts')
                 });
             };
 
-            $scope.$on("$viewContentLoaded",function(event,viewName){ //listen for when the content is loaded into the view
+            $scope.$on('$viewContentLoaded',function(event,viewName){ //listen for when the content is loaded into the view
                 if (viewName === 'posts-finance@home'){
                     $scope.subject = 'finance';
                 }
