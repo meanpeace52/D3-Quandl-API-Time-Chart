@@ -63,6 +63,10 @@ var postSchema = new Schema({
         type: Number,
         default: 0,
         trim: false
+    },
+    uniquepageviews: {
+        type: Number,
+        default: 0
     }
 });
 
