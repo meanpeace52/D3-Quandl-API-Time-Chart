@@ -67,6 +67,9 @@ var postSchema = new Schema({
     uniquepageviews: {
         type: Number,
         default: 0
+    },
+    featured: {
+        type: Boolean
     }
 });
 
