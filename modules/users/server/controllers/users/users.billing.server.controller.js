@@ -13,9 +13,7 @@ var path = require('path'),
     config = require(path.resolve('./config/config')),
     stripe = require('stripe')(config.stripe.secret_key),
     errorHandler = require(path.resolve('./modules/core/server/controllers/errors.server.controller')),
-    nodemailer = require('nodemailer');
-
-var smtpTransport = nodemailer.createTransport(config.mailer.options);
+    email = require(path.resolve('./modules/core/server/controllers/emails.server.controller'));
 
 var plans = [
       {name:'Premium', price:10,id:'premium',stripe_id:'premium_monthly', period:1},
@@ -55,7 +53,7 @@ var plans = [
           user.stripe_subscription,
           function(err, subscription) {
             if(err){
-              res.status(err.status).send({message:err.message});
+              res.status(err.status).json({message:err.message});
             } else {
               res.json(subscription);
             }
@@ -85,7 +83,7 @@ var plans = [
           user.stripe_customer,
           function(err, customer) {
             if(err){
-              res.status(err.status).send({message:err.message});
+              res.status(err.status).json({message:err.message});
             } else {
               res.json(returnCustomerBillingInfo(customer));
             }
@@ -108,7 +106,7 @@ var plans = [
           {source: req.body.token },
           function(err, card) {
             if(err){
-              res.status(err.status).send({message:err.message});
+              res.status(err.status).json({message:err.message});
             } else {
               stripe.customers.update(user.stripe_customer, {
                 default_source: card.id
@@ -119,7 +117,7 @@ var plans = [
           }
         );
       }else{
-        res.status(400).send({message:'no user or customer'});
+        res.status(400).json({message:'no user or customer'});
       }
     };
 
@@ -135,7 +133,7 @@ var plans = [
           { limit: 100,customer:user.stripe_customer },
           function(err, invoices) {
             if(err){
-              res.status(err.status).send({message:err.message});
+              res.status(err.status).json({message:err.message});
             } else {
               res.json(invoices.data);
             }
@@ -151,91 +149,72 @@ var plans = [
     * Subscribe a user to a plan
     */
     exports.subscribeToPlan = function (req, res) {
+
       var user = req.user, stripe_plan, user_plan;
+      if (!user) return res.status(400).json({message:'user not logged in'});
       for (var i = 0; i < plans.length; i++) {
         if(plans[i].stripe_id == req.body.plan){
           stripe_plan = plans[i].stripe_id;
           user_plan = plans[i].id;
         }
       }
-      if(!stripe_plan){
-        res.status(400).send({message:'plan not found'});
-      }
-      if (user) {
-        if(user.stripe_customer){
-          stripe.customers.createSource(
-            user.stripe_customer,
-            {source: req.body.token },
-            function(err, card) {
-              if(err){
-                res.status(err.status).send({message:err.message});
-              } else {
-                stripe.customers.update(user.stripe_customer, {
-                  default_source: card.id
-                }, function(err, customer) {
-                  if(user.stripe_subscription){
-                    updateSubscription(
-                      user.stripe_subscription,
-                      stripe_plan,
-                      user_plan,
-                      user,
-                      function(err, subscription_id){
-                        if(err){
-                          res.status(err.status).send({message:err.message});
-                        } else {
-                          res.json(user_plan);
-                        }
-                      }
-                    );
-                  }else{
-                    subscribeCustomerToPlan(
-                      user.stripe_customer,
-                      stripe_plan,
-                      user_plan,
-                      user,
-                      function(err, subscription_id){
-                        if(err){
-                          res.status(err.status).send({message:err.message});
-                        } else {
-                          res.json(user_plan);
-                        }
-                      }
-                    );
-                  }
-                });
-              }
-            }
-          );
-        } else {
-          createCustomer(
-            req.body.token,
-            user,
-            function(err, customer_id){
-              if(err){
-                res.status(err.status).send({message:err.message});
-              } else {
-                subscribeCustomerToPlan(
-                  customer_id,
+      if(!stripe_plan) return res.status(400).json({message:'plan not found'});
+
+      if(user.stripe_customer){
+        stripe.customers.createSource(
+          user.stripe_customer,
+          {source: req.body.token },
+          function(err, card) {
+            if(err) return res.status(err.status).json({message:err.message});
+            stripe.customers.update(user.stripe_customer, {
+              default_source: card.id
+            }, function(err, customer) {
+              if(user.stripe_subscription){
+                updateSubscription(
+                  user.stripe_subscription,
                   stripe_plan,
                   user_plan,
                   user,
                   function(err, subscription_id){
-                    if(err){
-                      res.status(err.status).send({message:err.message});
-                    } else {
-                      res.json(user_plan);
-                    }
+                    if(err) return res.status(err.status).json({message:err.message});
+                    res.json(user_plan);
+                  }
+                );
+              }else{
+                subscribeCustomerToPlan(
+                  user.stripe_customer,
+                  stripe_plan,
+                  user_plan,
+                  user,
+                  function(err, subscription_id){
+                    if(err) return res.status(err.status).json({message:err.message});
+                    res.json(user_plan);
                   }
                 );
               }
-            }
-          );
-        }
+            });
+          }
+        );
       } else {
-        res.status(400).send({message:'user not logged in'});
+        createCustomer(
+          req.body.token,
+          user,
+          function(err, customer_id){
+            if(err) return res.status(err.status).json({message:err.message});
+            subscribeCustomerToPlan(
+              customer_id,
+              stripe_plan,
+              user_plan,
+              user,
+              function(err, subscription_id){
+                if(err) return res.status(err.status).json({message:err.message});
+                res.json(user_plan);
+              }
+            );
+          }
+        );
       }
     };
-
 
 
 
@@ -243,27 +222,29 @@ var plans = [
      * stripe webhook listener
      */
 
-    exports.getStripeWebhookEvent = function (req, res) {
+    exports.onStripeWebhookEvent = function (req, res) {
       var event_json;
       try {
           event_json = JSON.parse(req.body);
       }
       catch(err) {
-          return res.status('400').send({message:err.message});
+          return res.status('400').send(err.message);
       }
 
       stripe.events.retrieve(event_json.id, function(err, event) {
         StripeEvent.findById(event_json.id, function(err,stripeEvent){
-          if(err) return res.status('400').send({message:err.message});
+          if(err) return res.status('400').send(err.message);
           if (stripeEvent){
             res.status(200).send('already processed');
           } else{
-            var next = function(){
+            var next = function(err){
+              if(err) return res.status(200).send(err);
+              if(stripeEvent) return res.status(200).send('ok');
               stripeEvent = new StripeEvent();
               stripeEvent._id = event_json.id;
               stripeEvent.data = event;
               stripeEvent.save(function(err){
-                if(err) throw(err);
+                if(err) return res.status('400').send(err.message);
                 res.status(200).send('ok');
               });
             };
@@ -272,36 +253,34 @@ var plans = [
             if(event_json.type === 'invoice.payment_succeeded'){
               customer = event_json.data.object.customer;
               invoice = event_json.data.object;
-
               User.findOne({stripe_customer: customer}, function(err, user){
-                if(err) return res.status('400').send({message:err.message});
+                if(err) return res.status('400').send(err.message);
 
-                sendEmail(user.email, 'You have a new invoice', {invoice:invoice, name:user.firstName+' '+user.lastName},
+                email.send(user.email, 'You have a new invoice', {invoice:invoice, name:user.displayName},
                   'modules/users/server/templates/invoice-email', res, next);
               });
 
             } else if(event_json.type === 'invoice.payment_failed'){
               customer = event_json.data.object.customer;
               invoice = event_json.data.object;
-
               User.findOne({stripe_customer: customer}, function(err, user){
-                if(err) return res.status('400').send({message:err.message});
+                if(err) return res.status('400').send(err.message);
 
-                sendEmail(user.email, 'Your payment failed', {invoice:invoice, name:user.firstName+' '+user.lastName},
+                email.send(user.email, 'Your payment failed', {invoice:invoice, name:user.displayName},
                   'modules/users/server/templates/billing-failed-email', res, next);
               });
 
             } else if(event_json.type === 'customer.subscription.deleted'){
-              customer = event_json.data;
+              customer = event_json.data.object.customer;
 
               User.findOneAndUpdate(
                 {stripe_customer: customer},
                 {plan:'free', stripe_subscription: null},
                 {new: false},
                 function(err, user){
-                  if(err) return res.status('400').send({message:err.message});
+                  if(err) return res.status('400').send(err.message);
 
-                  sendEmail(user.email, 'Your subscription was cancelled', {name:user.firstName+' '+user.lastName},
+                  email.send(user.email, 'Your subscription was cancelled', {name:user.displayName},
                     'modules/users/server/templates/subscription-cancelled-email', res, next);
               });
 
@@ -312,27 +291,6 @@ var plans = [
         });
       });
     };
-
-
-
-    function sendEmail(email, subject, merge, template, res, next) {
-      merge.appName = config.app.title;
-      res.render(
-        path.resolve(template),
-        merge,
-        function (err, html) {
-          if(err) return next(err);
-          var mailOptions = {
-            to: email,
-            from: config.mailer.from,
-            subject: subject,
-            html: html
-          };
-          smtpTransport.sendMail(mailOptions, function (err) {
-            next(err);
-          });
-        });
-    }
 
 
     function subscribeCustomerToPlan(customer_id, plan_id, plan, user , next){
@@ -380,9 +338,6 @@ var plans = [
          }
       });
    }
-
-
-
 
    function createCustomer(token, user, next){
      stripe.customers.create({

@@ -39,7 +39,8 @@ module.exports = function (app) {
 
 
   // stripe webhook route
-  app.route('/api/stripe/webhook').post(users.getStripeWebhookEvent);
+  app.route('/api/stripe/webhook').post(users.onStripeWebhookEvent);
+
 
   // Setting up the users profile api
   app.route('/api/users/search').get(users.search);
