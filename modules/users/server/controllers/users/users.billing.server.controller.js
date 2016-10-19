@@ -238,13 +238,10 @@ var plans = [
             res.status(200).send('already processed');
           } else{
             var next = function(err){
-              if(err) return res.status(200).send(err);
-              if(stripeEvent) return res.status(200).send('ok');
               stripeEvent = new StripeEvent();
               stripeEvent._id = event_json.id;
               stripeEvent.data = event;
               stripeEvent.save(function(err){
-                if(err) return res.status('400').send(err.message);
                 res.status(200).send('ok');
               });
             };
