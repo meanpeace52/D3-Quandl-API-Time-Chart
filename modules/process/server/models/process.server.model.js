@@ -28,6 +28,10 @@ var ProcessSchema = new Schema({
         type: Schema.ObjectId,
         ref: 'User'
     },
+    dataset: {
+        type: Schema.ObjectId,
+        ref: 'Dataset'
+    },
     access: {
         type: [{
             type: String,
