@@ -73,7 +73,7 @@ module.exports = {
       transport: process.env.MAILER_TRANSPORT || 'ses',
       accessKeyId: process.env.AWS_KEY_ID || 'AKIAJJFR7HFHM2ETEVCQ',
       secretAccessKey: process.env.AWS_SECRET || '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',
-      SeviceUrl:process.env.AWS_SES_SERVICEURL || "https://email.us-east-1.amazonaws.com",
+      SeviceUrl:process.env.AWS_SES_SERVICEURL || 'https://email.us-east-1.amazonaws.com',
       rateLimit:process.env.AWS_SES_RATELIMIT || 14
     }
   },
