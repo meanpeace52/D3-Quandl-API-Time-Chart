@@ -188,36 +188,43 @@ exports.postByID = function (req, res, next, id) {
 };
 
 exports.trackPostView = function (req, res) {
-    PostView.findOne({
-        post : req.post._id,
-        user : req.user._id
-    }, function(err, view){
-        if (err){
-            res.status(err.status).json(err);
-        }
-        else {
-            if (!view){
-                var postview = new PostView({
-                    post : req.post._id,
-                    user : req.user._id,
-                    created : new Date()
-                });
-                postview.save();
-
-                Post.update(
-                    { _id : req.post._id },
-                    { $inc: { uniquepageviews: 1 } }, function(err, result){
-                        if (err){
-
-                        }
+    // Only track if its not the owner of the post
+    if (req.post.user._id !== req.user._id){
+        PostView.findOne({
+            post : req.post._id,
+            user : req.user._id
+        }, function(err, view){
+            if (err){
+                res.status(err.status).json(err);
+            }
+            else {
+                if (!view){
+                    var postview = new PostView({
+                        post : req.post._id,
+                        user : req.user._id,
+                        created : new Date()
                     });
+                    postview.save();
 
-                res.send({ success : true });
+                    Post.update(
+                        { _id : req.post._id },
+                        { $inc: { uniquepageviews: 1 } }, function(err, result){
+                            if (err){
+
+                            }
+                        });
+
+                    res.send({ success : true });
+                }
+                else{
+                    res.send({ success : true });
+                }
             }
-            else{
-                res.status(200).send({ success : true });
-            }
-        }
-    });
+        });
+    }
+    else{
+        res.send({ success : true });
+    }
+
 
 };
