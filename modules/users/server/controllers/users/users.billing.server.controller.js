@@ -34,10 +34,10 @@ var plans = [
      */
     exports.getMyPlan = function (req, res) {
       var user = req.user;
+      if (!user) return res.status(400).json({message:'user not logged in'});
       for (var i = 0; i < plans.length; i++) {
         if(plans[i].id == user.plan){
-          res.json(plans[i]);
-          break;
+          return res.json(plans[i]);
         }
       }
       res.json({name:'Free',id:'free'});
@@ -100,7 +100,8 @@ var plans = [
      */
     exports.updateCreditCard = function (req, res) {
       var user = req.user;
-      if(user && user.stripe_customer){
+      if (!user) return res.status(400).json({message:'user not logged in'});
+      if(user.stripe_customer){
         stripe.customers.createSource(
           user.stripe_customer,
           {source: req.body.token },
@@ -117,7 +118,7 @@ var plans = [
           }
         );
       }else{
-        res.status(400).json({message:'no user or customer'});
+        res.status(400).json({message:'user has no stripe customer'});
       }
     };
 
@@ -128,6 +129,7 @@ var plans = [
      */
     exports.getInvoices = function (req, res) {
       var user = req.user;
+      if (!user) return res.status(400).json({message:'user not logged in'});
       if(user.stripe_customer){
         stripe.invoices.list(
           { limit: 100,customer:user.stripe_customer },
