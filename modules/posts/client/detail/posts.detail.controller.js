@@ -36,6 +36,13 @@ angular.module('posts')
                 vm.notfound = true;
             });
 
+            // This is a silent event
+            posts.trackpostview($stateParams.postId)
+                .then()
+                .catch(function (error) {
+                    $log.error(error);
+                });
+
             vm.changeTab = function(tab){
                 vm.activeTab = tab;
             };
@@ -76,4 +83,6 @@ angular.module('posts')
                         toastr.error('Error deleting post.');
                     });
             };
+
+
  }]);
