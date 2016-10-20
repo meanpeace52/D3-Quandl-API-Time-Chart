@@ -83,6 +83,18 @@ angular.module('users').factory('BillingService', ['$http', '$window','toastr', 
       }
     };
 
+    billing.createAccount = function(data, next){
+      if(Authentication.user){
+        return $http.post('/api/users/account', data).then(function successCallback(response) {
+          next(response.data);
+        }, function errorCallback(response) {
+          toastr.error('Could not create your account');
+        });
+      } else {
+        toastr.error('You need to be logged in');
+      }
+    };
+
     billing.openSelectPlanModal = function(options, next){
       this.getPlans(function(plans){
         var modalInstance = $uibModal.open({

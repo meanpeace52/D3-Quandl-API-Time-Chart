@@ -43,6 +43,33 @@ var plans = [
       res.json({name:'Free',id:'free'});
     };
 
+
+    /**
+     * create stripe managed account
+     */
+    exports.createManagedAccount = function (req, res) {
+      var user = req.user;
+      if (!user) return res.status(400).json({message:'user not logged in'});
+      var data = {
+        managed: true,
+        country: 'US',
+        legal_entity:req.body.legal_entity};
+      delete data.legal_entity.dob.text;
+      stripe.accounts.create({
+        managed: true,
+        country: 'US',
+        legal_entity:req.body.legal_entity
+      }, function(err, account) {
+        if(err) return res.status(400).json({message:err.message});
+        user.stripe_account = account.id;
+        user.save(function(err, user){
+            if(err) return res.status(400).json({message:err.message});
+            res.json({id:account.id});
+        });
+      });
+
+    };
+
     /**
      * Get the user's subscription
      */

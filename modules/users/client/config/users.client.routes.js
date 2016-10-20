@@ -42,6 +42,10 @@ angular.module('users').config(['$stateProvider',
               url: '/billing',
               templateUrl: 'modules/users/client/views/settings/billing.client.view.html'
           })
+          .state('settings.gettingpaid', {
+              url: '/gettingpaid',
+              templateUrl: 'modules/users/client/views/settings/gettingpaid.client.view.html'
+          })
           .state('pricing', {
               url: '/pricing',
               templateUrl: 'modules/users/client/views/pricing/pricing.client.view.html'

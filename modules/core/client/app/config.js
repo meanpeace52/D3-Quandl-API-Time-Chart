@@ -18,7 +18,8 @@ var ApplicationConfiguration = (function () {
         'ui.utils',
         'angular-loading-bar',
         'toastr',
-        'angularPayments'
+        'angularPayments',
+        'angularDob'
     ];
 
     // Add a new vertical module

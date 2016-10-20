@@ -36,7 +36,7 @@ module.exports = function (app) {
   app.route('/api/users/plans').get(users.getPlans);
   app.route('/api/users/myplan').get(users.getMyPlan);
   app.route('/api/users/mysubscription').get(users.getMySubscription);
-
+  app.route('/api/users/account').post(users.createManagedAccount);
 
   // stripe webhook route
   app.route('/api/stripe/webhook').post(users.onStripeWebhookEvent);

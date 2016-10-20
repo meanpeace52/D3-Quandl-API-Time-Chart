@@ -97,6 +97,9 @@ var UserSchema = new Schema({
     stripe_subscription: {
         type: String,
     },
+    stripe_account: {
+        type: String,
+    },
     updated: {
         type: Date
     },
