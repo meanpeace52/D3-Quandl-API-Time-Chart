@@ -7,6 +7,7 @@ var path = require('path'),
     mongoose = require('mongoose'),
     _ = require('lodash'),
     Post = mongoose.model('Post'),
+    PostView = mongoose.model('PostView'),
     errorHandler = require(path.resolve('./modules/core/server/controllers/errors.server.controller'));
 
 /**
@@ -159,4 +160,71 @@ exports.postByID = function (req, res, next, id) {
         }
         next();
     });
+};
+
+exports.postByID = function (req, res, next, id) {
+
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+        return res.status(400).send({
+            message: 'post is invalid'
+        });
+    }
+
+    Post.findById(id).populate('user', 'username').exec(function (err, post) {
+        if (err) {
+            return next(err);
+        }
+        else if (!post) {
+            return res.status(404).send({
+                message: 'No post with that identifier has been found'
+            });
+        }
+        req.post = post;
+        if (!req.body.post){
+            req.body.post = post;
+        }
+        next();
+    });
+};
+
+exports.trackPostView = function (req, res) {
+    // Only track if its not the owner of the post
+    if (req.post.user._id !== req.user._id){
+        PostView.findOne({
+            post : req.post._id,
+            user : req.user._id
+        }, function(err, view){
+            if (err){
+                res.status(err.status).json(err);
+            }
+            else {
+                if (!view){
+                    var postview = new PostView({
+                        post : req.post._id,
+                        user : req.user._id,
+                        created : new Date()
+                    });
+                    postview.save();
+
+                    Post.update(
+                        { _id : req.post._id },
+                        { $inc: { uniquepageviews: 1 } }, function(err, result){
+                            if (err){
+
+                            }
+                        });
+
+                    res.send({ success : true });
+                }
+                else{
+                    res.send({ success : true });
+                }
+            }
+        });
+    }
+    else{
+        res.send({ success : true });
+    }
+
+
 };
