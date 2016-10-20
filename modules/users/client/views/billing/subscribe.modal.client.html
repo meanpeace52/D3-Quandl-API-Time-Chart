@@ -22,7 +22,7 @@
     <div class="row">
       <div class="col-sm-12 text-center">
         <h2 ng-if="!allow_choice">{{selectedPlan.name}}</h2>
-        <h3>Invoicing : ${{price}} / {{selectedPeriod.name}} <small>${{price/selectedPeriod.val | number:2}} / month</small></h3>
+        <h3>${{price}} / {{selectedPeriod.period}} <small>( ${{price/selectedPeriod.val | number:2}} / Month )</small></h3>
         <p>You will be charged ${{price}} up-front on your credit card</p>
       </div>
     </div>

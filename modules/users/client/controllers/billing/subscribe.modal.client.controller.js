@@ -9,7 +9,7 @@ angular.module('users')
         $uibModalInstance.close();
       };
       $scope.planOptions = [{id:'premium',name:'Premium'},{id:'small_business',name:'Small Business'},{id:'enterprise',name:'Enterprise'}];
-      $scope.periodOptions = [{val:12,name:'Yearly'},{val:6,name:'6 Months'},{val:1,name:'Monthly'}];
+      $scope.periodOptions = [{val:12,name:'Yearly',period:'Year'},{val:6,name:'6 Months',period:'6 Months'},{val:1,name:'Monthly',period:'Month'}];
       for (var i = 0; i < $scope.planOptions.length; i++) {
         if($scope.planOptions[i].id == options.plan_id) $scope.selectedPlan = $scope.planOptions[i];
       }
