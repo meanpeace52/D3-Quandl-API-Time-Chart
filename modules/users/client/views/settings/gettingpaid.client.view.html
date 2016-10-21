@@ -71,10 +71,15 @@
 
     <div class="form-group">
       <label class="control-label" for="owner_ssn_last_4">Social Security Number:</label>
-      <input  class="form-control" name="owner_ssn_last_4" placeholder="9999" maxlength="4" type="text" ng-model="legal_entity.ssn_last_4" required>
+      <input  class="form-control" name="owner_ssn_last_4" placeholder="9999" maxlength="4" type="text" ng-model="legal_entity.ssn_last_4" >
       We use the last four digits to verify your identity.
     </div>
 
+    <div class="form-group">
+      <label class="control-label" for="owner_ssn_last_4">Personal id number:</label>
+      <input  class="form-control" name="personal_id_number" placeholder="12345678910" maxlength="20" type="text" ng-model="legal_entity.personal_id_number" >
+      We use the last four digits to verify your identity.
+    </div>
 
     <h2>Bank details</h2>
     <p class="explanation bank_extra">Your bank account must be a checking account.</p>

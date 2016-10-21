@@ -3,7 +3,7 @@
 angular.module('users').controller('GettingPaidController', ['$scope','Authentication','BillingService','$uibModal','toastr',
   function ($scope,Authentication,BillingService,$uibModal,toastr) {
     $scope.user = Authentication.user;
-    $scope.legal_entity = {address:{}};
+    $scope.legal_entity = {address:{},type:'individual'};
     $scope.countries = [
       {code:'AU', name:'Australia'},
       {code:'AT', name:'Austria'},
@@ -49,9 +49,10 @@ angular.module('users').controller('GettingPaidController', ['$scope','Authentic
         toastr.error('Please fix the errors before you can continue.');
         $scope.$broadcast('show-errors-check-validity', 'form');
       } else {
-        console.log($scope.legal_entity);
+        delete $scope.legal_entity.dob.text;
+        if($scope.legal_entity.personal_id_number) delete $scope.legal_entity.ssn_last_4;
         BillingService.createAccount($scope.legal_entity, function successCallback(response) {
-            console.log(response);
+
         });
       }
     };

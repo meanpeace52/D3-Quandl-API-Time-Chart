@@ -53,13 +53,14 @@ var plans = [
       var data = {
         managed: true,
         country: 'US',
-        legal_entity:req.body.legal_entity};
-      delete data.legal_entity.dob.text;
-      stripe.accounts.create({
-        managed: true,
-        country: 'US',
-        legal_entity:req.body.legal_entity
-      }, function(err, account) {
+        legal_entity:req.body,
+        tos_acceptance: {
+          date: Math.floor(Date.now() / 1000),
+          ip: req.connection.remoteAddress
+        }
+      };
+
+      stripe.accounts.create(data, function(err, account) {
         if(err) return res.status(400).json({message:err.message});
         user.stripeAccount = account.id;
         user.save(function(err, user){
@@ -67,8 +68,28 @@ var plans = [
             res.json({id:account.id});
         });
       });
-
     };
+
+
+    /**
+     * create stripe managed account
+     */
+    exports.getManagedAccount = function (req, res) {
+      var user = req.user;
+      if (!user) return res.status(400).json({message:'User is not signed in'});
+      if (user.stripeAccount){
+        stripe.accounts.retrieve(
+          user.stripeAccount,
+          function(err, account) {
+            if(err) return res.status(400).json({message:err.message});
+            res.json(account);
+          }
+        );
+      } else {
+        res.json({});
+      }
+    };
+
 
     /**
      * Get the user's subscription
@@ -188,7 +209,6 @@ var plans = [
         }
       }
       if(!stripe_plan) return res.status(400).json({message:'plan not found'});
-
       if(user.stripeCustomer){
         stripe.customers.createSource(
           user.stripe_customer,

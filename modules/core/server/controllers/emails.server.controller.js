@@ -15,11 +15,6 @@ var mailTransport = nodemailer.createTransport(sesTransport({
     rateLimit: config.mailer.options.rateLimit
 }));
 
-
-
-
-
-
 /**
  * send email
  */
