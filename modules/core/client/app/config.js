@@ -17,7 +17,8 @@ var ApplicationConfiguration = (function () {
         'ui.router',
         'ui.utils',
         'angular-loading-bar',
-        'toastr'
+        'toastr',
+        'angularPayments'
     ];
 
     // Add a new vertical module
@@ -35,4 +36,3 @@ var ApplicationConfiguration = (function () {
         registerModule: registerModule
     };
 })();
-

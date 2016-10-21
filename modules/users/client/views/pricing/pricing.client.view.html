@@ -1,0 +1,42 @@
+<section ng-controller="PricingController">
+  <div style="height:50px"></div>
+  <div class="page-header">
+    <h1>Pricing</h1>
+  </div>
+  <div class="row">
+    <div class="col-md-3 col-xs-12 col-sm-6"  ng-repeat="(key, plan) in plans">
+      <div class="panel panel-{{plan.color}} text-center">
+        <div ng-if="plan.id != 'free'"><h3>{{plan.name}}</h3>
+        from $<span style="font-size:40px">{{plan.from | number:2}}</span><br>/month<br><small>* based on a yearly plan</small></div>
+        <div ng-if="plan.id == 'free'"><h3>{{plan.name}}</h3>
+        $<span style="font-size:40px">0</span><br> Forever<br><small>&nbsp;</small></div>
+        <ul class="list-group">
+          <li ng-repeat="(key, feature) in plan.features" class="list-group-item">
+            <span ng-if="feature.name" >{{feature.name}}
+              <span ng-if="feature.value===true" class="fa fa-check text-success"></span>
+              <span ng-if="feature.value===false" class="fa fa-times text-danger"></span>
+              <span ng-if="feature.value!==true && feature.value!==false"> {{feature.value}}</span>
+            </span>
+            <span ng-if="!feature.name">{{feature}}</span>
+          </li>
+          <li ng-repeat="(key, p) in plan.periods" class="list-group-item text-left">
+            <label>
+              <input type="radio" ng-model="planChoice[plan.id].period" value="{{p.period}}">
+              $<span style="font-size:20px">{{p.price}}</span>/
+              <span ng-if="p.period===1">Month</span>
+              <span ng-if="p.period===6">6 Months</span>
+              <span ng-if="p.period===12">Year</span>
+            </label>
+          </li>
+        </ul>
+
+        <div class="panel-body" ng-if="plan.id != 'free'">
+          <button ng-if="planChoice[plan.id].period" class="btn btn-lg btn-default btn-block" ng-click="selectPlan(plan.id, planChoice[plan.id].period)">Sign Up</button>
+          <button ng-if="!planChoice[plan.id].period" class="btn btn-lg btn-default btn-block disabled">Sign Up</button>
+        </div>
+
+      </div>
+    </div>
+
+  </div>
+</section>

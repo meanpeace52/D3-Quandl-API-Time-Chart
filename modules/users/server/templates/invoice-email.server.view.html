@@ -1,0 +1,17 @@
+
+<p>Dear {{name}},</p>
+<br />
+<p>
+  A new invoice has been payed at {{appName}}
+</p>
+
+<div>Amount : ${{invoice.amount_due / 100}} </div>
+{% for invoice in invoice.lines.data %}
+<div>${{invoice.amount / 100}} {{invoice.description}} </div>
+{% endfor %}
+
+<div>Total : ${{invoice.total / 100}}</div>
+
+<br />
+<br />
+<p>The {{appName}} Support Team</p>

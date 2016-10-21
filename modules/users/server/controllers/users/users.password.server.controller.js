@@ -8,11 +8,10 @@ var path = require('path'),
   errorHandler = require(path.resolve('./modules/core/server/controllers/errors.server.controller')),
   mongoose = require('mongoose'),
   User = mongoose.model('User'),
-  nodemailer = require('nodemailer'),
   async = require('async'),
-  crypto = require('crypto');
+  crypto = require('crypto'),
+  email = require(path.resolve('./modules/core/server/controllers/emails.server.controller'));
 
-var smtpTransport = nodemailer.createTransport(config.mailer.options);
 
 /**
  * Forgot for reset password (forgot POST)
@@ -61,34 +60,24 @@ exports.forgot = function (req, res, next) {
       if (config.secure && config.secure.ssl === true) {
         httpTransport = 'https://';
       }
-      res.render(path.resolve('modules/users/server/templates/reset-password-email'), {
-        name: user.displayName,
-        appName: config.app.title,
-        url: httpTransport + req.headers.host + '/api/auth/reset/' + token
-      }, function (err, emailHTML) {
-        done(err, emailHTML, user);
-      });
-    },
-    // If valid email, send reset email using service
-    function (emailHTML, user, done) {
-      var mailOptions = {
-        to: user.email,
-        from: config.mailer.from,
-        subject: 'Password Reset',
-        html: emailHTML
-      };
-      smtpTransport.sendMail(mailOptions, function (err) {
-        if (!err) {
-          res.send({
-            message: 'An email has been sent to the provided email with further instructions.'
-          });
-        } else {
-          return res.status(400).send({
-            message: 'Failure sending email'
-          });
-        }
-
-        done(err);
+      email.send(user.email, 'Password Reset', {
+          name: user.displayName,
+          appName: config.app.title,
+          url: httpTransport + req.headers.host + '/api/auth/reset/' + token
+        },
+        'modules/users/server/templates/reset-password-email',
+        res,
+        function (err) {
+          if (!err) {
+            res.send({
+              message: 'An email has been sent to the provided email with further instructions.'
+            });
+          } else {
+            return res.status(400).send({
+              message: 'Failure sending email'
+            });
+          }
+          done(err);
       });
     }
   ], function (err) {
@@ -173,24 +162,14 @@ exports.reset = function (req, res, next) {
       });
     },
     function (user, done) {
-      res.render('modules/users/server/templates/reset-password-confirm-email', {
-        name: user.displayName,
-        appName: config.app.title
-      }, function (err, emailHTML) {
-        done(err, emailHTML, user);
-      });
-    },
-    // If valid email, send reset email using service
-    function (emailHTML, user, done) {
-      var mailOptions = {
-        to: user.email,
-        from: config.mailer.from,
-        subject: 'Your password has been changed',
-        html: emailHTML
-      };
-
-      smtpTransport.sendMail(mailOptions, function (err) {
-        done(err, 'done');
+      email.send(user.email, 'Your password has been changed', {
+          name: user.displayName,
+          appName: config.app.title
+        },
+        'modules/users/server/templates/reset-password-confirm-email',
+        res,
+        function (err) {
+          done(err, 'done');
       });
     }
   ], function (err) {

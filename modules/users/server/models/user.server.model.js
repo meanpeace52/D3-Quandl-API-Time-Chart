@@ -87,6 +87,16 @@ var UserSchema = new Schema({
         default: ['user'],
         required: 'Please provide at least one role'
     },
+    plan: {
+        type: String,
+        default: 'free'
+    },
+    stripe_customer: {
+        type: String,
+    },
+    stripe_subscription: {
+        type: String,
+    },
     updated: {
         type: Date
     },

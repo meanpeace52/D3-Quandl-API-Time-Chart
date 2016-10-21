@@ -40,7 +40,8 @@
     "handlebars": "~4.0.5",
     "js-rbroker-framework": "git@github.com:Microsoft/js-rbroker-framework.git#~7.4.0",
     "angular-loading-bar": "^0.9.0",
-    "angular-toastr": "^2.1.1"
+    "angular-toastr": "^2.1.1",
+    "angular-payments": "*"
   },
   "resolutions": {
     "objectpath": "~1.1.0",
