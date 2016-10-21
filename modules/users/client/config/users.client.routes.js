@@ -43,12 +43,12 @@ angular.module('users').config(['$stateProvider',
               url: '/pricing',
               templateUrl: 'modules/users/client/views/pricing/pricing.client.view.html'
           })
-	      .state('authentication', {
-	            abstract: true,
-	            url: '/authentication',
-	            templateUrl: 'modules/users/client/views/authentication/authentication.client.view.html',
-	            controller: 'AuthenticationController'
-	      })
+            .state('authentication', {
+                abstract: true,
+                url: '/authentication',
+                templateUrl: 'modules/users/client/views/authentication/authentication.client.view.html',
+                controller: 'AuthenticationController'
+            })
           .state('authentication.signup', {
               url: '/signup',
               templateUrl: 'modules/users/client/views/authentication/signup.client.view.html',
