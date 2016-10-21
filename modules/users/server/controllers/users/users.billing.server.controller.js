@@ -36,7 +36,7 @@ var plans = [
       var user = req.user;
       if (!user) return res.status(400).json({message:'user not logged in'});
       for (var i = 0; i < plans.length; i++) {
-        if(plans[i].id == user.plan){
+        if(plans[i].id === user.plan){
           return res.json(plans[i]);
         }
       }
@@ -182,7 +182,7 @@ var plans = [
       var user = req.user, stripe_plan, user_plan;
       if (!user) return res.status(400).json({message:'user not logged in'});
       for (var i = 0; i < plans.length; i++) {
-        if(plans[i].stripe_id == req.body.plan){
+        if(plans[i].stripe_id === req.body.plan){
           stripe_plan = plans[i].stripe_id;
           user_plan = plans[i].id;
         }
@@ -252,23 +252,21 @@ var plans = [
      */
 
     exports.onStripeWebhookEvent = function (req, res) {
-      var event_json;
-      try {
-          event_json = JSON.parse(req.body);
+      if(!req.body || req.body.object !== 'event' || !req.body.id) {
+        return res.status('400').send('Event data not included');
       }
-      catch(err) {
-          return res.status('400').send(err.message);
+      if (req.body.id === 'evt_00000000000000'){
+        return res.status(200).end();
       }
-
-      stripe.events.retrieve(event_json.id, function(err, event) {
-        StripeEvent.findById(event_json.id, function(err,stripeEvent){
+      stripe.events.retrieve(req.body.id, function(err, event) {
+        StripeEvent.findById(event.id, function(err,stripeEvent){
           if(err) return res.status('400').send(err.message);
           if (stripeEvent){
             res.status(200).send('already processed');
           } else{
             var next = function(err){
               stripeEvent = new StripeEvent();
-              stripeEvent._id = event_json.id;
+              stripeEvent._id = event.id;
               stripeEvent.data = event;
               stripeEvent.save(function(err){
                 res.status(200).send('ok');
@@ -276,9 +274,9 @@ var plans = [
             };
             var customer, invoice;
 
-            if(event_json.type === 'invoice.payment_succeeded'){
-              customer = event_json.data.object.customer;
-              invoice = event_json.data.object;
+            if(event.type === 'invoice.payment_succeeded'){
+              customer = event.data.object.customer;
+              invoice = event.data.object;
               User.findOne({stripe_customer: customer}, function(err, user){
                 if(err) return res.status('400').send(err.message);
 
@@ -286,9 +284,9 @@ var plans = [
                   'modules/users/server/templates/invoice-email', res, next);
               });
 
-            } else if(event_json.type === 'invoice.payment_failed'){
-              customer = event_json.data.object.customer;
-              invoice = event_json.data.object;
+            } else if(event.type === 'invoice.payment_failed'){
+              customer = event.data.object.customer;
+              invoice = event.data.object;
               User.findOne({stripe_customer: customer}, function(err, user){
                 if(err) return res.status('400').send(err.message);
 
@@ -296,8 +294,8 @@ var plans = [
                   'modules/users/server/templates/billing-failed-email', res, next);
               });
 
-            } else if(event_json.type === 'customer.subscription.deleted'){
-              customer = event_json.data.object.customer;
+            } else if(event.type === 'customer.subscription.deleted'){
+              customer = event.data.object.customer;
 
               User.findOneAndUpdate(
                 {stripe_customer: customer},
@@ -387,7 +385,7 @@ var plans = [
 
    function returnCustomerBillingInfo(customer){
      for (var i = 0; i < customer.sources.data.length; i++) {
-       if(customer.sources.data[i].id == customer.default_source){
+       if(customer.sources.data[i].id === customer.default_source){
          var fields = ['last4','brand','country','exp_month','exp_year','funding','name'];
          var billing = {};
          for (var j = 0; j < fields.length; j++) {
