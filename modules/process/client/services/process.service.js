@@ -25,9 +25,9 @@ angular.module('process')
         getSelectedProcess: function() {
           return currentProcess;
         },
-        getByUser: function(userId) {
+        getByUser: function(datasetId, userId) {
           return $http({
-            url: 'api/process/user/' + userId,
+            url: 'api/process/user/' + userId + '?dataset=' + datasetId,
             method: 'GET'
           }).then(function(res) {
               return res.data;

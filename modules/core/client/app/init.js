@@ -33,10 +33,9 @@ angular.module(ApplicationConfiguration.applicationModuleName, ApplicationConfig
         
         // Check authentication before changing state
         $rootScope.$on('$stateChangeStart', function (event, toState, toParams, fromState, fromParams) {
+            var allowed = false;
+
             if (toState.data && toState.data.hasOwnProperty('roles')) {
-                
-                var allowed = false;
-                
                 if (toState.data.roles.length) {
                     toState.data.roles.forEach(function (role) {
                         if (Authentication.user.roles !== undefined && Authentication.user.roles.indexOf(role) !== -1) {
@@ -45,16 +44,26 @@ angular.module(ApplicationConfiguration.applicationModuleName, ApplicationConfig
                         }
                     });
                 }
-                
-                if (!allowed) {
-                    event.preventDefault();
-                    if (Authentication.user !== undefined && typeof Authentication.user === 'object') {
-                        $state.go('forbidden');
-                    } else {
-                        $state.go('authentication.signin').then(function () {
-                            storePreviousState(toState, toParams);
-                        });
-                    }
+            }
+
+            // Add auth exception states here
+            var allowedstates = ['home', 'not-found', 'authentication', 'authentication.signup', 'authentication.signin', 'password.forgot', 'password.reset', 'password.reset.invalid', 'password.reset.success', 'password.reset.form' ];
+
+            if (allowedstates.indexOf(toState.name) > -1){
+                return;
+            }
+            else if (Authentication.user && (Authentication.user.roles.indexOf('user') > -1 || Authentication.user.roles.indexOf('admin') > -1)){
+                return;
+            }
+
+            if (!allowed) {
+                event.preventDefault();
+                if (Authentication.user !== undefined && typeof Authentication.user === 'object') {
+                    $state.go('forbidden');
+                } else {
+                    $state.go('authentication.signin').then(function () {
+                        storePreviousState(toState, toParams);
+                    });
                 }
             }
         });

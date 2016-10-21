@@ -10,7 +10,6 @@ angular.module('core').config(['$stateProvider', '$urlRouterProvider',
         // Home state routing
         $stateProvider
             .state('home', {
-
                 url: '/',
                 views: {
                     '': {

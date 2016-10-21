@@ -6,14 +6,11 @@ angular.module('users').config(['$stateProvider',
         var MODULE_PATH = 'modules/users/client/';
         // Users state routing
         $stateProvider
-        .state('settings', {
+          .state('settings', {
             abstract: true,
             url: '/settings',
-            templateUrl: 'modules/users/client/views/settings/settings.client.view.html',
-            data: {
-                roles: ['user', 'admin']
-            }
-        })
+            templateUrl: 'modules/users/client/views/settings/settings.client.view.html'
+          })
           .state('settings.profile', {
               url: '/profile',
               templateUrl: 'modules/users/client/views/settings/edit-profile.client.view.html'
@@ -46,12 +43,12 @@ angular.module('users').config(['$stateProvider',
               url: '/pricing',
               templateUrl: 'modules/users/client/views/pricing/pricing.client.view.html'
           })
-        .state('authentication', {
-            abstract: true,
-            url: '/authentication',
-            templateUrl: 'modules/users/client/views/authentication/authentication.client.view.html',
-            controller: 'AuthenticationController'
-        })
+            .state('authentication', {
+                abstract: true,
+                url: '/authentication',
+                templateUrl: 'modules/users/client/views/authentication/authentication.client.view.html',
+                controller: 'AuthenticationController'
+            })
           .state('authentication.signup', {
               url: '/signup',
               templateUrl: 'modules/users/client/views/authentication/signup.client.view.html',
@@ -64,11 +61,11 @@ angular.module('users').config(['$stateProvider',
           })
 
 
-        .state('password', {
-            abstract: true,
-            url: '/password',
-            template: '<ui-view/>'
-        })
+          .state('password', {
+              abstract: true,
+              url: '/password',
+              template: '<ui-view/>'
+          })
           .state('password.forgot', {
               url: '/forgot',
               templateUrl: 'modules/users/client/views/password/forgot-password.client.view.html'
@@ -92,11 +89,11 @@ angular.module('users').config(['$stateProvider',
           })
 
 
-        .state('users', {
+          .state('users', {
             abstract: true,
             url: '/users',
             template: '<ui-view/>'
-        })
+          })
           .state('users.list', {
               url: '',
               controller: 'UsersListController',

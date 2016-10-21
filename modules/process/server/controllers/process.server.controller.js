@@ -32,7 +32,8 @@ exports.list = function (req, res) {
  */
 exports.listByUserId = function (req, res) {
     Process.find({
-            user: req.params.userId
+            user: req.params.userId,
+            dataset: req.query.dataset
         })
         .limit(100)
         .sort('-created')
