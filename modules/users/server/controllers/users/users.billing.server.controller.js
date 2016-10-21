@@ -34,7 +34,7 @@ var plans = [
      */
     exports.getMyPlan = function (req, res) {
       var user = req.user;
-      if (!user) return res.status(400).json({message:'user not logged in'});
+      if (!user) return res.status(400).json({message:'User is not signed in'});
       for (var i = 0; i < plans.length; i++) {
         if(plans[i].id === user.plan){
           return res.json(plans[i]);
@@ -49,7 +49,7 @@ var plans = [
      */
     exports.createManagedAccount = function (req, res) {
       var user = req.user;
-      if (!user) return res.status(400).json({message:'user not logged in'});
+      if (!user) return res.status(400).json({message:'User is not signed in'});
       var data = {
         managed: true,
         country: 'US',
@@ -61,7 +61,7 @@ var plans = [
         legal_entity:req.body.legal_entity
       }, function(err, account) {
         if(err) return res.status(400).json({message:err.message});
-        user.stripe_account = account.id;
+        user.stripeAccount = account.id;
         user.save(function(err, user){
             if(err) return res.status(400).json({message:err.message});
             res.json({id:account.id});
@@ -75,9 +75,9 @@ var plans = [
      */
     exports.getMySubscription = function (req, res) {
       var user = req.user;
-      if(user.stripe_subscription){
+      if(user.stripeSubscription){
         stripe.subscriptions.retrieve(
-          user.stripe_subscription,
+          user.stripeSubscription,
           function(err, subscription) {
             if(err){
               res.status(err.status).json({message:err.message});
@@ -105,9 +105,9 @@ var plans = [
      */
     exports.getBillingInfo = function (req, res) {
       var user = req.user;
-      if(user.stripe_customer){
+      if(user.stripeCustomer){
         stripe.customers.retrieve(
-          user.stripe_customer,
+          user.stripeCustomer,
           function(err, customer) {
             if(err){
               res.status(err.status).json({message:err.message});
@@ -127,16 +127,16 @@ var plans = [
      */
     exports.updateCreditCard = function (req, res) {
       var user = req.user;
-      if (!user) return res.status(400).json({message:'user not logged in'});
-      if(user.stripe_customer){
+      if (!user) return res.status(400).json({message:'User is not signed in'});
+      if(user.stripeCustomer){
         stripe.customers.createSource(
-          user.stripe_customer,
+          user.stripeCustomer,
           {source: req.body.token },
           function(err, card) {
             if(err){
               res.status(err.status).json({message:err.message});
             } else {
-              stripe.customers.update(user.stripe_customer, {
+              stripe.customers.update(user.stripeCustomer, {
                 default_source: card.id
               }, function(err, customer) {
                 res.json(returnCustomerBillingInfo(customer));
@@ -156,10 +156,10 @@ var plans = [
      */
     exports.getInvoices = function (req, res) {
       var user = req.user;
-      if (!user) return res.status(400).json({message:'user not logged in'});
-      if(user.stripe_customer){
+      if (!user) return res.status(400).json({message:'User is not signed in'});
+      if(user.stripeCustomer){
         stripe.invoices.list(
-          { limit: 100,customer:user.stripe_customer },
+          { limit: 100,customer:user.stripeCustomer },
           function(err, invoices) {
             if(err){
               res.status(err.status).json({message:err.message});
@@ -180,7 +180,7 @@ var plans = [
     exports.subscribeToPlan = function (req, res) {
 
       var user = req.user, stripe_plan, user_plan;
-      if (!user) return res.status(400).json({message:'user not logged in'});
+      if (!user) return res.status(400).json({message:'User is not signed in'});
       for (var i = 0; i < plans.length; i++) {
         if(plans[i].stripe_id === req.body.plan){
           stripe_plan = plans[i].stripe_id;
@@ -189,18 +189,18 @@ var plans = [
       }
       if(!stripe_plan) return res.status(400).json({message:'plan not found'});
 
-      if(user.stripe_customer){
+      if(user.stripeCustomer){
         stripe.customers.createSource(
           user.stripe_customer,
           {source: req.body.token },
           function(err, card) {
             if(err) return res.status(err.status).json({message:err.message});
-            stripe.customers.update(user.stripe_customer, {
+            stripe.customers.update(user.stripeCustomer, {
               default_source: card.id
             }, function(err, customer) {
-              if(user.stripe_subscription){
+              if(user.stripeSubscription){
                 updateSubscription(
-                  user.stripe_subscription,
+                  user.stripeSubscription,
                   stripe_plan,
                   user_plan,
                   user,
@@ -211,7 +211,7 @@ var plans = [
                 );
               }else{
                 subscribeCustomerToPlan(
-                  user.stripe_customer,
+                  user.stripeCustomer,
                   stripe_plan,
                   user_plan,
                   user,
@@ -281,7 +281,7 @@ var plans = [
                 if(err) return res.status('400').send(err.message);
 
                 email.send(user.email, 'You have a new invoice', {invoice:invoice, name:user.displayName},
-                  'modules/users/server/templates/invoice-email', res, next);
+                  'modules/users/server/templates/invoice-email', next);
               });
 
             } else if(event.type === 'invoice.payment_failed'){
@@ -291,7 +291,7 @@ var plans = [
                 if(err) return res.status('400').send(err.message);
 
                 email.send(user.email, 'Your payment failed', {invoice:invoice, name:user.displayName},
-                  'modules/users/server/templates/billing-failed-email', res, next);
+                  'modules/users/server/templates/billing-failed-email', next);
               });
 
             } else if(event.type === 'customer.subscription.deleted'){
@@ -305,7 +305,7 @@ var plans = [
                   if(err) return res.status('400').send(err.message);
 
                   email.send(user.email, 'Your subscription was cancelled', {name:user.displayName},
-                    'modules/users/server/templates/subscription-cancelled-email', res, next);
+                    'modules/users/server/templates/subscription-cancelled-email', next);
               });
 
             } else {
@@ -325,7 +325,7 @@ var plans = [
          if(err){
            next(err);
          } else {
-           user.stripe_subscription = subscription.id;
+           user.stripeSubscription = subscription.id;
            user.plan = plan;
            user.save(function (err) {
              if (err) {
@@ -371,7 +371,7 @@ var plans = [
        if(err){
          next(err);
        } else {
-         user.stripe_customer = customer.id;
+         user.stripeCustomer = customer.id;
          user.save(function (err) {
            if (err) {
              next(err);

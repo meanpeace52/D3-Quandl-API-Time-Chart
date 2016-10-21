@@ -9,7 +9,7 @@ var AWS = require('aws-sdk'),
  */
 exports.renderIndex = function (req, res) {
     res.render('modules/core/server/views/index', {
-        user: req.user || null,
+        user: req.user.profile() || null,
         stripe_pub:config.stripe.publishable_key
     });
 };

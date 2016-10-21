@@ -5,9 +5,12 @@
  */
 var path = require('path'),
   errorHandler = require(path.resolve('./modules/core/server/controllers/errors.server.controller')),
+  config = require(path.resolve('./config/config')),
   mongoose = require('mongoose'),
   passport = require('passport'),
-  User = mongoose.model('User');
+  User = mongoose.model('User'),
+  crypto = require('crypto'),
+  email = require(path.resolve('./modules/core/server/controllers/emails.server.controller'));
 
 // URLs for which user can't be redirected on signin
 var noReturnUrls = [
@@ -23,13 +26,19 @@ exports.signup = function (req, res) {
   delete req.body.roles;
 
   // Init Variables
-  var user = new User(req.body);
+  var user = new User();
+
+  user.firstName = req.body.firstName;
+  user.lastName = req.body.lastName;
+  user.username = req.body.username;
+  user.email = req.body.email;
+  user.password = req.body.password;
+
   var message = null;
 
   // Add missing user fields
   user.provider = 'local';
   user.displayName = user.firstName + ' ' + user.lastName;
-
   // Then save the user
   user.save(function (err) {
     if (err) {
@@ -37,18 +46,54 @@ exports.signup = function (req, res) {
         message: errorHandler.getErrorMessage(err)
       });
     } else {
-      // Remove sensitive data before login
-      user.password = undefined;
-      user.salt = undefined;
-
-      req.login(user, function (err) {
-        if (err) {
-          res.status(400).send(err);
-        } else {
-          res.json(user);
-        }
+      email.verifyEmail(req, user, function(err){
+          if (!err) {
+            // Remove sensitive data before login
+            user.password = undefined;
+            user.salt = undefined;
+            req.login(user, function (err) {
+              if (err) {
+                res.status(400).send(err);
+              } else {
+                res.json(user.profile());
+              }
+            });
+          } else {
+            return res.status(400).send({
+              message: 'Failure sending email'
+            });
+          }
       });
     }
+  });
+};
+
+/**
+ * Verify Email
+ */
+exports.verifyEmail = function (req, res) {
+  User.findOne({verifyEmailToken:req.params.token}, function(err,user){
+    if (!err && user) {
+      //user.verifyEmailToken = undefined;
+      user.emailIsVerified = true;
+      res.redirect('/emailverification/success');
+    } else{
+      if (!user) {
+        return res.redirect('/emailverification/invalid');
+      }
+    }
+  });
+};
+
+/**
+ * Send Verification Email
+ */
+exports.sendVerificationEmail = function (req, res) {
+  var user = req.user;
+  if (!user) return res.status(400).json({message:'user not signed in'});
+  email.verifyEmail(req, user, function(err){
+    if(err)return res.status(400).send({message: errorHandler.getErrorMessage(err)});
+    res.json(user.profile());
   });
 };
 
@@ -68,7 +113,7 @@ exports.signin = function (req, res, next) {
         if (err) {
           res.status(400).send(err);
         } else {
-          res.json(user);
+          res.json(user.profile());
         }
       });
     }

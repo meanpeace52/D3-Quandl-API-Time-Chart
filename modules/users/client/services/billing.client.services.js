@@ -22,7 +22,7 @@ angular.module('users').factory('BillingService', ['$http', '$window','toastr', 
 
     billing.getSubscription = function(next){
       if(Authentication.user){
-        return $http.get('/api/users/mysubscription').then(function successCallback(response) {
+        $http.get('/api/users/mysubscription').then(function successCallback(response) {
             next(response.data);
         }, function errorCallback(response) {
           toastr.error('Could not load your subscription');
@@ -34,7 +34,7 @@ angular.module('users').factory('BillingService', ['$http', '$window','toastr', 
 
     billing.subscribe = function(token, plan_id, next){
       if(Authentication.user){
-        return $http.post('/api/users/subscribe', { plan: plan_id , token: token}).then(function successCallback(response) {
+        $http.post('/api/users/subscribe', { plan: plan_id , token: token}).then(function successCallback(response) {
           toastr.success('Your subscription has been successfully updated');
           Authentication.user.plan = response.data;
           next(response.data);
@@ -48,7 +48,7 @@ angular.module('users').factory('BillingService', ['$http', '$window','toastr', 
 
     billing.updateCard = function(token, next){
       if(Authentication.user){
-        return $http.put('/api/users/billing', { token: token}).then(function successCallback(response) {
+        $http.put('/api/users/billing', { token: token}).then(function successCallback(response) {
           toastr.success('Your credit card has been successfully updated');
           next(response.data);
         }, function errorCallback(response) {
@@ -61,7 +61,7 @@ angular.module('users').factory('BillingService', ['$http', '$window','toastr', 
 
     billing.getInvoices = function(next){
       if(Authentication.user){
-        return $http.get('/api/users/invoices').then(function successCallback(response) {
+        $http.get('/api/users/invoices').then(function successCallback(response) {
           next(response.data);
         }, function errorCallback(response) {
           toastr.error('Could not get your invoices');
@@ -73,7 +73,7 @@ angular.module('users').factory('BillingService', ['$http', '$window','toastr', 
 
     billing.getBillingInfo = function(next){
       if(Authentication.user){
-        return $http.get('/api/users/billing').then(function successCallback(response) {
+        $http.get('/api/users/billing').then(function successCallback(response) {
           next(response.data);
         }, function errorCallback(response) {
           toastr.error('Could not get your billing information');
@@ -85,7 +85,7 @@ angular.module('users').factory('BillingService', ['$http', '$window','toastr', 
 
     billing.createAccount = function(data, next){
       if(Authentication.user){
-        return $http.post('/api/users/account', data).then(function successCallback(response) {
+        $http.post('/api/users/account', data).then(function successCallback(response) {
           next(response.data);
         }, function errorCallback(response) {
           toastr.error('Could not create your account');

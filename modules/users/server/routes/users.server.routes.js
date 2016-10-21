@@ -53,8 +53,8 @@ module.exports = function (app) {
   app.route('/api/users/files').post(upload.single('file'), users.uploadFile); // todo make main file route
   app.route('/api/users/:username').get(users.read);
   app.route('/api/users/:username/models/:model').get(users.models);
-
-
+  app.route('/api/users/verify/:token').get(users.verifyEmail);
+  app.route('/api/users/verify/').put(users.sendVerificationEmail);
 
   // Finish by binding the user middleware
   app.param('username', users.userByUsername);

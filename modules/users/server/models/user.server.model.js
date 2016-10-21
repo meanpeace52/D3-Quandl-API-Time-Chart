@@ -91,13 +91,13 @@ var UserSchema = new Schema({
         type: String,
         default: 'free'
     },
-    stripe_customer: {
+    stripeCustomer: {
         type: String,
     },
-    stripe_subscription: {
+    stripeSubscription: {
         type: String,
     },
-    stripe_account: {
+    stripeAccount: {
         type: String,
     },
     updated: {
@@ -113,8 +113,35 @@ var UserSchema = new Schema({
     },
     resetPasswordExpires: {
         type: Date
-    }
+    },
+    verifyEmailToken: {
+        type: String
+    },
+    emailIsVerified: {
+        type: Boolean,
+        default:false
+    },
 });
+
+/**
+ * Returns the profile that can be exposed on the frontend
+ */
+UserSchema.methods.profile = function () {
+    return {
+      _id:this._id,
+      firstName:this.firstName,
+      lastName:this.lastName,
+      displayName:this.displayName,
+      username:this.username,
+      email:this.email,
+      roles:this.roles,
+      files:this.files,
+      plan:this.plan,
+      profileImageURL:this.profileImageURL,
+      emailIsVerified:this.emailIsVerified
+    };
+};
+
 
 /**
  * Hook a pre save method to hash the password
