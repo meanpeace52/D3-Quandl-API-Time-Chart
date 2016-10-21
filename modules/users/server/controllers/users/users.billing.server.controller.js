@@ -36,7 +36,7 @@ var plans = [
       var user = req.user;
       if (!user) return res.status(400).json({message:'user not logged in'});
       for (var i = 0; i < plans.length; i++) {
-        if(plans[i].id == user.plan){
+        if(plans[i].id === user.plan){
           return res.json(plans[i]);
         }
       }
@@ -155,7 +155,7 @@ var plans = [
       var user = req.user, stripe_plan, user_plan;
       if (!user) return res.status(400).json({message:'user not logged in'});
       for (var i = 0; i < plans.length; i++) {
-        if(plans[i].stripe_id == req.body.plan){
+        if(plans[i].stripe_id === req.body.plan){
           stripe_plan = plans[i].stripe_id;
           user_plan = plans[i].id;
         }
@@ -358,7 +358,7 @@ var plans = [
 
    function returnCustomerBillingInfo(customer){
      for (var i = 0; i < customer.sources.data.length; i++) {
-       if(customer.sources.data[i].id == customer.default_source){
+       if(customer.sources.data[i].id === customer.default_source){
          var fields = ['last4','brand','country','exp_month','exp_year','funding','name'];
          var billing = {};
          for (var j = 0; j < fields.length; j++) {
