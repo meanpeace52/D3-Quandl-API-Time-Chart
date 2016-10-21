@@ -74,9 +74,11 @@ exports.signup = function (req, res) {
 exports.verifyEmail = function (req, res) {
   User.findOne({verifyEmailToken:req.params.token}, function(err,user){
     if (!err && user) {
-      //user.verifyEmailToken = undefined;
+      user.verifyEmailToken = undefined;
       user.emailIsVerified = true;
-      res.redirect('/emailverification/success');
+      user.save(function(err){
+        res.redirect('/emailverification/success');
+      });
     } else{
       if (!user) {
         return res.redirect('/emailverification/invalid');

@@ -51,7 +51,7 @@ angular.module('users').config(['$stateProvider',
             url: '/pricing',
             templateUrl: MODULE_PATH + 'views/pricing/pricing.client.view.html'
         })
-        
+
         .state('authentication', {
             abstract: true,
             url: '/authentication',
@@ -78,8 +78,7 @@ angular.module('users').config(['$stateProvider',
               templateUrl: MODULE_PATH + 'views/emailverification/emailverification-invalid.client.view.html'
           })
           .state('emailverification.success', {
-              url: '/success',
-              templateUrl: MODULE_PATH + 'views/emailverification/emailverification-success.client.view.html'
+              url: '/success'
           })
 
         .state('password', {

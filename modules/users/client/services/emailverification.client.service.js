@@ -5,7 +5,7 @@ angular.module('users').factory('EmailVerificationService', ['$http', 'Authentic
   function ($http, Authentication, toastr) {
     return {
       verifyEmail : function(next){
-        $http.get('/api/users/verifyemail').then(function successCallback(response) {
+        $http.put('/api/users/verify').then(function successCallback(response) {
           next();
         }, function errorCallback(err) {
           next(err);

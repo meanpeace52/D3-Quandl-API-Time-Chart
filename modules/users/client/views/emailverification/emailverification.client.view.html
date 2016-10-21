@@ -1,4 +1,12 @@
-<section class="row" ng-controller="EmailVerificationController">
-  <h3 class="col-md-12 text-center">Email verification</h3>
-  <p ng-if="user.e">
+<section class="row text-center" ng-controller="EmailVerificationController">
+  <div ui-view></div>
+  <div ng-if="user.emailIsVerified" class="well" >
+    <p>Your email is successfully verified</p>
+    <a class="btn btn-default btn-lg" ui-sref="home" class="col-md-12">Continue to home page</a>
+  </div>
+  <div class="well" ng-if="!user.emailIsVerified">
+    <p>Your email is not yet verified</p>
+    <a ng-click="verify()" ng-if="!emailsent" class="btn btn-primary btn-lg">Resend Verification Email</a>
+    <p ng-if="emailsent">We have sent you a verification email. Please check your inbox.</p>
+  </div>
 </section>
