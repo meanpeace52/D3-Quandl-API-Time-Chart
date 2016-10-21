@@ -56,5 +56,11 @@ angular.module('users').controller('GettingPaidController', ['$scope','Authentic
         });
       }
     };
+
+    BillingService.getAccount($scope.legal_entity, function successCallback(account) {
+      if(account.id) {
+        $scope.legal_entity = account.legal_entity;
+      }
+    });
   }
 ]);

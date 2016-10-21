@@ -74,7 +74,7 @@ var plans = [
     /**
      * create stripe managed account
      */
-    exports.getManagedAccount = function (req, res) {
+    exports.getMyManagedAccount = function (req, res) {
       var user = req.user;
       if (!user) return res.status(400).json({message:'User is not signed in'});
       if (user.stripeAccount){
@@ -87,6 +87,25 @@ var plans = [
         );
       } else {
         res.json({});
+      }
+    };
+
+
+    /**
+     * update stripe managed account
+     */
+    exports.updateMyManagedAccount = function (req, res) {
+      var user = req.user;
+      if (!user) return res.status(400).json({message:'User is not signed in'});
+      if (user.stripeAccount){
+        stripe.accounts.update(user.stripeAccount, {legal_entity:req.body},
+          function(err, account) {
+            if(err) return res.status(400).json({message:err.message});
+            res.json(account);
+          }
+        );
+      } else {
+        res.status(400).json({message:'User has no account'});
       }
     };
 

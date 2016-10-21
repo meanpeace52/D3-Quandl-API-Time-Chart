@@ -95,6 +95,30 @@ angular.module('users').factory('BillingService', ['$http', '$window','toastr', 
       }
     };
 
+    billing.updateAccount = function(data, next){
+      if(Authentication.user){
+        $http.post('/api/users/account', data).then(function successCallback(response) {
+          next(response.data);
+        }, function errorCallback(response) {
+          toastr.error('Could not update your account');
+        });
+      } else {
+        toastr.error('You need to be logged in');
+      }
+    };
+
+    billing.getAccount = function(data, next){
+      if(Authentication.user){
+        $http.get('/api/users/account').then(function successCallback(response) {
+          next(response.data);
+        }, function errorCallback(response) {
+          toastr.error('Could not get your account');
+        });
+      } else {
+        toastr.error('You need to be logged in');
+      }
+    };
+
     billing.openSelectPlanModal = function(options, next){
       this.getPlans(function(plans){
         var modalInstance = $uibModal.open({

@@ -6,7 +6,7 @@ var path = require('path'),
     nodemailer = require('nodemailer'),
     sesTransport = require('nodemailer-ses-transport'),
     crypto = require('crypto'),
-    swig  = require('swig');
+    swig = require('swig');
 
 var mailTransport = nodemailer.createTransport(sesTransport({
     AWSAccessKeyID: config.mailer.options.accessKeyId,
