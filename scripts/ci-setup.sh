@@ -5,10 +5,10 @@ set -xe
 \curl -sSL https://raw.githubusercontent.com/codeship/scripts/master/packages/mongodb.sh | bash -s
 rvm use 2.2.0 --install
 gem update --system
-gem install sass --version "=3.3.7"
+# gem install sass --version "=3.3.7"
 npm install --no-optional
 npm install gulp -g
-npm rebuild node-sass
+# npm rebuild node-sass
 
 
 npm install -g http-server protractor
