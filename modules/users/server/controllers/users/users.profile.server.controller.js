@@ -36,15 +36,16 @@ exports.update = function (req, res) {
     // Init Variables
     var user = req.user, verifyemail = false;
     if (user) {
-        // Merge existing user
-        user.firstName = req.body.firstName;
-        user.lastName = req.body.lastName;
-        user.username = req.body.username;
+
         if(user.email !== req.body.email){
-          user.email = req.body.email;
           user.emailIsVerified = false;
           verifyemail = true;
         }
+        // For security measure we remove the roles from the req.body object
+        delete req.body.roles;
+        // Merge existing user
+        user = _.extend(user, req.body);
+
 
         user.updated = Date.now();
         user.displayName = user.firstName + ' ' + user.lastName;
@@ -52,7 +53,6 @@ exports.update = function (req, res) {
           if (err) return res.status(400).send({message: errorHandler.getErrorMessage(err)});
           if(verifyemail){
             email.verifyEmail(req, user, function(err){
-              if(err)return res.status(400).send({message: errorHandler.getErrorMessage(err)});
               res.json(user.profile());
             });
           }else{
@@ -122,7 +122,7 @@ exports.changeProfilePicture = function (req, res) {
  * Send User
  */
 exports.me = function (req, res) {
-    res.json(req.user.profile() || null);
+    res.json(req.user ? req.user.profile() : null);
 };
 
 exports.read = function (req, res) {
