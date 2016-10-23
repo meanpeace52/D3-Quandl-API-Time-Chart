@@ -38,7 +38,6 @@ exports.update = function (req, res) {
     if (user) {
 
         if(user.email !== req.body.email){
-          user.emailIsVerified = false;
           verifyemail = true;
         }
         // For security measure we remove the roles from the req.body object

@@ -38,8 +38,8 @@ angular.module('users').factory('BillingService', ['$http', '$window','toastr', 
           toastr.success('Your subscription has been successfully updated');
           Authentication.user.plan = response.data;
           next(response.data);
-        }, function errorCallback(response) {
-          toastr.error('Could not update your subscription');
+        }, function (err) {
+          toastr.error('Could not update your subscription.\n'+err.data.message);
         });
       } else {
         toastr.error('You need to be logged in');
@@ -48,11 +48,11 @@ angular.module('users').factory('BillingService', ['$http', '$window','toastr', 
 
     billing.updateCard = function(token, next){
       if(Authentication.user){
-        $http.put('/api/users/billing', { token: token}).then(function successCallback(response) {
+        $http.put('/api/users/billing', { token: token}).then(function (response) {
           toastr.success('Your credit card has been successfully updated');
           next(response.data);
-        }, function errorCallback(response) {
-          toastr.error('Could not update your credit card');
+        }, function (err) {
+          toastr.error('Could not update your credit card.\n'+err.data.message);
         });
       } else {
         toastr.error('You need to be logged in');
@@ -61,7 +61,7 @@ angular.module('users').factory('BillingService', ['$http', '$window','toastr', 
 
     billing.getInvoices = function(next){
       if(Authentication.user){
-        $http.get('/api/users/invoices').then(function successCallback(response) {
+        $http.get('/api/users/invoices').then(function (response) {
           next(response.data);
         }, function errorCallback(response) {
           toastr.error('Could not get your invoices');
@@ -73,7 +73,7 @@ angular.module('users').factory('BillingService', ['$http', '$window','toastr', 
 
     billing.getBillingInfo = function(next){
       if(Authentication.user){
-        $http.get('/api/users/billing').then(function successCallback(response) {
+        $http.get('/api/users/billing').then(function (response) {
           next(response.data);
         }, function errorCallback(response) {
           toastr.error('Could not get your billing information');
@@ -85,10 +85,11 @@ angular.module('users').factory('BillingService', ['$http', '$window','toastr', 
 
     billing.createAccount = function(data, next){
       if(Authentication.user){
-        $http.post('/api/users/account', data).then(function successCallback(response) {
-          next(response.data);
-        }, function errorCallback(response) {
-          toastr.error('Could not create your account');
+        $http.post('/api/users/account', data).then(function (response) {
+          next(null,response.data);
+        }, function (err) {
+          next(err);
+          toastr.error('Could not create your account.\n'+err.data.message);
         });
       } else {
         toastr.error('You need to be logged in');
@@ -97,21 +98,23 @@ angular.module('users').factory('BillingService', ['$http', '$window','toastr', 
 
     billing.updateAccount = function(data, next){
       if(Authentication.user){
-        $http.post('/api/users/account', data).then(function successCallback(response) {
-          next(response.data);
-        }, function errorCallback(response) {
-          toastr.error('Could not update your account');
+        $http.put('/api/users/account', data).then(function successCallback(response) {
+          next(null, response.data);
+        }, function errorCallback(err) {
+          next(err);
+          toastr.error('Could not update your account.\n'+err.data.message);
         });
       } else {
         toastr.error('You need to be logged in');
       }
     };
 
-    billing.getAccount = function(data, next){
+    billing.getAccount = function(next){
       if(Authentication.user){
         $http.get('/api/users/account').then(function successCallback(response) {
-          next(response.data);
-        }, function errorCallback(response) {
+          next(null, response.data);
+        }, function errorCallback(err) {
+          next(err);
           toastr.error('Could not get your account');
         });
       } else {

@@ -53,19 +53,25 @@ var plans = [
       var data = {
         managed: true,
         country: 'US',
-        legal_entity:req.body,
+        legal_entity:req.body.legal_entity,
         tos_acceptance: {
           date: Math.floor(Date.now() / 1000),
           ip: req.connection.remoteAddress
-        }
+        },
+        external_account: {
+          object:'bank_account',
+          account_number:req.body.external_account.account_number,
+          routing_number:req.body.external_account.routing_number,
+          country:'US'
+        },
+        metadata: req.body.meta
       };
-
       stripe.accounts.create(data, function(err, account) {
         if(err) return res.status(400).json({message:err.message});
         user.stripeAccount = account.id;
         user.save(function(err, user){
-            if(err) return res.status(400).json({message:err.message});
-            res.json({id:account.id});
+          if(err) return res.status(400).json({message:errorHandler.getErrorMessage(err)});
+          res.json(account);
         });
       });
     };
@@ -98,7 +104,7 @@ var plans = [
       var user = req.user;
       if (!user) return res.status(400).json({message:'User is not signed in'});
       if (user.stripeAccount){
-        stripe.accounts.update(user.stripeAccount, {legal_entity:req.body},
+        stripe.accounts.update(user.stripeAccount, {legal_entity:req.body.legal_entity, metadata: req.body.meta},
           function(err, account) {
             if(err) return res.status(400).json({message:err.message});
             res.json(account);
@@ -317,7 +323,7 @@ var plans = [
               customer = event.data.object.customer;
               invoice = event.data.object;
               User.findOne({stripe_customer: customer}, function(err, user){
-                if(err) return res.status('400').send(err.message);
+                if(err) return res.status('400').send(errorHandler.getErrorMessage(err));
 
                 email.send(user.email, 'You have a new invoice', {invoice:invoice, name:user.displayName},
                   'modules/users/server/templates/invoice-email', next);
@@ -327,7 +333,7 @@ var plans = [
               customer = event.data.object.customer;
               invoice = event.data.object;
               User.findOne({stripe_customer: customer}, function(err, user){
-                if(err) return res.status('400').send(err.message);
+                if(err) return res.status('400').send(errorHandler.getErrorMessage(err));
 
                 email.send(user.email, 'Your payment failed', {invoice:invoice, name:user.displayName},
                   'modules/users/server/templates/billing-failed-email', next);
@@ -341,7 +347,7 @@ var plans = [
                 {plan:'free', stripe_subscription: null},
                 {new: false},
                 function(err, user){
-                  if(err) return res.status('400').send(err.message);
+                  if(err) return res.status('400').send(errorHandler.getErrorMessage(err));
 
                   email.send(user.email, 'Your subscription was cancelled', {name:user.displayName},
                     'modules/users/server/templates/subscription-cancelled-email', next);
@@ -368,7 +374,7 @@ var plans = [
            user.plan = plan;
            user.save(function (err) {
              if (err) {
-               next(err);
+               next({message: errorHandler.getErrorMessage(err)});
              } else {
                next(err, subscription.id);
              }
@@ -392,7 +398,7 @@ var plans = [
               user.plan = plan;
               user.save(function (err) {
                 if (err) {
-                  next(err);
+                  next({message: errorHandler.getErrorMessage(err)});
                 } else {
                   next(err, subscription.id);
                 }
@@ -413,7 +419,7 @@ var plans = [
          user.stripeCustomer = customer.id;
          user.save(function (err) {
            if (err) {
-             next(err);
+             next({message: errorHandler.getErrorMessage(err)});
            } else {
              next(err, customer.id);
            }
