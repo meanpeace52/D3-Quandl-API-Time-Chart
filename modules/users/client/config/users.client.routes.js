@@ -42,10 +42,21 @@ angular.module('users').config(['$stateProvider',
               url: '/billing',
               templateUrl: MODULE_PATH + 'views/settings/billing.client.view.html'
           })
+
           .state('settings.gettingpaid', {
+              abstract: true,
               url: '/gettingpaid',
-              templateUrl: MODULE_PATH + 'views/settings/gettingpaid.client.view.html'
+              template: '<ui-view/>'
           })
+            .state('settings.gettingpaid.account', {
+                url: '/account',
+                templateUrl: MODULE_PATH + 'views/settings/gettingpaid/account.client.view.html'
+            })
+            .state('settings.gettingpaid.additional', {
+                url: '/additional',
+                templateUrl: MODULE_PATH + 'views/settings/gettingpaid/additional.client.view.html'
+            })
+
 
         .state('pricing', {
             url: '/pricing',
@@ -68,6 +79,9 @@ angular.module('users').config(['$stateProvider',
               templateUrl: MODULE_PATH + 'views/authentication/signin.client.view.html',
               controller: 'AuthenticationController'
           })
+
+
+
 
         .state('emailverification', {
             url: '/emailverification',

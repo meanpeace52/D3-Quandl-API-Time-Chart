@@ -39,6 +39,7 @@ module.exports = function (app) {
   app.route('/api/users/account').post(users.createManagedAccount);
   app.route('/api/users/account').get(users.getMyManagedAccount);
   app.route('/api/users/account').put(users.updateMyManagedAccount);
+  app.route('/api/users/account/document').post(users.uploadVerificationDocument);
   // stripe webhook route
   app.route('/api/stripe/webhook').post(users.onStripeWebhookEvent);
 

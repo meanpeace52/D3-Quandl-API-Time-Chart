@@ -13,7 +13,9 @@ var path = require('path'),
     config = require(path.resolve('./config/config')),
     stripe = require('stripe')(config.stripe.secret_key),
     errorHandler = require(path.resolve('./modules/core/server/controllers/errors.server.controller')),
-    email = require(path.resolve('./modules/core/server/controllers/emails.server.controller'));
+    email = require(path.resolve('./modules/core/server/controllers/emails.server.controller')),
+    multer = require('multer'),
+    fs = require('fs');
 
 var plans = [
       {name:'Premium', price:10,id:'premium',stripe_id:'premium_monthly', period:1},
@@ -115,6 +117,49 @@ var plans = [
       }
     };
 
+    /**
+     * update stripe managed account
+     */
+    exports.uploadVerificationDocument = function (req, res) {
+      var user = req.user;
+      if (!user) return res.status(400).json({message:'User is not signed in'});
+      if (user.stripeAccount){
+        var upload = multer(config.uploads.stripeUpload).single('newAccountDocument');
+        var stripeUploadFileFilter = require(path.resolve('./config/lib/multer')).stripeUploadFileFilter;
+        upload.fileFilter = stripeUploadFileFilter;
+        upload(req, res, function (uploadError) {
+            if (uploadError) {
+                return res.status(400).send({
+                    message: 'Error occurred while uploading document'
+                });
+            }
+            else {
+              var document = config.uploads.stripeUpload.dest + req.file.filename;
+              stripe.fileUploads.create({
+                purpose: 'identity_document',
+                file: {
+                  data: fs.readFileSync(req.file.path),
+                  name: req.file.filename,
+                  type: 'application/octet-stream' }
+                },
+                {stripe_account: user.stripeAccount},
+                function(err, fileUpload) {
+                  if(err) return res.status(err.status).json({message:err.message});
+                  fs.unlinkSync(req.file.path);
+                  stripe.accounts.update(
+                    user.stripeAccount,
+                    {legal_entity: {verification: {document: fileUpload.id}}},
+                    function(err, account){
+                      if(err) return res.status(err.status).json({message:err.message});
+                      res.json(account);
+                });
+              });
+            }
+        });
+      } else {
+        res.status(400).json({message:'User has no account'});
+      }
+    };
 
     /**
      * Get the user's subscription
