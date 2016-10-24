@@ -14,6 +14,7 @@ module.exports = {
                 BOWER_PATH + 'angularjs-slider/dist/rzslider.css',
                 BOWER_PATH + 'datatables/media/css/dataTables.bootstrap.min.css',
                 BOWER_PATH + 'font-awesome/css/font-awesome.min.css',
+                BOWER_PATH + 'ng-img-crop-full-extended/compile/minified/ng-img-crop.css',
                 'https://fonts.googleapis.com/css?family=Open+Sans:400,600,700',
                 'https://fonts.googleapis.com/css?family=PT+Sans:400,700',
                 'https://fonts.googleapis.com/css?family=Droid+Sans',
@@ -54,6 +55,7 @@ module.exports = {
                 BOWER_PATH + 'handlebars/handlebars.js',
                 BOWER_PATH + 'js-rbroker-framework/browser/rbroker.min.js',
                 BOWER_PATH + 'angular-payments/lib/angular-payments.js',
+                BOWER_PATH + 'ng-img-crop-full-extended/compile/minified/ng-img-crop.js',
                 'https://js.stripe.com/v2/'
             ],
             tests: [BOWER_PATH + 'angular-mocks/angular-mocks.js']

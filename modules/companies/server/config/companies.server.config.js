@@ -14,11 +14,17 @@ var path = require('path'),
 module.exports = function (app, db) {
 
   // Reload companies db everyday at 11PM.
-  var scheduledReloadCompanies = later
-      .parse
-      .recur()
-      .on(23)
-      .hour();
+  // Check if test is running as this code keeps Mocha from finishing to execute
+  var isInTest = typeof global.it === 'function';
 
-  later.setInterval(companiesService.reloadCompanies, scheduledReloadCompanies);
+  if(!isInTest){
+      var scheduledReloadCompanies = later
+          .parse
+          .recur()
+          .on(23)
+          .hour();
+
+      later.setInterval(companiesService.reloadCompanies, scheduledReloadCompanies);
+  }
+
 };
