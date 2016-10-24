@@ -11,10 +11,10 @@ var mongoose = require('mongoose'),
  */
 var CompanySchema = new Schema({
   name: {
-    type: String,
-    default: '',
-    required: 'Please fill Company name',
-    trim: true
+    type: String
+  },
+  code: {
+    type: String
   },
   created: {
     type: Date,

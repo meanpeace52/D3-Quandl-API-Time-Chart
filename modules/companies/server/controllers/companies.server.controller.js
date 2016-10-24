@@ -7,7 +7,9 @@ var path = require('path'),
   mongoose = require('mongoose'),
   Company = mongoose.model('Company'),
   errorHandler = require(path.resolve('./modules/core/server/controllers/errors.server.controller')),
-  _ = require('lodash');
+  quandlService = require(path.resolve('./modules/quandl/server/services/quandl.server.api')),
+  _ = require('lodash'),
+  config = require(path.resolve('./config/config'));
 
 /**
  * Create a Company
@@ -115,3 +117,49 @@ exports.companyByID = function(req, res, next, id) {
     next();
   });
 };
+
+exports.search = function(req, res) {
+  if (req.params.query && req.params.query.length > 0){
+    Company.find({ name : { '$regex': req.params.query, '$options': 'i' }})
+        .limit(10)
+        .exec(function(err, companies) {
+          if (err) {
+            return res.status(err.status).send({
+              message: errorHandler.getErrorMessage(err)
+            });
+          } else {
+            res.json(companies);
+          }
+        });
+  }
+  else{
+    res.status(400).json({ message : 'Please provide a query to search by.' });
+  }
+
+};
+
+exports.findByCode = function(req, res) {
+  Company.findOne({ code : req.params.id.toUpperCase() }, function(err, company){
+    if (err){
+      console.log(err);
+      return res.status(err.status).json(err);
+    }
+    else{
+      if (company){
+        quandlService.getDataset(config.quandlApiKey, 'WIKI', req.params.id.toUpperCase())
+            .then(function(info){
+              res.json(info);
+            })
+            .catch(function(err){
+              console.log(err);
+              return res.status(err.status).json(err);
+            });
+      }
+      else{
+        return res.status(400).json({ message : 'Company not found.' });
+      }
+    }
+  });
+};
+
+

@@ -12,6 +12,7 @@ module.exports = {
   deployrHost: 'http://52.44.200.161:8000/deployr/',
   deployrUsername: 'testuser',
   deployrPassword: '8sBLAJkqJh4G6VhY',
+  quandlApiKey: 'ZLbtxbexUUMvs4GCAa-m',
   port: process.env.PORT || 3000,
   templateEngine: 'swig',
   // Session Cookie settings
