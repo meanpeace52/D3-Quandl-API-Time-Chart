@@ -5,6 +5,9 @@ angular.module('users').controller('ChangeProfilePictureController', ['$scope', 
     $scope.user = Authentication.user;
     $scope.imageURL = $scope.user.profileImageURL;
 
+    $scope.myImage = $scope.imageURL;
+    $scope.myCroppedImage = ''; // in this variable you will have dataUrl of cropped area.
+
     // Create file uploader instance
     $scope.uploader = new FileUploader({
       url: 'api/users/picture',
