@@ -15,13 +15,13 @@ var path = require('path'),
  */
 
 exports.create = function (req, res) {
-    Post.findOne({ title : req.body.title, user : req.user._id }, function(err, post){
+    Post.findOne({ title : req.body.title, user : req.user._id }, function(err, foundpost){
         if (err){
             return res.status(err.status).send({
                 message: errorHandler.getErrorMessage(err)
             });
         }
-        if (!post){
+        if (!foundpost){
             var post = new Post(req.body);
             post.user = req.user._id;
             post.save(function (err) {

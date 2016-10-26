@@ -27,20 +27,26 @@
     </form>
     <div class="list-group">
         <div data-ng-repeat="post in postsList.list | limitTo: postsList.postLimit" class="list-group-item posts">
-            <small class="list-group-item-text">
-                <span ng-if="!post.user">Unknown User -</span>
-                <span ng-if="post.user">{{ post.user.username }} - </span> <span>{{post.created | date:'mediumDate'}}</span>
-                <span ng-if="post.subject"> - {{post.subject | capitalize }}</span>
-            </small>
-            <h4 class="list-group-item-heading">{{post.title}}
-                <a ng-if="post.access != 'for sale' || (post.access === 'for sale' && post.purchased) || (post.user._id == postsList.authentication.user._id)" class="pull-right btn btn-secondary" ui-sref="posts.detail({postId: post._id})">View</a>
-                <p ng-if="post.access == 'for sale' && post.purchased && post.user._id != postsList.authentication.user._id" class="pull-right">Bought!</p>
-                <button ng-if="post.access === 'for sale' && !post.purchased && post.user._id != postsList.authentication.user._id"  class="pull-right btn btn-primary" ng-click="postsList.confirmPurchase(post)">Buy for ${{post.cost}}</button>
-                <span ng-if="post.access === 'for sale'" class="pull-right glyphicon glyphicon-usd" title="For Sale"></span>
-                <span ng-if="post.files.length" class="pull-right glyphicon glyphicon-file" title="PDFs attached"></span>
-                <span ng-if="post.datasets.length" class="pull-right glyphicon glyphicon-list" title="Datasets Attached"></span>
-                <span if="post.models.length" class="pull-right glyphicon glyphicon-stats" title="Models Attached"></span>
-            </h4>
+            <div class="row">
+                <div class="col-md-6">
+                    <small class="list-group-item-text">
+                        <span ng-if="!post.user">Unknown User -</span>
+                        <span ng-if="post.user">{{ post.user.username }} - </span> <span>{{post.created | date:'mediumDate'}}</span>
+                        <span ng-if="post.subject"> - {{post.subject | capitalize }}</span>
+                        <p class="post-title">{{post.title}}</p>
+                        <p class="post-note" ng-if="post.access == 'for sale'"><span ng-show="!post.showFull">{{ post.previewnote | cut:true:50:' ...' }}</span><span ng-show="post.showFull">{{ post.previewnote }}</span> <a href="" ng-show="post.previewnote.length > 50" ng-click="post.showFull = !post.showFull">Show Full</a></p>
+                    </small>
+                </div>
+                <div class="col-md-6 buttons">
+                    <a ng-if="post.access != 'for sale' || (post.access === 'for sale' && post.purchased) || (post.user._id == postsList.authentication.user._id)" class="pull-right btn btn-secondary" ui-sref="posts.detail({postId: post._id})">View</a>
+                    <p ng-if="post.access == 'for sale' && post.purchased && post.user._id != postsList.authentication.user._id" class="pull-right bought">Bought!</p>
+                    <button ng-if="post.access === 'for sale' && !post.purchased && post.user._id != postsList.authentication.user._id"  class="pull-right btn btn-primary" ng-click="postsList.confirmPurchase(post)">Buy for ${{post.cost}}</button>
+                    <span ng-if="post.access === 'for sale'" class="pull-right glyphicon glyphicon-usd" title="For Sale"></span>
+                    <span ng-if="post.files.length" class="pull-right glyphicon glyphicon-file" title="PDFs attached"></span>
+                    <span ng-if="post.datasets.length" class="pull-right glyphicon glyphicon-list" title="Datasets Attached"></span>
+                    <span if="post.models.length" class="pull-right glyphicon glyphicon-stats" title="Models Attached"></span>
+                </div>
+            </div>
             <!--<p class="list-group-item-text">{{post.content}}</p>-->
         </div>
     </div>

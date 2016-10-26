@@ -279,7 +279,7 @@ exports.trimIfPaid = function (user, models) {
         if (model.access === 'for sale' || model.access === 'paid'){
             if (model.buyers){
                 var purchased = _.find(model.buyers, function(buyer){
-                    return buyer.id = user.id;
+                    return buyer.id === user.id;
                 });
                 if (purchased){
                     model.purchased = true;
