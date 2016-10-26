@@ -80,9 +80,10 @@ module.exports.initMiddleware = function (app) {
 
   // Request body parsing middleware should be above methodOverride
   app.use(bodyParser.urlencoded({
-    extended: true
+    extended: true,
+    limit: '5mb'
   }));
-  app.use(bodyParser.json());
+  app.use(bodyParser.json({ limit: '5mb' }));
   app.use(methodOverride());
 
   // Add the cookie parser and flash middleware
