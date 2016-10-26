@@ -49,8 +49,12 @@ angular.module('posts')
                                 postId: response._id
                             });
                         }, function (err) {
-                            vm.error = err.message;
-                            toastr.error('An error occurred when trying to save the post. Please try again.');
+                            if (err.status === 409){
+                                toastr.error(err.data);
+                            }
+                            else{
+                                toastr.error('An error occurred when trying to save the post. Please try again.');
+                            }
                         });
                 }
                 else{

@@ -15,18 +15,31 @@ var path = require('path'),
  */
 
 exports.create = function (req, res) {
-    var post = new Post(req.body);
-    post.user = req.user._id;
-    post.save(function (err) {
-        if (err) {
-            return res.status(400).send({
+    Post.findOne({ title : req.body.title, user : req.user._id }, function(err, post){
+        if (err){
+            return res.status(err.status).send({
                 message: errorHandler.getErrorMessage(err)
             });
         }
-        else {
-            res.json(post);
+        if (!post){
+            var post = new Post(req.body);
+            post.user = req.user._id;
+            post.save(function (err) {
+                if (err) {
+                    return res.status(err.status).send({
+                        message: errorHandler.getErrorMessage(err)
+                    });
+                }
+                else {
+                    res.json(post);
+                }
+            });
+        }
+        else{
+            res.status(409).json('Post with this title already exists, please enter a different title.');
         }
     });
+
 };
 
 /**
@@ -106,14 +119,27 @@ function trimPostIfPaid(user, post) {
  * Update a post
  */
 exports.update = function (req, res) {
-    Post.findOneAndUpdate({ _id : req.body.post._id }, req.body.post, function(err, doc){
+    Post.findOne({ title : req.body.post.title, user : req.user._id }, function(err, post){
         if (err){
-            res.status(err.status).json(err);
+            return res.status(err.status).send({
+                message: errorHandler.getErrorMessage(err)
+            });
         }
-        else{
-            res.json(doc);
+        if (!post || (post && post.id === req.body.post._id)) {
+            Post.findOneAndUpdate({ _id : req.body.post._id }, req.body.post, function(err, doc){
+                if (err){
+                    res.status(err.status).json(err);
+                }
+                else{
+                    res.json(doc);
+                }
+            });
+        }
+        else {
+            res.status(409).json('Post with this title already exists, please enter a different title.');
         }
     });
+
 };
 
 /**

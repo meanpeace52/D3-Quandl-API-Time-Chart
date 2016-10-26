@@ -34,7 +34,12 @@ angular.module('posts')
                         })
                         .catch(function(err){
                             $log.error(err);
-                            toastr.error('An error occurred when trying to save the post. Please try again.');
+                            if (err.status === 409){
+                                toastr.error(err.message);
+                            }
+                            else{
+                                toastr.error('An error occurred when trying to save the post. Please try again.');
+                            }
                         });
                 }
                 else{
