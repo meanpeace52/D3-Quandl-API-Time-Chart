@@ -2,8 +2,8 @@
 
 //posts List Controller
 angular.module('posts')
-    .controller('postsListController', ['$scope', '$stateParams', '$state', 'Authentication', 'posts', 'UsersFactory', 'postOptions',
-            function ($scope, $stateParams, $state, Authentication, posts, UsersFactory, postOptions) {
+    .controller('postsListController', ['$scope', '$stateParams', '$state', 'Authentication', 'posts', 'UsersFactory', 'postOptions', 'prompt', '$log', 'toastr',
+            function ($scope, $stateParams, $state, Authentication, posts, UsersFactory, postOptions, prompt, $log, toastr) {
             var vm = this;
 
             vm.authentication = Authentication;
@@ -73,7 +73,23 @@ angular.module('posts')
                 else {
                     vm.getPosts();
                 }
+            };
 
+            vm.confirmPurchase = function(post){
+                prompt({
+                    title: 'Confirm Purchase?',
+                    message: 'Are you sure you want to purchase access to this post for $' + post.cost + '?'
+                }).then(function(){
+                    posts.purchasepost(post._id)
+                        .then(function(result){
+                            post.purchased = true;
+                            toastr.success('Post purchased successfully.');
+                        })
+                        .catch(function(err){
+                            $log.error(err);
+                            toastr.error('Error purchasing post.');
+                        });
+                });
             };
 
             // set view based on state

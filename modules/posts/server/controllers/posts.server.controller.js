@@ -68,7 +68,6 @@ exports.read = function (req, res) {
  */
 
 exports.list = function (req, res) {
-
     var search = {};
 
     if (req.params.field) {
@@ -76,8 +75,6 @@ exports.list = function (req, res) {
         var value = req.params.value;
         search[field] = value;
     }
-
-    console.log('search: ', search);
     
     Post.find(search)
         .sort('-created')
@@ -107,11 +104,16 @@ exports.list = function (req, res) {
 
 // trims sensitive paid Post data if user hasn't paid for it
 function trimPostIfPaid(user, post) {
-    if (post.access === 'paid') {
-        if (!user || user._id !== post.user || post.users.indexOf(user._id) === -1) {
+    if (post.access === 'for sale') {
+        if (post.buyers && post.buyers.indexOf(user._id) > -1){
+            post.purchased = true;
+        }
+
+        if (!post.purchased) {
             post.content = undefined;
         }
     }
+    delete post.buyers;
     return post;
 }
 
@@ -139,7 +141,17 @@ exports.update = function (req, res) {
             res.status(409).json('Post with this title already exists, please enter a different title.');
         }
     });
+};
 
+exports.purchasePost = function (req, res) {
+
+    // TODO add transaction in here
+    Post.update({ _id : req.params.postId }, { $push : { buyers : req.user._id }}, function(err){
+        if (err){
+            return res.status(err.status).json(err);
+        }
+        res.json({ success : true });
+    });
 };
 
 /**

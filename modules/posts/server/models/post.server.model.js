@@ -46,10 +46,6 @@ var postSchema = new Schema({
         type: Schema.ObjectId,
         ref: 'User'
     },
-    users: [{
-        type: Schema.ObjectId,
-        ref: 'User'
-    }],
     files: {
         type: Array,
         default: [],
@@ -73,7 +69,11 @@ var postSchema = new Schema({
     },
     featured: {
         type: Boolean
-    }
+    },
+    buyers: [{
+        type: Schema.ObjectId,
+        ref: 'User'
+    }]
 });
 
 mongoose.model('Post', postSchema);

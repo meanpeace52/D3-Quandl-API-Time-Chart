@@ -54,6 +54,7 @@ module.exports = {
                 BOWER_PATH + 'handlebars/handlebars.js',
                 BOWER_PATH + 'js-rbroker-framework/browser/rbroker.min.js',
                 BOWER_PATH + 'angular-payments/lib/angular-payments.js',
+                BOWER_PATH + 'angular-prompt/dist/angular-prompt.js',
                 'https://js.stripe.com/v2/'
             ],
             tests: [BOWER_PATH + 'angular-mocks/angular-mocks.js']

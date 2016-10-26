@@ -27,6 +27,14 @@ exports.invokeRolesPolicies = function () {
                 {
                     resources: '/api/search/:field/:value',
                     permissions: ['get']
+                },
+                {
+                    resources: '/api/purchasepost/:postId',
+                    permissions: ['post']
+                },
+                {
+                    resources: '/api/trackpostview/:postId',
+                    permissions: ['post']
                 }]
         },
         {
@@ -43,6 +51,14 @@ exports.invokeRolesPolicies = function () {
                 {
                     resources: '/api/search/:field/:value',
                     permissions: ['get']
+                },
+                {
+                    resources: '/api/purchasepost/:postId',
+                    permissions: ['post']
+                },
+                {
+                    resources: '/api/trackpostview/:postId',
+                    permissions: ['post']
                 }]
         },
         {
