@@ -56,13 +56,16 @@ var postSchema = new Schema({
     },
     access: {
         type: String,
-        enum: ['public', 'paid', 'private'],
+        enum: ['public', 'for sale', 'private'],
         default: 'public'
     },
     cost: {
         type: Number,
-        default: 0,
+        default: 1,
         trim: false
+    },
+    previewnote: {
+        type: String
     },
     uniquepageviews: {
         type: Number,

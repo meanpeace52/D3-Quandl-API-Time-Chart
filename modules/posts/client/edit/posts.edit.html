@@ -34,6 +34,28 @@
                         </div>
                     </div>
                 </div>
+                <div class="form-group row" show-errors ng-show="postsEdit.post.access === 'for sale'">
+                    <div class="col-md-2">
+                        <label for="access">Price</label>
+                    </div>
+                    <div class="col-md-2">
+                        <div class="input-group">
+                            <span class="input-group-addon">$</span>
+                            <input type="number" name="cost" id="cost" class="form-control" ng-model="postsEdit.post.cost" min="1" ng-min="1" step="0.50" />
+                        </div>
+                        <div ng-if="form.cost.$error && postsEdit.submitted" ng-messages="form.cost.$error" role="alert">
+                            <p class="help-block error-text" ng-message="required">Enter a price greater than $1.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group row" show-errors ng-show="postsEdit.post.access === 'for sale'">
+                    <div class="col-md-2">
+                        <label for="cost">Preview Note for Customers</label>
+                    </div>
+                    <div class="col-md-10">
+                        <textarea ng-model="postsEdit.post.previewnote" class="form-control" id="previewnote" name="previewnote" maxlength="255" placeholder="A description of your post to potential buyers"></textarea>
+                    </div>
+                </div>
                 <div class="form-group row" show-errors>
                     <div class="col-md-2">
                         <label for="subject">Subject</label>

@@ -16,7 +16,6 @@ angular.module('posts')
             vm.postOptions = postOptions;
 
             // Create new post
-
             vm.post = {
                 access : 'public'
             };

@@ -35,6 +35,12 @@ angular.module('posts')
                 vm.submitted = true;
 
                 if (form.$valid){
+
+                    if (vm.post.access !== 'for sale'){
+                        vm.post.cost = null;
+                        vm.post.previewnote = null;
+                    }
+
                     posts.crud.update({
                         post: vm.post,
                         postId: $stateParams.postId
