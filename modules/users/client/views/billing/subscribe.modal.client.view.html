@@ -1,0 +1,33 @@
+<div class="modal-header">
+    <h3 class="modal-title" id="modal-title">Subscribe to a plan</h3>
+</div>
+<div class="modal-body" id="modal-body">
+  <div class="well">
+    <div class="row" ng-if="allow_choice">
+      <div class="col-sm-6">
+        <select class="form-control"
+            ng-model="selectedPlan"
+            ng-options="o.name for o in planOptions"
+            ng-change="getPrice(selectedPlan)">
+        </select>
+      </div>
+      <div class="col-sm-6">
+        <select class="form-control"
+            ng-model="selectedPeriod"
+            ng-options="o.name for o in periodOptions"
+            ng-change="getPrice(selectedPeriod)">
+        </select>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-sm-12 text-center">
+        <h2 ng-if="!allow_choice">{{selectedPlan.name}}</h2>
+        <h3>${{price}} / {{selectedPeriod.period}} <small>( ${{price/selectedPeriod.val | number:2}} / Month )</small></h3>
+        <p>You will be charged ${{price}} up-front on your credit card</p>
+      </div>
+    </div>
+  </div>
+  <h3>Enter your credit card info</h3>
+  <hr>
+  <div ng-include="'modules/users/client/views/billing/credit-card.client.view.html'"></div>
+</div>

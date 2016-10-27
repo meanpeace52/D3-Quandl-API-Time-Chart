@@ -62,7 +62,7 @@
               <label for="biz_legal_name" class="control-label">Legal name:</label>
               <input class="form-control" name="biz_legal_name" placeholder="Company, Inc." type="text" ng-model="legal_entity.business_name"  required>
               <div ng-if="form.biz_legal_name.$error && submitted" ng-messages="form.biz_legal_name.$error" role="alert">
-                <p class="help-block error-text" ng-message="required">required</p>
+                <p class="help-block error-text" ng-message="required">This field is required</p>
               </div>
             </div>
 
@@ -71,7 +71,7 @@
               <input class="form-control" name="tax_id" autocomplete="off" placeholder="123456789" type="text"
               ng-model="legal_entity.business_tax_id" ng-required="type.code!=='individual'">
               <div ng-if="form.business_tax_id.$error && submitted" ng-messages="form.business_tax_id.$error" role="alert">
-                <p class="help-block error-text" ng-message="required">required</p>
+                <p class="help-block error-text" ng-message="required">This field is required</p>
               </div>
             </div>
 
@@ -79,20 +79,20 @@
               <label for="biz_street" class="control-label"><span ng-if="type.code !== 'individual'">Business</span><span ng-if="type.code === 'individual'">Your</span>  address:</label>
               <input class="form-control" name="street" placeholder="Street" type="text" ng-model="legal_entity.address.line1" required>
               <div ng-if="form.street.$error && submitted" ng-messages="form.street.$error" role="alert">
-                <p class="help-block error-text" ng-message="required">required</p>
+                <p class="help-block error-text" ng-message="required">This field is required</p>
               </div>
             </div>
             <div class="row">
               <div class="col-sm-4 form-group" show-errors>
                 <input class="form-control" name="zip" autocomplete="off" placeholder="ZIP" type="text" ng-model="legal_entity.address.postal_code" required>
                 <div ng-if="form.zip.$error && submitted" ng-messages="form.zip.$error" role="alert">
-                  <p class="help-block error-text" ng-message="required">required</p>
+                  <p class="help-block error-text" ng-message="required">This field is required</p>
                 </div>
               </div>
               <div class="col-sm-4 form-group" show-errors>
                 <input class="form-control" name="city" placeholder="City" type="text" ng-model="legal_entity.address.city" required>
                 <div ng-if="form.city.$error && submitted" ng-messages="form.city.$error" role="alert">
-                  <p class="help-block error-text" ng-message="required">required</p>
+                  <p class="help-block error-text" ng-message="required">This field is required</p>
                 </div>
               </div>
               <div class="col-sm-4">
@@ -119,13 +119,13 @@
               <div class="col-sm-6 form-group" show-errors>
                 <input class="form-control" name="first_name" placeholder="First" ng-model="legal_entity.first_name" type="text" required>
                 <div ng-if="form.first_name.$error && submitted" ng-messages="form.first_name.$error" role="alert">
-                  <p class="help-block error-text" ng-message="required">required</p>
+                  <p class="help-block error-text" ng-message="required">This field is required</p>
                 </div>
               </div>
               <div class="col-sm-6 form-group" show-errors>
                 <input class="form-control" name="last_name" placeholder="Last" ng-model="legal_entity.last_name" type="text" required>
                 <div ng-if="form.last_name.$error && submitted" ng-messages="form.last_name.$error" role="alert">
-                  <p class="help-block error-text" ng-message="required">required</p>
+                  <p class="help-block error-text" ng-message="required">This field is required</p>
                 </div>
               </div>
             </div>
@@ -135,7 +135,8 @@
                <input type="text" name="dob" class="form-control" placeholder="mm / dd / yyyy"
                ng-model="legal_entity.dob" dob-validate dob-format required/>
                <div ng-if="form.dob.$error && submitted" ng-messages="form.dob.$error" role="alert">
-                 <p class="help-block error-text" ng-message="required">required</p>
+                 <p class="help-block error-text" ng-message="required">The date of birth is required</p>
+                 <p class="help-block error-text" ng-message="dob">Please enter a valid date</p>
                </div>
             </div>
 
@@ -144,7 +145,7 @@
               <input  class="form-control" name="owner_ssn_last_4" placeholder="9999" maxlength="4" type="text" ng-model="legal_entity.ssn_last_4" >
               <p class="small">We use the last four digits to verify your identity.</p>
               <div ng-if="form.owner_ssn_last_4.$error && submitted" ng-messages="form.owner_ssn_last_4.$error" role="alert">
-                <p class="help-block error-text" ng-message="required">required</p>
+                <p class="help-block error-text" ng-message="required">This field is required</p>
               </div>
             </div>
           </div>
@@ -172,28 +173,7 @@
           </div>
           <div ng-if="!external_account.id">
             <p class="explanation bank_extra">Your bank account must be a checking account.</p>
-            <div class="form-group"  show-errors>
-              <label class="control-label" for="account_number">Routing number:</label>
-              <input data-number-type="routing" class="routing form-control" name="routing_number"
-              ng-model="external_account.routing_number" placeholder="111000000" type="text" required >
-            </div>
-
-            <div class="form-group"  show-errors>
-              <label class="control-label" for="account_number">Account number:</label>
-              <input class="form-control" name="account_number" autocomplete="off" placeholder=""
-              ng-model="external_account.account_number" maxlength="34" type="text" required>
-              <div ng-if="form.account_number.$error && submitted" ng-messages="form.account_number.$error" role="alert">
-                <p class="help-block error-text" ng-message="required">required</p>
-              </div>
-            </div>
-
-            <div class="form-group"  show-errors>
-              <label class="control-label" for="account_number">Confirm account number:</label>
-              <input class="form-control" name="account_number_validate" autocomplete="off" placeholder="" equals="{{external_account.account_number}}"  ng-model="account_number_validate" maxlength="34" type="text" required>
-              <div ng-if="form.account_number_validate.$error && submitted" ng-messages="form.account_number_validate.$error" role="alert">
-                <p class="help-block error-text" ng-message="required">required</p>
-              </div>
-            </div>
+            <div ng-include="'modules/users/client/views/settings/gettingpaid/bank-account-fields.client.view.html'"></div>
           </div>
         </div>
       </div>

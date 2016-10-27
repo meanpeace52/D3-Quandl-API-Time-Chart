@@ -1,0 +1,52 @@
+<form name="form" stripe-form="stripeCallback" ng-submit="validate(form)"  ng-if="!submitting" novalidate >
+  <div class="panel panel-default">
+    <div class="panel-body">
+      <div class="form-group">
+        <input ng-model="name" placeholder="Name on card"  class="form-control" />
+      </div>
+      <div class="form-group" show-errors>
+        <input ng-model="number" name="card" placeholder="Card Number" payments-validate="card"  payments-format="card" class="form-control" required />
+        <div ng-if="form.card.$error && submitted" ng-messages="form.card.$error" role="alert">
+          <p class="help-block error-text" ng-message="required">The card number is required</p>
+          <p class="help-block error-text" ng-message="card">Please check the card number</p>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col-xs-8">
+          <div class="form-group" show-errors>
+            <input ng-model="expiry" name="expiry" placeholder="Expiration" payments-validate="expiry"  payments-format="expiry" class="form-control" required />
+            <div ng-if="form.expiry.$error && submitted" ng-messages="form.expiry.$error" role="alert">
+              <p class="help-block error-text" ng-message="required">The expiry date is required</p>
+              <p class="help-block error-text" ng-message="expiry">Please check the date</p>
+            </div>
+          </div>
+        </div>
+        <div class="col-xs-4">
+          <div class="form-group" show-errors>
+            <input ng-model="cvc" name="cvc" placeholder="CVC" payments-validate="cvc"  payments-format="cvc" class="form-control" required />
+            <div ng-if="form.cvc.$error && submitted" ng-messages="form.cvc.$error" role="alert">
+              <p class="help-block error-text" ng-message="required">The CVC is required</p>
+              <p class="help-block error-text" ng-message="cvc">Please check the cvc</p>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div ng-show="carderror" class="alert alert-danger">
+        <strong ng-bind="carderror"></strong>
+      </div>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-xs-6">
+        <a class="btn btn-default btn-block btn-lg" ng-click="cancel()">Cancel</a>
+    </div>
+    <div class="col-xs-6">
+      <button type="submit" class="btn btn-primary btn-block btn-lg" ng-disabled="submitting">Submit</button>
+    </div>
+  </div>
+</form>
+
+<div ng-show="submitting">
+<p class="text-center" style="margin:60px 0">Please be patient we are processing your card</p>
+</div>

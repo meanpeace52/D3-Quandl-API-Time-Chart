@@ -179,12 +179,12 @@ var plans = [
             {stripe_account: user.stripeAccount},
             function(err, fileUpload) {
               fs.unlinkSync(req.file.path);
-              if(err) return res.status(err.status).json({message:err.message});
+              if(err) return handleStripeError(err, res);
               stripe.accounts.update(
                 user.stripeAccount,
                 {legal_entity: {verification: {document: fileUpload.id}}},
                 function(err, account){
-                  if(err) return res.status(err.status).json({message:err.message});
+                  if(err) return handleStripeError(err, res);
                   res.json(account);
             });
           });
@@ -201,7 +201,7 @@ var plans = [
           user.stripeSubscription,
           function(err, subscription) {
             if(err){
-              res.status(err.status).json({message:err.message});
+              handleStripeError(err, res);
             } else {
               res.json(subscription);
             }
@@ -231,7 +231,7 @@ var plans = [
           user.stripeCustomer,
           function(err, customer) {
             if(err){
-              res.status(err.status).json({message:err.message});
+              handleStripeError(err, res);
             } else {
               res.json(returnCustomerBillingInfo(customer));
             }
@@ -255,7 +255,7 @@ var plans = [
           {source: req.body.token },
           function(err, card) {
             if(err){
-              res.status(err.status).json({message:err.message});
+              handleStripeError(err, res);
             } else {
               stripe.customers.update(user.stripeCustomer, {
                 default_source: card.id
@@ -283,7 +283,7 @@ var plans = [
           { limit: 100,customer:user.stripeCustomer },
           function(err, invoices) {
             if(err){
-              res.status(err.status).json({message:err.message});
+              handleStripeError(err, res);
             } else {
               res.json(invoices.data);
             }
@@ -313,7 +313,7 @@ var plans = [
           user.stripe_customer,
           {source: req.body.token },
           function(err, card) {
-            if(err) return res.status(err.status).json({message:err.message});
+            if(err) return handleStripeError(err, res);
             stripe.customers.update(user.stripeCustomer, {
               default_source: card.id
             }, function(err, customer) {
@@ -324,7 +324,7 @@ var plans = [
                   user_plan,
                   user,
                   function(err, subscription_id){
-                    if(err) return res.status(err.status).json({message:err.message});
+                    if(err) return handleStripeError(err, res);
                     res.json(user_plan);
                   }
                 );
@@ -335,7 +335,7 @@ var plans = [
                   user_plan,
                   user,
                   function(err, subscription_id){
-                    if(err) return res.status(err.status).json({message:err.message});
+                    if(err) return handleStripeError(err, res);
                     res.json(user_plan);
                   }
                 );
@@ -348,14 +348,14 @@ var plans = [
           req.body.token,
           user,
           function(err, customer_id){
-            if(err) return res.status(err.status).json({message:err.message});
+            if(err) return handleStripeError(err, res);
             subscribeCustomerToPlan(
               customer_id,
               stripe_plan,
               user_plan,
               user,
               function(err, subscription_id){
-                if(err) return res.status(err.status).json({message:err.message});
+                if(err) return handleStripeError(err, res);
                 res.json(user_plan);
               }
             );
@@ -380,7 +380,7 @@ var plans = [
             application_fee : 200,
             description: 'test charge for ' + user.email
           }, function(err, charge) {
-            if (err) return res.status(err.status).json({message:err.message});
+            if (err) return handleStripeError(err, res);
             return res.json({success:true});
           });
       }else{
@@ -538,4 +538,9 @@ var plans = [
          return billing;
        }
      }
+   }
+
+   function handleStripeError(err, res){
+     console.log(err);
+     res.status(err.statusCode).json({message:err.message});
    }

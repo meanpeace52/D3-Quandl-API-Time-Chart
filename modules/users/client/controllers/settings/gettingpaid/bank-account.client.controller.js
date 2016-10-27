@@ -2,7 +2,7 @@
 
 angular.module('users').controller('BankAccountController', ['$scope','Authentication','BillingService','toastr',
   function ($scope, Authentication, BillingService, toastr) {
-
+    $scope.external_account = {};
     $scope.validate = function(form){
       if (!form.$valid){
         $scope.submitted = true;
@@ -34,7 +34,7 @@ angular.module('users').controller('BankAccountController', ['$scope','Authentic
     function initAccountInfo(account){
       if(account.id) {
         if(account.external_accounts.data.length) {
-          $scope.external_account = account.external_accounts.data[0];
+          $scope.bank_account = account.external_accounts.data[0];
         }
         $scope.accountLoaded = true;
       }

@@ -37,8 +37,9 @@ angular.module('users').factory('BillingService', ['$http', '$window','toastr', 
         $http.post('/api/users/subscribe', { plan: plan_id , token: token}).then(function successCallback(response) {
           toastr.success('Your subscription has been successfully updated');
           Authentication.user.plan = response.data;
-          next(response.data);
+          next(null, response.data);
         }, function (err) {
+          next(err);
           toastr.error('Could not update your subscription.\n'+err.data.message);
         });
       } else {
@@ -50,16 +51,15 @@ angular.module('users').factory('BillingService', ['$http', '$window','toastr', 
       if(Authentication.user){
         $http.put('/api/users/billing', { token: token}).then(function (response) {
           toastr.success('Your credit card has been successfully updated');
-          next(response.data);
+          next(null, response.data);
         }, function (err) {
           toastr.error('Could not update your credit card.\n'+err.data.message);
+          next(err);
         });
       } else {
         toastr.error('You need to be logged in');
       }
     };
-
-
 
     billing.getInvoices = function(next){
       if(Authentication.user){
@@ -141,7 +141,7 @@ angular.module('users').factory('BillingService', ['$http', '$window','toastr', 
     billing.openSelectPlanModal = function(options, next){
       this.getPlans(function(plans){
         var modalInstance = $uibModal.open({
-          templateUrl: 'modules/users/client/views/billing/subscribe.modal.client.html',
+          templateUrl: 'modules/users/client/views/billing/subscribe.modal.client.view.html',
           controller: 'SubscribeModalController',
           resolve: {
             plans: function() {return plans;},
@@ -152,24 +152,6 @@ angular.module('users').factory('BillingService', ['$http', '$window','toastr', 
       });
     };
 
-    billing.openCreditCardModal = function(next){
-      var modalInstance = $uibModal.open({
-        templateUrl: 'modules/users/client/views/billing/creditcard.modal.client.html',
-        controller: 'CreditCardModalController',
-        resolve: {
-          next: function() {
-            return function(result){
-              billing.updateCard(result.id, function successCallback(response) {
-                modalInstance.close();
-                next(response);
-              });
-            };
-          },
-        }
-      });
-    };
-
-
     billing.testCharge = function(token, next){
       if(Authentication.user){
         $http.post('/api/users/testcharge', { token: token}).then(function (response) {
@@ -177,7 +159,7 @@ angular.module('users').factory('BillingService', ['$http', '$window','toastr', 
           next(null, response.data);
         }, function (err) {
           toastr.error('Could not create charge.\n'+err.data.message);
-          next(err);
+          next(err, null);
         });
       } else {
         toastr.error('You need to be logged in');
@@ -185,23 +167,52 @@ angular.module('users').factory('BillingService', ['$http', '$window','toastr', 
     };
 
 
-    billing.openTestChargeModal = function(next){
-        var modalInstance = $uibModal.open({
-          templateUrl: 'modules/users/client/views/billing/creditcard.modal.client.html',
-          controller: 'CreditCardModalController',
-          resolve: {
-            next: function() {
-              return function(result){
-                billing.testCharge(result.id, function successCallback(response) {
-                  modalInstance.close();
-                  next(response);
-                });
-              };
-            },
-          }
+    billing.openChangeCreditCardModal = function(next){
+      var modalInstance = billing.openCreditCardModal('Update your Credit Card',
+        function(result){
+          billing.updateCard(result.id, function (err, response) {
+            if(err){
+              modalInstance.close();
+              billing.openChangeCreditCardModal(next);
+            }else{
+              modalInstance.close();
+              next(response);
+            }
         });
+      });
     };
 
+    billing.openTestChargeModal = function(next){
+      var modalInstance = billing.openCreditCardModal(
+        'Create a test charge on connected account',
+        function(result){
+          billing.testCharge(result.id, function (err, response) {
+            if(err){
+              modalInstance.close();
+              billing.openTestChargeModal(next);
+            }else{
+              modalInstance.close();
+              next(response);
+            }
+        });
+      });
+    };
+
+
+    billing.openCreditCardModal = function(title, next){
+      return $uibModal.open({
+        templateUrl: 'modules/users/client/views/billing/creditcard.modal.client.view.html',
+        controller: 'CreditCardModalController',
+        resolve: {
+          next: function() {
+            return function(result){
+              next(result);
+            };
+          },
+          title: function() {return title;}
+        }
+      });
+    };
     return billing;
   }
 ]);

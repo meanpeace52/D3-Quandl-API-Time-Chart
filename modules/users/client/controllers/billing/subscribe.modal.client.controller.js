@@ -48,10 +48,16 @@ angular.module('users')
         if (result.error) {
             $scope.carderror = result.error.message;
         } else {
-          BillingService.subscribe(result.id, $scope.stripe_plan_id, function successCallback(response) {
-            next();
+          BillingService.subscribe(result.id, $scope.stripe_plan_id, function (err, response) {
+            if(err){
+              $scope.carderror = err.data.message;
+              $scope.submitting = false;
+            }else{
+              $uibModalInstance.close();
+              next();
+            }
           });
-          $uibModalInstance.close();
+
         }
       };
     }]);
