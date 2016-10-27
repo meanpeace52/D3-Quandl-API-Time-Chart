@@ -18,9 +18,7 @@ angular.module('users')
         if (result.error) {
             $scope.carderror = result.error.message;
         } else {
-          BillingService.updateCard(result.id, function successCallback(response) {
-              next();
-          });
+          next(result);
           $uibModalInstance.close();
         }
       };

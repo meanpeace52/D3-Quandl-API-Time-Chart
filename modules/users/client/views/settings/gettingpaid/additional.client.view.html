@@ -1,43 +1,62 @@
 <section class="row" ng-controller="GettingPaidAdditionalController">
+  <div class="col-md-8 col-md-offset-2" >
 
-  <form class="form company" name="form" ng-if="accountLoaded" ng-submit="validate(form)"  novalidate>
-
-    <div class="alert alert-danger" ng-if="verification.fields_needed.length">
-      <h4>We could not verify your account</h4>
-      <p>Please provide the requested information</p>
-      <p ng-if="verification.fields_needed.indexOf('external_account')>-1">
-        A valid Bank account number
-      </p>
-      <p ng-if="verification.fields_needed.indexOf('legal_entity.verification.document')>-1">
-        Upload a scan of an identifying document, such as a passport or driver’s license.
-      </p>
-      <p ng-if="verification.fields_needed.indexOf('legal_entity.verification.personal_id_number')>-1">
-        Provide your social security number
-      </p>
+    <div class="alert alert-warning" ng-if="legal_entity.verification.status === 'unverified'">
+      Your account is not verified
+      <p>{{legal_entity.verification.details}}</p>
+    </div>
+    <div class="alert alert-info" ng-if="legal_entity.verification.status === 'pending'">
+      Your account verification is pending
+    </div>
+    <div class="alert alert-success" ng-if="legal_entity.verification.status === 'verified'">
+      Your account is verified
     </div>
 
-    <div class="form-group" ng-hide="uploader.queue.length" ng-hide="uploading || fileUploadSuccess">
-      <span class="btn btn-default btn-file">
-          Select Document <input type="file" nv-file-select uploader="uploader">
-      </span>
-      <p>image/jpeg, image/png, or application/pdf. The maximum allowed file size is 4MB.</p>
-    </div>
-    <div class="text-center form-group" ng-show="uploading">
-      <strong>Please be patient we are uploading your document</strong>
-    </div>
-    <div ng-show="fileUploadSuccess" class="text-center text-success">
-      <strong>Document uploaded successfully</strong>
-    </div>
 
-    <div class="form-group" ng-if="!register && (!legal_entity.personal_id_number_provided)" show-errors>
-      <label class="control-label" for="owner_ssn_last_4">Social Security Number:</label>
-      <input  class="form-control" name="personal_id_number" placeholder="12345678910"
-      maxlength="9" type="text" ng-model="legal_entity.personal_id_number" >
-    </div>
+    <form class="form company" name="form" ng-if="accountLoaded" ng-submit="validate(form)" ng-hide="accountUpdated"  novalidate>
+      <div ng-if="verification.fields_needed.indexOf('legal_entity.verification.document')>-1">
+        <div class="form-group" >
+          <div ng-hide="uploading || fileUploadSuccess">
+            <label class="control-label" for="owner_ssn_last_4">
+              Upload a scan of an identifying document, such as a passport or driver’s license.
+            </label>
+            <span class="btn btn-default btn-file">
+                Select Document <input type="file" nv-file-select uploader="uploader">
+            </span>
+            <p>image/jpeg, image/png, or application/pdf. The maximum allowed file size is 4MB.</p>
+          </div>
+          <div class="text-center form-group" ng-show="uploading">
+            <strong>Please be patient we are uploading your document</strong>
+          </div>
+          <div ng-show="fileUploadSuccess" class="text-center text-success">
+            <strong>Document uploaded successfully</strong>
+          </div>
+        </div>
+        <div class="form-group text-right" >
+          <a ui-sref="settings.gettingpaid.account" class="btn btn-default btn-lg">Cancel</a>
+        </div>
+      </div>
 
-    <div ng-show="error" class="text-center text-danger">
-      <strong ng-bind="error"></strong>
-    </div>
 
-  </form>
+      <div ng-if="verification.fields_needed.indexOf('legal_entity.personal_id_number')>-1">
+        <div class="form-group" ng-if="!register && (!legal_entity.personal_id_number_provided)" show-errors>
+          <label class="control-label" for="owner_ssn_last_4">Provide your social security number:</label>
+          <input  class="form-control" name="personal_id_number" placeholder="12345678910"
+          maxlength="9" type="text" ng-model="legal_entity.personal_id_number" required >
+          <div ng-if="form.personal_id_number.$error && submitted" ng-messages="form.personal_id_number.$error" role="alert">
+            <p class="help-block error-text" ng-message="required">required</p>
+          </div>
+        </div>
+        <div ng-show="error" class="text-center text-danger">
+          <strong ng-bind="error"></strong>
+        </div>
+        <div class="form-group text-right">
+          <a ui-sref="settings.gettingpaid.account" class="btn btn-default btn-lg">Cancel</a> <button type="submit" class="btn btn-primary btn-lg">Verify your account</button>
+        </div>
+      </div>
+    </form>
+    <div class="alert alert-success" ng-if="accountUpdated"><p>Thank you! We are now processing your information and verifying your account</p>
+      <a ui-sref="settings.gettingpaid.account" class="btn btn-default">Back</a>
+    </div>
+  </div>
 </section>

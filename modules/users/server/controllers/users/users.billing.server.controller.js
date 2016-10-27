@@ -106,7 +106,9 @@ var plans = [
       var user = req.user;
       if (!user) return res.status(400).json({message:'User is not signed in'});
       if (user.stripeAccount){
-        stripe.accounts.update(user.stripeAccount, {legal_entity:req.body.legal_entity, metadata: req.body.meta},
+        var data ={legal_entity:req.body.legal_entity, metadata: req.body.meta};
+        if(req.body.meta) data.metadata = req.body.meta;
+        stripe.accounts.update(user.stripeAccount, data,
           function(err, account) {
             if(err) return res.status(400).json({message:err.message});
             res.json(account);
@@ -118,47 +120,75 @@ var plans = [
     };
 
     /**
-     * update stripe managed account
+     * update bank account
+     */
+    exports.updateMyBankAccount = function (req, res) {
+      var user = req.user;
+      if (!user) return res.status(400).json({message:'User is not signed in'});
+      if (user.stripeAccount){
+        stripe.accounts.retrieve(
+          user.stripeAccount,
+          function(err, account) {
+            if(err) return res.status(400).json({message:err.message});
+
+            stripe.accounts.createExternalAccount(
+              user.stripeAccount,
+              { external_account:{
+                  object:'bank_account',
+                  account_number:req.body.external_account.account_number,
+                  routing_number:req.body.external_account.routing_number,
+                  country:'US',
+                  currency:'usd',
+                  default_for_currency:true
+                }
+              },
+              function(err, bank_account) {
+                if(err) return res.status(400).json({message:err.message});
+                for (var i = 0; i < account.external_accounts.data.length; i++) {
+                  stripe.accounts.deleteExternalAccount(user.stripeAccount,account.external_accounts.data[i].id);
+                }
+                res.json(bank_account);
+              }
+            );
+          }
+        );
+      } else {
+        res.status(400).json({message:'User has no account'});
+      }
+    };
+
+    /**
+     * upload identity verification document
      */
     exports.uploadVerificationDocument = function (req, res) {
       var user = req.user;
       if (!user) return res.status(400).json({message:'User is not signed in'});
-      if (user.stripeAccount){
-        var upload = multer(config.uploads.stripeUpload).single('newAccountDocument');
-        var stripeUploadFileFilter = require(path.resolve('./config/lib/multer')).stripeUploadFileFilter;
-        upload.fileFilter = stripeUploadFileFilter;
-        upload(req, res, function (uploadError) {
-            if (uploadError) {
-                return res.status(400).send({
-                    message: 'Error occurred while uploading document'
-                });
-            }
-            else {
-              var document = config.uploads.stripeUpload.dest + req.file.filename;
-              stripe.fileUploads.create({
-                purpose: 'identity_document',
-                file: {
-                  data: fs.readFileSync(req.file.path),
-                  name: req.file.filename,
-                  type: 'application/octet-stream' }
-                },
-                {stripe_account: user.stripeAccount},
-                function(err, fileUpload) {
+      if (!user.stripeAccount) return res.status(400).json({message:'User has no account'});
+      var upload = multer(config.uploads.stripeUpload).single('newAccountDocument');
+      var stripeUploadFileFilter = require(path.resolve('./config/lib/multer')).stripeUploadFileFilter;
+      upload.fileFilter = stripeUploadFileFilter;
+      upload(req, res, function (uploadError) {
+          if (uploadError) return res.status(400).send({message: 'Error occurred while uploading document'});
+          stripe.fileUploads.create({
+            purpose: 'identity_document',
+            file: {
+              data: fs.readFileSync(req.file.path),
+              name: req.file.filename,
+              type: 'application/octet-stream' }
+            },
+            {stripe_account: user.stripeAccount},
+            function(err, fileUpload) {
+              fs.unlinkSync(req.file.path);
+              if(err) return res.status(err.status).json({message:err.message});
+              stripe.accounts.update(
+                user.stripeAccount,
+                {legal_entity: {verification: {document: fileUpload.id}}},
+                function(err, account){
                   if(err) return res.status(err.status).json({message:err.message});
-                  fs.unlinkSync(req.file.path);
-                  stripe.accounts.update(
-                    user.stripeAccount,
-                    {legal_entity: {verification: {document: fileUpload.id}}},
-                    function(err, account){
-                      if(err) return res.status(err.status).json({message:err.message});
-                      res.json(account);
-                });
-              });
-            }
-        });
-      } else {
-        res.status(400).json({message:'User has no account'});
-      }
+                  res.json(account);
+            });
+          });
+      });
     };
 
     /**
@@ -269,7 +299,6 @@ var plans = [
     * Subscribe a user to a plan
     */
     exports.subscribeToPlan = function (req, res) {
-
       var user = req.user, stripe_plan, user_plan;
       if (!user) return res.status(400).json({message:'User is not signed in'});
       for (var i = 0; i < plans.length; i++) {
@@ -334,6 +363,31 @@ var plans = [
         );
       }
     };
+
+
+    /**
+     * create a charge on a managed account
+     */
+    exports.createTestCharge = function (req, res) {
+      var user = req.user;
+      if (!user) return res.status(400).json({message:'User is not signed in'});
+      if (user.stripeAccount){
+        stripe.charges.create({
+            amount: 1000,
+            currency: 'usd',
+            source: req.body.token,
+            destination : user.stripeAccount,
+            application_fee : 200,
+            description: 'test charge for ' + user.email
+          }, function(err, charge) {
+            if (err) return res.status(err.status).json({message:err.message});
+            return res.json({success:true});
+          });
+      }else{
+        res.status(400).json({message:'user has no account'});
+      }
+    };
+
 
 
 

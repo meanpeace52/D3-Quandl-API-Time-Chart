@@ -43,7 +43,7 @@ module.exports = {
       }
     },
     stripeUpload: {
-      dest: './modules/users/client/img/tmp/', // files for stripe identity verification
+      dest: './temp/', // files for stripe identity verification
       limits: {
         fileSize: 4*1024*1024 // Max file size in bytes (4 MB)
       }

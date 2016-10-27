@@ -24,7 +24,7 @@ angular.module('users').controller('GettingPaidAdditionalController', ['$scope',
         $scope.uploader.uploadAll();
         $scope.uploading = true;
       } else{
-        $scope.fileError = "Sorry this file is too large, maximum 4MB are allowed";
+        $scope.fileError = 'Sorry this file is too large, maximum 4MB are allowed';
       }
     };
 
@@ -32,6 +32,7 @@ angular.module('users').controller('GettingPaidAdditionalController', ['$scope',
     $scope.uploader.onSuccessItem = function (fileItem, response, status, headers) {
       $scope.fileUploadSuccess = true;
       $scope.uploading = false;
+      $scope.accountUpdated = true;
       initAccountInfo(response);
     };
 
@@ -40,7 +41,31 @@ angular.module('users').controller('GettingPaidAdditionalController', ['$scope',
     };
 
 
-    BillingService.getAccount(function successCallback(err, account) {
+    $scope.validate = function(form){
+      if (!form.$valid){
+        $scope.submitted = true;
+        toastr.error('Please fix the errors before you can continue.');
+        $scope.$broadcast('show-errors-check-validity', 'form');
+      } else {
+
+        $scope.accountLoaded = false;
+        BillingService.updateAccount({legal_entity:{personal_id_number:$scope.legal_entity.personal_id_number}},
+          function (err, account) {
+            if(err){
+              $scope.accountLoaded = true;
+            } else {
+              $scope.accountUpdated = true;
+              initAccountInfo(account);
+            }
+        });
+
+
+      }
+    };
+
+
+
+    BillingService.getAccount(function (err, account) {
       initAccountInfo(account);
     });
 

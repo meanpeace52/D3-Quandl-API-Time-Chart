@@ -56,6 +56,10 @@ angular.module('users').config(['$stateProvider',
                 url: '/additional',
                 templateUrl: MODULE_PATH + 'views/settings/gettingpaid/additional.client.view.html'
             })
+            .state('settings.gettingpaid.bank', {
+                url: '/bank',
+                templateUrl: MODULE_PATH + 'views/settings/gettingpaid/bank-account.client.view.html'
+            })
 
 
         .state('pricing', {

@@ -3,8 +3,7 @@
 angular.module('users').controller('ManagedAccountController', ['$scope','Authentication','BillingService','$uibModal','toastr',
   function ($scope,Authentication,BillingService,$uibModal,toastr) {
     $scope.user = Authentication.user;
-    $scope.legal_entity = {address:{},type:'individual',first_name:Authentication.user.firstName, last_name:Authentication.user.lastName};
-    $scope.external_account = {};
+
     $scope.countries = [
       {code:'AU', name:'Australia'},
       {code:'AT', name:'Austria'},
@@ -32,7 +31,8 @@ angular.module('users').controller('ManagedAccountController', ['$scope','Authen
 
     $scope.businessTypes = [
       {code:'corporation', name:'Corporation', value:'company'},
-      {code:'sole_prop', name:'Individual / Sole Proprietorship', value:'individual'},
+      {code:'individual', name:'Individual', value:'individual'},
+      {code:'sole_prop', name:'Sole Proprietorship', value:'individual'},
       {code:'non_profit', name:'Non-profit', value:'company'},
       {code:'partnership', name:'Partnership', value:'company'},
       {code:'llc', name:'LLC', value:'company'}
@@ -41,11 +41,41 @@ angular.module('users').controller('ManagedAccountController', ['$scope','Authen
     $scope.type = $scope.businessTypes[1];
     var states = 'AK,AL,AR,AZ,CA,CO,CT,DC,DE,FL,GA,HI,IA,ID,IL,IN,KS,KY,LA,MA,MD,ME,MI,MN,MO,MS,MT,NC,ND,NE,NH,NJ,NM,NV,NY,OH,OK,OR,PA,PR,RI,SC,SD,TN,TX,UT,VA,VT,WA,WI,WV,WY';
     $scope.states = states.split(',');
-    $scope.legal_entity.address.state = $scope.states[0];
+
     $scope.selectType = function(type){
       $scope.legal_entity.type = type.value;
       $scope.type = type;
     };
+    getAccount();
+
+    $scope.testCharge = function (){
+      BillingService.openTestChargeModal(function(err, result){
+      });
+    };
+
+    $scope.newAccount = function (){
+      initAccountInfo({});
+    };
+
+
+    $scope.switchEdit = function(val){
+      $scope.edit = val;
+      if(!val) getAccount();
+    };
+
+
+    $scope.openTerms = function(){
+      var modalInstance = $uibModal.open({
+        templateUrl: 'modules/users/client/views/settings/gettingpaid/stripe-terms.client.view.html',
+        controller: function($scope) {
+          $scope.close = function(){
+            modalInstance.close();
+          };
+        }
+      });
+    };
+
+
 
     $scope.validate = function(form){
       if (!form.$valid){
@@ -87,7 +117,7 @@ angular.module('users').controller('ManagedAccountController', ['$scope','Authen
             function (err, account) {
               if(err){
                 $scope.accountLoaded = true;
-              }else {
+              } else {
                 initAccountInfo(account);
               }
           });
@@ -96,9 +126,14 @@ angular.module('users').controller('ManagedAccountController', ['$scope','Authen
       }
     };
 
-    BillingService.getAccount(function successCallback(err, account) {
-      initAccountInfo(account);
-    });
+    function getAccount(){
+      $scope.accountLoaded = false;
+      BillingService.getAccount(function successCallback(err, account) {
+        initAccountInfo(account);
+        $scope.accountLoaded = true;
+      });
+    }
+
 
 
     function initAccountInfo(account){
@@ -117,10 +152,20 @@ angular.module('users').controller('ManagedAccountController', ['$scope','Authen
           }
         }
         $scope.register = false;
+        $scope.edit = false;
       } else {
+        $scope.legal_entity = {address:{},type:'individual',first_name:Authentication.user.firstName, last_name:Authentication.user.lastName};
+        $scope.external_account = {};
+        $scope.verification = {};
+          $scope.legal_entity.address.state = $scope.states[0];
         $scope.register = true;
+        $scope.edit = true;
       }
       $scope.accountLoaded = true;
     }
+
+
+
+
   }
 ]);

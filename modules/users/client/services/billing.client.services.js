@@ -59,6 +59,8 @@ angular.module('users').factory('BillingService', ['$http', '$window','toastr', 
       }
     };
 
+
+
     billing.getInvoices = function(next){
       if(Authentication.user){
         $http.get('/api/users/invoices').then(function (response) {
@@ -95,6 +97,20 @@ angular.module('users').factory('BillingService', ['$http', '$window','toastr', 
         toastr.error('You need to be logged in');
       }
     };
+
+    billing.updateBankAccount = function(data, next){
+      if(Authentication.user){
+        $http.post('/api/users/account/bank', data).then(function (response) {
+          next(null,response.data);
+        }, function (err) {
+          next(err);
+          toastr.error('Could not update your bank account.\n'+err.data.message);
+        });
+      } else {
+        toastr.error('You need to be logged in');
+      }
+    };
+
 
     billing.updateAccount = function(data, next){
       if(Authentication.user){
@@ -137,11 +153,51 @@ angular.module('users').factory('BillingService', ['$http', '$window','toastr', 
     };
 
     billing.openCreditCardModal = function(next){
+      var modalInstance = $uibModal.open({
+        templateUrl: 'modules/users/client/views/billing/creditcard.modal.client.html',
+        controller: 'CreditCardModalController',
+        resolve: {
+          next: function() {
+            return function(result){
+              billing.updateCard(result.id, function successCallback(response) {
+                modalInstance.close();
+                next(response);
+              });
+            };
+          },
+        }
+      });
+    };
+
+
+    billing.testCharge = function(token, next){
+      if(Authentication.user){
+        $http.post('/api/users/testcharge', { token: token}).then(function (response) {
+          toastr.success('The charge has succeeded');
+          next(null, response.data);
+        }, function (err) {
+          toastr.error('Could not create charge.\n'+err.data.message);
+          next(err);
+        });
+      } else {
+        toastr.error('You need to be logged in');
+      }
+    };
+
+
+    billing.openTestChargeModal = function(next){
         var modalInstance = $uibModal.open({
           templateUrl: 'modules/users/client/views/billing/creditcard.modal.client.html',
           controller: 'CreditCardModalController',
           resolve: {
-            next: function() {return next;},
+            next: function() {
+              return function(result){
+                billing.testCharge(result.id, function successCallback(response) {
+                  modalInstance.close();
+                  next(response);
+                });
+              };
+            },
           }
         });
     };
