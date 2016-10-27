@@ -47,16 +47,16 @@ angular.module('users').controller('GettingPaidAdditionalController', ['$scope',
         toastr.error('Please fix the errors before you can continue.');
         $scope.$broadcast('show-errors-check-validity', 'form');
       } else {
-
+        $scope.submitting = true;
         $scope.accountLoaded = false;
         BillingService.updateAccount({legal_entity:{personal_id_number:$scope.legal_entity.personal_id_number}},
           function (err, account) {
             if(err){
-              $scope.accountLoaded = true;
+              $scope.submitting = false;
             } else {
-              $scope.accountUpdated = true;
               initAccountInfo(account);
             }
+            $scope.accountUpdated = true;
         });
 
 

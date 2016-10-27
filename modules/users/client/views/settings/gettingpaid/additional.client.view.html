@@ -1,17 +1,8 @@
 <section class="row" ng-controller="GettingPaidAdditionalController">
   <div class="col-md-8 col-md-offset-2" >
 
-    <div class="alert alert-warning" ng-if="legal_entity.verification.status === 'unverified'">
-      Your account is not verified
-      <p>{{legal_entity.verification.details}}</p>
-    </div>
-    <div class="alert alert-info" ng-if="legal_entity.verification.status === 'pending'">
-      Your account verification is pending
-    </div>
-    <div class="alert alert-success" ng-if="legal_entity.verification.status === 'verified'">
-      Your account is verified
-    </div>
-
+    <h2>Account verification</h2>
+    <h3>Submit additional information</h3>
 
     <form class="form company" name="form" ng-if="accountLoaded" ng-submit="validate(form)" ng-hide="accountUpdated"  novalidate>
       <div ng-if="verification.fields_needed.indexOf('legal_entity.verification.document')>-1">
@@ -32,14 +23,14 @@
             <strong>Document uploaded successfully</strong>
           </div>
         </div>
-        <div class="form-group text-right" >
+        <div class="form-group text-right" ng-hide="uploading">
           <a ui-sref="settings.gettingpaid.account" class="btn btn-default btn-lg">Cancel</a>
         </div>
       </div>
 
 
-      <div ng-if="verification.fields_needed.indexOf('legal_entity.personal_id_number')>-1">
-        <div class="form-group" ng-if="!register && (!legal_entity.personal_id_number_provided)" show-errors>
+      <div ng-if="verification.fields_needed.indexOf('legal_entity.personal_id_number')>-1" ng-hide="submitting">
+        <div class="form-group" show-errors>
           <label class="control-label" for="owner_ssn_last_4">Provide your social security number:</label>
           <input  class="form-control" name="personal_id_number" placeholder="12345678910"
           maxlength="9" type="text" ng-model="legal_entity.personal_id_number" required >
@@ -56,7 +47,7 @@
       </div>
     </form>
     <div class="alert alert-success" ng-if="accountUpdated"><p>Thank you! We are now processing your information and verifying your account</p>
-      <a ui-sref="settings.gettingpaid.account" class="btn btn-default">Back</a>
+      <p><a ui-sref="settings.gettingpaid.account" class="btn btn-default">Back</a></p>
     </div>
   </div>
 </section>
