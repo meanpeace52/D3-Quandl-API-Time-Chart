@@ -308,7 +308,7 @@ var plans = [
         }
       }
       if(!stripe_plan) return res.status(400).json({message:'plan not found'});
-      if(user.stripeCustomer){
+      if(!user.stripeCustomer){
         stripe.customers.createSource(
           user.stripe_customer,
           {source: req.body.token },
@@ -317,6 +317,7 @@ var plans = [
             stripe.customers.update(user.stripeCustomer, {
               default_source: card.id
             }, function(err, customer) {
+              if (err) return handleStripeError(err, res);
               if(user.stripeSubscription){
                 updateSubscription(
                   user.stripeSubscription,
@@ -542,5 +543,10 @@ var plans = [
 
    function handleStripeError(err, res){
      console.log(err);
-     res.status(err.statusCode).json({message:err.message});
+     if(err.statusCode){
+       res.status(err.statusCode).json({message:err.message});
+     }else{
+       res.status(500).json({message:'Semething went wrong while processing your data'});
+     }
+
    }
