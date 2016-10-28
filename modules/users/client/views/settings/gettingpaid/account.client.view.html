@@ -8,12 +8,12 @@
         ng-change="selectCountry(country)" class="form-control"/>
     </div>
 
-    <p ng-if="accountLoaded">
+    <p ng-if="accountLoaded && legal_entity.verification.status">
       <button ng-click="testCharge()" class="btn btndefault">Create test charge</button>
       <button ng-click="newAccount()" class="btn btndefault">ceate new account</button>
     </p>
 
-    <form class="form company" name="form" ng-if="accountLoaded" ng-submit="validate(form)"  novalidate>
+    <form class="form company" name="form" ng-show="accountLoaded" ng-submit="validate(form)"  novalidate>
 
       <div class="alert alert-warning" ng-if="legal_entity.verification.status === 'unverified'">
         Your account is not verified

@@ -16,10 +16,10 @@
             </span>
             <p>image/jpeg, image/png, or application/pdf. The maximum allowed file size is 4MB.</p>
           </div>
-          <div class="text-center form-group" ng-show="uploading">
+          <div class="form-group" ng-show="uploading">
             <strong>Please be patient we are uploading your document</strong>
           </div>
-          <div ng-show="fileUploadSuccess" class="text-center text-success">
+          <div ng-show="fileUploadSuccess" class="text-success">
             <strong>Document uploaded successfully</strong>
           </div>
         </div>
@@ -32,7 +32,7 @@
       <div ng-if="verification.fields_needed.indexOf('legal_entity.personal_id_number')>-1" ng-hide="submitting">
         <div class="form-group" show-errors>
           <label class="control-label" for="owner_ssn_last_4">Provide your social security number:</label>
-          <input  class="form-control" name="personal_id_number" placeholder="12345678910"
+          <input  class="form-control" name="personal_id_number" placeholder="1234567891"
           maxlength="9" type="text" ng-model="legal_entity.personal_id_number" required >
           <div ng-if="form.personal_id_number.$error && submitted" ng-messages="form.personal_id_number.$error" role="alert">
             <p class="help-block error-text" ng-message="required">This field is required</p>
