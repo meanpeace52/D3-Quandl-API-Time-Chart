@@ -58,7 +58,6 @@ exports.read = function (req, res) {
                     message: errorHandler.getErrorMessage(err)
                 });
             }
-            post = trimPostIfPaid(req.user, post);
             res.json(post);
         });
 };
@@ -87,35 +86,11 @@ exports.list = function (req, res) {
                 });
             }
             else {
-                posts = _.filter(posts, function(post){
-                    if (post.access === 'private' && post.user != req.user._id){
-                        return false;
-                    }
-                    return true;
-                });
-                posts.forEach(function (post, index, array) {
-                    trimPostIfPaid(req.user, post);
-                });
                 res.json(posts);
             }
         });
 };
 
-
-// trims sensitive paid Post data if user hasn't paid for it
-function trimPostIfPaid(user, post) {
-    if (post.access === 'for sale') {
-        if (post.buyers && post.buyers.indexOf(user._id) > -1){
-            post.purchased = true;
-        }
-
-        if (!post.purchased) {
-            post.content = undefined;
-        }
-    }
-    delete post.buyers;
-    return post;
-}
 
 /**
  * Update a post
@@ -140,17 +115,6 @@ exports.update = function (req, res) {
         else {
             res.status(409).json('Post with this title already exists, please enter a different title.');
         }
-    });
-};
-
-exports.purchasePost = function (req, res) {
-
-    // TODO add transaction in here
-    Post.update({ _id : req.params.postId }, { $push : { buyers : req.user._id }}, function(err){
-        if (err){
-            return res.status(err.status).json(err);
-        }
-        res.json({ success : true });
     });
 };
 

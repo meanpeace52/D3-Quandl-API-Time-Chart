@@ -17,7 +17,6 @@ angular.module('posts')
 
             // Create new post
             vm.post = {
-                access : 'public'
             };
 
             vm.step1 = function(form){

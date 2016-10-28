@@ -1,0 +1,59 @@
+li a:visited {
+  text-decoration: none;
+}
+
+.badge {
+  margin: 0.5em;
+}
+
+.page-header a {
+  text-decoration: none;
+}
+
+.page-header ul {
+  margin-top: 2em;
+  margin-bottom: 0.5em;
+}
+
+.page-header li {
+  margin-right: 1em;
+}
+
+.page-header li.active {
+  border-bottom: 3px solid #337ab7;
+}
+
+.glyphicon {
+  margin-left: 1.5em;
+  margin-right: 1.5em;
+}
+
+.list-group-item .glyphicon {
+
+  margin-left: 1.5em;
+  margin-right: 1.5em;
+}
+
+.list-inline {
+  display: inline-block;
+}
+
+.list-inline .badge {
+  padding: 0.6em 1em;
+  color: #333;
+  background-color: #fff;
+  border: 1px solid #adadad;
+}
+
+.list-inline .badge a {
+  text-decoration: none;
+}
+
+.list-inline .glyphicon {
+  cursor: pointer;
+  margin: 0 0.5em;
+}
+
+form .btn-group {
+  display: inline-block;
+}

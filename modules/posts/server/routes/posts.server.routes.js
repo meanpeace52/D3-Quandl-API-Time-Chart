@@ -26,9 +26,6 @@ module.exports = function (app) {
 
     app.route('/api/trackpostview/:postId').all(postsPolicy.isAllowed)
         .post(posts.trackPostView);
-
-    app.route('/api/purchasepost/:postId').all(postsPolicy.isAllowed)
-        .post(posts.purchasePost);
         
     // Finish by binding the post middleware
     app.param('postId', posts.postByID);

@@ -50,30 +50,13 @@ var postSchema = new Schema({
         type: Array,
         default: [],
     },
-    access: {
-        type: String,
-        enum: ['public', 'for sale', 'private'],
-        default: 'public'
-    },
-    cost: {
-        type: Number,
-        default: 1,
-        trim: false
-    },
-    previewnote: {
-        type: String
-    },
     uniquepageviews: {
         type: Number,
         default: 0
     },
     featured: {
         type: Boolean
-    },
-    buyers: [{
-        type: Schema.ObjectId,
-        ref: 'User'
-    }]
+    }
 });
 
 mongoose.model('Post', postSchema);

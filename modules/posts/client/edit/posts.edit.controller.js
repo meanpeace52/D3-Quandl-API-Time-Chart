@@ -15,8 +15,7 @@ angular.module('posts')
 
             vm.postOptions = postOptions;
 
-            vm.post = {
-            };
+            vm.post = {};
 
             vm.get = function () {
                 posts.crud.get({
@@ -35,12 +34,6 @@ angular.module('posts')
                 vm.submitted = true;
 
                 if (form.$valid){
-
-                    if (vm.post.access !== 'for sale'){
-                        vm.post.cost = null;
-                        vm.post.previewnote = null;
-                    }
-
                     posts.crud.update({
                         post: vm.post,
                         postId: $stateParams.postId
