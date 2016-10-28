@@ -52,10 +52,23 @@ exports.read = function (req, res) {
         .populate('models')
         .populate('datasets')
         .populate('user', 'username')
+        .lean()
         .exec(function (err, post) {
             if (err) {
-                res.status(400).send({
+                return res.status(400).send({
                     message: errorHandler.getErrorMessage(err)
+                });
+            }
+            if (post.datasets && post.datasets.length){
+                _.each(post.datasets, function(dataset){
+                    if (dataset.buyers && dataset.buyers.length > 0){
+                        var purchased = _.find(dataset.buyers, function(buyer){
+                            return buyer.id.toString() === req.user._id.id;
+                        });
+                        if (purchased){
+                            dataset.purchased = true;
+                        }
+                    }
                 });
             }
             res.json(post);
@@ -139,31 +152,6 @@ exports.delete = function (req, res) {
 /**
  * post middleware
  */
-exports.postByID = function (req, res, next, id) {
-
-    if (!mongoose.Types.ObjectId.isValid(id)) {
-        return res.status(400).send({
-            message: 'post is invalid'
-        });
-    }
-
-    Post.findById(id).populate('user', 'username').exec(function (err, post) {
-        if (err) {
-            return next(err);
-        }
-        else if (!post) {
-            return res.status(404).send({
-                message: 'No post with that identifier has been found'
-            });
-        }
-        req.post = post;
-        if (!req.body.post){
-            req.body.post = post;
-        }
-        next();
-    });
-};
-
 exports.postByID = function (req, res, next, id) {
 
     if (!mongoose.Types.ObjectId.isValid(id)) {

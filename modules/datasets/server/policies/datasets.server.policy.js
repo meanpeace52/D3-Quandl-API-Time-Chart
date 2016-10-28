@@ -47,6 +47,10 @@ exports.invokeRolesPolicies = function () {
                 {
                     resources: '/api/datasets/merge',
                     permissions: ['post']
+                },
+                {
+                    resources: '/api/datasets/purchasedataset/:id',
+                    permissions: ['post']
                 }
             ]
         },
@@ -83,6 +87,10 @@ exports.invokeRolesPolicies = function () {
                 },
                 {
                     resources: '/api/datasets/merge',
+                    permissions: ['post']
+                },
+                {
+                    resources: '/api/datasets/purchasedataset/:id',
                     permissions: ['post']
                 }
             ]

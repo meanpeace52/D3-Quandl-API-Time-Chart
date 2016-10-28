@@ -11,6 +11,7 @@ angular.module('datasets')
                 remove: remove,
                 search: search,
                 filter: filter,
+                purchaseDataset: purchaseDataset,
                 addToUserApiCall: addToUserApiCall,
                 getDatasetWithS3: getDatasetWithS3,
                 saveCustom: saveCustom,
@@ -61,6 +62,20 @@ angular.module('datasets')
                 var dfd = $q.defer();
 
                 $http.delete('/api/datasets/' + dataset._id)
+                    .success(function (data, status, headers, config) {
+                        dfd.resolve(data);
+                    })
+                    .error(function (data, status, headers, config) {
+                        dfd.reject(data);
+                    });
+
+                return dfd.promise;
+            }
+
+            function purchaseDataset(dataset){
+                var dfd = $q.defer();
+
+                $http.post('/api/datasets/purchasedataset/' + dataset._id, dataset)
                     .success(function (data, status, headers, config) {
                         dfd.resolve(data);
                     })

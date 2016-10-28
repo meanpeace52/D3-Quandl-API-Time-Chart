@@ -28,8 +28,7 @@
     "browser",
     "element",
     "angular",
-    "_",
-    "moment"
+    "_"
   ],
   "devel": true // Allow development statements e.g. `console.log();`.
 }

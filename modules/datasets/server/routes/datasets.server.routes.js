@@ -54,6 +54,9 @@ module.exports = function (app) {
         .get(datasets.list)
         .post(datasets.create);
 
+    app.route('/api/datasets/purchasedataset/:id').all(datasetsPolicy.isAllowed)
+        .post(datasets.purchaseDataset);
+
     app.route('/api/datasets/upload')
         .post(upload.single('file'), datasets.uploadFile);
 
