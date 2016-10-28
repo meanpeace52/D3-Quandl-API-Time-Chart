@@ -29,10 +29,7 @@ angular.module('datasets')
                     url: '/create',
                     controller: 'DatasetsCreateController',
                     controllerAs: 'datasetsCreate',
-                    templateUrl: MODULE_PATH + 'create/datasets.create.html',
-                    data: {
-                        roles: ['user', 'admin']
-                    }
+                    templateUrl: MODULE_PATH + 'create/datasets.create.html'
                 })
                 .state('datasets.workbench', {
                     url: '/workbench/:ds1/:ds2',
@@ -47,7 +44,7 @@ angular.module('datasets')
                         ds2: {
                             squash: true,
                             value: null
-                        },
+                        }
                     }
                 })
                 .state('datasets.detail', {
@@ -60,10 +57,7 @@ angular.module('datasets')
                     url: '/:datasetId/edit',
                     controller: 'DatasetsEditController',
                     controllerAs: 'datasetsEdit',
-                    templateUrl: MODULE_PATH + 'edit/datasets.edit.html',
-                    data: {
-                        roles: ['user', 'admin']
-                    }
+                    templateUrl: MODULE_PATH + 'edit/datasets.edit.html'
                 });
         }
     ]);

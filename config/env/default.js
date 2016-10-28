@@ -12,6 +12,7 @@ module.exports = {
   deployrHost: 'http://52.44.200.161:8000/deployr/',
   deployrUsername: 'testuser',
   deployrPassword: '8sBLAJkqJh4G6VhY',
+  quandlApiKey: 'ZLbtxbexUUMvs4GCAa-m',
   port: process.env.PORT || 3000,
   templateEngine: 'swig',
   // Session Cookie settings
@@ -39,7 +40,7 @@ module.exports = {
     profileUpload: {
       dest: './modules/users/client/img/profile/uploads/', // Profile upload destination path
       limits: {
-        fileSize: 1*1024*1024 // Max file size in bytes (1 MB)
+        fileSize: 5*1024*1024 // Max file size in bytes (1 MB)
       }
     },
     stripeUpload: {

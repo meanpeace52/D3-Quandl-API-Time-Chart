@@ -11,7 +11,7 @@
       </li>
     </ul>
   </div>
-  <div class="current-process">
+  <div class="current-process" ng-if="ProcessMain.process">
     <div class="current-process-text" ng-if="!ProcessMain.showProcessLoader">
       Current Selected Workflow: <span ng-if="ProcessMain.process">{{ProcessMain.process.title}}</span> <span ng-if="!ProcessMain.process">(EMPTY)</span>
     </div>
@@ -27,14 +27,14 @@
     <button class="btn btn-default"
             ng-if="ProcessMain.showProcessLoader"
             ng-click="ProcessMain.cancelProcess()">
-      Cancel Workflow
+      Stop Workflow
     </button>
     <button class="btn btn-default" ng-disabled="!ProcessMain.process" ng-click="ProcessMain.saveProcess()">Save</button>
     <button class="btn btn-default" ng-disabled="!ProcessMain.process" ng-click="ProcessMain.openModal('edit')">Edit</button>
   </div>
   <div class="pull-right">
     <button class="btn btn-primary" ng-click="ProcessMain.openModal('create')">Create NEW Workflow</button>
-    <div class="btn-group" uib-dropdown>
+    <div class="btn-group" uib-dropdown ng-if="ProcessMain.usersProcesses.length > 0">
       <button id="dropdown-processes" class="btn btn-default" type="button" uib-dropdown-toggle>
         Use Saved Workflow <span class="caret"></span>
       </button>

@@ -6,14 +6,12 @@ angular.module('users').config(['$stateProvider',
         var MODULE_PATH = 'modules/users/client/';
         // Users state routing
         $stateProvider
-        .state('settings', {
+          .state('settings', {
             abstract: true,
             url: '/settings',
-            templateUrl: MODULE_PATH + 'views/settings/settings.client.view.html',
-            data: {
-                roles: ['user', 'admin']
-            }
+            templateUrl: MODULE_PATH + 'views/settings/settings.client.view.html'
         })
+
           .state('settings.profile', {
               url: '/profile',
               templateUrl: MODULE_PATH + 'views/settings/edit-profile.client.view.html'
@@ -42,7 +40,6 @@ angular.module('users').config(['$stateProvider',
               url: '/billing',
               templateUrl: MODULE_PATH + 'views/settings/billing.client.view.html'
           })
-
           .state('settings.gettingpaid', {
               abstract: true,
               url: '/gettingpaid',
@@ -73,6 +70,7 @@ angular.module('users').config(['$stateProvider',
             templateUrl: MODULE_PATH + 'views/authentication/authentication.client.view.html',
             controller: 'AuthenticationController'
         })
+
           .state('authentication.signup', {
               url: '/signup',
               templateUrl: MODULE_PATH + 'views/authentication/signup.client.view.html',
@@ -83,8 +81,6 @@ angular.module('users').config(['$stateProvider',
               templateUrl: MODULE_PATH + 'views/authentication/signin.client.view.html',
               controller: 'AuthenticationController'
           })
-
-
 
 
         .state('emailverification', {
@@ -104,6 +100,7 @@ angular.module('users').config(['$stateProvider',
             url: '/password',
             template: '<ui-view/>'
         })
+
           .state('password.forgot', {
               url: '/forgot',
               templateUrl: MODULE_PATH + 'views/password/forgot-password.client.view.html'
@@ -127,11 +124,11 @@ angular.module('users').config(['$stateProvider',
           })
 
 
-        .state('users', {
+          .state('users', {
             abstract: true,
             url: '/users',
             template: '<ui-view/>'
-        })
+          })
           .state('users.list', {
               url: '',
               controller: 'UsersListController',

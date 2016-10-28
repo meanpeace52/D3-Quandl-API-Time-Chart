@@ -17,7 +17,7 @@ angular.module('posts')
                     url: '',
                     controller: 'postsListController',
                     controllerAs: 'postsList',
-                    templateUrl: MODULE_PATH + 'list/posts.list.html',
+                    templateUrl: MODULE_PATH + 'list/posts.list.html'
                 })
                 .state('posts.search', {
                     url: '/search/:field/:value',
@@ -29,10 +29,7 @@ angular.module('posts')
                     url: '/create',
                     controller: 'postsCreateController',
                     controllerAs: 'postsCreate',
-                    templateUrl: MODULE_PATH + 'create/posts.create.html',
-                    data: {
-                        roles: ['user', 'admin']
-                    }
+                    templateUrl: MODULE_PATH + 'create/posts.create.html'
                 })
                 .state('posts.detail', {
                     url: '/:postId',
@@ -44,28 +41,19 @@ angular.module('posts')
                     url: '/:postId/edit',
                     controller: 'postsEditController',
                     controllerAs: 'postsEdit',
-                    templateUrl: MODULE_PATH + 'edit/posts.edit.html',
-                    data: {
-                        roles: ['user', 'admin']
-                    }
+                    templateUrl: MODULE_PATH + 'edit/posts.edit.html'
                 })
                 .state('posts.createstep2', {
                     url: '/:postId/create/step2',
                     controller: 'postsStep2Controller',
                     controllerAs: 'postsStep2',
-                    templateUrl: MODULE_PATH + 'step2/posts.step2.html',
-                    data: {
-                        roles: ['user', 'admin']
-                    }
+                    templateUrl: MODULE_PATH + 'step2/posts.step2.html'
                 })
                 .state('posts.editstep2', {
                     url: '/:postId/edit/step2',
                     controller: 'postsStep2Controller',
                     controllerAs: 'postsStep2',
-                    templateUrl: MODULE_PATH + 'step2/posts.step2.html',
-                    data: {
-                        roles: ['user', 'admin']
-                    }
+                    templateUrl: MODULE_PATH + 'step2/posts.step2.html'
                 });
         }
     ]);
