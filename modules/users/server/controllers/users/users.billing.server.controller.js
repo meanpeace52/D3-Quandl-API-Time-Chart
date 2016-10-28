@@ -318,7 +318,7 @@ var plans = [
         }
       }
       if(!stripe_plan) return res.status(400).json({message:'plan not found'});
-      if(!user.stripeCustomer){
+      if(user.stripeCustomer){
         stripe.customers.createSource(
           user.stripe_customer,
           {source: req.body.token },
