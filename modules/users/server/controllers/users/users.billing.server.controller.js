@@ -117,6 +117,12 @@ var plans = [
               stripe.customers.update(user.stripeCustomer, {
                 default_source: card.id
               }, function(err, customer) {
+                if (err) return handleStripeError(err, res);
+                for (var i = 0; i < customer.sources.data.length; i++) {
+                 if(customer.default_source != customer.sources.data[i].id){
+                   stripe.customers.deleteCard(customer.id, customer.sources.data[i].id);
+                 }
+                }
                 res.json(returnCustomerBillingInfo(customer));
               });
             }
@@ -175,6 +181,11 @@ var plans = [
               default_source: card.id
             }, function(err, customer) {
               if (err) return handleStripeError(err, res);
+              for (var i = 0; i < customer.sources.data.length; i++) {
+               if(customer.default_source != customer.sources.data[i].id){
+                 stripe.customers.deleteCard(customer.id, customer.sources.data[i].id);
+               }
+              }
               if(user.stripeSubscription){
                 updateSubscription(
                   user.stripeSubscription,
