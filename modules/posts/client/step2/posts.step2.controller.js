@@ -83,11 +83,25 @@ angular.module('posts')
             };
 
             vm.addDataset = function(dataset){
-                if (!vm.post.datasets){
-                    vm.post.datasets = [];
+
+                if (dataset.access !== 'private'){
+                    if (!vm.post.datasets){
+                        vm.post.datasets = [];
+                    }
+
+                    Datasets.update(dataset)
+                        .then(function(){
+
+                        })
+                        .catch(function(err){
+                            $log.error(err);
+                        });
+
+                    vm.datasets = _.without(vm.datasets, dataset);
+                    vm.dataset = undefined;
+                    vm.post.datasets.push(dataset);
                 }
-                vm.datasets = _.without(vm.datasets, dataset);
-                vm.post.datasets.push(dataset);
+
             };
 
             vm.addExistingFile = function(existingFile){
@@ -106,6 +120,17 @@ angular.module('posts')
             vm.removeFile = function(file){
                 vm.post.files = _.without(vm.post.files, file);
                 vm.user.files.push(file);
+            };
+
+            vm.changeDatasetAccess = function(dataset){
+                if (dataset.access === 'for sale'){
+                    if (!dataset.cost){
+                        dataset.cost = 1;
+                    }
+                }
+                else{
+                    delete dataset.cost;
+                }
             };
 
             // IMPORTANT : fileuploader must be kept on $scope because of bug with controllerAs

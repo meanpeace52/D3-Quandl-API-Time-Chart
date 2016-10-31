@@ -1,7 +1,6 @@
 <section>
     <div class="page-header">
         <span class="h1 capitalize">{{postsDetail.post.title}}</span>
-        <span data-ng-if="postsDetail.post.access === 'paid'" class="pull-right glyphicon glyphicon-usd" title="For Sale"></span>
         <span data-ng-if="postsDetail.post.files.length" class="pull-right glyphicon glyphicon-file" title="PDFs attached"></span>
         <span data-ng-if="postsDetail.post.datasets.length" class="pull-right glyphicon glyphicon-list" title="Datasets Attached"></span>
         <span data-ng-if="postsDetail.post.models.length" class="pull-right glyphicon glyphicon-stats" title="Models Attached"></span>
@@ -44,8 +43,9 @@
                         <ul class="list-unstyled">
                             <li ng-repeat="dataset in postsDetail.post.datasets" class="row">
                                 {{ dataset.title }}
-                                <button class="btn btn-default pull-right" ng-click="postsDetail.showData(dataset)">View</button>
-                                <button class="btn btn-primary pull-right" ng-show="dataset.user != postsDetail.post.user._id" ng-click="postsDetail.addToUser(dataset)">Save to Lab</button>
+                                <button class="btn btn-default pull-right" ng-if="dataset.access == 'public' || (dataset.access == 'for sale' && dataset.purchased) || postsDetail.authentication.user._id == postsDetail.post.user._id" ng-click="postsDetail.showData(dataset)">View</button>
+                                <button class="btn btn-primary pull-right" ng-if="dataset.access == 'for sale'" ng-click="postsDetail.purchaseDataset(dataset) && dataset.user != postsDetail.post.user._id">Buy for ${{ dataset.cost | number : 2 }}</button>
+                                <button class="btn btn-primary pull-right" ng-if="dataset.access == 'public'" ng-show="dataset.user != postsDetail.post.user._id" ng-click="postsDetail.addToUser(dataset)">Save to Lab</button>
                             </li>
                         </ul>
                     </div>

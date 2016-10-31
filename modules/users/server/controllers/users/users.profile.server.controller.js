@@ -275,15 +275,23 @@ exports.getFile = function (req, res) {
 
 // trims sensitive paid model data if user hasn't paid for it
 exports.trimIfPaid = function (user, models) {
-    for (var i = 0, len = models.length; i < len; i++) {
-        var model = models[i];
+    _.each(models, function(model){
+        if (model.access === 'for sale' || model.access === 'paid'){
+            if (model.buyers){
+                var purchased = _.find(model.buyers, function(buyer){
+                    return buyer.id === user.id;
+                });
+                if (purchased){
+                    model.purchased = true;
+                }
+            }
 
-        if (models.access === 'paid') {
-            if (!user || user._id !== model.user || models.users.indexOf(user._id) === -1) {
+            if (!model.purchased) {
                 model.content = undefined;
             }
         }
-    }
+        delete model.buyers;
+    });
     return models;
 };
 
@@ -309,7 +317,11 @@ exports.models = function (req, res) {
 
     model.find({
         user: req.readUser._id
-    }).populate('user', 'username').sort('-created').exec(function (err, models) {
+    })
+    .populate('user', 'username')
+    .sort('-created')
+    .lean()
+    .exec(function (err, models) {
         if (err) {
             return res.status(400).send({
                 message: errorHandler.getErrorMessage(err)

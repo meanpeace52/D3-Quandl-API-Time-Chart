@@ -97,12 +97,30 @@ a:hover .header-profile-image {
 }
 .posts.list-group-item {
   cursor: pointer;
+  position: relative;
 }
 .posts.list-group-item:hover {
   background: #eee;
 }
 .posts.list-group-item span.glyphicon {
-  margin-top: -7px;
+  position: relative;
+  top: 17px;
+}
+.posts.list-group-item p.bought {
+  position: relative;
+  top: 8px;
+}
+.posts.list-group-item p.post-title {
+  font-size: 16px;
+}
+.posts.list-group-item p.post-note {
+  margin-top: -10px;
+  font-size: 12px;
+}
+.posts.list-group-item .buttons button,
+.posts.list-group-item .buttons a {
+  position: relative;
+  top: 8px;
 }
 form label {
   font-size: 12px;

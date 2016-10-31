@@ -2,8 +2,8 @@
 
 //posts List Controller
 angular.module('posts')
-    .controller('postsListController', ['$scope', '$stateParams', '$state', 'Authentication', 'posts', 'UsersFactory', 'postOptions',
-            function ($scope, $stateParams, $state, Authentication, posts, UsersFactory, postOptions) {
+    .controller('postsListController', ['$scope', '$stateParams', '$state', 'Authentication', 'posts', 'UsersFactory', 'postOptions', 'prompt', '$log', 'toastr',
+            function ($scope, $stateParams, $state, Authentication, posts, UsersFactory, postOptions, prompt, $log, toastr) {
             var vm = this;
 
             vm.authentication = Authentication;
@@ -73,7 +73,6 @@ angular.module('posts')
                 else {
                     vm.getPosts();
                 }
-
             };
 
             // set view based on state

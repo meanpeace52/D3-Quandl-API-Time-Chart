@@ -14,6 +14,7 @@ var path = require('path'),
     async = require('async'),
     json2csv = require('json2csv'),
     _ = require('lodash'),
+    moment = require('moment'),
     User = mongoose.model('User'),
     client = s3.createClient({
         maxAsyncS3: 20, // this is the default
@@ -141,7 +142,7 @@ function saveFileToS3(filePath, path, done) {
 
         s3Params: {
             Bucket: 'datasetstl',
-            Key: path + filePath,
+            Key: path + filePath
         },
     };
     var uploader = client.uploadFile(params);
@@ -592,6 +593,38 @@ exports.update = function (req, res) {
         }
         else{
             res.json(doc);
+        }
+    });
+};
+
+exports.purchaseDataset = function (req, res) {
+    var user = req.user._id;
+
+    Dataset.findOneAndUpdate({ _id : req.params.id }, { $push : { buyers : user }}, function(err, doc){
+        if (err){
+            res.status(err.status).json(err);
+        }
+        else{
+            return DatasetS3Service.copyDatasetFile(user.username, doc.s3reference)
+                    .then(function(path){
+                        var dataset = new Dataset(_.omit(doc.toObject(), '_id'));
+                        dataset.user = user;
+                        dataset.users = [ dataset.user ];
+                        dataset.created = new Date();
+                        dataset.origDataset = doc._id;
+                        dataset.s3reference = 'https://s3.amazonaws.com/datasetstl/' + path;
+                        dataset.title = doc.title + ' - ' + moment().format('MM/DD/YYYY, h:mm:ss a');
+                        dataset.access = 'purchased';
+                        dataset.save(function(err, doc){
+                            if (err){
+
+                            }
+                        });
+                        res.json({ success : true });
+                    })
+                    .catch(function(err){
+                        res.status(err.status).json(err);
+                    });
         }
     });
 };

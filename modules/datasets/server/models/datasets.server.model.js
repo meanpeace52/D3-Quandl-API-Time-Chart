@@ -34,6 +34,10 @@ var DatasetSchema = new Schema({
         type: Schema.ObjectId,
         ref: 'User'
     },
+    users: [{
+        type: Schema.ObjectId,
+        ref: 'User'
+    }],
     origDataset: {
         type: Schema.ObjectId,
         ref: 'Dataset'
@@ -56,7 +60,7 @@ var DatasetSchema = new Schema({
     },
     access: {
         type: String,
-        enum: ['public', 'paid', 'private'],
+        enum: ['public', 'paid', 'private', 'purchased'],
         default: ['private']
     },
     mediatype: {
@@ -66,6 +70,13 @@ var DatasetSchema = new Schema({
         }],
         default: ['in the news']
     },
+    cost: {
+      type: Number
+    },
+    buyers: [{
+        type: Schema.ObjectId,
+        ref: 'User'
+    }],
     subject: {
         type: String,
         default: 'Tags' // Tags

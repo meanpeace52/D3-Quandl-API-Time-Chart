@@ -2,8 +2,8 @@
 
 //posts Detail Controller
 angular.module('posts')
-    .controller('postsDetailController', ['$stateParams', 'Authentication', 'posts', '$state', '$log', 'Datasets', '$modal', 'toastr',
-            function ($stateParams, Authentication, posts, $state, $log, Datasets, $modal, toastr) {
+    .controller('postsDetailController', ['$stateParams', 'Authentication', 'posts', '$state', '$log', 'Datasets', '$modal', 'toastr', 'prompt',
+            function ($stateParams, Authentication, posts, $state, $log, Datasets, $modal, toastr, prompt) {
 
             var vm = this;
 
@@ -67,6 +67,23 @@ angular.module('posts')
                     resolve: {
                         viewingDataset: dataset
                     }
+                });
+            };
+
+            vm.purchaseDataset = function(dataset){
+                prompt({
+                    title: 'Confirm Purchase?',
+                    message: 'Are you sure you want to purchase this dataset for $' + dataset.cost + '?'
+                }).then(function(){
+                    Datasets.purchaseDataset(dataset)
+                        .then(function(result){
+                            dataset.purchased = true;
+                            toastr.success('Dataset purchased successfully and it has been copied to your LAB.');
+                        })
+                        .catch(function(err){
+                            $log.error(err);
+                            toastr.error('Error purchasing dataset.');
+                        });
                 });
             };
 

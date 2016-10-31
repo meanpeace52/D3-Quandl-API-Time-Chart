@@ -8,5 +8,5 @@ angular.module('posts')
         }
     ]).constant('postOptions', {
         subjects: ['finance', 'soshsci'],
-        access: ['public','private','paid']
+        access: ['public','private','for sale']
     });

@@ -12,7 +12,6 @@
         </div>
     </div>
     <div class="row text-right" style="padding-right: 15px;">
-        <span class="glyphicon glyphicon-usd legend-icon" title="For Sale"></span> For Sale
         <span class="glyphicon glyphicon-file legend-icon" title="PDFs attached"></span> PDF's Attached
         <span class="glyphicon glyphicon-list legend-icon" title="Datasets Attached"></span> Datasets Attached
         <span class="glyphicon glyphicon-stats legend-icon" title="Models Attached"></span> Models Attached
@@ -26,18 +25,23 @@
         </button>
     </form>
     <div class="list-group">
-        <div data-ng-repeat="post in postsList.list | limitTo: postsList.postLimit" data-ui-sref="posts.detail({postId: post._id})" class="list-group-item posts">
-            <small class="list-group-item-text">
-                <span ng-if="!post.user">Unknown User -</span>
-                <span ng-if="post.user">{{ post.user.username }} - </span> <span>{{post.created | date:'mediumDate'}}</span>
-                <span ng-if="post.subject"> - {{post.subject | capitalize }}</span>
-            </small>
-            <h4 class="list-group-item-heading">{{post.title}}
-                <span data-ng-if="post.access === 'paid'" class="pull-right glyphicon glyphicon-usd" title="For Sale"></span>
-                <span data-ng-if="post.files.length" class="pull-right glyphicon glyphicon-file" title="PDFs attached"></span>
-                <span data-ng-if="post.datasets.length" class="pull-right glyphicon glyphicon-list" title="Datasets Attached"></span>
-                <span data-ng-if="post.models.length" class="pull-right glyphicon glyphicon-stats" title="Models Attached"></span>
-            </h4>
+        <div data-ng-repeat="post in postsList.list | limitTo: postsList.postLimit" class="list-group-item posts">
+            <div class="row">
+                <div class="col-md-6">
+                    <small class="list-group-item-text">
+                        <span ng-if="!post.user">Unknown User -</span>
+                        <span ng-if="post.user">{{ post.user.username }} - </span> <span>{{post.created | date:'mediumDate'}}</span>
+                        <span ng-if="post.subject"> - {{post.subject | capitalize }}</span>
+                        <p class="post-title">{{post.title}}</p>
+                    </small>
+                </div>
+                <div class="col-md-6 buttons">
+                    <a class="pull-right btn btn-secondary" ui-sref="posts.detail({postId: post._id})">View</a>
+                    <span ng-if="post.files.length" class="pull-right glyphicon glyphicon-file" title="PDFs attached"></span>
+                    <span ng-if="post.datasets.length" class="pull-right glyphicon glyphicon-list" title="Datasets Attached"></span>
+                    <span if="post.models.length" class="pull-right glyphicon glyphicon-stats" title="Models Attached"></span>
+                </div>
+            </div>
             <!--<p class="list-group-item-text">{{post.content}}</p>-->
         </div>
     </div>

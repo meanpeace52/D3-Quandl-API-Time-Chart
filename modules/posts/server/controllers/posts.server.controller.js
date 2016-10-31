@@ -15,18 +15,31 @@ var path = require('path'),
  */
 
 exports.create = function (req, res) {
-    var post = new Post(req.body);
-    post.user = req.user._id;
-    post.save(function (err) {
-        if (err) {
-            return res.status(400).send({
+    Post.findOne({ title : req.body.title, user : req.user._id }, function(err, foundpost){
+        if (err){
+            return res.status(err.status).send({
                 message: errorHandler.getErrorMessage(err)
             });
         }
-        else {
-            res.json(post);
+        if (!foundpost){
+            var post = new Post(req.body);
+            post.user = req.user._id;
+            post.save(function (err) {
+                if (err) {
+                    return res.status(err.status).send({
+                        message: errorHandler.getErrorMessage(err)
+                    });
+                }
+                else {
+                    res.json(post);
+                }
+            });
+        }
+        else{
+            res.status(409).json('Post with this title already exists, please enter a different title.');
         }
     });
+
 };
 
 /**
@@ -39,13 +52,25 @@ exports.read = function (req, res) {
         .populate('models')
         .populate('datasets')
         .populate('user', 'username')
+        .lean()
         .exec(function (err, post) {
             if (err) {
-                res.status(400).send({
+                return res.status(400).send({
                     message: errorHandler.getErrorMessage(err)
                 });
             }
-            post = trimPostIfPaid(req.user, post);
+            if (post.datasets && post.datasets.length){
+                _.each(post.datasets, function(dataset){
+                    if (dataset.buyers && dataset.buyers.length > 0){
+                        var purchased = _.find(dataset.buyers, function(buyer){
+                            return buyer.id.toString() === req.user._id.id;
+                        });
+                        if (purchased){
+                            dataset.purchased = true;
+                        }
+                    }
+                });
+            }
             res.json(post);
         });
 };
@@ -55,7 +80,6 @@ exports.read = function (req, res) {
  */
 
 exports.list = function (req, res) {
-
     var search = {};
 
     if (req.params.field) {
@@ -63,8 +87,6 @@ exports.list = function (req, res) {
         var value = req.params.value;
         search[field] = value;
     }
-
-    console.log('search: ', search);
     
     Post.find(search)
         .sort('-created')
@@ -77,41 +99,34 @@ exports.list = function (req, res) {
                 });
             }
             else {
-                posts = _.filter(posts, function(post){
-                    if (post.access === 'private' && post.user != req.user._id){
-                        return false;
-                    }
-                    return true;
-                });
-                posts.forEach(function (post, index, array) {
-                    trimPostIfPaid(req.user, post);
-                });
                 res.json(posts);
             }
         });
 };
 
 
-// trims sensitive paid Post data if user hasn't paid for it
-function trimPostIfPaid(user, post) {
-    if (post.access === 'paid') {
-        if (!user || user._id !== post.user || post.users.indexOf(user._id) === -1) {
-            post.content = undefined;
-        }
-    }
-    return post;
-}
-
 /**
  * Update a post
  */
 exports.update = function (req, res) {
-    Post.findOneAndUpdate({ _id : req.body.post._id }, req.body.post, function(err, doc){
+    Post.findOne({ title : req.body.post.title, user : req.user._id }, function(err, post){
         if (err){
-            res.status(err.status).json(err);
+            return res.status(err.status).send({
+                message: errorHandler.getErrorMessage(err)
+            });
         }
-        else{
-            res.json(doc);
+        if (!post || (post && post.id === req.body.post._id)) {
+            Post.findOneAndUpdate({ _id : req.body.post._id }, req.body.post, function(err, doc){
+                if (err){
+                    res.status(err.status).json(err);
+                }
+                else{
+                    res.json(doc);
+                }
+            });
+        }
+        else {
+            res.status(409).json('Post with this title already exists, please enter a different title.');
         }
     });
 };
@@ -137,31 +152,6 @@ exports.delete = function (req, res) {
 /**
  * post middleware
  */
-exports.postByID = function (req, res, next, id) {
-
-    if (!mongoose.Types.ObjectId.isValid(id)) {
-        return res.status(400).send({
-            message: 'post is invalid'
-        });
-    }
-
-    Post.findById(id).populate('user', 'username').exec(function (err, post) {
-        if (err) {
-            return next(err);
-        }
-        else if (!post) {
-            return res.status(404).send({
-                message: 'No post with that identifier has been found'
-            });
-        }
-        req.post = post;
-        if (!req.body.post){
-            req.body.post = post;
-        }
-        next();
-    });
-};
-
 exports.postByID = function (req, res, next, id) {
 
     if (!mongoose.Types.ObjectId.isValid(id)) {
