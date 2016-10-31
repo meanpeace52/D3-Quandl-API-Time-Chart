@@ -23,13 +23,13 @@
           pageTitle: 'Models List'
         }
       })
-      .state('models.filter', {
-        url: '/:field/:value',
-        templateUrl: 'modules/models/client/views/list-models.client.view.html',
+      .state('models.search', {
+        url: '/search/:search',
         controller: 'ModelsListController',
         controllerAs: 'vm',
+        templateUrl: 'modules/models/client/views/list-models.client.view.html',
         data: {
-          pageTitle: 'Models List'
+          pageTitle: 'Models Search'
         }
       })
       .state('models.create', {
@@ -38,7 +38,9 @@
         controller: 'ModelsController',
         controllerAs: 'vm',
         resolve: {
-          modelResolve: newModel
+          modelResolve: function(){
+
+          }
         },
         data: {
           pageTitle: 'Models Create'
@@ -67,20 +69,23 @@
         data: {
           pageTitle: 'Model {{ modelResolve.name }}'
         }
+      })
+      .state('models.filter', {
+        url: '/:field/:value',
+        templateUrl: 'modules/models/client/views/list-models.client.view.html',
+        controller: 'ModelsListController',
+        controllerAs: 'vm',
+        data: {
+          pageTitle: 'Models List'
+        }
       });
   }
 
   getModel.$inject = ['$stateParams', 'ModelsService'];
 
   function getModel($stateParams, ModelsService) {
-    return ModelsService.get({
+    return ModelsService.crud().get({
       modelId: $stateParams.modelId
     }).$promise;
-  }
-
-  newModel.$inject = ['ModelsService'];
-
-  function newModel(ModelsService) {
-    return new ModelsService();
   }
 })();

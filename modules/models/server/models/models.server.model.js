@@ -35,9 +35,17 @@ var ModelSchema = new Schema({
     },
     access: {
         type: String,
-        enum: ['public', 'paid', 'private'],
+        enum: ['public', 'for sale', 'private'],
         default: 'public'
-    }
+    },
+    cost: {
+        type: Number
+    },
+    buyers: [{
+        type: Schema.ObjectId,
+        ref: 'User'
+    }],
+    previewnote: String
 });
 
 mongoose.model('Model', ModelSchema);

@@ -14,6 +14,9 @@ module.exports = function (app) {
         .get(model.list)
         .post(model.create);
 
+    app.route('/api/models/search').all(modelPolicy.isAllowed)
+        .get(model.searchModel);
+
     app.route('/api/models/:modelId').all(modelPolicy.isAllowed)
         .get(model.read)
         .put(model.update)

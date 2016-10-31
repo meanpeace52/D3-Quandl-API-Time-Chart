@@ -27,7 +27,12 @@ exports.invokeRolesPolicies = function () {
                 {
                     resources: '/api/models/user/:userId',
                     permissions: ['get']
+                },
+                {
+                    resources: '/api/models/search',
+                    permissions: ['get']
                 }
+
             ]
         },
         {
@@ -43,6 +48,10 @@ exports.invokeRolesPolicies = function () {
                 },
                 {
                     resources: '/api/models/user/:userId',
+                    permissions: ['get']
+                },
+                {
+                    resources: '/api/models/search',
                     permissions: ['get']
                 }
             ]
