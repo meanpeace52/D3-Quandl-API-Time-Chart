@@ -2,8 +2,8 @@
 
 //posts Detail Controller
 angular.module('posts')
-    .controller('postsDetailController', ['$stateParams', 'Authentication', 'posts', '$state', '$log', 'Datasets', '$modal', 'toastr', 'prompt',
-            function ($stateParams, Authentication, posts, $state, $log, Datasets, $modal, toastr, prompt) {
+    .controller('postsDetailController', ['$stateParams', 'Authentication', 'posts', '$state', '$log', 'Datasets', '$modal', 'toastr', 'prompt', 'ModelsService',
+            function ($stateParams, Authentication, posts, $state, $log, Datasets, $modal, toastr, prompt, ModelsService) {
 
             var vm = this;
 
@@ -83,6 +83,23 @@ angular.module('posts')
                         .catch(function(err){
                             $log.error(err);
                             toastr.error('Error purchasing dataset.');
+                        });
+                });
+            };
+
+            vm.purchaseModel = function(model){
+                prompt({
+                    title: 'Confirm Purchase?',
+                    message: 'Are you sure you want to purchase this model for $' + model.cost + '?'
+                }).then(function(){
+                    ModelsService.purchasemodel(model._id)
+                        .then(function(result){
+                            model.purchased = true;
+                            toastr.success('Model purchased successfully and it has been copied to your LAB.');
+                        })
+                        .catch(function(err){
+                            $log.error(err);
+                            toastr.error('Error purchasing model.');
                         });
                 });
             };

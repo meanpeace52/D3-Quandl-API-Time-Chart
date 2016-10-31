@@ -20,11 +20,12 @@ module.exports = function (app) {
     app.route('/api/models/purchasemodel/:id').all(modelPolicy.isAllowed)
         .post(model.purchaseModel);
 
+    app.route('/api/models/user/:id').all(modelPolicy.isAllowed)
+        .get(model.listByUserId);
+
     app.route('/api/models/:modelId').all(modelPolicy.isAllowed)
         .get(model.read)
         .put(model.update)
         .delete(model.delete);
 
-    app.route('/api/models/user/:userId').all(modelPolicy.isAllowed)
-        .get(model.listByUserId);
 };

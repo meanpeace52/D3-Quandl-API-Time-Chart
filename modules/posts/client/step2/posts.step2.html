@@ -69,6 +69,14 @@
                                         </div>
                                     </div>
                                 </div>
+                                <div class="row form-group" ng-if="postsStep2.user.plan !== 'free' && postsStep2.dataset.access == 'for sale' && postsStep2.dataset">
+                                    <div class="col-md-3">
+                                        <label class="control-label" for="cost">Preview Note</label>
+                                    </div>
+                                    <div class="col-md-9">
+                                        <textarea name="previewnote" id="previewnote" class="form-control" ng-model="postsStep2.dataset.previewnote"></textarea>
+                                    </div>
+                                </div>
                                 <div class="row">
                                     <div class="col-md-12">
                                         <button ng-show="postsStep2.dataset" data-ng-click="postsStep2.addDataset(postsStep2.dataset)" class="btn btn-default text-capitalize" type="button" dropdown-toggle>
@@ -87,7 +95,68 @@
                             </div>
                         </div>
                         <div class="tab-pane" ng-class="{'active' : postsStep2.activeTab == 'Models' }">
-
+                            <form name="modelform" novalidate>
+                                <div class="row form-group">
+                                    <div class="col-md-3">
+                                        <label class="control-label" for="model">Model</label>
+                                    </div>
+                                    <div class="col-md-9">
+                                        <select name="model" id="model" ng-model="postsStep2.model" class="form-control" ng-options="model as model.title for model in postsStep2.models">
+                                            <option value="">- Select Model -</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="row form-group" ng-if="postsStep2.user.plan !== 'free' && postsStep2.model">
+                                    <div class="col-md-12">
+                                        <p><strong>Note: Any changes you make here will be update your model.</strong></p>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <label class="control-label" for="access">Access</label>
+                                    </div>
+                                    <div class="col-md-9">
+                                        <select name="access" id="access" ng-model="postsStep2.model.access" class="form-control" ng-change="postsStep2.changeModelAccess(postsStep2.model)" ng-options="access as (access | capitalize) for access in postsStep2.modelOptions.access">
+                                        </select>
+                                        <div ng-if="postsStep2.model.access == 'private'" role="alert">
+                                            <p class="help-block error-text">You can not attached a private model to the post, you need to change its access level.</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row form-group" ng-if="postsStep2.user.plan !== 'free' && postsStep2.model.access == 'for sale' && postsStep2.model">
+                                    <div class="col-md-3">
+                                        <label class="control-label" for="cost">Price</label>
+                                    </div>
+                                    <div class="col-md-3 input-group">
+                                        <span class="input-group-addon">$</span>
+                                        <input type="number" name="cost" id="cost" class="form-control" ng-model="postsStep2.model.cost" min="1" ng-min="1" step="0.50" />
+                                        <div ng-if="modelform.model.$error" ng-messages="modelform.model.$error" role="alert">
+                                            <p class="help-block error-text" ng-message="required">Enter a price greater than $1.</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row form-group" ng-if="postsStep2.user.plan !== 'free' && postsStep2.model.access == 'for sale' && postsStep2.model">
+                                    <div class="col-md-3">
+                                        <label class="control-label" for="cost">Preview Note</label>
+                                    </div>
+                                    <div class="col-md-9">
+                                        <textarea name="previewnote" id="previewnote" class="form-control" ng-model="postsStep2.model.previewnote"></textarea>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <button ng-show="postsStep2.model" data-ng-click="postsStep2.addModel(postsStep2.model)" class="btn btn-default text-capitalize" type="button" dropdown-toggle>
+                                            Add Model
+                                        </button>
+                                    </div>
+                                </div>
+                            </form>
+                            <div ng-show="postsStep2.post.models.length">
+                                <ul data-ng-if="postsStep2.post.models" class="list-inline">
+                                    <li data-ng-repeat="model in postsStep2.post.models track by $index" class="badge text-capitalize">
+                                        <span data-ng-click="postsStep2.removeModel(model)" class="glyphicon glyphicon-remove" href="#"></span>
+                                        <a href="#" class="h5">{{model.title}}</a><br/>
+                                    </li>
+                                </ul><br/>
+                            </div>
                         </div>
                         <div class="tab-pane" ng-class="{'active' : postsStep2.activeTab == 'PDF' }">
                             <div class="row">

@@ -67,6 +67,20 @@
       return $http.get('api/models/search?q=' + q + '&itemsPerPage=' + itemsPerPage + '&currentPage=' + currentPage);
     };
 
+    models.user = function(username) {
+          var dfd = $q.defer();
+
+          $http.get('api/models/user/' + username)
+              .success(function (data, status, headers, config) {
+                  dfd.resolve(data);
+              })
+              .error(function (data, status, headers, config) {
+                  dfd.reject({ status : status, message : data });
+              });
+
+          return dfd.promise;
+    };
+
     models.purchasemodel = function(id){
         var dfd = $q.defer();
 

@@ -25,7 +25,7 @@ exports.invokeRolesPolicies = function () {
                     permissions: ['get', 'put', 'delete']
                 },
                 {
-                    resources: '/api/models/user/:userId',
+                    resources: '/api/models/user/:id',
                     permissions: ['get']
                 },
                 {
@@ -50,7 +50,7 @@ exports.invokeRolesPolicies = function () {
                     permissions: ['get', 'put', 'delete']
                 },
                 {
-                    resources: '/api/models/user/:userId',
+                    resources: '/api/models/user/:id',
                     permissions: ['get']
                 },
                 {

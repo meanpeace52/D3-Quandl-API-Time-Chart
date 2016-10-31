@@ -93,8 +93,9 @@ exports.searchModel = function (req, res) {
  */
 exports.listByUserId = function (req, res) {
     Model.find({
-            user: req.params.userId
-        }).populate('user')
+            user: req.params.id
+        })
+        .populate('user', 'username')
         .limit(100)
         .sort('-created')
         .exec(function (err, models) {
@@ -226,6 +227,7 @@ exports.purchaseModel = function (req, res) {
 
     Model.findOneAndUpdate({ _id : req.params.id }, { $push : { buyers : user }}, function(err, doc){
         if (err){
+            console.log(err);
             res.status(err.status).json(err);
         }
         else{
