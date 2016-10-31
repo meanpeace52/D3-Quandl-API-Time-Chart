@@ -69,7 +69,7 @@ var path = require('path'),
 
               User.findOneAndUpdate(
                 {stripeCustomer: customer},
-                {plan:'free', stripe_subscription: null},
+                {plan:'free', stripeSubscription: null},
                 {new: false},
                 function(err, user){
                   if(err) return res.status('400').send(errorHandler.getErrorMessage(err));

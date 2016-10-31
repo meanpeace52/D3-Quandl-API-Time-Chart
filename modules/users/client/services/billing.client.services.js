@@ -213,6 +213,8 @@ angular.module('users').factory('BillingService', ['$http', '$window','toastr', 
         }
       });
     };
+
+
     return billing;
   }
 ]);
