@@ -46,23 +46,9 @@ var postSchema = new Schema({
         type: Schema.ObjectId,
         ref: 'User'
     },
-    users: [{
-        type: Schema.ObjectId,
-        ref: 'User'
-    }],
     files: {
         type: Array,
         default: [],
-    },
-    access: {
-        type: String,
-        enum: ['public', 'paid', 'private'],
-        default: 'public'
-    },
-    cost: {
-        type: Number,
-        default: 0,
-        trim: false
     },
     uniquepageviews: {
         type: Number,

@@ -13,7 +13,7 @@
             <h2>Add Data, Models, and .pdf files to your Post for reproducible research</h2>
             <p>Don't have any models or datasets yet? <a ui-sref="datasets.list">Find datasets</a> based on your interests, and then open them in your <a ui-sref="lab.process">Lab</a> to fit a predictive model to them! Or you can save what <a ui-sref="users.list">other users are working on as a starting point</a>.</p>
         </div>
-        <form name="form" class="form-horizontal" ng-submit="postsStep2.update(form)" novalidate>
+        <form name="form" class="form-horizontal" novalidate>
             <div class="row">
                 <div class="col-md-3">
                     <ul class="nav nav-pills nav-stacked">
@@ -31,18 +31,52 @@
                 <div class="col-md-9">
                     <div class="tab-content">
                         <div class="tab-pane" ng-class="{'active' : postsStep2.activeTab == 'Datasets' }">
-                            <div class="row">
-                                <div class="col-md-9">
-                                    <select name="dataset" id="dataset" ng-model="postsStep2.dataset" class="form-control" ng-options="dataset as dataset.title for dataset in postsStep2.datasets">
-                                        <option value="">- Select Dataset -</option>
-                                    </select>
+                            <form name="datasetform" novalidate>
+                                <div class="row form-group">
+                                    <div class="col-md-3">
+                                        <label class="control-label" for="dataset">Dataset</label>
+                                    </div>
+                                    <div class="col-md-9">
+                                        <select name="dataset" id="dataset" ng-model="postsStep2.dataset" class="form-control" ng-options="dataset as dataset.title for dataset in postsStep2.datasets">
+                                            <option value="">- Select Dataset -</option>
+                                        </select>
+                                    </div>
                                 </div>
-                                <div class="col-md-3">
-                                    <button ng-show="postsStep2.dataset" data-ng-click="postsStep2.addDataset(postsStep2.dataset)" class="btn btn-default text-capitalize" type="button" dropdown-toggle>
-                                        Add Dataset
-                                    </button>
+                                <div class="row form-group" ng-if="postsStep2.user.plan !== 'free' && postsStep2.dataset">
+                                    <div class="col-md-12">
+                                        <p><strong>Note: Any changes you make here will be update your dataset.</strong></p>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <label class="control-label" for="access">Access</label>
+                                    </div>
+                                    <div class="col-md-9">
+                                        <select name="access" id="access" ng-model="postsStep2.dataset.access" class="form-control" ng-change="postsStep2.changeDatasetAccess(postsStep2.dataset)" ng-options="access as (access | capitalize) for access in postsStep2.postOptions.access">
+                                        </select>
+                                        <div ng-if="postsStep2.dataset.access == 'private'" role="alert">
+                                            <p class="help-block error-text">You can not attached a private dataset to the post, you need to change its access level.</p>
+                                        </div>
+                                    </div>
                                 </div>
-                            </div>
+                                <div class="row form-group" ng-if="postsStep2.user.plan !== 'free' && postsStep2.dataset.access == 'for sale' && postsStep2.dataset">
+                                    <div class="col-md-3">
+                                        <label class="control-label" for="cost">Price</label>
+                                    </div>
+                                    <div class="col-md-3 input-group">
+                                        <span class="input-group-addon">$</span>
+                                        <input type="number" name="cost" id="cost" class="form-control" ng-model="postsStep2.dataset.cost" min="1" ng-min="1" step="0.50" />
+                                        <div ng-if="datasetform.cost.$error" ng-messages="datasetform.cost.$error" role="alert">
+                                            <p class="help-block error-text" ng-message="required">Enter a price greater than $1.</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <button ng-show="postsStep2.dataset" data-ng-click="postsStep2.addDataset(postsStep2.dataset)" class="btn btn-default text-capitalize" type="button" dropdown-toggle>
+                                            Add Dataset
+                                        </button>
+                                    </div>
+                                </div>
+                            </form>
                             <div ng-show="postsStep2.post.datasets.length">
                                 <ul data-ng-if="postsStep2.post.datasets" class="list-inline">
                                     <li data-ng-repeat="dataset in postsStep2.post.datasets track by $index" class="badge text-capitalize">
@@ -95,7 +129,7 @@
                         <button class="btn" ng-click="$event.preventDefault();postsStep2.back();">Back</button>
                     </div>
                     <div class="col-md-offset-10 col-md-1">
-                        <button type="submit" class="btn btn-primary pull-right">Submit</button>
+                        <button type="submit" class="btn btn-primary pull-right" ng-click="postsStep2.update(form)">Submit</button>
                     </div>
                 </div>
                 <div ng-show="form.error" class="text-danger">

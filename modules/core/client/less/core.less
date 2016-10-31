@@ -126,11 +126,30 @@ a:hover .header-profile-image {
 .posts {
   &.list-group-item {
     cursor: pointer;
+    position: relative;
     &:hover {
       background: #eee;
     }
     span.glyphicon{
-      margin-top: -7px;
+      position: relative;
+      top: 17px;
+    }
+    p.bought{
+      position: relative;
+      top: 8px;
+    }
+    p.post-title{
+      font-size: 16px;
+    }
+    p.post-note{
+      margin-top: -10px;
+      font-size: 12px;
+    }
+    .buttons{
+      button, a{
+        position: relative;
+        top: 8px;
+      }
     }
   }
 }

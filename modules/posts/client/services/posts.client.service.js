@@ -23,7 +23,7 @@ angular.module('posts').factory('posts', ['$resource', '$http', '$state', '$q',
                     dfd.resolve(data);
                 })
                 .error(function (data, status, headers, config) {
-                    dfd.reject(data);
+                    dfd.reject({ status : status, message : data });
                 });
 
             return dfd.promise;
