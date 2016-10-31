@@ -5,11 +5,13 @@
     .module('models')
     .controller('ModelsListController', ModelsListController);
 
-  ModelsListController.$inject = ['$state', '$stateParams', 'Models', 'ModelsService', 'UsersFactory', 'prompt', 'toastr'];
+  ModelsListController.$inject = ['$state', '$stateParams', 'Models', 'ModelsService', 'UsersFactory', 'prompt', 'toastr', '$log', 'Authentication'];
 
-  function ModelsListController($state, $stateParams, Models, ModelsService, UsersFactory, prompt, toastr) {
+  function ModelsListController($state, $stateParams, Models, ModelsService, UsersFactory, prompt, toastr, $log, Authentication) {
 
     var vm = this;
+
+    vm.user = Authentication.user;
 
     vm.resolved = false;
     vm.loading = false;
@@ -75,6 +77,23 @@
       else{
         toastr.error('You need to enter a word or phrases to search by.');
       }
+    };
+
+    vm.purchaseModel = function(model){
+      prompt({
+        title: 'Confirm Purchase?',
+        message: 'Are you sure you want to purchase this model for $' + model.cost + '?'
+      }).then(function() {
+        ModelsService.purchasemodel(model._id)
+            .then(function () {
+              toastr.success('Model purchased successfully and the model has been copied to your models.');
+              model.purchased = true;
+            })
+            .catch(function (err) {
+              $log.error(err);
+              toastr.error('Error purchasing model!');
+            });
+      });
     };
 
     if ($state.current.name === 'models.filter') {

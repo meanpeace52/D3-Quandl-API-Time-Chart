@@ -17,6 +17,9 @@ module.exports = function (app) {
     app.route('/api/models/search').all(modelPolicy.isAllowed)
         .get(model.searchModel);
 
+    app.route('/api/models/purchasemodel/:id').all(modelPolicy.isAllowed)
+        .post(model.purchaseModel);
+
     app.route('/api/models/:modelId').all(modelPolicy.isAllowed)
         .get(model.read)
         .put(model.update)

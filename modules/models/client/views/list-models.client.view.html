@@ -42,9 +42,10 @@
                 <span data-ng-bind="model.title" ng-class="{'active': vm.showTitle (model.title)}"></span>
             </small>
             <span ng-if="!vm.modal" class="pull-right">
-                <a class="btn btn-secondary" ui-sref="models.view({modelId: model._id})" class="pull-right">View</a>
-                <a data-ng-if="vm.user._id == model.user" class="btn btn-primary" ui-sref="models.edit({modelId:model._id})">Edit</a>
-                <a data-ng-if="vm.user._id == model.user" class="btn btn-primary" ng-click="vm.remove(model)">Delete</a>
+                <a class="btn btn-secondary" ng-if="(model.access == 'for sale' && !model.purchased) &&  vm.user._id != model.user._id"  class="pull-right" ng-click="vm.purchaseModel(model)">Buy for ${{ model.cost }}</a>
+                <a class="btn btn-secondary" ng-if="model.access != 'for sale' || (model.access == 'for sale' && model.purchased) || vm.user._id == model.user._id" ui-sref="models.view({modelId: model._id})" class="pull-right">View</a>
+                <a data-ng-if="vm.user._id == model.user._id" class="btn btn-primary" ui-sref="models.edit({modelId:model._id})">Edit</a>
+                <a data-ng-if="vm.user._id == model.user._id" class="btn btn-primary" ng-click="vm.remove(model)">Delete</a>
             </span>
         </span>
     </div>

@@ -31,8 +31,11 @@ exports.invokeRolesPolicies = function () {
                 {
                     resources: '/api/models/search',
                     permissions: ['get']
+                },
+                {
+                    resources: '/api/models/purchasemodel/:id',
+                    permissions: ['post']
                 }
-
             ]
         },
         {
@@ -53,6 +56,10 @@ exports.invokeRolesPolicies = function () {
                 {
                     resources: '/api/models/search',
                     permissions: ['get']
+                },
+                {
+                    resources: '/api/models/purchasemodel/:id',
+                    permissions: ['post']
                 }
             ]
         },

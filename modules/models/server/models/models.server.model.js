@@ -25,17 +25,25 @@ var ModelSchema = new Schema({
       default: 0.7
     },
     model: Object,
+    origModel: {
+        type: Schema.ObjectId,
+        ref: 'Model'
+    },
     user: {
       type: Schema.ObjectId,
       ref: 'User'
     },
+    users: [{
+        type: Schema.ObjectId,
+        ref: 'User'
+    }],
     created: {
         type: Date,
         default: Date.now
     },
     access: {
         type: String,
-        enum: ['public', 'for sale', 'private'],
+        enum: ['public', 'for sale', 'private', 'purchased'],
         default: 'public'
     },
     cost: {
