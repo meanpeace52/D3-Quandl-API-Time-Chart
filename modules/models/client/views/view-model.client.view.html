@@ -2,16 +2,6 @@
   <div class="page-header">
     <h1 data-ng-bind="vm.model.title"></h1>
   </div>
-  <div class="pull-right"
-       data-ng-show="vm.model.isCurrentUserOwner">
-    <a class="btn btn-primary"
-       ui-sref="models.edit({ modelId: vm.model._id })">
-      <i class="glyphicon glyphicon-edit"></i>
-    </a>
-    <a class="btn btn-primary" ng-click="vm.remove()">
-      <i class="glyphicon glyphicon-trash"></i>
-    </a>
-  </div>
   <small>
     <em class="text-muted">
       Posted on
@@ -20,7 +10,7 @@
       <span data-ng-if="vm.model.user"
             data-ng-bind="vm.model.user.username"></span>
       <span data-ng-if="!vm.model.user">Deleted User</span>
-        <span class="pull-right" ng-if="vm.authentication.user._id === vm.model.user._id">
+        <span class="pull-right" ng-if="vm.user._id === vm.model.user._id">
             <a class="btn btn-primary" ui-sref="models.edit({modelId: vm.model._id})">
                 <i class="glyphicon glyphicon-edit"></i>
             </a>

@@ -30,7 +30,8 @@ exports.list = function (req, res) {
 
 exports.searchModel = function (req, res) {
     var query = {
-        title: new RegExp(req.query.q, 'i')
+        title: new RegExp(req.query.q, 'i'),
+        access: { $ne : 'private' }
     };
     var count = 0;
 
@@ -99,24 +100,35 @@ exports.listByUserId = function (req, res) {
  * Create a model
  */
 exports.create = function (req, res) {
-    var modelFields = req.body;
-    modelFields.user = req.user._id;
-
-    if (!req.user.plan || (req.user.plan && req.user.plan === 'free')){
-        req.body.access = 'public';
-        delete req.body.model.cost;
-        delete req.body.model.previewnote;
-    }
-
-    var model = new Model(req.body);
-    model.save(function (err, model) {
-        if (err) {
-            res.status(400).send({
+    Model.findOne({ title : req.body.title, user : req.user._id }, function(err, foundmodel){
+        if (err){
+            return res.status(err.status).send({
                 message: errorHandler.getErrorMessage(err)
             });
         }
-        else {
-            res.json(model);
+
+        if (!foundmodel){
+            req.body.user = req.user._id;
+            if (!req.user.plan || (req.user.plan && req.user.plan === 'free')){
+                req.body.access = 'public';
+                delete req.body.cost;
+                delete req.body.previewnote;
+            }
+
+            var model = new Model(req.body);
+            model.save(function (err, model) {
+                if (err) {
+                    res.status(400).send({
+                        message: errorHandler.getErrorMessage(err)
+                    });
+                }
+                else {
+                    res.json(model);
+                }
+            });
+        }
+        else{
+            res.status(409).json('Model with this title already exists, please enter a different title.');
         }
     });
 };
@@ -128,7 +140,7 @@ exports.read = function (req, res) {
     Model.findOne({
             _id: req.params.modelId
         })
-        .populate('user', 'displayName')
+        .populate('user', 'username')
         .exec(function (err, model) {
             if (err) {
                 res.status(400).send({
@@ -145,22 +157,35 @@ exports.read = function (req, res) {
  * Update a model by id
  */
 exports.update = function (req, res) {
-    if (!req.user.plan || (req.user.plan && req.user.plan === 'free')){
-        req.body.model.access = 'public';
-        delete req.body.model.cost;
-        delete req.body.model.previewnote;
-    }
-
-    Model.update({
-        _id: req.params.modelId
-    }, req.body, function (err, _res) {
+    Model.findOne({ title : req.body.title, user : req.user._id }, function(err, foundmodel) {
         if (err) {
-            res.status(400).send({
+            return res.status(err.status).send({
                 message: errorHandler.getErrorMessage(err)
             });
         }
+
+        if (!foundmodel || (foundmodel && foundmodel.id === req.body._id)) {
+            if (!req.user.plan || (req.user.plan && req.user.plan === 'free')) {
+                req.body.model.access = 'public';
+                delete req.body.model.cost;
+                delete req.body.model.previewnote;
+            }
+
+            Model.update({
+                _id: req.params.modelId
+            }, req.body, function (err, _res) {
+                if (err) {
+                    res.status(400).send({
+                        message: errorHandler.getErrorMessage(err)
+                    });
+                }
+                else {
+                    res.json(req.body.model);
+                }
+            });
+        }
         else {
-            res.json(req.body.model);
+            res.status(409).json('Model with this title already exists, please enter a different title.');
         }
     });
 };

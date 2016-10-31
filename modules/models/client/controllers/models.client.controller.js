@@ -59,7 +59,7 @@
             })
             .catch(function(err){
               $log.error(err);
-              toastr.error('Error updating model!');
+              toastr.error(err.message);
             });
       } else {
         ModelsService.create(vm.model)
@@ -71,7 +71,7 @@
             })
             .catch(function(err){
               $log.error(err);
-              toastr.error('Error creating model!');
+              toastr.error(err.message);
             });
       }
     }

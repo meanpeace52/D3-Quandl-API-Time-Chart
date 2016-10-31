@@ -26,7 +26,7 @@
 
       $http.post('/api/models', model)
           .success(function (data, status, headers, config) {
-            dfd.resolve(data);
+                dfd.resolve(data);
           })
           .error(function (data, status, headers, config) {
             dfd.reject({ status : status, message : data });
