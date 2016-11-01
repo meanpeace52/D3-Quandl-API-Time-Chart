@@ -49,5 +49,6 @@ module.exports = {
         fileSize: 4*1024*1024 // Max file size in bytes (4 MB)
       }
     }
-  }
+  },
+  applicationFee:20 //Stripe application_fee in %
 };

@@ -192,10 +192,10 @@ var plans = [
         createCustomer(
           req.body.token,
           user,
-          function(err, customer_id){
+          function(err, customer){
             if(err) return handleStripeError(err, res);
             subscribeCustomerToPlan(
-              customer_id,
+              customer.id,
               stripe_plan,
               user_plan,
               user,
@@ -206,63 +206,6 @@ var plans = [
             );
           }
         );
-      }
-    };
-
-
-
-
-
-    exports.purchase = function(req, res){
-      var user = req.user;
-      if (!user) return res.status(400).json({message:'User is not signed in'});
-      if (!req.body.type) return res.status(400).json({message:'The type of the purchased object is needed'});
-      if (!req.body.id) return res.status(400).json({message:'The id of the purchased object is needed'});
-
-      var createCharge = function(item, type){
-        if (!item.user.stripeAccount) return res.status(400).json({message:'The item seller has no stripe account'});
-        if (!item.user.stripeChargesEnabled) return res.status(400).json({message:'The item seller is not able to charge'});
-        var charge = {
-          amount: item.cost * 100,
-          currency: 'usd',
-          destination : item.user.stripeAccount,
-          application_fee : item.cost * 100 * 0.2,
-          description: 'purchase of '+item.title+'  by ' + user.email,
-          metadata:{
-            id:item._id.toString(),
-            user:user._id.toString(),
-            type:type
-          }
-        };
-        var next = function(err, customer){
-          charge.customer = customer.id;
-          stripe.charges.create(charge, function(err, charge) {
-              if (err) return handleStripeError(err, res);
-              dataSetsController.purchaseDataset(item._id, user, function(err,dataset){
-                if (err) return res.status(400).json({message: errorHandler.getErrorMessage(err)});
-                return res.json(dataset);
-              });
-            });
-        };
-        if(req.body.token){
-          if(user.stripeCustomer){
-            updateCustomerSource(req.body.token , user.stripeCustomer, next);
-          } else{
-            createCustomer(req.body.token , user, next);
-          }
-        } else if(user.stripeCustomer){
-          charge.customer = user.stripeCustomer;
-          next(null, {id:user.stripeCustomer});
-        } else {
-          return res.status(400).json({message:'please provide a credit card'});
-        }
-      };
-
-      if(req.body.type == 'dataset'){
-        Dataset.findById(req.body.id).populate('user').exec(function(err, dataset){
-          if (err) return res.status(400).json({message: errorHandler.getErrorMessage(err)});
-          createCharge(dataset, 'dataset');
-        });
       }
     };
 
@@ -306,6 +249,87 @@ var plans = [
         res.status(400).json({message:'user has no account'});
       }
     };
+
+
+    /**
+     * Purchase Item from a managed account
+     */
+
+    exports.purchase = function(req, res){
+      var user = req.user;
+      if (!user) return res.status(400).json({message:'User is not signed in'});
+      if (!req.body.type) return res.status(400).json({message:'The type of the purchased object is needed'});
+      if (!req.body.id) return res.status(400).json({message:'The id of the purchased object is needed'});
+
+      if(req.body.type == 'dataset'){
+        Dataset.findById(req.body.id).populate('user').exec(function(err, dataset){
+          if (err) return res.status(400).json({message: errorHandler.getErrorMessage(err)});
+
+          //purchase the item and hook into the datasetController
+          purchaseItem(dataset, req.body.type , req.body.token, user, function(err, charge){
+            if (err) return res.status(400).json({message:err.message});
+            dataSetsController.purchaseDataset(dataset._id, user, function(err,dataset){
+              if (err) return res.status(400).json({message: errorHandler.getErrorMessage(err)});
+              return res.json(dataset);
+            });
+          });
+
+
+        });
+
+      } else {
+        return res.status(400).json({message:'This type is not for sale'});
+      }
+    };
+
+
+
+
+    function purchaseItem (item, type, token, user, next){
+      if (!item.user.stripeAccount) return next({message:'The item seller has no stripe account'});
+      if (!item.user.stripeChargesEnabled) return next({message:'The item seller is not able to charge'});
+      var charge = {
+        amount: item.cost * 100,
+        currency: 'usd',
+        destination : item.user.stripeAccount,
+        application_fee : item.cost * 100 * (config.applicationFee / 100),
+        description: 'purchase of '+item.title+'  by ' + user.email,
+        metadata:{
+          id:item._id.toString(),
+          user:user._id.toString(),
+          type:type
+        }
+      };
+      if(token){
+        if(user.stripeCustomer){
+          updateCustomerSource(token , user.stripeCustomer, function(err,customer){
+            if(err) return next(err);
+            charge.customer = customer.id;
+            stripe.charges.create(charge, function(err, charge) {
+                next(err, charge);
+              });
+          });
+        } else{
+          createCustomer(token , user, function(err,customer){
+            if(err) return next(err);
+            charge.customer = customer.id;
+            stripe.charges.create(charge, function(err, charge) {
+                next(err, charge);
+              });
+          });
+        }
+      } else if(user.stripeCustomer){
+        charge.customer = user.stripeCustomer;
+        stripe.charges.create(charge, function(err, charge) {
+            next(err, charge);
+          });
+      } else {
+        return next({message:'please provide a credit card'});
+      }
+    }
+
+
+
 
 
 
@@ -392,7 +416,7 @@ var plans = [
            if (err) {
              next({message: errorHandler.getErrorMessage(err)});
            } else {
-             next(err, customer.id);
+             next(err, customer);
            }
          });
         }
