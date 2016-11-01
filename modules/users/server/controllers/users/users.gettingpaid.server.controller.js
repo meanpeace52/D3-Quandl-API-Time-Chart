@@ -53,6 +53,7 @@ var path = require('path'),
       stripe.accounts.create(data, function(err, account) {
         if(err) return res.status(400).json({message:err.message});
         user.stripeAccount = account.id;
+        user.stripeChargesEnabled = account.charges_enabled;
         user.save(function(err, user){
           if(err) return res.status(400).json({message:errorHandler.getErrorMessage(err)});
           res.json(returnAccount(account));
@@ -175,34 +176,8 @@ var path = require('path'),
 
 
 
-
-    /**
-     * create a charge on a managed account
-     */
-    exports.createTestCharge = function (req, res) {
-      var user = req.user;
-      if (!user) return res.status(400).json({message:'User is not signed in'});
-      if (user.stripeAccount){
-        stripe.charges.create({
-            amount: 1000,
-            currency: 'usd',
-            source: req.body.token,
-            destination : user.stripeAccount,
-            application_fee : 200,
-            description: 'test charge for ' + user.email
-          }, function(err, charge) {
-            if (err) return handleStripeError(err, res);
-            return res.json({success:true});
-          });
-      }else{
-        res.status(400).json({message:'user has no account'});
-      }
-    };
-
-
-
     function returnAccount(account){
-      var fields=['external_accounts','legal_entity','metadata','verification','charges_enabled','transfers_enabled'];
+      var fields=['external_accounts','legal_entity','metadata','verification','charges_enabled','transfers_enabled','id'];
       var a = {};
       for (var i = 0; i < fields.length; i++) {
         a[fields[i]] = account[fields[i]];

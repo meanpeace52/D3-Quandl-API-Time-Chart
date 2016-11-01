@@ -597,12 +597,10 @@ exports.update = function (req, res) {
     });
 };
 
-exports.purchaseDataset = function (req, res) {
-    var user = req.user._id;
-
-    Dataset.findOneAndUpdate({ _id : req.params.id }, { $push : { buyers : user }}, function(err, doc){
+exports.purchaseDataset = function (id, user, next) {
+    Dataset.findOneAndUpdate({ _id : id }, { $push : { buyers : user }}, function(err, doc){
         if (err){
-            res.status(err.status).json(err);
+            next(err);
         }
         else{
             return DatasetS3Service.copyDatasetFile(user.username, doc.s3reference)
@@ -617,13 +615,13 @@ exports.purchaseDataset = function (req, res) {
                         dataset.access = 'purchased';
                         dataset.save(function(err, doc){
                             if (err){
-
+                              next(err);
                             }
                         });
-                        res.json({ success : true });
+                        next(err,doc);
                     })
                     .catch(function(err){
-                        res.status(err.status).json(err);
+                        next(err);
                     });
         }
     });

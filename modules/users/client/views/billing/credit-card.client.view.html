@@ -1,7 +1,39 @@
-<form name="form" stripe-form="stripeCallback" ng-submit="validate(form)"  ng-if="!submitting" novalidate >
-  <div class="panel panel-default">
-    <div class="panel-body">
-      <div class="form-group">
+<div class="panel panel-default" ng-if="!submitting">
+  <div class="panel-body">
+    <div ng-show="billing && !showCardForm">
+      <p class="text-right"><a ng-click="changeCard(true)" class="btn btn-default">Change my credit card</a></p>
+      <table class="table">
+        <tr>
+          <td>{{billing.brand}} {{billing.funding}}</td>
+          <td>**** **** **** {{billing.last4}}</td>
+        </tr>
+        <tr>
+          <td>Name</td>
+          <td>{{billing.name}}</td>
+        </tr>
+        <tr>
+          <td>Expiration Date</td>
+          <td>{{billing.exp_month}} / {{billing.exp_year}}</td>
+        </tr>
+        <tr>
+          <td>Country</td>
+          <td>{{billing.country}}</td>
+        </tr>
+      </table>
+      <div class="row">
+        <div class="col-xs-6">
+            <a class="btn btn-default btn-block btn-lg" ng-click="cancel()">Cancel</a>
+        </div>
+        <div class="col-xs-6">
+          <a ng-click="confirm()" class="btn btn-primary btn-block btn-lg" ng-disabled="submitting">Submit</a>
+        </div>
+      </div>
+    </div>
+
+
+    <form name="form" stripe-form="stripeCallback" ng-submit="validate(form)"   novalidate ng-show="showCardForm">
+      <p class="text-right" ng-if="billing"><a ng-click="changeCard(false)"  class="btn btn-default">Use my saved credit card</a></p>
+      <div class="form-group" >
         <input ng-model="name" placeholder="Name on card"  class="form-control" />
       </div>
       <div class="form-group" show-errors>
@@ -35,17 +67,18 @@
       <div ng-show="carderror" class="alert alert-danger">
         <strong ng-bind="carderror"></strong>
       </div>
+      <div class="row">
+        <div class="col-xs-6">
+            <a class="btn btn-default btn-block btn-lg" ng-click="cancel()">Cancel</a>
+        </div>
+        <div class="col-xs-6">
+          <button type="submit" class="btn btn-primary btn-block btn-lg" ng-disabled="submitting">Submit</button>
+        </div>
     </div>
+    </form>
   </div>
-  <div class="row">
-    <div class="col-xs-6">
-        <a class="btn btn-default btn-block btn-lg" ng-click="cancel()">Cancel</a>
-    </div>
-    <div class="col-xs-6">
-      <button type="submit" class="btn btn-primary btn-block btn-lg" ng-disabled="submitting">Submit</button>
-    </div>
-  </div>
-</form>
+</div>
+
 
 <div ng-show="submitting">
 <p class="text-center" style="margin:60px 0">Please be patient we are processing your card</p>

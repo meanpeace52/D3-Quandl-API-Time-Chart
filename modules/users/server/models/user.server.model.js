@@ -100,6 +100,10 @@ var UserSchema = new Schema({
     stripeAccount: {
         type: String,
     },
+    stripeChargesEnabled: {
+        type: Boolean,
+        default: false
+    },
     updated: {
         type: Date
     },

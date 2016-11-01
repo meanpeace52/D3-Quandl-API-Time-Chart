@@ -125,6 +125,7 @@ angular.module('users').factory('BillingService', ['$http', '$window','toastr', 
       }
     };
 
+
     billing.getAccount = function(next){
       if(Authentication.user){
         $http.get('/api/users/account').then(function successCallback(response) {
@@ -138,16 +139,20 @@ angular.module('users').factory('BillingService', ['$http', '$window','toastr', 
       }
     };
 
+
     billing.openSelectPlanModal = function(options, next){
-      this.getPlans(function(plans){
-        var modalInstance = $uibModal.open({
-          templateUrl: 'modules/users/client/views/billing/subscribe.modal.client.view.html',
-          controller: 'SubscribeModalController',
-          resolve: {
-            plans: function() {return plans;},
-            options: function() {return options;},
-            next: function() {return next;},
-          }
+      billing.getBillingInfo(function(billingInfo){
+        billing.getPlans(function(plans){
+          var modalInstance = $uibModal.open({
+            templateUrl: 'modules/users/client/views/billing/subscribe.modal.client.view.html',
+            controller: 'SubscribeModalController',
+            resolve: {
+              plans: function() {return plans;},
+              options: function() {return options;},
+              next: function() {return next;},
+              billingInfo: function() {return billingInfo;}
+            }
+          });
         });
       });
     };
@@ -166,9 +171,27 @@ angular.module('users').factory('BillingService', ['$http', '$window','toastr', 
       }
     };
 
+    billing.purchase = function(token, type, id, next){
+      if(Authentication.user){
+        $http.post('/api/users/purchase', { token: token, type: type, id: id}).then(function (response) {
+          toastr.success('Your item has been purchased');
+          next(null, response.data);
+        }, function (err) {
+          toastr.error('Could not purchase item.\n'+err.data.message);
+          next(err, null);
+        });
+      } else {
+        toastr.error('You need to be logged in');
+      }
+    };
 
     billing.openChangeCreditCardModal = function(next){
-      var modalInstance = billing.openCreditCardModal('Update your Credit Card',
+      var modalInstance = billing.openCreditCardModal(
+        {
+          title:'Update your Credit Card',
+          description:'Enter your new credit card info',
+          billing:null
+        },
         function(result){
           billing.updateCard(result.id, function (err, response) {
             if(err){
@@ -182,24 +205,49 @@ angular.module('users').factory('BillingService', ['$http', '$window','toastr', 
       });
     };
 
+    billing.openCheckoutModal = function(initObj, next){
+      billing.getBillingInfo(function(billingInfo){
+        initObj.billing = billingInfo;
+        var modalInstance = billing.openCreditCardModal(
+          initObj,
+          function(result){
+            billing.purchase(result ? result.id : null, initObj.type, initObj.id,function (err, response) {
+              if(err){
+                modalInstance.close();
+                billing.openCheckoutModal(initObj, next);
+              }else{
+                modalInstance.close();
+                next(response);
+              }
+          });
+        });
+      });
+    };
+
     billing.openTestChargeModal = function(next){
-      var modalInstance = billing.openCreditCardModal(
-        'Create a test charge on connected account',
-        function(result){
-          billing.testCharge(result.id, function (err, response) {
-            if(err){
-              modalInstance.close();
-              billing.openTestChargeModal(next);
-            }else{
-              modalInstance.close();
-              next(response);
-            }
+      billing.getBillingInfo(function(billingInfo){
+        var modalInstance = billing.openCreditCardModal(
+          {
+            title:'Create a test charge on connected account',
+            description:'Test your managed account',
+            billing:billingInfo
+          },
+          function(result){
+            billing.testCharge(result ? result.id : null, function (err, response) {
+              if(err){
+                modalInstance.close();
+                billing.openTestChargeModal(next);
+              }else{
+                modalInstance.close();
+                next(response);
+              }
+          });
         });
       });
     };
 
 
-    billing.openCreditCardModal = function(title, next){
+    billing.openCreditCardModal = function(initObj, next){
       return $uibModal.open({
         templateUrl: 'modules/users/client/views/billing/creditcard.modal.client.view.html',
         controller: 'CreditCardModalController',
@@ -209,7 +257,7 @@ angular.module('users').factory('BillingService', ['$http', '$window','toastr', 
               next(result);
             };
           },
-          title: function() {return title;}
+          initObj: function() {return initObj;}
         }
       });
     };

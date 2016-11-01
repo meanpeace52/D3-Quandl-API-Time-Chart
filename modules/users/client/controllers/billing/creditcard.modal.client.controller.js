@@ -2,9 +2,20 @@
 
 //users List Controller
 angular.module('users')
-    .controller('CreditCardModalController', ['$scope', '$uibModalInstance', 'BillingService', 'toastr', 'next','title',
-    function($scope, $uibModalInstance, BillingService, toastr, next, title){
-      $scope.title = title;
+    .controller('CreditCardModalController', ['$scope', '$uibModalInstance', 'BillingService', 'toastr', 'next','initObj',
+    function($scope, $uibModalInstance, BillingService, toastr, next, initObj){
+      $scope.initObj = initObj;
+      $scope.billing = initObj.billing;
+      if(initObj.billing){
+        $scope.showCardForm = false;
+      } else{
+        $scope.showCardForm = true;
+      }
+
+      $scope.changeCard = function(val){
+        $scope.showCardForm = val;
+      };
+
       $scope.cancel = function(){
         $uibModalInstance.close();
       };
@@ -21,7 +32,7 @@ angular.module('users')
           $scope.$broadcast('show-errors-check-validity', 'form');
         }
       };
-      
+
       $scope.stripeCallback = function (code, result) {
         if (result.error) {
             $scope.carderror = result.error.message;
@@ -29,5 +40,10 @@ angular.module('users')
           $scope.submitting = true;
           next(result);
         }
+      };
+
+      $scope.confirm = function(){
+        $scope.submitting = true;
+        next();
       };
     }]);

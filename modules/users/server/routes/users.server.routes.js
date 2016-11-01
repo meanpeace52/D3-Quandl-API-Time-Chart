@@ -42,7 +42,7 @@ module.exports = function (app) {
   app.route('/api/users/account/document').post(users.uploadVerificationDocument);
   app.route('/api/users/account/bank').post(users.updateMyBankAccount);
   app.route('/api/users/testcharge').post(users.createTestCharge);
-
+  app.route('/api/users/purchase').post(users.purchase);
 
   // stripe webhook route
   app.route('/api/stripe/webhook').post(users.onStripeWebhookEvent);
