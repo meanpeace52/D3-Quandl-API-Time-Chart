@@ -268,13 +268,11 @@ exports.delete = function (req, res) {
     });
 };
 
-exports.purchaseModel = function (req, res) {
-    var user = req.user._id;
-
-    Model.findOneAndUpdate({ _id : req.params.id }, { $push : { buyers : user }}, function(err, doc){
+exports.purchaseModel = function (id, user, next) {
+    Model.findOneAndUpdate({ _id : id }, { $push : { buyers : user }}, function(err, doc){
         if (err){
             console.log(err);
-            res.status(err.status).json(err);
+            next(err);
         }
         else{
             //return modelsService.copyModelFile(user.username, doc.s3reference)
@@ -289,13 +287,14 @@ exports.purchaseModel = function (req, res) {
                     model.access = 'purchased';
                     model.save(function(err, doc){
                         if (err){
-
+                            console.log(err);
+                            return next(err);
                         }
                     });
-                    res.json({ success : true });
+                    next(err,doc);
             //    })
             //    .catch(function(err){
-            //        res.status(err.status).json(err);
+            //        next(err);
             //    });
         }
     });

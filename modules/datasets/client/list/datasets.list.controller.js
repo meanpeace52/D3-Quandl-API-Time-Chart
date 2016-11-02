@@ -2,8 +2,8 @@
 
 //datasets List Controller
 angular.module('datasets').controller('DatasetsListController', ['$state', '$stateParams', '$sce', '$modal', 'Authentication',
-                                        'Datasets','UsersFactory', 'toastr', '$log', 'prompt',
-    function ($state, $stateParams, $sce, $modal, Authentication, Datasets, UsersFactory, toastr, $log, prompt) {
+                                        'Datasets','UsersFactory', 'toastr', '$log', 'prompt', 'BillingService',
+    function ($state, $stateParams, $sce, $modal, Authentication, Datasets, UsersFactory, toastr, $log, prompt, BillingService) {
         var vm = this;
 
         vm.authentication = Authentication;
@@ -76,6 +76,24 @@ angular.module('datasets').controller('DatasetsListController', ['$state', '$sta
                 vm.loaded();
             }, function (err) {
                 vm.loaded();
+            });
+        };
+
+        vm.purchaseDataset = function(dataset){
+            BillingService.openCheckoutModal({
+                title: 'Purchase dataset',
+                description: dataset.title + ' $'+dataset.cost,
+                type: 'dataset',
+                id: dataset._id
+            }, function(err, result){
+                if (err){
+                    $log.error(err);
+                    toastr.error('Error purchasing dataset.');
+                }
+                else{
+                    dataset.purchased = true;
+                    toastr.success('Dataset purchased successfully and it has been copied to your page.');
+                }
             });
         };
 

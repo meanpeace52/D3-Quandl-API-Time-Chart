@@ -100,6 +100,17 @@ exports.searchDataset = function (req, res) {
                         callback(err);
                     }
                     else {
+                        _.each(datasets, function(dataset){
+                            if (dataset.access === 'for sale' && dataset.buyers && dataset.buyers.length > 0){
+                                var purchased = _.find(dataset.buyers, function(buyer){
+                                    return buyer.id.toString() === req.user._id.id;
+                                });
+                                if (purchased){
+                                    dataset.purchased = true;
+                                }
+                            }
+                            delete dataset.buyers;
+                        });
                         callback(null, datasets);
                     }
                 });

@@ -72,7 +72,7 @@ angular.module('posts')
 
             vm.purchaseDataset = function(dataset){
               BillingService.openCheckoutModal({
-                title:'Purchase dataset',
+                title: 'Purchase dataset',
                 description:dataset.title + ' $'+dataset.cost,
                 type:'dataset',
                 id:dataset._id
@@ -89,19 +89,20 @@ angular.module('posts')
             };
 
             vm.purchaseModel = function(model){
-                prompt({
-                    title: 'Confirm Purchase?',
-                    message: 'Are you sure you want to purchase this model for $' + model.cost + '?'
-                }).then(function(){
-                    ModelsService.purchasemodel(model._id)
-                        .then(function(result){
-                            model.purchased = true;
-                            toastr.success('Model purchased successfully and it has been copied to your LAB.');
-                        })
-                        .catch(function(err){
-                            $log.error(err);
-                            toastr.error('Error purchasing model.');
-                        });
+                BillingService.openCheckoutModal({
+                    title: 'Purchase model',
+                    description: model.title + ' $'+ model.cost,
+                    type: 'model',
+                    id: model._id
+                }, function(err, result){
+                    if (err){
+                        $log.error(err);
+                        toastr.error('Error purchasing model.');
+                    }
+                    else{
+                        model.purchased = true;
+                        toastr.success('Model purchased successfully and it has been copied to your page.');
+                    }
                 });
             };
 
