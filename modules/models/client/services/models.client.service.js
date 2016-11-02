@@ -95,6 +95,20 @@
         return dfd.promise;
     };
 
+    models.addToUserApiCall = function(model) {
+          var dfd = $q.defer();
+
+          $http.post('api/models/copy', model)
+              .success(function (data, status, headers, config) {
+                  dfd.resolve(data);
+              })
+              .error(function (data, status, headers, config) {
+                  dfd.reject(data);
+              });
+
+          return dfd.promise;
+    };
+
     return models;
   }
 })();

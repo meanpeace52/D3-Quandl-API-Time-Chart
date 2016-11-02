@@ -35,6 +35,10 @@ exports.invokeRolesPolicies = function () {
                 {
                     resources: '/api/models/purchasemodel/:id',
                     permissions: ['post']
+                },
+                {
+                    resources: '/api/models/copy',
+                    permissions: ['post']
                 }
             ]
         },
@@ -59,6 +63,10 @@ exports.invokeRolesPolicies = function () {
                 },
                 {
                     resources: '/api/models/purchasemodel/:id',
+                    permissions: ['post']
+                },
+                {
+                    resources: '/api/models/copy',
                     permissions: ['post']
                 }
             ]

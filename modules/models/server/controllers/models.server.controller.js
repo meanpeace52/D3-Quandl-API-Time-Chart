@@ -8,6 +8,7 @@ var path = require('path'),
     async = require('async'),
     _ = require('lodash'),
     moment = require('moment'),
+    modelsService = require('../services/models.server.s3.js'),
     errorHandler = require(path.resolve('./modules/core/server/controllers/errors.server.controller')),
     Model = mongoose.model('Model');
 
@@ -28,6 +29,51 @@ exports.list = function (req, res) {
                 res.json(models);
             }
         });
+};
+
+function saveModelCopy(user, entry, cb) {
+    if (entry.user && user._id === entry.user._id){
+        throw new Error('You can not copy your own model.');
+    }
+
+    modelsService.copyModelFile(user.username, entry.s3reference)
+        .then(function(path){
+            var model = new Model(_.omit(entry, '_id'));
+            model.user = user;
+            model.users = [ entry.user ];
+            model.created = new Date();
+            model.origModel = entry._id;
+            model.title = model.title + ' - ' + moment().format('MM/DD/YYYY, h:mm:ss a');
+            model.s3reference = 'https://s3.amazonaws.com/' + path;
+            model.save(cb);
+        })
+        .catch(function(err){
+            throw new Error(err);
+        });
+}
+
+exports.copymodel = function (req, res) {
+    Model.findById(req.body._id)
+        .lean()
+        .exec(function (err, model) {
+            if (err) {
+                console.log('error retreiving the entry', err);
+                return res.status(400).send({
+                    message: errorHandler.getErrorMessage(err)
+                });
+            }
+
+            saveModelCopy(req.user, model, function (err, result) {
+                if (err) {
+                    return res.status(400).send({
+                        message: errorHandler.getErrorMessage(err)
+                    });
+                }
+                else {
+                    res.json(result);
+                }
+            });
+    });
 };
 
 exports.searchModel = function (req, res) {
@@ -231,14 +277,14 @@ exports.purchaseModel = function (req, res) {
             res.status(err.status).json(err);
         }
         else{
-            //return DatasetS3Service.copyDatasetFile(user.username, doc.s3reference)
+            //return modelsService.copyModelFile(user.username, doc.s3reference)
             //    .then(function(path){
                     var model = new Model(_.omit(doc.toObject(), '_id'));
                     model.user = user;
                     model.users = [ model.user ];
                     model.created = new Date();
                     model.origModel = doc._id;
-                    //dataset.s3reference = 'https://s3.amazonaws.com/datasetstl/' + path;
+                    //model.s3reference = 'https://s3.amazonaws.com/rdatamodels/' + path;
                     model.title = doc.title + ' - ' + moment().format('MM/DD/YYYY, h:mm:ss a');
                     model.access = 'purchased';
                     model.save(function(err, doc){

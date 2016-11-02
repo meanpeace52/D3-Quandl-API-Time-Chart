@@ -96,6 +96,17 @@
       });
     };
 
+    vm.copyModel = function(model){
+      ModelsService.addToUserApiCall(model)
+          .then(function (data) {
+            toastr.success('Model copied to your page.');
+          })
+          .catch(function (err) {
+            $log.error(err);
+            toastr.error('An error occurred while copying the model.');
+          });
+    };
+
     if ($state.current.name === 'models.filter') {
       var field = $stateParams.field;
       var value = $stateParams.value;

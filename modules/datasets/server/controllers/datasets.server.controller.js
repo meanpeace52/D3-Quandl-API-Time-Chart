@@ -124,9 +124,11 @@ function saveDatasetCopy(user, entry, cb) {
         .then(function(path){
             var dataset = new Dataset(_.omit(entry.toObject(), '_id'));
             dataset.user = user;
+            dataset.users = [ entry.user ];
             dataset.created = new Date();
             dataset.origDataset = entry._id;
             dataset.s3reference = 'https://s3.amazonaws.com/datasetstl/' + path;
+            dataset.title = dataset.title + ' - ' + moment().format('MM/DD/YYYY, h:mm:ss a');
             console.log('inside save', dataset);
             dataset.save(cb);
         })

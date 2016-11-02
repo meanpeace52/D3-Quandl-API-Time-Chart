@@ -110,7 +110,7 @@ angular.module('datasets').controller('DatasetsListController', ['$state', '$sta
         vm.addToUser = function (dataset) {
             Datasets.addToUserApiCall(dataset)
                 .then(function (data) {
-                    toastr.success('Dataset copied to your LAB.');
+                    toastr.success('Dataset copied to your page.');
                 })
                 .catch(function (err) {
                     $log.error(err);

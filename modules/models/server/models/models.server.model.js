@@ -41,6 +41,7 @@ var ModelSchema = new Schema({
         type: Date,
         default: Date.now
     },
+    s3reference: String,
     access: {
         type: String,
         enum: ['public', 'for sale', 'private', 'purchased'],
