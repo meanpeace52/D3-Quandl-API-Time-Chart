@@ -270,7 +270,7 @@ var plans = [
             if (err) return res.status(400).json({message:err.message});
             dataSetsController.purchaseDataset(dataset._id, user, function(err,dataset){
               if (err) return res.status(400).json({message: errorHandler.getErrorMessage(err)});
-              return res.json(dataset);
+              return res.json(true);
             });
           });
 

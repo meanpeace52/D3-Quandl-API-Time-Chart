@@ -77,7 +77,7 @@ angular.module('posts')
                 type:'dataset',
                 id:dataset._id
               }, function(err, result){
-
+                // result== true if payment is successful
               });
             };
 

@@ -215,9 +215,10 @@ angular.module('users').factory('BillingService', ['$http', '$window','toastr', 
               if(err){
                 modalInstance.close();
                 billing.openCheckoutModal(initObj, next);
+                next(err);
               }else{
                 modalInstance.close();
-                next(response);
+                next(err, response);
               }
           });
         });

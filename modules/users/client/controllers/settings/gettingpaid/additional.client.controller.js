@@ -52,11 +52,13 @@ angular.module('users').controller('GettingPaidAdditionalController', ['$scope',
         BillingService.updateAccount({legal_entity:{personal_id_number:$scope.legal_entity.personal_id_number}},
           function (err, account) {
             if(err){
+              $scope.accountLoaded = true;
               $scope.submitting = false;
             } else {
               initAccountInfo(account);
+              $scope.accountUpdated = true;
             }
-            $scope.accountUpdated = true;
+
         });
 
 
