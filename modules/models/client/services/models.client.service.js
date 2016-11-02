@@ -107,7 +107,7 @@
               });
 
           return dfd.promise;
-    }
+    };
 
     return models;
   }
