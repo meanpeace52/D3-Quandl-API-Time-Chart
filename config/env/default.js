@@ -42,6 +42,13 @@ module.exports = {
       limits: {
         fileSize: 5*1024*1024 // Max file size in bytes (1 MB)
       }
+    },
+    stripeUpload: {
+      dest: './temp/', // files for stripe identity verification
+      limits: {
+        fileSize: 4*1024*1024 // Max file size in bytes (4 MB)
+      }
     }
-  }
+  },
+  applicationFee:20 //Stripe application_fee in %
 };

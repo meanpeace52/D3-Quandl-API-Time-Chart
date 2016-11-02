@@ -66,7 +66,6 @@ exports.forgot = function (req, res, next) {
           url: httpTransport + req.headers.host + '/api/auth/reset/' + token
         },
         'modules/users/server/templates/reset-password-email',
-        res,
         function (err) {
           if (!err) {
             res.send({

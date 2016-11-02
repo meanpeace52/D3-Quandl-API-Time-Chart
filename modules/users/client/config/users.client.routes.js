@@ -9,66 +9,101 @@ angular.module('users').config(['$stateProvider',
           .state('settings', {
             abstract: true,
             url: '/settings',
-            templateUrl: 'modules/users/client/views/settings/settings.client.view.html'
-          })
+            templateUrl: MODULE_PATH + 'views/settings/settings.client.view.html'
+        })
+
           .state('settings.profile', {
               url: '/profile',
-              templateUrl: 'modules/users/client/views/settings/edit-profile.client.view.html'
+              templateUrl: MODULE_PATH + 'views/settings/edit-profile.client.view.html'
           })
           .state('settings.password', {
               url: '/password',
-              templateUrl: 'modules/users/client/views/settings/change-password.client.view.html'
+              templateUrl: MODULE_PATH + 'views/settings/change-password.client.view.html'
           })
           .state('settings.accounts', {
               url: '/accounts',
-              templateUrl: 'modules/users/client/views/settings/manage-social-accounts.client.view.html'
+              templateUrl: MODULE_PATH + 'views/settings/manage-social-accounts.client.view.html'
           })
           .state('settings.picture', {
               url: '/picture',
-              templateUrl: 'modules/users/client/views/settings/change-profile-picture.client.view.html'
+              templateUrl: MODULE_PATH + 'views/settings/change-profile-picture.client.view.html'
           })
           .state('settings.subscription', {
               url: '/subscription',
-              templateUrl: 'modules/users/client/views/settings/subscription.client.view.html'
+              templateUrl: MODULE_PATH + 'views/settings/subscription.client.view.html'
           })
           .state('settings.invoices', {
               url: '/invoices',
-              templateUrl: 'modules/users/client/views/settings/invoices.client.view.html'
+              templateUrl: MODULE_PATH + 'views/settings/invoices.client.view.html'
           })
           .state('settings.billing', {
               url: '/billing',
-              templateUrl: 'modules/users/client/views/settings/billing.client.view.html'
+              templateUrl: MODULE_PATH + 'views/settings/billing.client.view.html'
           })
-          .state('pricing', {
-              url: '/pricing',
-              templateUrl: 'modules/users/client/views/pricing/pricing.client.view.html'
+          .state('settings.gettingpaid', {
+              abstract: true,
+              url: '/gettingpaid',
+              template: '<ui-view/>'
           })
-            .state('authentication', {
-                abstract: true,
-                url: '/authentication',
-                templateUrl: 'modules/users/client/views/authentication/authentication.client.view.html',
-                controller: 'AuthenticationController'
+            .state('settings.gettingpaid.account', {
+                url: '/account',
+                templateUrl: MODULE_PATH + 'views/settings/gettingpaid/account.client.view.html'
             })
+            .state('settings.gettingpaid.additional', {
+                url: '/additional',
+                templateUrl: MODULE_PATH + 'views/settings/gettingpaid/additional.client.view.html'
+            })
+            .state('settings.gettingpaid.bank', {
+                url: '/bank',
+                templateUrl: MODULE_PATH + 'views/settings/gettingpaid/bank-account.client.view.html'
+            })
+
+
+        .state('pricing', {
+            url: '/pricing',
+            templateUrl: MODULE_PATH + 'views/pricing/pricing.client.view.html'
+        })
+
+        .state('authentication', {
+            abstract: true,
+            url: '/authentication',
+            templateUrl: MODULE_PATH + 'views/authentication/authentication.client.view.html',
+            controller: 'AuthenticationController'
+        })
+
           .state('authentication.signup', {
               url: '/signup',
-              templateUrl: 'modules/users/client/views/authentication/signup.client.view.html',
+              templateUrl: MODULE_PATH + 'views/authentication/signup.client.view.html',
               controller: 'AuthenticationController'
           })
           .state('authentication.signin', {
               url: '/signin?err',
-              templateUrl: 'modules/users/client/views/authentication/signin.client.view.html',
+              templateUrl: MODULE_PATH + 'views/authentication/signin.client.view.html',
               controller: 'AuthenticationController'
           })
 
 
-          .state('password', {
-              abstract: true,
-              url: '/password',
-              template: '<ui-view/>'
+        .state('emailverification', {
+            url: '/emailverification',
+            templateUrl: MODULE_PATH + 'views/emailverification/emailverification.client.view.html'
+        })
+          .state('emailverification.invalid', {
+              url: '/invalid',
+              templateUrl: MODULE_PATH + 'views/emailverification/emailverification-invalid.client.view.html'
           })
+          .state('emailverification.success', {
+              url: '/success'
+          })
+
+        .state('password', {
+            abstract: true,
+            url: '/password',
+            template: '<ui-view/>'
+        })
+
           .state('password.forgot', {
               url: '/forgot',
-              templateUrl: 'modules/users/client/views/password/forgot-password.client.view.html'
+              templateUrl: MODULE_PATH + 'views/password/forgot-password.client.view.html'
           })
           .state('password.reset', {
               abstract: true,
@@ -77,15 +112,15 @@ angular.module('users').config(['$stateProvider',
           })
           .state('password.reset.invalid', {
               url: '/invalid',
-              templateUrl: 'modules/users/client/views/password/reset-password-invalid.client.view.html'
+              templateUrl: MODULE_PATH + 'views/password/reset-password-invalid.client.view.html'
           })
           .state('password.reset.success', {
               url: '/success',
-              templateUrl: 'modules/users/client/views/password/reset-password-success.client.view.html'
+              templateUrl: MODULE_PATH + 'views/password/reset-password-success.client.view.html'
           })
           .state('password.reset.form', {
               url: '/:token',
-              templateUrl: 'modules/users/client/views/password/reset-password.client.view.html'
+              templateUrl: MODULE_PATH + 'views/password/reset-password.client.view.html'
           })
 
 

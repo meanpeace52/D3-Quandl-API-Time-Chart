@@ -17,8 +17,14 @@
         <li ui-sref-active="active">
           <a ui-sref="settings.accounts">Manage Social Accounts</a>
         </li>
-        <li ui-sref-active="active">
+        <li ng-if="user.emailIsVerified" ui-sref-active="active">
           <a ui-sref="settings.billing">Billing and Subscription</a>
+        </li>
+        <li ng-if="!user.emailIsVerified" ui-sref-active="active">
+          <a ui-sref="emailverification">Verify your email</a>
+        </li>
+        <li ng-if="user.plan !== 'free'" ui-sref-active="active">
+          <a ui-sref="settings.gettingpaid.account">Getting Paid</a>
         </li>
       </ul>
     </nav>

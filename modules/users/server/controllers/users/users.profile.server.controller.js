@@ -13,6 +13,7 @@ var _ = require('lodash'),
     config = require(path.resolve('./config/config')),
     User = mongoose.model('User'),
     s3 = require('s3'),
+    email = require(path.resolve('./modules/core/server/controllers/emails.server.controller')),
     client = s3.createClient({
         maxAsyncS3: 20, // this is the default
         s3RetryCount: 3, // this is the default
@@ -33,39 +34,35 @@ var _ = require('lodash'),
  */
 exports.update = function (req, res) {
     // Init Variables
-    var user = req.user;
-
-    // For security measurement we remove the roles from the req.body object
-    delete req.body.roles;
-
+    var user = req.user, verifyemail = false;
     if (user) {
+
+        if(user.email !== req.body.email){
+          verifyemail = true;
+        }
+        // For security measure we remove the roles from the req.body object
+        delete req.body.roles;
         // Merge existing user
         user = _.extend(user, req.body);
+
+
         user.updated = Date.now();
         user.displayName = user.firstName + ' ' + user.lastName;
-
         user.save(function (err) {
-            if (err) {
-                return res.status(400).send({
-                    message: errorHandler.getErrorMessage(err)
-                });
-            }
-            else {
-                req.login(user, function (err) {
-                    if (err) {
-                        res.status(400).send(err);
-                    }
-                    else {
-                        res.json(user);
-                    }
-                });
-            }
+          if (err) return res.status(400).send({message: errorHandler.getErrorMessage(err)});
+          if(verifyemail){
+            email.verifyEmail(req, user, function(err){
+              res.json(user.profile());
+            });
+          }else{
+            res.json(user.profile());
+          }
         });
     }
     else {
-        res.status(400).send({
-            message: 'User is not signed in'
-        });
+      res.status(400).send({
+          message: 'User is not signed in'
+      });
     }
 };
 
@@ -124,7 +121,7 @@ exports.changeProfilePicture = function (req, res) {
  * Send User
  */
 exports.me = function (req, res) {
-    res.json(req.user || null);
+    res.json(req.user ? req.user.profile() : null);
 };
 
 exports.read = function (req, res) {

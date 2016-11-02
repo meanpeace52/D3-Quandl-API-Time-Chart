@@ -1,0 +1,16 @@
+
+<p>Dear {{name}},</p>
+<p>
+  We were not able to verify your account with the information you provided, we will additional information to confirm your identity.
+</p>
+
+{% for field in fields %}
+<p>
+  {{field}}
+</p>
+{% endfor %}
+
+Please visit {{url}} to submit additional information.
+
+<br />
+<p>The {{appName}} Support Team</p>

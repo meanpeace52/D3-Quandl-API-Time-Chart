@@ -2,8 +2,8 @@
 
 //posts Detail Controller
 angular.module('posts')
-    .controller('postsDetailController', ['$stateParams', 'Authentication', 'posts', '$state', '$log', 'Datasets', '$modal', 'toastr', 'prompt', 'ModelsService',
-            function ($stateParams, Authentication, posts, $state, $log, Datasets, $modal, toastr, prompt, ModelsService) {
+    .controller('postsDetailController', ['$stateParams', 'Authentication', 'posts', '$state', '$log', 'Datasets', '$modal', 'toastr', 'prompt', 'ModelsService', 'BillingService',
+            function ($stateParams, Authentication, posts, $state, $log, Datasets, $modal, toastr, prompt, ModelsService, BillingService) {
 
             var vm = this;
 
@@ -12,9 +12,9 @@ angular.module('posts')
             vm.activeTab = '';
 
             vm.notfound = false;
-            
+
             vm.authentication = Authentication;
-            
+
             posts.crud.get({
                 postId: $stateParams.postId
             }).$promise.then(function (response) {
@@ -71,20 +71,21 @@ angular.module('posts')
             };
 
             vm.purchaseDataset = function(dataset){
-                prompt({
-                    title: 'Confirm Purchase?',
-                    message: 'Are you sure you want to purchase this dataset for $' + dataset.cost + '?'
-                }).then(function(){
-                    Datasets.purchaseDataset(dataset)
-                        .then(function(result){
-                            dataset.purchased = true;
-                            toastr.success('Dataset purchased successfully and it has been copied to your LAB.');
-                        })
-                        .catch(function(err){
-                            $log.error(err);
-                            toastr.error('Error purchasing dataset.');
-                        });
-                });
+              BillingService.openCheckoutModal({
+                title:'Purchase dataset',
+                description:dataset.title + ' $'+dataset.cost,
+                type:'dataset',
+                id:dataset._id
+              }, function(err, result){
+                if (err){
+                	$log.error(err);
+                	toastr.error('Error purchasing dataset.');
+                }
+                else{
+                	dataset.purchased = true;
+                    toastr.success('Dataset purchased successfully and it has been copied to your LAB.');
+                }
+              });
             };
 
             vm.purchaseModel = function(model){

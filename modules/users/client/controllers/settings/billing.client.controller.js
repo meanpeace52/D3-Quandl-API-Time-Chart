@@ -9,7 +9,7 @@ angular.module('users').controller('BillingController', ['$scope','Authenticatio
     $scope.getSubscription = getSubscription;
 
     $scope.changeCreditCard = function (){
-      BillingService.openCreditCardModal(getBillingInfo);
+      BillingService.openChangeCreditCardModal(getBillingInfo);
     };
 
     $scope.updateSubscription = function(){

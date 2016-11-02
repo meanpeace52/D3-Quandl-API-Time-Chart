@@ -1,0 +1,24 @@
+<div class="form-group"  show-errors>
+  <label class="control-label" for="account_number">Routing number:</label>
+  <input data-number-type="routing" class="routing form-control" name="routing_number"
+  ng-model="external_account.routing_number" placeholder="111000000" type="text" required >
+  <div ng-if="form.routing_number.$error && submitted" ng-messages="form.routing_number.$error" role="alert">
+    <p class="help-block error-text" ng-message="required">This field is required</p>
+  </div>
+</div>
+<div class="form-group"  show-errors>
+  <label class="control-label" for="account_number">Account number:</label>
+  <input class="form-control" name="account_number" autocomplete="off" placeholder=""
+  ng-model="external_account.account_number" maxlength="34" type="text" required>
+  <div ng-if="form.account_number.$error && submitted" ng-messages="form.account_number.$error" role="alert">
+    <p class="help-block error-text" ng-message="required">This field is required</p>
+  </div>
+</div>
+<div class="form-group"  show-errors>
+  <label class="control-label" for="account_number">Confirm account number:</label>
+  <input class="form-control" name="account_number_validate" autocomplete="off" placeholder="" equals="{{external_account.account_number}}"  ng-model="account_number_validate" maxlength="34" type="text" required>
+  <div ng-if="form.account_number_validate.$error && submitted" ng-messages="form.account_number_validate.$error" role="alert">
+    <p class="help-block error-text" ng-message="required">This field is required</p>
+    <p class="help-block error-text" ng-message="equals">The account numbers must match</p>
+  </div>
+</div>

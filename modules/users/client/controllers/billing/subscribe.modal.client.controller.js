@@ -2,9 +2,20 @@
 
 //users List Controller
 angular.module('users')
-    .controller('SubscribeModalController', ['$scope', '$uibModalInstance', 'BillingService', 'toastr', 'plans', 'options' , 'next',
-    function($scope, $uibModalInstance, BillingService, toastr, plans, options, next){
+    .controller('SubscribeModalController', ['$scope', '$uibModalInstance', 'BillingService', 'toastr', 'plans', 'options' , 'billingInfo', 'next',
+    function($scope, $uibModalInstance, BillingService, toastr, plans, options, billingInfo, next){
       $scope.plans = plans;
+      $scope.billing = billingInfo;
+      if(billingInfo){
+        $scope.showCardForm = false;
+      } else{
+        $scope.showCardForm = true;
+      }
+
+      $scope.changeCard = function(val){
+        $scope.showCardForm = val;
+      };
+
       $scope.cancel = function(){
         $uibModalInstance.close();
       };
@@ -48,10 +59,29 @@ angular.module('users')
         if (result.error) {
             $scope.carderror = result.error.message;
         } else {
-          BillingService.subscribe(result.id, $scope.stripe_plan_id, function successCallback(response) {
-            next();
+          $scope.submitting = true;
+          BillingService.subscribe(result.id, $scope.stripe_plan_id, function (err, response) {
+            if(err){
+              $scope.carderror = err.data.message;
+              $scope.submitting = false;
+            }else{
+              $uibModalInstance.close();
+              next();
+            }
           });
-          $uibModalInstance.close();
         }
+      };
+
+      $scope.confirm = function(){
+        $scope.submitting = true;
+        BillingService.subscribe(null, $scope.stripe_plan_id, function (err, response) {
+          if(err){
+            $scope.carderror = err.data.message;
+            $scope.submitting = false;
+          }else{
+            $uibModalInstance.close();
+            next();
+          }
+        });
       };
     }]);
