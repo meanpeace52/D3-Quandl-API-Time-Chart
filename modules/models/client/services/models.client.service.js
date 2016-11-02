@@ -98,7 +98,7 @@
     models.addToUserApiCall = function(model) {
           var dfd = $q.defer();
 
-          $http.post('api/model/copy', model)
+          $http.post('api/models/copy', model)
               .success(function (data, status, headers, config) {
                   dfd.resolve(data);
               })
