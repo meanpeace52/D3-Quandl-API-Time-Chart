@@ -60,8 +60,8 @@ var DatasetSchema = new Schema({
     },
     access: {
         type: String,
-        enum: ['public', 'paid', 'private', 'purchased'],
-        default: ['private']
+        enum: ['public', 'for sale', 'private', 'purchased'],
+        default: ['public']
     },
     mediatype: {
         type: [{
@@ -73,6 +73,7 @@ var DatasetSchema = new Schema({
     cost: {
       type: Number
     },
+    previewnote: String,
     buyers: [{
         type: Schema.ObjectId,
         ref: 'User'

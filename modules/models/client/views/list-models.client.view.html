@@ -2,44 +2,56 @@
     <div class="row">
       <div class="col-md-12 page-header">
         <span class="h2 pull-left">Models</span>
-        <a data-ng-if="vm.ownership" data-ui-sref="models.create" class="header-secondary-title h4 pull-right">Create Model</a>
+        <!--<a data-ng-if="vm.ownership" data-ui-sref="models.create" class="header-secondary-title h4 pull-right">Create Model</a>-->
       </div>
     </div>
   </div>
-  <form ng-if="vm.state === 'models.list'" ng-submit="vm.search()" class="datasets-search-container">
+  <form ng-if="vm.state === 'models.list' || vm.state === 'models.search'" ng-submit="vm.search()" class="datasets-search-container">
     <input class="form-control" type="text" ng-model="vm.q">
     <button ng-click="vm.search()" class="btn btn-secondary pull-right" type="button">
-	    	<i 
-	    		ng-hide="vm.loading" 
+	    	<i
+	    		ng-hide="vm.loading"
 	    		class="glyphicon glyphicon-search"></i>
-	    	<i 
-	    		ng-show="vm.loading" 
+	    	<i
+	    		ng-show="vm.loading"
 	    		class="glyphicon glyphicon-hourglass"></i>
 	    </button>
   </form>
 
-  <div class="list-group">
-    <a data-ng-if="!vm.modal" data-ng-repeat="model in vm.list track by $index" class="list-group-item" data-ui-sref="models.view({modelId: model._id})">
-      <span class="list-group-item-heading h4" data-ng-bind="model.title"></span>
-      <br/>
-      <small class="list-group-item-text">
-        Created on <span data-ng-bind="model.created | date:'mediumDate'"></span> by
-    <span data-ng-if="model.user" data-ng-bind="model.user.displayName"></span>
-    <span data-ng-if="!model.user">Deleted User</span>
-    </small>
-    </a>
-    <div data-ng-if="vm.modal" data-ng-repeat="model in vm.list track by $index" class="list-group-item">
-      <span class="h4 list-group-item-heading" data-ng-bind="model.title"></span>
-      <button ng-if="vm.modal" ng-click="vm.ok(model)" data-ng-disabled="vm.selectedData.indexOf(model._id) !== -1" class="btn btn-small btn-default pull-right">Select</button>
-      <br/>
-      <small class="list-group-item-text">
-        Created on <span data-ng-bind="model.created | date:'mediumDate'"></span> by
-    <span data-ng-if="model.user" data-ng-bind="model.user.displayName"></span>
-    <span data-ng-if="!model.user">Deleted User</span>
-    </small>
+    <div class="row" ng-if="vm.state === 'models.list' || vm.state === 'models.search'">
+        <div class="col-md-6">
+            <ul ng-show="vm.resolved && vm.totalItems > vm.itemsPerPage" uib-pagination total-items="vm.totalItems" ng-model="vm.currentPage" items-per-page="vm.itemsPerPage" max-size="5" force-ellipses="true" boundary-links="true" ng-change="vm.pageChanged()"></ul>
+        </div>
+        <div class="col-md-3 pull-right" ng-show="vm.resolved">
+            <label>Rows per page:</label>
+            <select ng-model="vm.itemsPerPage" ng-change="vm.pageChanged()" class="form-control">
+                <option>10</option>
+                <option>25</option>
+                <option selected>50</option>
+                <option>100</option>
+                <option>250</option>
+                <option>500</option>
+            </select>
+        </div>
     </div>
-  </div>
-  <div class="alert alert-warning text-center" ng-show="!vm.list.length && vm.resolved">
-    No models found.
-  </div>
+
+    <div class="list-group">
+        <span data-ng-repeat="model in vm.list track by $index" class="list-group-item dataset">
+            <small class="list-group-item-text">
+                Title:
+                <span data-ng-bind="model.title" ng-class="{'active': vm.showTitle (model.title)}"></span>
+            </small>
+            <span ng-if="!vm.modal" class="pull-right">
+                <a class="btn btn-secondary" ng-if="(model.access == 'for sale' && !model.purchased) &&  vm.user._id != model.user._id"  class="pull-right" ng-click="vm.purchaseModel(model)">Buy for ${{ model.cost }}</a>
+                <a class="btn btn-secondary" ng-if="model.access != 'for sale' || (model.access == 'for sale' && model.purchased) || vm.user._id == model.user._id" ui-sref="models.view({modelId: model._id})" class="pull-right">View</a>
+                <a class="btn btn-secondary" ng-if="model.access == 'public' && vm.user._id != model.user._id" ng-click="vm.copyModel(model)" class="pull-right">Save to my Page</a>
+                <a data-ng-if="vm.user._id == model.user._id" class="btn btn-primary" ui-sref="models.edit({modelId:model._id})">Edit</a>
+                <a data-ng-if="vm.user._id == model.user._id" class="btn btn-primary" ng-click="vm.remove(model)">Delete</a>
+            </span>
+        </span>
+    </div>
+    <ul ng-show="vm.resolved && vm.totalItems > vm.itemsPerPage" uib-pagination total-items="vm.totalItems" ng-model="vm.currentPage" items-per-page="vm.itemsPerPage" max-size="5" force-ellipses="true" boundary-links="true" ng-change="vm.pageChanged()"></ul>
+    <div class="alert alert-warning text-center" ng-show="!vm.list.length && vm.resolved">
+        No models found.
+    </div>
 </section>

@@ -3,8 +3,8 @@
 //posts Step2 Controller
 angular.module('posts')
     .controller('postsStep2Controller', ['$scope', '$state', '$stateParams', 'Authentication', 'posts', '$uibModal', '$window', '$timeout', 'FileUploader', 'postOptions',
-                'Models', 'Datasets', '$log', 'toastr',
-            function ($scope, $state, $stateParams, Authentication, posts, $uibModal, $window, $timeout, FileUploader, postOptions, Models, Datasets, $log, toastr) {
+                'Models', 'Datasets', '$log', 'toastr', 'ModelsService', 'modelOptions',
+            function ($scope, $state, $stateParams, Authentication, posts, $uibModal, $window, $timeout, FileUploader, postOptions, Models, Datasets, $log, toastr, ModelsService, modelOptions) {
             var vm = this;
 
             vm.user = Authentication.user;
@@ -14,6 +14,8 @@ angular.module('posts')
             vm.error = null;
 
             vm.postOptions = postOptions;
+
+            vm.modelOptions = modelOptions;
 
             vm.newPost = $state.current.name === 'posts.createstep2';
 
@@ -76,14 +78,26 @@ angular.module('posts')
             };
 
             vm.addModel = function(model){
-                if (!vm.post.models){
-                    vm.post.models = [];
+                if (model.access !== 'private'){
+                    if (!vm.post.models){
+                        vm.post.models = [];
+                    }
+
+                    ModelsService.update(model)
+                        .then(function(){
+
+                        })
+                        .catch(function(err){
+                            $log.error(err);
+                        });
+
+                    vm.models = _.without(vm.models, model);
+                    vm.model = undefined;
+                    vm.post.models.push(model);
                 }
-                vm.post.models.push(model);
             };
 
             vm.addDataset = function(dataset){
-
                 if (dataset.access !== 'private'){
                     if (!vm.post.datasets){
                         vm.post.datasets = [];
@@ -101,7 +115,6 @@ angular.module('posts')
                     vm.dataset = undefined;
                     vm.post.datasets.push(dataset);
                 }
-
             };
 
             vm.addExistingFile = function(existingFile){
@@ -117,6 +130,11 @@ angular.module('posts')
                 vm.datasets.push(dataset);
             };
 
+            vm.removeModel = function(model){
+                vm.post.models = _.without(vm.post.models, model);
+                vm.models.push(model);
+            };
+
             vm.removeFile = function(file){
                 vm.post.files = _.without(vm.post.files, file);
                 vm.user.files.push(file);
@@ -130,6 +148,17 @@ angular.module('posts')
                 }
                 else{
                     delete dataset.cost;
+                }
+            };
+
+            vm.changeModelAccess = function(model){
+                if (model.access === 'for sale'){
+                    if (!model.cost){
+                        model.cost = 1;
+                    }
+                }
+                else{
+                    delete model.cost;
                 }
             };
 
@@ -203,15 +232,6 @@ angular.module('posts')
                 vm.error = response.message;
             };
 
-            Models.filter('user', Authentication.user._id)
-                .then(function (res) {
-                    vm.models = res.data;
-
-                },
-                function (error) {
-
-                });
-
             Datasets.user(Authentication.user.username)
                 .then(function (res) {
                     vm.datasets = res.data;
@@ -225,8 +245,27 @@ angular.module('posts')
                         });
                     }
                 },
-                function (error) {
+                function (err) {
+                    $log.error(err);
+                    toastr.error('Please loading datasets.');
+                });
 
+            ModelsService.user(Authentication.user._id)
+                .then(function (res) {
+                    vm.models = res;
+
+                    if (vm.post.models && vm.post.models.length){
+                        _.each(vm.post.models, function(model){
+                            var foundmodel = _.find(vm.models, { _id : model._id });
+                            if (foundmodel){
+                                vm.models = _.without(vm.models, foundmodel);
+                            }
+                        });
+                    }
+                },
+                function (err) {
+                    $log.error(err);
+                    toastr.error('Please loading models.');
                 });
 
     }]);

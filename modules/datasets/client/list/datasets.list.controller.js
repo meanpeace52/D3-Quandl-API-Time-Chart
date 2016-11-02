@@ -2,8 +2,8 @@
 
 //datasets List Controller
 angular.module('datasets').controller('DatasetsListController', ['$state', '$stateParams', '$sce', '$modal', 'Authentication',
-                                        'Datasets','UsersFactory', 'toastr', '$log',
-    function ($state, $stateParams, $sce, $modal, Authentication, Datasets, UsersFactory, toastr, $log) {
+                                        'Datasets','UsersFactory', 'toastr', '$log', 'prompt', 'BillingService',
+    function ($state, $stateParams, $sce, $modal, Authentication, Datasets, UsersFactory, toastr, $log, prompt, BillingService) {
         var vm = this;
 
         vm.authentication = Authentication;
@@ -52,15 +52,20 @@ angular.module('datasets').controller('DatasetsListController', ['$state', '$sta
 
         vm.deleteDataset = function(dataset){
             if (vm.user._id === dataset.user._id || vm.user._id === dataset.user){
-                Datasets.remove(dataset)
-                    .then(function(){
-                        vm.list = _.without(vm.list, dataset);
-                        toastr.success('Dataset deleted successfully.');
-                    })
-                    .catch(function(err){
-                        $log.error(err);
-                        toastr.error('Error deleting dataset.');
-                    });
+                prompt({
+                    title: 'Confirm Delete?',
+                    message: 'Are you sure you want to delete this dataset?'
+                }).then(function() {
+                    Datasets.remove(dataset)
+                        .then(function () {
+                            vm.list = _.without(vm.list, dataset);
+                            toastr.success('Dataset deleted successfully.');
+                        })
+                        .catch(function (err) {
+                            $log.error(err);
+                            toastr.error('Error deleting dataset.');
+                        });
+                });
             }
         };
 
@@ -71,6 +76,24 @@ angular.module('datasets').controller('DatasetsListController', ['$state', '$sta
                 vm.loaded();
             }, function (err) {
                 vm.loaded();
+            });
+        };
+
+        vm.purchaseDataset = function(dataset){
+            BillingService.openCheckoutModal({
+                title: 'Purchase dataset',
+                description: dataset.title + ' $'+dataset.cost,
+                type: 'dataset',
+                id: dataset._id
+            }, function(err, result){
+                if (err){
+                    $log.error(err);
+                    toastr.error('Error purchasing dataset.');
+                }
+                else{
+                    dataset.purchased = true;
+                    toastr.success('Dataset purchased successfully and it has been copied to your page.');
+                }
             });
         };
 
@@ -110,7 +133,7 @@ angular.module('datasets').controller('DatasetsListController', ['$state', '$sta
         vm.addToUser = function (dataset) {
             Datasets.addToUserApiCall(dataset)
                 .then(function (data) {
-                    toastr.success('Dataset copied to your LAB.');
+                    toastr.success('Dataset copied to your page.');
                 })
                 .catch(function (err) {
                     $log.error(err);

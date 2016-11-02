@@ -43,8 +43,9 @@
             </small>
             <span class="h4 list-group-item-heading" ng-bind="dataset.name"></span>
             <span ng-if="!Datasetslist.modal" class="pull-right">
-                <a class="btn btn-secondary" ui-sref="datasets.detail({datasetId: dataset._id})" class="pull-right">View</a>
-                <button data-ng-if="DatasetsList.user._id != dataset.user && DatasetsList.user._id != dataset.user._id" class="btn btn-primary" ng-click="DatasetsList.addToUser(dataset)">Save to my LAB</button>
+                <a ng-if="dataset.access != 'for sale' || (dataset.access == 'for sale' && dataset.purchased)" class="btn btn-secondary" ui-sref="datasets.detail({datasetId: dataset._id})" class="pull-right">View</a>
+                <button ng-if="(DatasetsList.user._id != dataset.user && DatasetsList.user._id != dataset.user._id) && dataset.access == 'for sale' && !dataset.purchased" class="btn btn-primary" ng-click="DatasetsList.purchaseDataset(dataset)">Buy for ${{ dataset.cost | number: 2 }}</button>
+                <button data-ng-if="(DatasetsList.user._id != dataset.user && DatasetsList.user._id != dataset.user._id) && (!dataset.access || dataset.access == 'public')" class="btn btn-primary" ng-click="DatasetsList.addToUser(dataset)">Save to my Page</button>
                 <a data-ng-if="DatasetsList.user._id == dataset.user" class="btn btn-primary" ui-sref="datasets.edit({datasetId:dataset._id})">Edit</a>
                 <a data-ng-if="DatasetsList.user._id == dataset.user" class="btn btn-primary" ng-click="DatasetsList.deleteDataset(dataset)">Delete</a>
             </span>

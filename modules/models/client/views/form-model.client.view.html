@@ -3,20 +3,50 @@
     <h1>{{vm.model._id ? 'Edit Model' : 'New Model'}}</h1>
   </div>
   <div class="col-md-12">
-    <form name="vm.form.modelForm" class="form-horizontal" ng-submit="vm.save(vm.form.modelForm.$valid)" novalidate>
+    <form name="form" class="form-horizontal" ng-submit="vm.save(form.$valid)" novalidate>
       <fieldset>
-        <div class="form-group" show-errors>
-          <label class="control-label" for="title">Title</label>
-          <input name="title" type="text" ng-model="vm.model.title" id="title" class="form-control" placeholder="title" required>
-          <div ng-messages="vm.form.modelForm.title.$error" role="alert">
-            <p class="help-block error-text" ng-message="required">Model title is required.</p>
-          </div>
+        <div class="form-group row" show-errors>
+            <div class="col-md-2">
+                <label class="control-label" for="title">Title</label>
+            </div>
+            <div class="col-md-10">
+                <input name="title" type="text" ng-model="vm.model.title" id="title" class="form-control" placeholder="title" required>
+                <div ng-messages="form.title.$error && vm.submitted" role="alert">
+                    <p class="help-block error-text" ng-message="required">Model title is required.</p>
+                </div>
+            </div>
         </div>
+          <div class="row form-group" ng-if="vm.user.plan !== 'free'">
+              <div class="col-md-2">
+                  <label class="control-label" for="access">Access</label>
+              </div>
+              <div class="col-md-10">
+                  <select name="access" id="access" ng-model="vm.model.access" class="form-control" ng-change="postsStep2.changeDatasetAccess(postsStep2.dataset)" ng-options="access as (access | capitalize) for access in vm.accessList">
+                  </select>
+              </div>
+          </div>
+          <div class="row form-group" ng-if="vm.user.plan !== 'free' && vm.model.access == 'for sale'">
+              <div class="col-md-2">
+                  <label class="control-label" for="cost">Price</label>
+              </div>
+              <div class="col-md-2 input-group">
+                  <span class="input-group-addon">$</span>
+                  <input type="number" name="cost" id="cost" class="form-control" ng-model="vm.model.cost" min="1" ng-min="1" step="0.50" />
+                  <div ng-messages="form.cost.$error && vm.submitted" role="alert">
+                      <p class="help-block error-text" ng-message="required">Enter a price greater than $1.</p>
+                  </div>
+              </div>
+          </div>
+          <div class="row form-group" ng-if="vm.user.plan !== 'free' && vm.model.access == 'for sale'">
+              <div class="col-md-2">
+                  <label class="control-label" for="previewnote">Preview Note</label>
+              </div>
+              <div class="col-md-10">
+                  <textarea name="previewnote" class="form-control" id="previewnote" ng-model="vm.model.previewnote"></textarea>
+              </div>
+          </div>
         <div class="form-group">
           <button type="submit" class="btn btn-default">{{vm.model._id ? 'Update' : 'Create'}}</button>
-        </div>
-        <div ng-show="vm.error" class="text-danger">
-          <strong ng-bind="vm.error"></strong>
         </div>
       </fieldset>
     </form>

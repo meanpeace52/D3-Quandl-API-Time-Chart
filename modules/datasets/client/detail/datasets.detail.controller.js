@@ -36,10 +36,10 @@ angular.module('datasets')
                         vm.hasLoadedData = true;
                     });
 
-                vm.addtoUser = function (viewingDataset) {
-                    Datasets.addToUserApiCall(viewingDataset)
+                vm.addtoUser = function () {
+                    Datasets.addToUserApiCall(vm.dataset)
                         .then(function (dataset) {
-                            toastr.success('Dataset copied to your LAB.');
+                            toastr.success('Dataset copied to your page.');
                         })
                         .catch(function (err) {
                             $log.error(err);

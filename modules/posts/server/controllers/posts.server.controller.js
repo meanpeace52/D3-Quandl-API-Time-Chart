@@ -71,6 +71,18 @@ exports.read = function (req, res) {
                     }
                 });
             }
+            if (post.models && post.models.length){
+                _.each(post.models, function(model){
+                    if (model.buyers && model.buyers.length > 0){
+                        var purchased = _.find(model.buyers, function(buyer){
+                            return buyer.id.toString() === req.user._id.id;
+                        });
+                        if (purchased){
+                            model.purchased = true;
+                        }
+                    }
+                });
+            }
             res.json(post);
         });
 };
@@ -116,9 +128,9 @@ exports.update = function (req, res) {
             });
         }
         if (!post || (post && post.id === req.body.post._id)) {
-            Post.findOneAndUpdate({ _id : req.body.post._id }, req.body.post, function(err, doc){
-                if (err){
-                    res.status(err.status).json(err);
+            Post.findOneAndUpdate({ _id : req.body.post._id }, req.body.post, function(err2, doc){
+                if (err2){
+                    res.status(err2.status).json(err2);
                 }
                 else{
                     res.json(doc);

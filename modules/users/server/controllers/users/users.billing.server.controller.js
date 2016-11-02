@@ -10,12 +10,14 @@ var path = require('path'),
     User = mongoose.model('User'),
     StripeEvent = mongoose.model('StripeEvent'),
     Dataset = mongoose.model('Dataset'),
+    Model = mongoose.model('Model'),
     path = require('path'),
     config = require(path.resolve('./config/config')),
     stripe = require('stripe')(config.stripe.secret_key),
     errorHandler = require(path.resolve('./modules/core/server/controllers/errors.server.controller')),
     email = require(path.resolve('./modules/core/server/controllers/emails.server.controller')),
     dataSetsController = require(path.resolve('./modules/datasets/server/controllers/datasets.server.controller')),
+    modelsController = require(path.resolve('./modules/models/server/controllers/models.server.controller')),
     multer = require('multer'),
     fs = require('fs');
 
@@ -261,22 +263,33 @@ var plans = [
       if (!req.body.type) return res.status(400).json({message:'The type of the purchased object is needed'});
       if (!req.body.id) return res.status(400).json({message:'The id of the purchased object is needed'});
 
-      if(req.body.type == 'dataset'){
-        Dataset.findById(req.body.id).populate('user').exec(function(err, dataset){
-          if (err) return res.status(400).json({message: errorHandler.getErrorMessage(err)});
-
-          //purchase the item and hook into the datasetController
-          purchaseItem(dataset, req.body.type , req.body.token, user, function(err, charge){
-            if (err) return res.status(400).json({message:err.message});
-            dataSetsController.purchaseDataset(dataset._id, user, function(err,dataset){
+      if(req.body.type === 'dataset') {
+          Dataset.findById(req.body.id).populate('user').exec(function (err, dataset) {
               if (err) return res.status(400).json({message: errorHandler.getErrorMessage(err)});
-              return res.json(true);
-            });
+
+              //purchase the item and hook into the datasetController
+              purchaseItem(dataset, req.body.type, req.body.token, user, function (err, charge) {
+                  if (err) return res.status(400).json({message: err.message});
+                  dataSetsController.purchaseDataset(dataset._id, user, function (err, dataset) {
+                      if (err) return res.status(400).json({message: errorHandler.getErrorMessage(err)});
+                      return res.json(true);
+                  });
+              });
           });
+      }
+      else if (req.body.type === 'model') {
+          Model.findById(req.body.id).populate('user').exec(function (err, model) {
+              if (err) return res.status(400).json({message: errorHandler.getErrorMessage(err)});
 
-
-        });
-
+              //purchase the item and hook into the datasetController
+              purchaseItem(model, req.body.type, req.body.token, user, function (err, charge) {
+                  if (err) return res.status(400).json({message: err.message});
+                  modelsController.purchaseModel(model._id, user, function (err, dataset) {
+                      if (err) return res.status(400).json({message: errorHandler.getErrorMessage(err)});
+                      return res.json(true);
+                  });
+              });
+          });
       } else {
         return res.status(400).json({message:'This type is not for sale'});
       }

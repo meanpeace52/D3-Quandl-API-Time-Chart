@@ -25,8 +25,20 @@ exports.invokeRolesPolicies = function () {
                     permissions: ['get', 'put', 'delete']
                 },
                 {
-                    resources: '/api/models/user/:userId',
+                    resources: '/api/models/user/:id',
                     permissions: ['get']
+                },
+                {
+                    resources: '/api/models/search',
+                    permissions: ['get']
+                },
+                {
+                    resources: '/api/models/purchasemodel/:id',
+                    permissions: ['post']
+                },
+                {
+                    resources: '/api/models/copy',
+                    permissions: ['post']
                 }
             ]
         },
@@ -42,8 +54,20 @@ exports.invokeRolesPolicies = function () {
                     permissions: ['get', 'put', 'delete']
                 },
                 {
-                    resources: '/api/models/user/:userId',
+                    resources: '/api/models/user/:id',
                     permissions: ['get']
+                },
+                {
+                    resources: '/api/models/search',
+                    permissions: ['get']
+                },
+                {
+                    resources: '/api/models/purchasemodel/:id',
+                    permissions: ['post']
+                },
+                {
+                    resources: '/api/models/copy',
+                    permissions: ['post']
                 }
             ]
         },

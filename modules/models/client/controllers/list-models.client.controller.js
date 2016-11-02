@@ -5,16 +5,28 @@
     .module('models')
     .controller('ModelsListController', ModelsListController);
 
-  ModelsListController.$inject = ['$state', '$stateParams', 'Models', 'ModelsService', 'UsersFactory'];
+  ModelsListController.$inject = ['$state', '$stateParams', 'Models', 'ModelsService', 'UsersFactory', 'prompt', 'toastr', '$log', 'Authentication', 'BillingService'];
 
-  function ModelsListController($state, $stateParams, Models, ModelsService, UsersFactory) {
+  function ModelsListController($state, $stateParams, Models, ModelsService, UsersFactory, prompt, toastr, $log, Authentication, BillingService) {
 
     var vm = this;
 
+    vm.user = Authentication.user;
+
     vm.resolved = false;
     vm.loading = false;
+
+    vm.totalItems = 0;
+    vm.currentPage = 1;
+    vm.itemsPerPage = 50;
+    vm.pageChanged = function(){
+      loadSearchData();
+    };
     
-    vm.load = function() {
+    vm.state = $state.current.name;
+    vm.ownership = UsersFactory.ownership();
+
+    vm.load = function () {
       vm.resolved = false;
       vm.loading = true;
     };
@@ -23,18 +35,77 @@
       vm.resolved = true;
       vm.loading = false;
     };
-    
-    vm.state = $state.current.name;
 
-    vm.ownership = UsersFactory.ownership();
+    if ($stateParams.search){
+      vm.q = $stateParams.search;
+      loadSearchData();
+    }
 
-    
-   vm.query = function() {
-      vm.load();
-      ModelsService.query().$promise.then(function (res) {
-        vm.loaded();
-        vm.list = res;
+    function loadSearchData(){
+      ModelsService.search(vm.q, vm.itemsPerPage, vm.currentPage)
+          .success(function (response) {
+            vm.list = response.models;
+            vm.totalItems = response.count;
+            vm.loaded();
+          })
+          .error(function (error) {
+            vm.loaded();
+          });
+    }
+
+    vm.remove = function(model) {
+      prompt({
+        title: 'Confirm Delete?',
+        message: 'Are you sure you want to delete this model?'
+      }).then(function(){
+        ModelsService.remove(model)
+            .then(function(){
+              toastr.success('Model deleted successfully!');
+              $state.go('users.profilepage.models', { username : vm.user.username });
+            })
+            .catch(function(err){
+              $log.error(err);
+              toastr.error('Error deleting model!');
+            });
       });
+    };
+
+    vm.search = function () {
+      if (vm.q && vm.q !== ''){
+        $state.go('models.search', { search : vm.q });
+      }
+      else{
+        toastr.error('You need to enter a word or phrases to search by.');
+      }
+    };
+
+    vm.purchaseModel = function(model){
+      BillingService.openCheckoutModal({
+        title:'Purchase model',
+        description: model.title + ' $'+ model.cost,
+        type: 'model',
+        id: model._id
+      }, function(err, result){
+        if (err){
+          $log.error(err);
+          toastr.error('Error purchasing model.');
+        }
+        else{
+          model.purchased = true;
+          toastr.success('Model purchased successfully and it has been copied to your page.');
+        }
+      });
+    };
+
+    vm.copyModel = function(model){
+      ModelsService.addToUserApiCall(model)
+          .then(function (data) {
+            toastr.success('Model copied to your page.');
+          })
+          .catch(function (err) {
+            $log.error(err);
+            toastr.error('An error occurred while copying the model.');
+          });
     };
 
     if ($state.current.name === 'models.filter') {

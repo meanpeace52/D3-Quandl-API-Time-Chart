@@ -2,8 +2,8 @@
 
 //posts Detail Controller
 angular.module('posts')
-    .controller('postsDetailController', ['$stateParams', 'Authentication', 'posts', '$state', '$log', 'Datasets', '$modal', 'toastr', 'prompt', 'BillingService',
-            function ($stateParams, Authentication, posts, $state, $log, Datasets, $modal, toastr, prompt, BillingService) {
+    .controller('postsDetailController', ['$stateParams', 'Authentication', 'posts', '$state', '$log', 'Datasets', '$modal', 'toastr', 'prompt', 'ModelsService', 'BillingService',
+            function ($stateParams, Authentication, posts, $state, $log, Datasets, $modal, toastr, prompt, ModelsService, BillingService) {
 
             var vm = this;
 
@@ -72,13 +72,38 @@ angular.module('posts')
 
             vm.purchaseDataset = function(dataset){
               BillingService.openCheckoutModal({
-                title:'Purchase dataset',
+                title: 'Purchase dataset',
                 description:dataset.title + ' $'+dataset.cost,
                 type:'dataset',
                 id:dataset._id
               }, function(err, result){
-                // result== true if payment is successful
+                if (err){
+                	$log.error(err);
+                	toastr.error('Error purchasing dataset.');
+                }
+                else{
+                	dataset.purchased = true;
+                    toastr.success('Dataset purchased successfully and it has been copied to your LAB.');
+                }
               });
+            };
+
+            vm.purchaseModel = function(model){
+                BillingService.openCheckoutModal({
+                    title: 'Purchase model',
+                    description: model.title + ' $'+ model.cost,
+                    type: 'model',
+                    id: model._id
+                }, function(err, result){
+                    if (err){
+                        $log.error(err);
+                        toastr.error('Error purchasing model.');
+                    }
+                    else{
+                        model.purchased = true;
+                        toastr.success('Model purchased successfully and it has been copied to your page.');
+                    }
+                });
             };
 
             vm.remove = function(){
