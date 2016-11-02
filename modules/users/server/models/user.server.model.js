@@ -142,7 +142,8 @@ UserSchema.methods.profile = function () {
       files:this.files,
       plan:this.plan,
       profileImageURL:this.profileImageURL,
-      emailIsVerified:this.emailIsVerified
+      emailIsVerified:this.emailIsVerified,
+      provider:this.provider
     };
 };
 

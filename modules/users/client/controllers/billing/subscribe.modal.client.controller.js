@@ -73,6 +73,7 @@ angular.module('users')
       };
 
       $scope.confirm = function(){
+        $scope.submitting = true;
         BillingService.subscribe(null, $scope.stripe_plan_id, function (err, response) {
           if(err){
             $scope.carderror = err.data.message;
