@@ -10,7 +10,7 @@
         </div>
 
         <div class="col-md-offset-10 col-md-1" ng-hide="!DatasetsDetail.hasLoadedData">
-            <button class="btn btn-success pull-right btn-sm" ng-if="DatasetsDetail.authentication.user._id != DatasetsDetail.viewingDataset.user._id && DatasetsDetail.authentication.user._id != DatasetsDetail.viewingDataset.user" ng-click="DatasetsDetail.addtoUser()">Save to My Page</button>
+            <button class="btn btn-success pull-right btn-sm" ng-if="DatasetsDetail.authentication.user._id != DatasetsDetail.dataset.user._id && DatasetsDetail.authentication.user._id != DatasetsDetail.dataset.user && (!DatasetsDetail.dataset.access || DatasetsDetail.dataset.access == 'public')" ng-click="DatasetsDetail.addtoUser()">Save to My Page</button>
         </div>
     </div>
     <br/>
@@ -55,7 +55,7 @@
         </div>
 
         <div class="col-md-offset-10 col-md-1" ng-hide="!DatasetsDetail.hasLoadedData">
-            <button class="btn btn-success pull-right btn-sm" ng-if="DatasetsDetail.authentication.user._id != DatasetsDetail.viewingDataset.user._id && DatasetsDetail.authentication.user._id != DatasetsDetail.viewingDataset.user" ng-click="DatasetsDetail.addtoUser()">Save to My Lab</button>
+            <button class="btn btn-success pull-right btn-sm" ng-if="DatasetsDetail.authentication.user._id != DatasetsDetail.dataset.user._id && DatasetsDetail.authentication.user._id != DatasetsDetail.dataset.user && (!DatasetsDetail.dataset.access || DatasetsDetail.dataset.access == 'public')" ng-click="DatasetsDetail.addtoUser()">Save to My Lab</button>
         </div>
     </div>
 </div>

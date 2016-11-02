@@ -44,7 +44,11 @@ exports.listByUsername = function (req, res) {
         else {
             Dataset.find({
                 user: user._id
-            }).limit(100).sort('-created').exec(function (err, datasets) {
+            })
+                .limit(100)
+                .sort('-created')
+                .lean()
+                .exec(function (err, datasets) {
                 if (err) {
                     return res.status(400).send({
                         message: errorHandler.getErrorMessage(err)
@@ -67,6 +71,7 @@ exports.listByUsername = function (req, res) {
 exports.searchDataset = function (req, res) {
     var query = {
         title: new RegExp(req.query.q, 'i'),
+        access: { $ne : 'private' }
         //access: { $in : [ 'public', 'paid' ]}
     };
     var count = 0;
@@ -162,16 +167,36 @@ function saveFileToS3(filePath, path, done) {
 }
 
 exports.create = function (req, res) {
-    var dataset = new Dataset(req.body);
-    dataset.user = req.user._id;
-    dataset.save(function (err) {
-        if (err) {
-            return res.status(400).send({
+    Dataset.findOne({ title : req.body.title, user : req.user._id }, function(err, founddataset){
+        if (err){
+            return res.status(err.status).send({
                 message: errorHandler.getErrorMessage(err)
             });
         }
-        else {
-            res.json(dataset);
+
+        if (!founddataset) {
+            if (!req.user.plan || (req.user.plan && req.user.plan === 'free')) {
+                req.body.access = 'public';
+                delete req.body.cost;
+                delete req.body.previewnote;
+            }
+
+            var dataset = new Dataset(req.body);
+            dataset.user = req.user._id;
+
+            dataset.save(function (err) {
+                if (err) {
+                    return res.status(400).send({
+                        message: errorHandler.getErrorMessage(err)
+                    });
+                }
+                else {
+                    res.json(dataset);
+                }
+            });
+        }
+        else{
+            res.status(409).json('Dataset with this title already exists, please enter a different title.');
         }
     });
 };
@@ -589,14 +614,34 @@ exports.saveCustom = function (req, res) {
  * Update a dataset
  */
 exports.update = function (req, res) {
-    Dataset.findOneAndUpdate({ _id : req.body._id }, req.body, function(err, doc){
-        if (err){
-            res.status(err.status).json(err);
+    Dataset.findOne({ title : req.body.title, user : req.user._id }, function(err, founddataset) {
+        if (err) {
+            return res.status(err.status).send({
+                message: errorHandler.getErrorMessage(err)
+            });
+        }
+
+        if (!founddataset || (founddataset && founddataset.id === req.body._id)) {
+            if (!req.user.plan || (req.user.plan && req.user.plan === 'free')){
+                req.body.access = 'public';
+                delete req.body.cost;
+                delete req.body.previewnote;
+            }
+
+            Dataset.findOneAndUpdate({ _id : req.body._id }, req.body, function(err, doc){
+                if (err){
+                    res.status(err.status).json(err);
+                }
+                else{
+                    res.json(doc);
+                }
+            });
         }
         else{
-            res.json(doc);
+            res.status(409).json('Dataset with this title already exists, please enter a different title.');
         }
     });
+
 };
 
 exports.purchaseDataset = function (req, res) {
@@ -653,16 +698,19 @@ exports.delete = function (req, res) {
  * List of datasets
  */
 exports.list = function (req, res) {
-    Dataset.find().sort('-created').populate('user', 'displayName').exec(function (err, datasets) {
-        if (err) {
-            return res.status(400).send({
-                message: errorHandler.getErrorMessage(err)
-            });
-        }
-        else {
-            res.json(datasets);
-        }
-    });
+    Dataset.find().sort('-created')
+        .populate('user', 'username')
+        .lean()
+        .exec(function (err, datasets) {
+            if (err) {
+                return res.status(400).send({
+                    message: errorHandler.getErrorMessage(err)
+                });
+            }
+            else {
+                res.json(datasets);
+            }
+        });
 };
 
 exports.readWithS3 = function (req, res) {

@@ -9,6 +9,8 @@ angular.module('datasets')
 
                 vm.authentication = Authentication;
 
+                vm.user = vm.authentication.user;
+
                 vm.datasetOptions = datasetOptions;
 
                 vm.submitted = false;
@@ -40,7 +42,7 @@ angular.module('datasets')
                         })
                         .catch(function(err){
                             $log.error(err);
-                            toastr.error('Error creating dataset.');
+                            toastr.error(err.message);
                         });
                 };
 

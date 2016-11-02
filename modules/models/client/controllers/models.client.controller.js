@@ -48,7 +48,6 @@
         return false;
       }
 
-
       if (vm.model._id) {
         ModelsService.update(vm.model)
             .then(function(result){
@@ -71,7 +70,7 @@
             })
             .catch(function(err){
               $log.error(err);
-              toastr.error(err.message);
+              toastr.error('Error creating model!');
             });
       }
     }
