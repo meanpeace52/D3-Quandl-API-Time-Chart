@@ -44,15 +44,21 @@
         </div>
         <div class="panel-body">
 
-          <div ng-if="!edit">
+          <div ng-if="!edit && type.name !== 'Individual' ">
             <p><label>Business Type:</label> {{type.name}}</p>
             <p ng-if="legal_entity.type !== 'individual'"><label>Business Name:</label> {{legal_entity.business_name}}</p>
             <p><label>Address:</label> {{legal_entity.address.line1}}, {{legal_entity.address.city}}, {{legal_entity.address.state}} {{legal_entity.address.postal_code}}</p>
           </div>
+          
+          <div ng-if="!edit">
+            <p><label>Name:</label> {{legal_entity.first_name}} {{legal_entity.last_name}}</p>
+            <p><label>Date of Birth:</label> {{legal_entity.dob}}</p>
+            <p ng-if="type.name == 'Individual'"><label>Address:</label> {{legal_entity.address.line1}}, {{legal_entity.address.city}}, {{legal_entity.address.state}} {{legal_entity.address.postal_code}}</p>
+          </div>
 
           <div ng-if="edit">
             <div class="form-group">
-              <label for="type" class="control-label">Your business type:</label>
+              <label for="type" class="control-label">I register as:</label>
               <select name="type" ng-model="type"
               ng-options="o.name for o in businessTypes"
               ng-change="selectType(type)" class="form-control" />
@@ -75,92 +81,131 @@
               </div>
             </div>
 
-            <div class="form-group" show-errors>
-              <label for="biz_street" class="control-label"><span ng-if="type.code !== 'individual'">Business</span><span ng-if="type.code === 'individual'">Your</span>  address:</label>
-              <input class="form-control" name="street" placeholder="Street" type="text" ng-model="legal_entity.address.line1" required>
-              <div ng-if="form.street.$error && submitted" ng-messages="form.street.$error" role="alert">
-                <p class="help-block error-text" ng-message="required">This field is required</p>
+            <div ng-if="type.value !== 'individual'">
+              <div class="form-group" show-errors>
+                <label for="biz_street" class="control-label">Business address:</label>
+                <input class="form-control" name="street" placeholder="Street" type="text" ng-model="legal_entity.address.line1" required>
+                <div ng-if="form.street.$error && submitted" ng-messages="form.street.$error" role="alert">
+                  <p class="help-block error-text" ng-message="required">This field is required</p>
+                </div>
               </div>
+              <div class="row">
+                <div class="col-sm-4 form-group" show-errors>
+                  <input class="form-control" name="zip" autocomplete="off" placeholder="ZIP" type="text" ng-model="legal_entity.address.postal_code" required>
+                  <div ng-if="form.zip.$error && submitted" ng-messages="form.zip.$error" role="alert">
+                    <p class="help-block error-text" ng-message="required">This field is required</p>
+                  </div>
+                </div>
+                <div class="col-sm-4 form-group" show-errors>
+                  <input class="form-control" name="city" placeholder="City" type="text" ng-model="legal_entity.address.city" required>
+                  <div ng-if="form.city.$error && submitted" ng-messages="form.city.$error" role="alert">
+                    <p class="help-block error-text" ng-message="required">This field is required</p>
+                  </div>
+                </div>
+                <div class="col-sm-4">
+                  <select name="state" name="type" ng-model="legal_entity.address.state"
+                    ng-options="state for state in states"
+                    ng-change="selectState(state)" class="form-control" />
+                </div>
+              </div>
+
             </div>
-            <div class="row">
-              <div class="col-sm-4 form-group" show-errors>
-                <input class="form-control" name="zip" autocomplete="off" placeholder="ZIP" type="text" ng-model="legal_entity.address.postal_code" required>
-                <div ng-if="form.zip.$error && submitted" ng-messages="form.zip.$error" role="alert">
-                  <p class="help-block error-text" ng-message="required">This field is required</p>
+
+
+            <h4 ng-if="type.value == 'individual'">Your personal details</h4>
+            <h4 ng-if="type.value != 'individual'">You, the company representative</h4>
+
+
+            <div ng-if="edit">
+              <div class="row" >
+                <div class="col-sm-6 form-group" show-errors>
+                  <input class="form-control" name="first_name" placeholder="First" ng-model="legal_entity.first_name" type="text" required>
+                  <div ng-if="form.first_name.$error && submitted" ng-messages="form.first_name.$error" role="alert">
+                    <p class="help-block error-text" ng-message="required">This field is required</p>
+                  </div>
+                </div>
+                <div class="col-sm-6 form-group" show-errors>
+                  <input class="form-control" name="last_name" placeholder="Last" ng-model="legal_entity.last_name" type="text" required>
+                  <div ng-if="form.last_name.$error && submitted" ng-messages="form.last_name.$error" role="alert">
+                    <p class="help-block error-text" ng-message="required">This field is required</p>
+                  </div>
                 </div>
               </div>
-              <div class="col-sm-4 form-group" show-errors>
-                <input class="form-control" name="city" placeholder="City" type="text" ng-model="legal_entity.address.city" required>
-                <div ng-if="form.city.$error && submitted" ng-messages="form.city.$error" role="alert">
-                  <p class="help-block error-text" ng-message="required">This field is required</p>
+
+              <div ng-if="type.value === 'individual'">
+                <div class="form-group" show-errors>
+                  <label for="biz_street" class="control-label">Your address:</label>
+                  <input class="form-control" name="street" placeholder="Street" type="text" ng-model="legal_entity.address.line1" required>
+                  <div ng-if="form.street.$error && submitted" ng-messages="form.street.$error" role="alert">
+                    <p class="help-block error-text" ng-message="required">This field is required</p>
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="col-sm-4 form-group" show-errors>
+                    <input class="form-control" name="zip" autocomplete="off" placeholder="ZIP" type="text" ng-model="legal_entity.address.postal_code" required>
+                    <div ng-if="form.zip.$error && submitted" ng-messages="form.zip.$error" role="alert">
+                      <p class="help-block error-text" ng-message="required">This field is required</p>
+                    </div>
+                  </div>
+                  <div class="col-sm-4 form-group" show-errors>
+                    <input class="form-control" name="city" placeholder="City" type="text" ng-model="legal_entity.address.city" required>
+                    <div ng-if="form.city.$error && submitted" ng-messages="form.city.$error" role="alert">
+                      <p class="help-block error-text" ng-message="required">This field is required</p>
+                    </div>
+                  </div>
+                  <div class="col-sm-4">
+                    <select name="state" name="type" ng-model="legal_entity.address.state"
+                      ng-options="state for state in states"
+                      ng-change="selectState(state)" class="form-control" />
+                  </div>
                 </div>
               </div>
-              <div class="col-sm-4">
-                <select name="state" name="type" ng-model="legal_entity.address.state"
-                  ng-options="state for state in states"
-                  ng-change="selectState(state)" class="form-control" />
+
+
+
+
+              <div class="form-group" show-errors>
+                <label class="control-label" for="dob">Date of birth:</label>
+                 <input type="text" name="dob" class="form-control" placeholder="mm / dd / yyyy"
+                 ng-model="legal_entity.dob" dob-validate dob-format required/>
+                 <div ng-if="form.dob.$error && submitted" ng-messages="form.dob.$error" role="alert">
+                   <p class="help-block error-text" ng-message="required">The date of birth is required</p>
+                   <p class="help-block error-text" ng-message="dob">Please enter a valid date</p>
+                 </div>
               </div>
+
+              <div class="form-group" ng-if="!legal_entity.ssn_last_4_provided" show-errors>
+                <label class="control-label" for="owner_ssn_last_4">Social Security Number 4 Last Digits:</label>
+                <input  class="form-control" name="owner_ssn_last_4" placeholder="9999" maxlength="4" minlength="4" type="text" ng-model="legal_entity.ssn_last_4" >
+                <p class="small">We use the last four digits to verify your identity.</p>
+                <div ng-if="form.owner_ssn_last_4.$error && submitted" ng-messages="form.owner_ssn_last_4.$error" role="alert">
+                  <p class="help-block error-text" ng-message="required">This field is required</p>
+                  <p class="help-block error-text" ng-message="minlength">Has to be 4 digits long</p>
+                  <p class="help-block error-text" ng-message="maxlength">Has to be 4 digits long</p>
+                </div>
+              </div>
+
+
+              <div class="form-group text-right" ng-if="!register && legal_entity.verification.status !='verified'">
+
+                <a ng-click="switchEdit(true)" ng-if="!edit" class="btn btn-default btn-lg btn-block">Edit your account</a>
+                <span ng-if="edit">
+                  <a ng-click="switchEdit(false)"  class="btn btn-default btn-lg">Cancel</a>
+                  <button type="submit" class="btn btn-primary btn-lg">Update your account</button>
+                </span>
+              </div>
+
             </div>
           </div>
         </div>
       </div>
-      <div class="panel panel-default">
-        <div class="panel-heading">
-          <span ng-if="type.value == 'individual'">Your personal details</span>
-          <span ng-if="type.value != 'individual'">You, the company representative</span>
-        </div>
-        <div class="panel-body">
-          <div ng-if="!edit">
-            <p><label>Name:</label> {{legal_entity.first_name}} {{legal_entity.last_name}}</p>
-            <p><label>Date of Birth:</label> {{legal_entity.dob}}</p>
-          </div>
-          <div ng-if="edit">
-            <div class="row" >
-              <div class="col-sm-6 form-group" show-errors>
-                <input class="form-control" name="first_name" placeholder="First" ng-model="legal_entity.first_name" type="text" required>
-                <div ng-if="form.first_name.$error && submitted" ng-messages="form.first_name.$error" role="alert">
-                  <p class="help-block error-text" ng-message="required">This field is required</p>
-                </div>
-              </div>
-              <div class="col-sm-6 form-group" show-errors>
-                <input class="form-control" name="last_name" placeholder="Last" ng-model="legal_entity.last_name" type="text" required>
-                <div ng-if="form.last_name.$error && submitted" ng-messages="form.last_name.$error" role="alert">
-                  <p class="help-block error-text" ng-message="required">This field is required</p>
-                </div>
-              </div>
-            </div>
-
-            <div class="form-group" show-errors>
-              <label class="control-label" for="dob">Date of birth:</label>
-               <input type="text" name="dob" class="form-control" placeholder="mm / dd / yyyy"
-               ng-model="legal_entity.dob" dob-validate dob-format required/>
-               <div ng-if="form.dob.$error && submitted" ng-messages="form.dob.$error" role="alert">
-                 <p class="help-block error-text" ng-message="required">The date of birth is required</p>
-                 <p class="help-block error-text" ng-message="dob">Please enter a valid date</p>
-               </div>
-            </div>
-
-            <div class="form-group" ng-if="!legal_entity.ssn_last_4_provided" show-errors>
-              <label class="control-label" for="owner_ssn_last_4">Social Security Number 4 Last Digits:</label>
-              <input  class="form-control" name="owner_ssn_last_4" placeholder="9999" maxlength="4" type="text" ng-model="legal_entity.ssn_last_4" >
-              <p class="small">We use the last four digits to verify your identity.</p>
-              <div ng-if="form.owner_ssn_last_4.$error && submitted" ng-messages="form.owner_ssn_last_4.$error" role="alert">
-                <p class="help-block error-text" ng-message="required">This field is required</p>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
 
 
-      <div class="form-group text-right" ng-if="!register && legal_entity.verification.status !='verified'">
 
-        <a ng-click="switchEdit(true)" ng-if="!edit" class="btn btn-default btn-lg btn-block">Edit your account</a>
-        <span ng-if="edit">
-          <a ng-click="switchEdit(false)"  class="btn btn-default btn-lg">Cancel</a>
-          <button type="submit" class="btn btn-primary btn-lg">Update your account</button>
-        </span>
-      </div>
+
+
+
+
 
 
       <div class="panel panel-default">

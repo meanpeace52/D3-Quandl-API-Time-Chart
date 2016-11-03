@@ -57,6 +57,7 @@ var plans = [
      */
     exports.getMySubscription = function (req, res) {
       var user = req.user;
+      if (!user) return res.status(400).json({message:'User is not signed in'});
       if(user.stripeSubscription){
         stripe.subscriptions.retrieve(
           user.stripeSubscription,
@@ -87,6 +88,7 @@ var plans = [
      */
     exports.getBillingInfo = function (req, res) {
       var user = req.user;
+      if (!user) return res.status(400).json({message:'User is not signed in'});
       if(user.stripeCustomer){
         stripe.customers.retrieve(
           user.stripeCustomer,
@@ -158,37 +160,20 @@ var plans = [
         }
       }
       if(!stripe_plan) return res.status(400).json({message:'plan not found'});
+
+      var confirm = function (err, subscription_id){
+        if (err) res.status(400).json({message:err.message});
+        res.json(user_plan);
+      };
+
       if(user.stripeCustomer){
-        var next = function (err, customer){
-          if (err) return handleStripeError(err, res);
-          if(user.stripeSubscription){
-            updateSubscription(
-              user.stripeSubscription,
-              stripe_plan,
-              user_plan,
-              user,
-              function(err, subscription_id){
-                if(err) return handleStripeError(err, res);
-                res.json(user_plan);
-              }
-            );
-          }else{
-            subscribeCustomerToPlan(
-              user.stripeCustomer,
-              stripe_plan,
-              user_plan,
-              user,
-              function(err, subscription_id){
-                if(err) return handleStripeError(err, res);
-                res.json(user_plan);
-              }
-            );
-          }
-        };
         if(req.body.token){
-          updateCustomerSource(req.body.token , user.stripeCustomer, next);
+          updateCustomerSource(req.body.token , user.stripeCustomer, function(err, customer){
+            if(err) return handleStripeError(err, res);
+            subscribeOrUpdateUserPlan(user, stripe_plan, user_plan, confirm);
+          });
         }else{
-          next();
+          subscribeOrUpdateUserPlan(user, stripe_plan, user_plan, confirm);
         }
       } else {
         createCustomer(
@@ -196,16 +181,8 @@ var plans = [
           user,
           function(err, customer){
             if(err) return handleStripeError(err, res);
-            subscribeCustomerToPlan(
-              customer.id,
-              stripe_plan,
-              user_plan,
-              user,
-              function(err, subscription_id){
-                if(err) return handleStripeError(err, res);
-                res.json(user_plan);
-              }
-            );
+            user.stripeCustomer = customer.id;
+            subscribeOrUpdateUserPlan(user, stripe_plan, user_plan, confirm);
           }
         );
       }
@@ -342,6 +319,31 @@ var plans = [
     }
 
 
+
+
+    function subscribeOrUpdateUserPlan(user, stripe_plan, user_plan, next){
+       if(user.stripeSubscription){
+         updateSubscription(
+           user.stripeSubscription,
+           stripe_plan,
+           user_plan,
+           user,
+           function(err, subscription_id){
+             next(err, subscription_id);
+           }
+         );
+       }else{
+         subscribeCustomerToPlan(
+           user.stripeCustomer,
+           stripe_plan,
+           user_plan,
+           user,
+           function(err, subscription_id){
+             next(err, subscription_id);
+           }
+         );
+       }
+    }
 
 
 

@@ -5,11 +5,14 @@
 </p>
 
 <div>Amount : ${{invoice.amount_due / 100}} </div>
+<b>Details</b>
+<table>
+<tr><th>Amount</th><th>plan</th><th>description</td></tr>
 {% for invoice in invoice.lines.data %}
-<div>${{invoice.amount / 100}} {{invoice.description}} </div>
+<tr><td>${{invoice.amount / 100}}</td><td>{{invoice.plan.name}}</td><td>{{invoice.description}}</td></tr>
 {% endfor %}
-
-<div>Total : ${{invoice.total / 100}}</div>
+</table>
+<div><b>Total : ${{invoice.total / 100}}</b></div>
 
 <br />
 <p>The {{appName}} Support Team</p>
