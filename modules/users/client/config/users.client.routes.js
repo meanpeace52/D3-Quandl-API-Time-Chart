@@ -89,7 +89,6 @@ angular.module('users').config(['$stateProvider',
         })
           .state('emailverification.invalid', {
               url: '/invalid',
-              templateUrl: MODULE_PATH + 'views/emailverification/emailverification-invalid.client.view.html'
           })
           .state('emailverification.success', {
               url: '/success'

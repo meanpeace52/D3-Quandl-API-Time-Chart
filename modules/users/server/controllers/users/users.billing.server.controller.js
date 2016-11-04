@@ -258,7 +258,7 @@ var plans = [
           Model.findById(req.body.id).populate('user').exec(function (err, model) {
               if (err) return res.status(400).json({message: errorHandler.getErrorMessage(err)});
 
-              //purchase the item and hook into the datasetController
+              //purchase the item and hook into the modelsController
               purchaseItem(model, req.body.type, req.body.token, user, function (err, charge) {
                   if (err) return res.status(400).json({message: err.message});
                   modelsController.purchaseModel(model._id, user, function (err, dataset) {

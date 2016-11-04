@@ -14,7 +14,7 @@ angular.module('users').controller('GettingPaidAdditionalController', ['$scope',
       name: 'imageFilter',
       fn: function (item, options) {
         var type = '|' + item.type.slice(item.type.lastIndexOf('/') + 1) + '|';
-        return '|jpg|png|jpeg|pdf|'.indexOf(type) !== -1;
+        return '|jpg|png|jpeg|'.indexOf(type) !== -1;
       }
     });
 
@@ -28,6 +28,10 @@ angular.module('users').controller('GettingPaidAdditionalController', ['$scope',
       }
     };
 
+    $scope.uploader.onWhenAddingFileFailed = function (fileItem){
+      toastr.error('Sorry this file type is not allowed.');
+    };
+
     // Called after the user has successfully uploaded a new picture
     $scope.uploader.onSuccessItem = function (fileItem, response, status, headers) {
       $scope.fileUploadSuccess = true;
@@ -37,6 +41,7 @@ angular.module('users').controller('GettingPaidAdditionalController', ['$scope',
     };
 
     $scope.uploader.onErrorItem = function (fileItem, response, status, headers) {
+      toastr.error(response.message);
       $scope.uploading = false;
     };
 
@@ -58,14 +63,9 @@ angular.module('users').controller('GettingPaidAdditionalController', ['$scope',
               initAccountInfo(account);
               $scope.accountUpdated = true;
             }
-
         });
-
-
       }
     };
-
-
 
     BillingService.getAccount(function (err, account) {
       initAccountInfo(account);

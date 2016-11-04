@@ -151,17 +151,27 @@ var path = require('path'),
       var stripeUploadFileFilter = require(path.resolve('./config/lib/multer')).stripeUploadFileFilter;
       upload.fileFilter = stripeUploadFileFilter;
       upload(req, res, function (uploadError) {
+          var filedata;
           if (uploadError) return res.status(400).send({message: 'Error occurred while uploading document'});
+          try {
+            filedata = fs.readFileSync(req.file.path);
+          } catch (err) {
+            return res.status(400).send({message: 'Error occured while reading document'});
+          }
           stripe.fileUploads.create({
             purpose: 'identity_document',
             file: {
-              data: fs.readFileSync(req.file.path),
+              data: filedata,
               name: req.file.filename,
               type: 'application/octet-stream' }
             },
             {stripe_account: user.stripeAccount},
             function(err, fileUpload) {
-              fs.unlinkSync(req.file.path);
+              try {
+                fs.unlinkSync(req.file.path);
+              } catch (err) {
+                return res.status(400).send({message: 'Error occured while deleting document'});
+              }
               if(err) return handleStripeError(err, res);
               stripe.accounts.update(
                 user.stripeAccount,
