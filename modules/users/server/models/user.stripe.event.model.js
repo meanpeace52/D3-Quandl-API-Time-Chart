@@ -12,6 +12,7 @@ var mongoose = require('mongoose'),
   */
  var StripeEventSchema = new Schema({
    _id: String,
+   type: String,
    data: Schema.Types.Mixed
  });
 

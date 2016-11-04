@@ -60,7 +60,7 @@ var path = require('path'),
               User.findOne({stripeCustomer: customer}, function(err, user){
                 if(err) return res.status('400').send(errorHandler.getErrorMessage(err));
 
-                email.send(user.email, 'Your payment failed', {invoice:invoice, name:user.displayName},
+                email.send(user.email, 'Your payment failed', {invoice:invoice, name:user.displayName, url:getHostUrl(req)+'/settings/billing/'},
                   'modules/users/server/templates/billing-failed-email', next);
               });
 
@@ -112,6 +112,7 @@ var path = require('path'),
               stripeEvent = new StripeEvent();
               stripeEvent._id = event.id;
               stripeEvent.data = event;
+              stripeEvent.type = event.type;
               stripeEvent.save(function(err){
                 res.status(200).send('ok');
               });
@@ -122,35 +123,70 @@ var path = require('path'),
               var account = event.data.object,
               previous_attributes = event.data.previous_attributes;
               if(
-                !account.verification ||
-                !account.verification.fields_needed ||
-                !account.verification.fields_needed.length ||
-                !previous_attributes.verification.fields_needed
-              ) return next();
+                account.verification &&
+                account.verification.fields_needed &&
+                account.verification.fields_needed.length &&
+                previous_attributes.verification.fields_needed
+              ) {
+                User.findOne({stripeAccount: account.id}, function(err, user){
+                  if(err) return res.status('400').send(errorHandler.getErrorMessage(err));
 
-              User.findOne({stripeAccount: account.id}, function(err, user){
-                if(err) return res.status('400').send(errorHandler.getErrorMessage(err));
+                  var fieldTexts = {
+                    'legal_entity.verification.document':'Upload a scan of an identifying document, such as a passport or driver’s license.',
+                    'legal_entity.verification.personal_id_number':'Provide your social security number'
+                  };
+                  var fields = [];
+                  for (var i = 0; i < account.verification.fields_needed.length; i++) {
+                    fields.push(fieldTexts[account.verification.fields_needed[i]]);
+                  }
 
-                var fieldTexts = {
-                  'legal_entity.verification.document':'Upload a scan of an identifying document, such as a passport or driver’s license.',
-                  'legal_entity.verification.personal_id_number':'Provide your social security number'
-                };
-                var fields = [];
-                for (var i = 0; i < account.verification.fields_needed.length; i++) {
-                  fields.push(fieldTexts[account.verification.fields_needed[i]]);
-                }
-                var httpTransport = 'http://';
-                if (config.secure && config.secure.ssl === true) {
-                  httpTransport = 'https://';
-                }
-                email.send(user.email, 'We need additional information to verify your account',
-                {fields:fields, name:user.displayName, url:httpTransport + req.headers.host + '/settings/gettingpaid/additional'},
-                  'modules/users/server/templates/account-verification-email', next);
-              });
+                  email.send(user.email, 'We need additional information to verify your account',
+                  {fields:fields, name:user.displayName, url:getHostUrl(req) + '/settings/gettingpaid/additional'},
+                    'modules/users/server/templates/account-verification-email', next);
+                });
+              } else if (previous_attributes.charges_enabled && !account.charges_enabled) {
+                User.findOne({stripeAccount: account.id}, function(err, user){
+                  if(err) return res.status('400').send(errorHandler.getErrorMessage(err));
+                  user.stripeChargesEnabled = false;
+                  user.save(function (err){
+                    email.send(user.email, 'Selling of items has been disabled',
+                    {name:user.displayName, url:getHostUrl(req) + '/settings/gettingpaid/account'},
+                      'modules/users/server/templates/account-charges-disabled', next);
+                    });
+                });
+              } else if (previous_attributes.transfers_enabled && !account.transfers_enabled) {
+                User.findOne({stripeAccount: account.id}, function(err, user){
+                  if(err) return res.status('400').send(errorHandler.getErrorMessage(err));
+
+                  email.send(user.email, 'Transfers to your bank account are disabled',
+                  {name:user.displayName, url:getHostUrl(req) + '/settings/gettingpaid/account'},
+                    'modules/users/server/templates/account-transfers-disabled', next);
+                  });
+              } else {
+                next();
+              }
             } else {
               next();
             }
           }
         });
+      });
+    };
+
+
+
+    function getHostUrl(req){
+      var httpTransport = 'http://';
+      if (config.secure && config.secure.ssl === true) {
+        httpTransport = 'https://';
+      }
+      return httpTransport + req.headers.host;
+    }
+
+
+
+    exports.getEvents = function(req, res) {
+      StripeEvent.find({},function(err,events){
+        res.json(events);
       });
     };
