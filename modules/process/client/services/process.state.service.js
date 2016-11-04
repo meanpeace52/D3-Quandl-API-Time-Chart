@@ -1,21 +1,46 @@
 'use strict';
 
 angular.module('process')
-    .factory('ProcessStateService', ['$http', function($http) {
+    .factory('ProcessStateService', ['$http', '$localStorage', function($http, $localStorage) {
       var stateHistory = [];
+      var processData = {};
 
       return {
+        loadProcessData: function(){
+          if ($localStorage.processData){
+            processData = $localStorage.processData;
+          }
+          else{
+            processData = {};
+          }
+        },
+        saveProcessData: function(processData){
+          processData = processData;
+          $localStorage.processData = processData;
+        },
+        currentProcessData: function(){
+          return processData;
+        },
+        loadState: function(){
+          if ($localStorage.stateHistory){
+            stateHistory = $localStorage.stateHistory;
+          }
+          else{
+            stateHistory = [];
+          }
+        },
         changeState: function(state){
           stateHistory.push(state);
-          console.log(stateHistory);
+          $localStorage.stateHistory = stateHistory;
         },
         previouseState: function(){
           stateHistory.pop();
-          console.log(stateHistory);
+          $localStorage.stateHistory = stateHistory;
           return stateHistory[stateHistory.length - 1];
         },
         setState: function(state){
           stateHistory = state;
+          $localStorage.stateHistory = stateHistory;
         }
       };
     }]);

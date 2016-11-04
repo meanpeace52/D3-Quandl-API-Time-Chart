@@ -8,6 +8,7 @@ angular.module('process')
 
             vm.user = Authentication.user;
 
+            ProcessStateService.saveProcessData({});
             ProcessStateService.setState(['lab.process2.step1']);
 
         }]);
