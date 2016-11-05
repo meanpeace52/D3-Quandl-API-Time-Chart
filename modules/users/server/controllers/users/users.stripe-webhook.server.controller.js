@@ -105,7 +105,7 @@ var path = require('path'),
         if(err) return res.status('400').send(err.message);
         StripeEvent.findById(event.id, function(err,stripeEvent){
           if(err) return res.status('400').send(err.message);
-          if (!stripeEvent){
+          if (stripeEvent){
             res.status(200).send('already processed');
           } else{
             var next = function(err){
