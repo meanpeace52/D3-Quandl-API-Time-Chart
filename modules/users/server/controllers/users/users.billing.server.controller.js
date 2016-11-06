@@ -411,6 +411,7 @@ var plans = [
            stripe.invoices.create({
               customer: subscription.customer
             }, function(err, invoice) {
+              if(err) return next(err);
               user.plan = plan;
               user.save(function (err) {
                 if (err) {

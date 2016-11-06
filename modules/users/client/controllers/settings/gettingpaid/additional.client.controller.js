@@ -6,7 +6,8 @@ angular.module('users').controller('GettingPaidAdditionalController', ['$scope',
     // Create file uploader instance
     $scope.uploader = new FileUploader({
       url: 'api/users/account/document',
-      alias: 'newAccountDocument'
+      alias: 'newAccountDocument',
+      resumeChunkSize:100000
     });
 
     // Set file uploader image filter
@@ -24,7 +25,7 @@ angular.module('users').controller('GettingPaidAdditionalController', ['$scope',
         $scope.uploader.uploadAll();
         $scope.uploading = true;
       } else{
-        toastr.error( 'Sorry this file is too large, maximum 4MB are allowed.');
+        toastr.error('Sorry this file is too large, maximum 4MB are allowed.');
       }
     };
 
