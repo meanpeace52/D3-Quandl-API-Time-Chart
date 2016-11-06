@@ -24,7 +24,7 @@ angular.module('users').controller('GettingPaidAdditionalController', ['$scope',
         $scope.uploader.uploadAll();
         $scope.uploading = true;
       } else{
-        $scope.fileError = 'Sorry this file is too large, maximum 4MB are allowed';
+        toastr.error( 'Sorry this file is too large, maximum 4MB are allowed.');
       }
     };
 
