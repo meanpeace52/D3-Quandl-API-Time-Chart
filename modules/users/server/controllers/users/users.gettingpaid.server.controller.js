@@ -56,7 +56,13 @@ var path = require('path'),
         user.stripeChargesEnabled = account.charges_enabled;
         user.save(function(err, user){
           if(err) return res.status(400).json({message:errorHandler.getErrorMessage(err)});
-          res.json(returnAccount(account));
+          if(!account.verification.fields_needed.length){
+            res.json(returnAccount(account));
+          }else{
+            exports.sendAdditionalFieldsEmail(req, user, account, function(){
+              res.json(returnAccount(account));
+            });
+          }
         });
       });
     };
@@ -183,6 +189,33 @@ var path = require('path'),
           });
       });
     };
+
+
+
+    exports.sendAdditionalFieldsEmail = function(req, user, account, next){
+      var fieldTexts = {
+        'legal_entity.verification.document':'Upload a scan of an identifying document, such as a passport or driver’s license.',
+        'legal_entity.personal_id_number':'Provide your social security number'
+      };
+      var fields = [];
+      for (var i = 0; i < account.verification.fields_needed.length; i++) {
+        fields.push(fieldTexts[account.verification.fields_needed[i]]);
+      }
+
+      email.send(user.email, 'We need additional information to verify your account',
+      {fields:fields, name:user.displayName, url:exports.getHostUrl(req) + '/settings/gettingpaid/additional'},
+        'modules/users/server/templates/account-verification-email', next);
+    };
+
+
+    exports.getHostUrl = function(req){
+      var httpTransport = 'http://';
+      if (config.secure && config.secure.ssl === true) {
+        httpTransport = 'https://';
+      }
+      return httpTransport + req.headers.host;
+    };
+
 
 
 

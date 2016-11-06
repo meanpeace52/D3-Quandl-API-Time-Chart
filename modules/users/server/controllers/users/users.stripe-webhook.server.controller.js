@@ -13,8 +13,8 @@ var path = require('path'),
     config = require(path.resolve('./config/config')),
     stripe = require('stripe')(config.stripe.secret_key),
     errorHandler = require(path.resolve('./modules/core/server/controllers/errors.server.controller')),
-    email = require(path.resolve('./modules/core/server/controllers/emails.server.controller'));
-
+    email = require(path.resolve('./modules/core/server/controllers/emails.server.controller')),
+    accountController = require(path.resolve('./modules/users/server/controllers/users/users.gettingpaid.server.controller'));
 
 
     /**
@@ -60,7 +60,7 @@ var path = require('path'),
               User.findOne({stripeCustomer: customer}, function(err, user){
                 if(err) return res.status('400').send(errorHandler.getErrorMessage(err));
 
-                email.send(user.email, 'Your payment failed', {invoice:invoice, name:user.displayName, url:getHostUrl(req)+'/settings/billing/'},
+                email.send(user.email, 'Your payment failed', {invoice:invoice, name:user.displayName, url:accountController.getHostUrl(req)+'/settings/billing/card'},
                   'modules/users/server/templates/billing-failed-email', next);
               });
 
@@ -130,19 +130,7 @@ var path = require('path'),
               ) {
                 User.findOne({stripeAccount: account.id}, function(err, user){
                   if(err) return res.status('400').send(errorHandler.getErrorMessage(err));
-
-                  var fieldTexts = {
-                    'legal_entity.verification.document':'Upload a scan of an identifying document, such as a passport or driver’s license.',
-                    'legal_entity.verification.personal_id_number':'Provide your social security number'
-                  };
-                  var fields = [];
-                  for (var i = 0; i < account.verification.fields_needed.length; i++) {
-                    fields.push(fieldTexts[account.verification.fields_needed[i]]);
-                  }
-
-                  email.send(user.email, 'We need additional information to verify your account',
-                  {fields:fields, name:user.displayName, url:getHostUrl(req) + '/settings/gettingpaid/additional'},
-                    'modules/users/server/templates/account-verification-email', next);
+                  accountController.sendAdditionalFieldsEmail(req, user, account, next);
                 });
               } else if (previous_attributes.charges_enabled && !account.charges_enabled) {
                 User.findOne({stripeAccount: account.id}, function(err, user){
@@ -150,16 +138,15 @@ var path = require('path'),
                   user.stripeChargesEnabled = false;
                   user.save(function (err){
                     email.send(user.email, 'Selling of items has been disabled',
-                    {name:user.displayName, url:getHostUrl(req) + '/settings/gettingpaid/account'},
+                    {name:user.displayName, url:accountController.getHostUrl(req) + '/settings/gettingpaid/account'},
                       'modules/users/server/templates/account-charges-disabled', next);
                     });
                 });
               } else if (previous_attributes.transfers_enabled && !account.transfers_enabled) {
                 User.findOne({stripeAccount: account.id}, function(err, user){
                   if(err) return res.status('400').send(errorHandler.getErrorMessage(err));
-
                   email.send(user.email, 'Transfers to your bank account are disabled',
-                  {name:user.displayName, url:getHostUrl(req) + '/settings/gettingpaid/account'},
+                  {name:user.displayName, url:accountController.getHostUrl(req) + '/settings/gettingpaid/account'},
                     'modules/users/server/templates/account-transfers-disabled', next);
                   });
               } else {
@@ -175,18 +162,12 @@ var path = require('path'),
 
 
 
-    function getHostUrl(req){
-      var httpTransport = 'http://';
-      if (config.secure && config.secure.ssl === true) {
-        httpTransport = 'https://';
-      }
-      return httpTransport + req.headers.host;
-    }
+
 
 
 
     exports.getEvents = function(req, res) {
-      StripeEvent.find({},function(err,events){
+      StripeEvent.find({type:'account.updated'},function(err,events){
         res.json(events);
       });
     };

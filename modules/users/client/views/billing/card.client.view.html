@@ -1,0 +1,21 @@
+<h1>My Credit Card</h1>
+
+<table class="table">
+  <tr>
+    <td>{{billing.brand}} {{billing.funding}}</td>
+    <td>**** **** **** {{billing.last4}}</td>
+  </tr>
+  <tr>
+    <td>Name</td>
+    <td>{{billing.name}}</td>
+  </tr>
+  <tr>
+    <td>Expiration Date</td>
+    <td>{{billing.exp_month}} / {{billing.exp_year}}</td>
+  </tr>
+  <tr>
+    <td>Country</td>
+    <td>{{billing.country}}</td>
+  </tr>
+</table>
+<button type="submit" class="btn btn-primary" ng-click="changeCreditCard()">Change my credit card</button>
