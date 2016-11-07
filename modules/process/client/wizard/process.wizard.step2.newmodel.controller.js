@@ -34,13 +34,14 @@ angular.module('process')
                     });
             };
 
-            vm.saveSelection = function(event, dataset){
+            vm.saveSelection = function(dataset){
                 if (!dataset){
                     toastr.error('Please select a new dataset.');
                     return;
                 }
 
                 ProcessStateService.currentProcessData().selecteddataset = dataset._id;
+                ProcessStateService.currentProcessData().step1selection = 'new-model';
                 ProcessStateService.saveProcessData();
                 $scope.$emit('changeState', 'lab.process2.step3');
             };

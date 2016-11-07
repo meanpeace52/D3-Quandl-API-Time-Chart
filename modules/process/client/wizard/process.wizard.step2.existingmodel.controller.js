@@ -58,7 +58,7 @@ angular.module('process')
                     });
             };
 
-            vm.saveSelection = function(event, model, dataset){
+            vm.saveSelection = function(model, dataset){
 
                 if (!model){
                     toastr.error('Please select a model.');
@@ -71,6 +71,7 @@ angular.module('process')
 
                 ProcessStateService.currentProcessData().selectedmodel = model._id;
                 ProcessStateService.currentProcessData().selecteddataset = dataset._id;
+                ProcessStateService.currentProcessData().step1selection = 'existing-model';
                 ProcessStateService.saveProcessData();
                 $scope.$emit('changeState', 'lab.process2.step3');
             };

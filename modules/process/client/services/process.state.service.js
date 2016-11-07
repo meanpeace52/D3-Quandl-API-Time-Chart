@@ -14,8 +14,7 @@ angular.module('process')
             processData = {};
           }
         },
-        saveProcessData: function(processData){
-          processData = processData;
+        saveProcessData: function(){
           $localStorage.processData = processData;
         },
         currentProcessData: function(){
