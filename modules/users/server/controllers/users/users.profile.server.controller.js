@@ -13,7 +13,7 @@ var _ = require('lodash'),
     config = require(path.resolve('./config/config')),
     User = mongoose.model('User'),
     s3 = require('s3'),
-    email = require(path.resolve('./modules/core/server/controllers/emails.server.controller')),
+    email = require(path.resolve('./modules/core/server/services/emails.server.service')),
     client = s3.createClient({
         maxAsyncS3: 20, // this is the default
         s3RetryCount: 3, // this is the default

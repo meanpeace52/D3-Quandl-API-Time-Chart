@@ -33,6 +33,16 @@ function send(to, subject, merge, template, next) {
  }
 
  /**
+  * send email to specific user
+  */
+
+ function sendToUser(user, subject, merge, template, next) {
+    merge.name = user.displayName;
+    send(user.email, subject, merge, template, next);
+  }
+
+
+ /**
   * verify user email
   */
 
@@ -61,4 +71,4 @@ function send(to, subject, merge, template, next) {
    });
  }
 
- module.exports = { verifyEmail:verifyEmail, send:send };
+ module.exports = { verifyEmail:verifyEmail, send:send, sendUser:sendToUser };

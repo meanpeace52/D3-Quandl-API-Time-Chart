@@ -11,9 +11,11 @@ var path = require('path'),
     StripeEvent = mongoose.model('StripeEvent'),
     path = require('path'),
     config = require(path.resolve('./config/config')),
-    stripe = require('stripe')(config.stripe.secret_key),
+    billingService = require(path.resolve('./modules/users/server/services/users.billing.service')),
+    stripe = billingService.stripe,
+    handleStripeError = billingService.handleStripeError,
     errorHandler = require(path.resolve('./modules/core/server/controllers/errors.server.controller')),
-    email = require(path.resolve('./modules/core/server/controllers/emails.server.controller')),
+    email = require(path.resolve('./modules/core/server/services/emails.server.service')),
     multer = require('multer'),
     fs = require('fs');
 
@@ -226,14 +228,4 @@ var path = require('path'),
         a[fields[i]] = account[fields[i]];
       }
       return a;
-    }
-
-
-
-    function handleStripeError(err, res){
-      if(err.statusCode){
-        res.status(err.statusCode).json({message:err.message});
-      }else{
-        res.status(500).json({message:'Something went wrong while processing your data'});
-      }
     }

@@ -10,7 +10,7 @@ var path = require('path'),
   passport = require('passport'),
   User = mongoose.model('User'),
   crypto = require('crypto'),
-  email = require(path.resolve('./modules/core/server/controllers/emails.server.controller'));
+  email = require(path.resolve('./modules/core/server/services/emails.server.service'));
 
 // URLs for which user can't be redirected on signin
 var noReturnUrls = [
