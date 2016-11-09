@@ -2,8 +2,8 @@
 
 //datasets List Controller
 angular.module('datasets').controller('DatasetsListController', ['$state', '$stateParams', '$sce', '$modal', 'Authentication',
-                                        'Datasets','UsersFactory', 'toastr', '$log', 'prompt', 'BillingService',
-    function ($state, $stateParams, $sce, $modal, Authentication, Datasets, UsersFactory, toastr, $log, prompt, BillingService) {
+                                        'Datasets','UsersFactory', 'toastr', '$log', 'prompt', 'BillingService', '$rootScope',
+    function ($state, $stateParams, $sce, $modal, Authentication, Datasets, UsersFactory, toastr, $log, prompt, BillingService, $rootScope) {
         var vm = this;
 
         vm.authentication = Authentication;
@@ -114,11 +114,17 @@ angular.module('datasets').controller('DatasetsListController', ['$state', '$sta
         }
 
         vm.search = function () {
-            if (vm.q && vm.q !== ''){
-                $state.go('datasets.search', { search : vm.q });
+            if (vm.state !== 'lab.process2.step3'){
+                if (vm.q && vm.q !== ''){
+                    $state.go('datasets.search', { search : vm.q });
+                }
+                else{
+                    toastr.error('You need to enter a word or phrases to search by.');
+                }
             }
             else{
-                toastr.error('You need to enter a word or phrases to search by.');
+                vm.itemsPerPage = 10;
+                loadSearchData();
             }
         };
 
@@ -151,5 +157,9 @@ angular.module('datasets').controller('DatasetsListController', ['$state', '$sta
                     viewingDataset: dataset
                 }
             });
+        };
+
+        vm.useDataset = function(dataset){
+            $rootScope.$emit('useDataset', dataset);
         };
 }]);

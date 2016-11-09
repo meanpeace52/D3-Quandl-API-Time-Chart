@@ -1,0 +1,23 @@
+<h2>Choose your data</h2>
+<div class="form-group row">
+    <div class=" col-md-1">
+        <label for="dataset">Dataset</label>
+    </div>
+    <div class="col-md-4">
+        <select id="dataset" name="dataset" class="form-control" ng-model="ProcessStep2.selecteddataset" ng-options="dataset as dataset.title for dataset in ProcessStep2.usersDatasets" ng-change="ProcessStep2.onDatasetChange(ProcessStep2.selecteddataset)"></select>
+    </div>
+</div>
+<div class="selected-dataset">
+    <p><strong>Selected Dataset:</strong> {{ ProcessStep2.selecteddataset.title }}</p>
+    <div class="loader text-center" ng-show="ProcessStep2.showLoader">
+        <i class="spinner"></i>
+    </div>
+    <div style="width: 100%;overflow: auto;">
+        <dataset-table columns="ProcessStep2.currentdataset.columns" rows="ProcessStep2.currentdataset.rows"></dataset-table>
+    </div>
+</div>
+<div>
+    <button ng-click="ProcessWizard.goBack()" class="btn btn-seconday pull-left">Back</button>
+    <button ng-click="ProcessStep2.saveSelection(ProcessStep2.selecteddataset);" class="btn btn-primary pull-right">Next - Prepare you data with transforms</button>
+</div>
+<br/><br/>
