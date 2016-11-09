@@ -2,8 +2,8 @@
 
 angular.module('process')
     .controller('ProcessWizardStep3Controller',
-    ['$state', '$stateParams', 'Authentication', 'toastr', '$log', 'UsersFactory', 'ProcessStateService', 'Datasets',
-        function ($state, $stateParams, Authentication, toastr, $log, UsersFactory, ProcessStateService, Datasets) {
+    ['$state', '$stateParams', 'Authentication', 'toastr', '$log', 'UsersFactory', 'ProcessStateService', 'Datasets', 'prompt', '$rootScope',
+        function ($state, $stateParams, Authentication, toastr, $log, UsersFactory, ProcessStateService, Datasets, prompt, $rootScope) {
             var vm = this;
 
             vm.user = Authentication.user;
@@ -31,15 +31,26 @@ angular.module('process')
 
             vm.currentmodeldataset = {};
 
+            vm.currentselecteddataset = {};
+
+            vm.selectedcomparitivedataset = {};
+
             vm.showLoader = false;
 
             vm.showModelLoader = false;
 
+            vm.showDatasetLoader = false;
+
             vm.transformSteps = [];
+
+            vm.showDatasetSearch = true;
 
             vm.changeTab = function(tab){
                 vm.activeTab = tab;
             };
+
+            ProcessStateService.loadTransformSteps();
+            vm.transformSteps = ProcessStateService.currentTransformSteps();
 
             UsersFactory.userData('datasets', vm.user.username)
                 .then(function (datasets) {
@@ -60,14 +71,47 @@ angular.module('process')
                     .then(function (data) {
                         vm.showLoader = false;
                         vm.currentdataset.columns = data.columns;
+                        vm.availablecolumns = data.columns;
                         vm.currentdataset.renamedcolumns = data.columns;
                         vm.excludedcolumns = _.reduce(vm.currentdataset.columns, function(hash, value) {
                             var key = value;
                             hash[key] = false;
                             return hash;
                         }, {});
+                        var dropcolumns = _.filter(vm.transformSteps, { type : 'drop' });
+                        _.each(dropcolumns, function(column){
+                            vm.excludedcolumns[column.columnname] = true;
+                        });
                         vm.keyfield = vm.currentdataset.columns[0];
                         vm.currentdataset.rows = _.take(data.rows, 10);
+                    });
+            };
+
+            vm.onComparitiveDatasetChange = function (dataset) {
+                // re-initialize table data
+                vm.currentselecteddataset.rows = [];
+                vm.currentselecteddataset.columns = [];
+                vm.showDatasetLoader = true;
+
+                Datasets.getDatasetWithS3(dataset._id)
+                    .then(function (data) {
+                        vm.showDatasetLoader = false;
+                        vm.currentselecteddataset.columns = data.columns;
+                        vm.currentselecteddataset.renamedcolumns = data.columns;
+                        vm.availablecomparitivedatasetcolumns = data.columns;
+                        vm.currentselecteddataset.renamedcolumnnames = data.columns;
+                        vm.currentselecteddataset.renamedcolumns = _.reduce(vm.currentselecteddataset.columns, function(hash, value) {
+                            var key = value;
+                            hash[key] = key;
+                            return hash;
+                        }, {});
+                        vm.selecteddatasetcolumns = _.reduce(vm.currentselecteddataset.columns, function(hash, value) {
+                            var key = value;
+                            hash[key] = true;
+                            return hash;
+                        }, {});
+                        vm.comparitivedatasetkeyfield = vm.currentdataset.columns[0];
+                        vm.currentselecteddataset.rows = _.take(data.rows, 10);
                     });
             };
 
@@ -112,8 +156,22 @@ angular.module('process')
                 vm.modelColumnsChanged();
             };
 
+            vm.selectDatasetColumnsAll = function(){
+                _.forOwn(vm.selecteddatasetcolumns, function(value, key) {
+                    vm.selecteddatasetcolumns[key] = true;
+                });
+                vm.datasetColumnsChanged();
+            };
+
+            vm.unselectDatasetColumnsAll = function(){
+                _.forOwn(vm.selecteddatasetcolumns, function(value, key) {
+                    vm.selecteddatasetcolumns[key] = false;
+                });
+                vm.datasetColumnsChanged();
+            };
+
             vm.addOldModelTransformStep = function(){
-                var transformStep = {  };
+                var transformStep = { };
                 transformStep.model = vm.selectedmodel;
                 transformStep.keyfield = vm.modelkeyfield;
 
@@ -131,9 +189,40 @@ angular.module('process')
 
                 transformStep.selectedcolumns = selectedcolumns;
                 transformStep.renamedcolumns = renamedcolumns;
-                transformStep.type = 'modeldataset';
+                transformStep.type = 'merge';
+                transformStep.source = 'modeldataset';
+                transformStep.destinationkeyfield = vm.keyfield;
 
                 vm.transformSteps.push(transformStep);
+                ProcessStateService.saveTransformSteps(vm.transformSteps);
+                toastr.success('Transform step added successfully.');
+            };
+
+            vm.addDatasetTransformStep = function(){
+                var transformStep = { };
+                transformStep.dataset = vm.selectedcomparitivedataset;
+                transformStep.keyfield = vm.comparitivedatasetkeyfield;
+
+                var selectedcolumns = [];
+                var renamedcolumns = [];
+                var i = 0;
+
+                _.forOwn(vm.selecteddatasetcolumns, function(value, key) {
+                    if (value){
+                        selectedcolumns.push(key);
+                        renamedcolumns.push(vm.currentmodeldataset.renamedcolumns[key]);
+                    }
+                    i++;
+                });
+
+                transformStep.selectedcolumns = selectedcolumns;
+                transformStep.renamedcolumns = renamedcolumns;
+                transformStep.destinationkeyfield = vm.keyfield;
+                transformStep.type = 'merge';
+                transformStep.source = 'dataset';
+
+                vm.transformSteps.push(transformStep);
+                ProcessStateService.saveTransformSteps(vm.transformSteps);
                 toastr.success('Transform step added successfully.');
             };
 
@@ -149,5 +238,53 @@ angular.module('process')
                 }
             };
 
+            vm.datasetColumnsChanged = function(){
+                vm.availablecomparitivedatasetcolumns = [];
+                _.forOwn(vm.selecteddatasetcolumns, function(value, key) {
+                    if (value){
+                        vm.availablecomparitivedatasetcolumns.push(key);
+                    }
+                });
+                if (vm.availablecomparitivedatasetcolumns.length){
+                    vm.comparitivedatasetkeyfield = vm.availablecomparitivedatasetcolumns[0];
+                }
+            };
 
+
+            vm.finalDatasetColumnsChanged = function(){
+                vm.transformSteps = _.filter(vm.transformSteps, function(step){
+                    return step.type !== 'drop';
+                });
+                _.forOwn(vm.excludedcolumns, function(value, key) {
+                    if (value){
+                        var transformStep = { };
+                        transformStep.type = 'drop';
+                        transformStep.columnname = key;
+                        vm.transformSteps.push(transformStep);
+                    }
+                });
+                ProcessStateService.saveTransformSteps(vm.transformSteps);
+                toastr.success('Transform step updated successfully.');
+            };
+
+            vm.removeStep = function(step){
+                prompt({
+                    title: 'Confirm Delete?',
+                    message: 'Are you sure you want to delete this transformation step?'
+                }).then(function() {
+                    vm.transformSteps = _.without(vm.transformSteps, step);
+                    if (step.type === 'drop'){
+                        vm.excludedcolumns[step.columnname] = false;
+                    }
+                    ProcessStateService.saveTransformSteps(vm.transformSteps);
+                    toastr.success('Step removed successfully!');
+                });
+            };
+
+
+            $rootScope.$on('useDataset', function(event, dataset){
+                vm.showDatasetSearch = false;
+                vm.selectedcomparitivedataset = dataset;
+                vm.onComparitiveDatasetChange(dataset);
+            });
         }]);

@@ -4,6 +4,7 @@ angular.module('process')
     .factory('ProcessStateService', ['$http', '$localStorage', function($http, $localStorage) {
       var stateHistory = [];
       var processData = {};
+      var transformSteps = [];
 
       return {
         loadProcessData: function(){
@@ -19,6 +20,21 @@ angular.module('process')
         },
         currentProcessData: function(){
           return processData;
+        },
+        loadTransformSteps: function(){
+          if ($localStorage.transformSteps){
+            transformSteps = $localStorage.transformSteps;
+          }
+          else{
+            transformSteps = {};
+          }
+        },
+        saveTransformSteps: function(transformSteps){
+          $localStorage.transformSteps = transformSteps;
+          transformSteps = transformSteps;
+        },
+        currentTransformSteps: function(){
+          return transformSteps;
         },
         loadState: function(){
           if ($localStorage.stateHistory){

@@ -98,9 +98,18 @@ angular.module('process')
                 })
                 .state('lab.process2.step3', {
                     url: '/step3',
-                    controller: 'ProcessWizardStep3Controller',
-                    controllerAs: 'ProcessStep3',
-                    templateUrl: MODULE_PATH + 'wizard/process.wizard.step3.html'
+                    views: {
+                        '' : {
+                            controller: 'ProcessWizardStep3Controller',
+                            controllerAs: 'ProcessStep3',
+                            templateUrl: MODULE_PATH + 'wizard/process.wizard.step3.html'
+                        },
+                        'datasetsearch@' : {
+                            templateUrl: 'modules/datasets/client/list/datasets.list.html',
+                            controller: 'DatasetsListController',
+                            controllerAs: 'DatasetsList'
+                        }
+                    }
                 })
                 .state('lab.process2.step4', {
                     url: '/step4',
