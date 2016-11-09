@@ -1,4 +1,56 @@
 <h2>Add a predictive model and finalize your workflow!</h2>
-<div>
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-3 task-accordion">
+            <uib-accordion close-others="true">
+                <uib-accordion-group ng-repeat="task in ProcessStep4.tasks" is-open="task.status.open" class="color-{{task.color}}">
+                    <uib-accordion-heading>
+                        {{task.title}} <i class="pull-right glyphicon ng-scope glyphicon-chevron-right" ng-class="{'glyphicon-chevron-down': task.status.open, 'glyphicon-chevron-right': !task.status.open}"></i>
+                    </uib-accordion-heading>
+                    <ul class="task-list">
+                        <li ng-repeat="subtask in task.subtasks"
+                            dnd-draggable="subtask"
+                            dnd-disable-if="ProcessStep4.disableDrag(subtask)"
+                            dnd-type="subtask.returnType"
+                            dnd-effect-allowed="copy">
+                            {{subtask.title}}
+                        </li>
+                    </ul>
+                </uib-accordion-group>
+            </uib-accordion>
+        </div>
+        <div class="col-md-9">
+            <ul
+                class="drop-list"
+                dnd-list="task.subtasks"
+                dnd-dragover="ProcessStep4.onDrag(event, index, type)"
+                dnd-drop="ProcessStep4.onCopy(event, index, item)"
+                dnd-horizontal-list="true">
+                <li class="dndPlaceholder">
+                    <i ng-show="ProcessStep4.showPlaceholderArrow" class="fa fa-long-arrow-right arrow"></i>
+                </li>
+                <li ng-repeat="task in ProcessStep4.process.tasks" ng-class="{'task-arrow': task.returnType == 'dataset'}">
+                    <button class="btn btn-default color-{{task.color}}" ng-click="ProcessStep4.onTaskClick(task)">{{task.title}}</button>
+                </li>
+            </ul>
+            <div class="options">
+                <div ui-view></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal-footer">
+        <div class="col-md-9">
+            <form class="form-horizontal">
+                <div class="form-group">
+                    <label for="title" class="col-sm-3 control-label">Process Title:</label>
+                    <div class="col-sm-9">
+                        <input type="text" ng-model="ProcessStep4.process.title" class="form-control" id="title">
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
     <button ng-click="ProcessWizard.goBack()" class="btn btn-seconday pull-left">Back - Prepare you data with transforms</button>
 </div>
