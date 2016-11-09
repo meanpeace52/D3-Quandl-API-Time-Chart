@@ -61,7 +61,7 @@
                                     <label>Key Field:</label>
                                 </div>
                                 <div class="col-md-5">
-                                    <select name="keyfield" class="form-control" ng-model="ProcessStep3.modelkeyfield" ng-options="column as column for column in ProcessStep3.currentmodeldataset.columns" required>
+                                    <select name="keyfield" class="form-control" ng-model="ProcessStep3.modelkeyfield" ng-options="column as column for column in ProcessStep3.availablemodelcolumns" required>
                                     </select>
                                 </div>
                             </div>
@@ -71,27 +71,35 @@
                             </div>
                             <table class="table table-striped table-bordered">
                                 <thead>
-                                <th ng-repeat="column in ProcessStep3.currentmodeldataset.columns">Include in Transform? <input type="checkbox" name="selectedcolumn" ng-model="ProcessStep3.selectedmodelcolumns[column]" /></th>
+                                    <th ng-repeat="column in ProcessStep3.currentmodeldataset.columns">Include in Transform? <input type="checkbox" name="selectedcolumn" ng-change="ProcessStep3.modelColumnsChanged()" ng-model="ProcessStep3.selectedmodelcolumns[column]" /></th>
                                 </thead>
                                 <thead>
-                                    <th ng-repeat="column in ProcessStep3.currentmodeldataset.columns" ng-bind="column"></th>
+                                    <th ng-repeat="column in ProcessStep3.currentmodeldataset.columns" ng-bind="column" ng-class="{ 'exclude' : !ProcessStep3.selectedmodelcolumns[column] }"></th>
                                 </thead>
                                 <thead>
-                                <th ng-repeat="column in ProcessStep3.currentmodeldataset.renamedcolumns"><input type="text" ng-model="column" class="form-control" /></th>
+                                    <th ng-repeat="renamedcolumn in ProcessStep3.currentmodeldataset.renamedcolumnnames" ng-class="{ 'exclude' : !ProcessStep3.selectedmodelcolumns[renamedcolumn] }"><input type="text" ng-model="ProcessStep3.currentmodeldataset.renamedcolumns[renamedcolumn]" class="form-control" ng-disabled="!ProcessStep3.selectedmodelcolumns[renamedcolumn]" /></th>
                                 </thead>
                                 <tbody>
                                 <tr ng-repeat="row in ProcessStep3.currentmodeldataset.rows">
-                                    <td ng-repeat="column in ProcessStep3.currentmodeldataset.columns" ng-bind="row[column]"></td>
+                                    <td ng-repeat="column in ProcessStep3.currentmodeldataset.columns" ng-class="{ 'exclude' : !ProcessStep3.selectedmodelcolumns[column] }" ng-bind="row[column]"></td>
                                 </tr>
                                 </tbody>
                             </table>
                         </div>
+                        <br/>
+                        <div class="text-center">
+                            <button class="btn btn-primary" ng-click="ProcessStep3.addOldModelTransformStep()">Add Step to Transforms</button>
+                        </div>
+                    </div>
+                </div>
+                <div ng-if="item == 'Transform Steps'">
+                    <div ng-repeat="step in ProcessStep3.transformSteps">
+                        <div ng-if="step.type == 'modeldataset'">
+                            {{ step | json }}
+                        </div>
                     </div>
                 </div>
             </div>
-        </div>
-        <div class="text-center">
-            <button class="btn btn-primary">Add Step to Transforms</button>
         </div>
     </div>
 </div>

@@ -35,6 +35,8 @@ angular.module('process')
 
             vm.showModelLoader = false;
 
+            vm.transformSteps = [];
+
             vm.changeTab = function(tab){
                 vm.activeTab = tab;
             };
@@ -79,7 +81,13 @@ angular.module('process')
                     .then(function (data) {
                         vm.showModelLoader = false;
                         vm.currentmodeldataset.columns = data.columns;
-                        vm.currentmodeldataset.renamedcolumns = data.columns;
+                        vm.availablemodelcolumns = data.columns;
+                        vm.currentmodeldataset.renamedcolumnnames = data.columns;
+                        vm.currentmodeldataset.renamedcolumns = _.reduce(vm.currentmodeldataset.columns, function(hash, value) {
+                            var key = value;
+                            hash[key] = key;
+                            return hash;
+                        }, {});
                         vm.selectedmodelcolumns = _.reduce(vm.currentmodeldataset.columns, function(hash, value) {
                             var key = value;
                             hash[key] = true;
@@ -94,12 +102,51 @@ angular.module('process')
                 _.forOwn(vm.selectedmodelcolumns, function(value, key) {
                     vm.selectedmodelcolumns[key] = true;
                 });
+                vm.modelColumnsChanged();
             };
 
             vm.unselectModelColumnsAll = function(){
                 _.forOwn(vm.selectedmodelcolumns, function(value, key) {
                     vm.selectedmodelcolumns[key] = false;
                 });
+                vm.modelColumnsChanged();
+            };
+
+            vm.addOldModelTransformStep = function(){
+                var transformStep = {  };
+                transformStep.model = vm.selectedmodel;
+                transformStep.keyfield = vm.modelkeyfield;
+
+                var selectedcolumns = [];
+                var renamedcolumns = [];
+                var i = 0;
+
+                _.forOwn(vm.selectedmodelcolumns, function(value, key) {
+                    if (value){
+                        selectedcolumns.push(key);
+                        renamedcolumns.push(vm.currentmodeldataset.renamedcolumns[key]);
+                    }
+                    i++;
+                });
+
+                transformStep.selectedcolumns = selectedcolumns;
+                transformStep.renamedcolumns = renamedcolumns;
+                transformStep.type = 'modeldataset';
+
+                vm.transformSteps.push(transformStep);
+                toastr.success('Transform step added successfully.');
+            };
+
+            vm.modelColumnsChanged = function(){
+                vm.availablemodelcolumns = [];
+                _.forOwn(vm.selectedmodelcolumns, function(value, key) {
+                    if (value){
+                        vm.availablemodelcolumns.push(key);
+                    }
+                });
+                if (vm.availablemodelcolumns.length){
+                    vm.modelkeyfield = vm.availablemodelcolumns[0];
+                }
             };
 
 
