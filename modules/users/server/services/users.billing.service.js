@@ -214,5 +214,6 @@ var plans = [
      updateSubscription:updateSubscription,
      subscribeCustomerToPlan:subscribeCustomerToPlan,
      purchaseItem:purchaseItem,
-     stripe:stripe
+     stripe:stripe,
+     plans:plans
   };

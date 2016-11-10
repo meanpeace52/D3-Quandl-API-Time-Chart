@@ -28,8 +28,8 @@ var path = require('path'),
       var user = req.user;
       if (!user) return res.status(400).json({message:'User is not signed in'});
       for (var i = 0; i < plans.length; i++) {
-        if(plans[i].id === user.plan){
-          return res.json(plans[i]);
+        if(billingService.plans[i].id === user.plan){
+          return res.json(billingService.plans[i]);
         }
       }
       res.json({name:'Free',id:'free'});
@@ -65,7 +65,8 @@ var path = require('path'),
      * Get the available plans
      */
     exports.getPlans = function (req, res) {
-      res.json(plans);
+      console.log(billingService.plans);
+      res.json(billingService.plans);
     };
 
 
@@ -140,9 +141,9 @@ var path = require('path'),
       var user = req.user, stripe_plan, user_plan;
       if (!user) return res.status(400).json({message:'User is not signed in'});
       for (var i = 0; i < plans.length; i++) {
-        if(plans[i].stripe_id === req.body.plan){
-          stripe_plan = plans[i].stripe_id;
-          user_plan = plans[i].id;
+        if(billingService.plans[i].stripe_id === req.body.plan){
+          stripe_plan = billingService.plans[i].stripe_id;
+          user_plan = billingService.plans[i].id;
         }
       }
       if(!stripe_plan) return res.status(400).json({message:'plan not found'});
