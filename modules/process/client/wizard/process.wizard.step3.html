@@ -7,15 +7,36 @@
         </div>
         <div class="overflow: auto;" ng-show="!ProcessStep3.showLoader">
             <div style="overflow: auto;">
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        <h3 class="panel-title">Add Step to Transforms</h3>
+                    </div>
+                    <div class="panel-body">
+                        <div class="row">
+                            <div class="col-md-5">
+                                <select class="form-control" ng-model="ProcessStep3.selectedAction">
+                                    <option>Rename Columns</option>
+                                    <option>Drop Selected Columns</option>
+                                    <option>PCA/Whitening</option>
+                                </select>
+                            </div>
+                            <div class="col-md-3">
+                                <button class="btn btn-secondary" ng-click="ProcessStep3.addTransformStep(ProcessStep3.selectedAction)">Add</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!--<button ng-click="ProcessStep3.renameColumnNames()" class="btn btn-secondary">Rename Columns</button>-->
                 <table class="table table-striped table-bordered">
                     <thead>
-                    <th ng-repeat="column in ProcessStep3.currentdataset.columns"><a href="" ng-click="ProcessStep3.excludedcolumns[column] = !ProcessStep3.excludedcolumns[column]; ProcessStep3.finalDatasetColumnsChanged()"><span class="glyphicon glyphicon-remove pull-right" ng-class="{ 'exclude' : ProcessStep3.excludedcolumns[column] }"></span></a></th>
+                    <th ng-repeat="column in ProcessStep3.currentdataset.columns"><a href="" ng-click="ProcessStep3.excludedcolumns[column] = !ProcessStep3.excludedcolumns[column];"><span class="glyphicon glyphicon-remove pull-right" ng-class="{ 'exclude' : ProcessStep3.excludedcolumns[column] }"></span></a></th>
                     </thead>
                     <thead>
                         <th ng-repeat="column in ProcessStep3.currentdataset.columns" ng-bind="column" ng-class="{ 'exclude' : ProcessStep3.excludedcolumns[column] }"></th>
                     </thead>
                     <thead>
-                        <th ng-repeat="column in ProcessStep3.currentdataset.renamedcolumns" ng-class="{ 'exclude' : ProcessStep3.excludedcolumns[column] }"><input type="text" class="form-control" ng-model="column" ng-change="ProcessStep3.finalDatasetColumnsChanged()" ng-disabled="ProcessStep3.excludedcolumns[column]" /></th>
+                        <th ng-repeat="columnname in ProcessStep3.currentdataset.renamedcolumnnames" ng-class="{ 'exclude' : ProcessStep3.excludedcolumns[column] }"><input type="text" class="form-control" ng-model="ProcessStep3.currentdataset.renamedcolumns[columnname]" ng-disabled="ProcessStep3.excludedcolumns[columnname]" /></th>
                     </thead>
                     <tbody>
                         <tr ng-repeat="row in ProcessStep3.currentdataset.rows">
@@ -155,6 +176,9 @@
                     <div ng-show="!ProcessStep3.transformSteps.length">
                         No transformations added yet.
                     </div>
+                    <div ng-show="ProcessStep3.transformSteps.length">
+                        <p>{{ProcessStep3.transformSteps.length}} transformation steps</p>
+                    </div>
                     <ul dnd-list="ProcessStep3.transformSteps" class="list-unstyled transformsteps" style="overflow: auto;">
                         <li ng-repeat="step in ProcessStep3.transformSteps"
                             dnd-draggable="step"
@@ -162,15 +186,19 @@
                             dnd-effect-allowed="move" style="white-space: nowrap;" class="{{ step.type }}">
                             <div ng-if="step.source == 'modeldataset'">
                                 <a href="" ng-click="ProcessStep3.removeStep(step)"><span class="glyphicon glyphicon-remove"></span></a>
-                                {{ step | json }}
+                                <strong>Merge with source model dataset:</strong> Model name: {{ step.model.title }} Key Column: {{ step.keyfield }} Destination Key Column: {{ step.keyfield }} Columns Included: {{ step.selectedcolumns.join(', ') }}
                             </div>
                             <div ng-if="step.source == 'dataset'">
                                 <a href="" ng-click="ProcessStep3.removeStep(step)"><span class="glyphicon glyphicon-remove"></span></a>
-                                {{ step | json }}
+                                <strong>Merge with source dataset: </strong> Dataset name: {{ step.dataset.title }} Key Column: {{ step.keyfield }} Destination Key Column: {{ step.keyfield }} Columns Included: {{ step.selectedcolumns.join(', ') }}
                             </div>
                             <div ng-if="step.type == 'drop'">
                                 <a href="" ng-click="ProcessStep3.removeStep(step)"><span class="glyphicon glyphicon-remove"></span></a>
-                                Drop Column: {{ step.columnname }}
+                                <strong>Drop Columns:</strong> {{ step.columnnames.join(', ') }}
+                            </div>
+                            <div ng-if="step.type == 'rename'">
+                                <a href="" ng-click="ProcessStep3.removeStep(step)"><span class="glyphicon glyphicon-remove"></span></a>
+                                <strong>Renamed Columns:</strong> {{ step.newcolumnnames.join(', ') }}
                             </div>
                         </li>
                     </ul>
@@ -183,5 +211,5 @@
 <br/><br/><br/><br/>
 <div>
     <button ng-click="ProcessWizard.goBack()" class="btn btn-seconday pull-left">Back - Choose Data</button>
-    <button ng-click="ProcessWizard.changeState('lab.process2.step4')" class="btn btn-primary pull-right">Next - Add a model to your workflow</button>
+    <button ng-click="ProcessStep3.updateTransformProcessTask();ProcessWizard.changeState('lab.process2.step4');" class="btn btn-primary pull-right">Next - Add a model to your workflow</button>
 </div>

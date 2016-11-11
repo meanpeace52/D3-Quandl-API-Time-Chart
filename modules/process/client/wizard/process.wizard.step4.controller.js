@@ -2,8 +2,8 @@
 
 angular.module('process')
     .controller('ProcessWizardStep4Controller',
-    ['$state', '$stateParams', '$timeout', 'Tasks', 'Deployr', '$uibModal', '$q', 'toastr', 'Process', '$log',
-        function ($state, $stateParams, $timeout, Tasks, Deployr, $uibModal, $q, toastr, Process, $log) {
+    ['$state', '$stateParams', '$timeout', 'Tasks', 'Deployr', '$uibModal', '$q', 'toastr', 'Process', '$log', 'ProcessStateService',
+        function ($state, $stateParams, $timeout, Tasks, Deployr, $uibModal, $q, toastr, Process, $log, ProcessStateService) {
             var baseStateUrl = 'lab.process2.step4';
             var vm = this;
             var runningTask = null;
@@ -11,13 +11,15 @@ angular.module('process')
 
             vm.taskoptionsview = '';
 
-            vm.process = {
-                title: '',
-                tasks: []
-            };
+            ProcessStateService.loadProcessTasksData();
+
+            vm.process = ProcessStateService.currentProcessTasksData();
 
             vm.tasks = Tasks.getTasks();
-            vm.tasks.forEach(function(task, i) {
+            vm.displayTasks = _.filter(vm.tasks, function(task){
+                return !task.hideinlist;
+            });
+            vm.displayTasks.forEach(function(task, i) {
                 task.status = {
                     open: i === 0
                 };
@@ -53,7 +55,7 @@ angular.module('process')
 
             function showTaskOptions(task) {
                 if (task.slug) {
-                    $state.go(baseStateUrl + '.' + task.slug, {options: task.options});
+                    $state.go(baseStateUrl + '.' + task.slug, {id: vm.process.tasks.indexOf(task), options: task.options});
                 } else {
                     //$state.go('lab.process.popup');
                 }
@@ -81,14 +83,21 @@ angular.module('process')
             vm.onCopy = function(event, index, task) {
                 if (!_.find(vm.process.tasks, {title: task.title})) {
                     updateTaskOptions();
-                    vm.process.tasks.splice(index, 0, task);
+                    vm.process.tasks.splice(index, 1, task);
+                    ProcessStateService.saveProcessTasksData(vm.process);
                     showTaskOptions(vm.process.tasks[index]);
                 }
                 return true;
             };
 
             vm.onTaskClick = function(task) {
-                showTaskOptions(task);
+                if (task.title === 'Initial Transformations'){
+                    $state.go('lab.process2.step3');
+                }
+                else{
+                    showTaskOptions(task);
+                }
+
             };
 
             function getRowsFromResult(result, columns) {
@@ -194,6 +203,27 @@ angular.module('process')
                 if (runningTask) {
                     runningTask.cancel(true);
                     runningTask = null;
+                }
+            };
+
+            vm.saveProcess = function(){
+                var process = _.clone(vm.process);
+                //process.tasks = process.tasks.map(function (task) {
+                //    return _.pick(task, ['title', 'slug']);
+                //});
+                if (process._id) {
+                    Process.update(process)
+                        .then(function (process) {
+                            toastr.success('Process updated successfully!');
+                            //var index = _.findIndex(vm.usersProcesses, {_id: process._id});
+                            //vm.usersProcesses[index] = process;
+                        });
+                } else {
+                    //process.dataset = Process.getSelectedDataset()._id;
+                    Process.create(process)
+                        .then(function (process) {
+                            toastr.success('Process created successfully!');
+                        });
                 }
             };
 

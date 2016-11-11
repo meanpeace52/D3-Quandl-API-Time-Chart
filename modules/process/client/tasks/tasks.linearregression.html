@@ -3,10 +3,8 @@
 <form class="form-inline">
   <div class="form-group">
     <label for="yColIndex">Y: </label>
-    <select id="yColIndex"
-            class="form-control"
-            ng-model="LROptions.options.yColIndex"
-            ng-options="idx as column for (idx, column) in LROptions.columns">
-      </select>
+    <select id="yColIndex" class="form-control" ng-model="LROptions.options.yColIndex" ng-options="idx as column for (idx, column) in LROptions.columns">
+    </select>
+    <button ng-click="LROptions.update()" class="btn btn-secondary">Update</button>
   </div>
 </form>

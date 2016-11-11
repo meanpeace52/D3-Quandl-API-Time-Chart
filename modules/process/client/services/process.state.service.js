@@ -5,8 +5,20 @@ angular.module('process')
       var stateHistory = [];
       var processData = {};
       var transformSteps = [];
+      var processTasksData = [];
 
       return {
+        setSelectedDataset: function(dataset){
+          $localStorage.selectedDataset = dataset;
+        },
+        getSelectedDataset: function(){
+          if ($localStorage.selectedDataset){
+            return $localStorage.selectedDataset;
+          }
+          else{
+            return {};
+          }
+        },
         loadProcessData: function(){
           if ($localStorage.processData){
             processData = $localStorage.processData;
@@ -26,7 +38,7 @@ angular.module('process')
             transformSteps = $localStorage.transformSteps;
           }
           else{
-            transformSteps = {};
+            transformSteps = [];
           }
         },
         saveTransformSteps: function(transformSteps){
@@ -35,6 +47,24 @@ angular.module('process')
         },
         currentTransformSteps: function(){
           return transformSteps;
+        },
+        loadProcessTasksData: function(){
+          if ($localStorage.processTasksData){
+            processTasksData = $localStorage.processTasksData;
+          }
+          else{
+            processTasksData = {
+              title : '',
+              tasks : []
+            };
+          }
+        },
+        saveProcessTasksData: function(processTasksData){
+          $localStorage.processTasksData = processTasksData;
+          processTasksData = processTasksData;
+        },
+        currentProcessTasksData: function(){
+          return processTasksData;
         },
         loadState: function(){
           if ($localStorage.stateHistory){
