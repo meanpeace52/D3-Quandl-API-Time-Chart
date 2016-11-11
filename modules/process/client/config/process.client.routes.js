@@ -22,7 +22,7 @@ angular.module('process')
                 })
                 .state('lab.process.popup', {
                     url: '/:type',
-                    modal: true,
+                    modal: false,
                     size: 'lg',
                     // common way around to use angular-ui modals with
                     // the router having nested states
@@ -116,6 +116,46 @@ angular.module('process')
                     controller: 'ProcessWizardStep4Controller',
                     controllerAs: 'ProcessStep4',
                     templateUrl: MODULE_PATH + 'wizard/process.wizard.step4.html'
+                })
+                .state('lab.process2.step4.linearregression', {
+                    templateUrl: MODULE_PATH + 'tasks/tasks.linearregression.html',
+                    controller: 'LROptionsController',
+                    controllerAs: 'LROptions',
+                    params: {options: {}},
+                    resolve: {
+                        // parameters to be shared by all the child states
+                        // including the modal and the states for task options
+                        processService: 'Process',
+                        usersDatasets: function (processService) {
+                            return processService.getUsersDatasets();
+                        },
+                        selectedDataset: function (processService) {
+                            return processService.getSelectedDataset();
+                        },
+                        process: function (processService) {
+                            return processService.getSelectedProcess();
+                        }
+                    }
+                })
+                .state('lab.process2.step4.merge', {
+                    templateUrl: MODULE_PATH + 'tasks/tasks.merge.html',
+                    controller: 'MergeTaskOptionsController',
+                    controllerAs: 'MergeTaskOptions',
+                    params: {options: {}},
+                    resolve: {
+                        // parameters to be shared by all the child states
+                        // including the modal and the states for task options
+                        processService: 'Process',
+                        usersDatasets: function (processService) {
+                            return processService.getUsersDatasets();
+                        },
+                        selectedDataset: function (processService) {
+                            return processService.getSelectedDataset();
+                        },
+                        process: function (processService) {
+                            return processService.getSelectedProcess();
+                        }
+                    }
                 });
         }
     ]);

@@ -28,18 +28,27 @@ angular.module('users').config(['$stateProvider',
               url: '/picture',
               templateUrl: MODULE_PATH + 'views/settings/change-profile-picture.client.view.html'
           })
-          .state('settings.subscription', {
-              url: '/subscription',
-              templateUrl: MODULE_PATH + 'views/settings/subscription.client.view.html'
-          })
-          .state('settings.invoices', {
-              url: '/invoices',
-              templateUrl: MODULE_PATH + 'views/settings/invoices.client.view.html'
-          })
+
           .state('settings.billing', {
+              abstract: true,
               url: '/billing',
               templateUrl: MODULE_PATH + 'views/settings/billing.client.view.html'
           })
+            .state('settings.billing.subscription', {
+                url: '/subscription',
+                templateUrl: MODULE_PATH + 'views/billing/subscription.client.view.html'
+            })
+            .state('settings.billing.card', {
+                url: '/card',
+                templateUrl: MODULE_PATH + 'views/billing/card.client.view.html'
+            })
+            .state('settings.billing.invoices', {
+                url: '/invoices',
+                templateUrl: MODULE_PATH + 'views/billing/invoices.client.view.html'
+            })
+
+
+
           .state('settings.gettingpaid', {
               abstract: true,
               url: '/gettingpaid',
@@ -89,7 +98,6 @@ angular.module('users').config(['$stateProvider',
         })
           .state('emailverification.invalid', {
               url: '/invalid',
-              templateUrl: MODULE_PATH + 'views/emailverification/emailverification-invalid.client.view.html'
           })
           .state('emailverification.success', {
               url: '/success'

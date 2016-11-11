@@ -67,16 +67,26 @@ exports.signup = function (req, res) {
  */
 exports.verifyEmail = function (req, res) {
   User.findOne({verifyEmailToken:req.params.token}, function(err,user){
-    if (!err && user) {
+    if(err) return res.status(500).send(errorHandler.getErrorMessage(err));
+    if (user) {
       user.verifyEmailToken = undefined;
       user.emailIsVerified = true;
       user.save(function(err){
-        res.redirect('/emailverification/success');
+        if(req.user){
+          res.redirect('/emailverification/success');
+        } else {
+          req.login(user, function (err) {
+            res.redirect('/emailverification/success');
+          });
+        }
       });
     } else{
-      if (!user) {
-        return res.redirect('/emailverification/invalid');
+      if (req.user) {
+        if(req.user.emailIsVerified){
+          return res.redirect('/emailverification/success');
+        }
       }
+      return res.redirect('/emailverification/invalid');
     }
   });
 };

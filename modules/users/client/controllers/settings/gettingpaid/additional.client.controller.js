@@ -6,7 +6,8 @@ angular.module('users').controller('GettingPaidAdditionalController', ['$scope',
     // Create file uploader instance
     $scope.uploader = new FileUploader({
       url: 'api/users/account/document',
-      alias: 'newAccountDocument'
+      alias: 'newAccountDocument',
+      resumeChunkSize:100000
     });
 
     // Set file uploader image filter
@@ -14,7 +15,7 @@ angular.module('users').controller('GettingPaidAdditionalController', ['$scope',
       name: 'imageFilter',
       fn: function (item, options) {
         var type = '|' + item.type.slice(item.type.lastIndexOf('/') + 1) + '|';
-        return '|jpg|png|jpeg|pdf|'.indexOf(type) !== -1;
+        return '|jpg|png|jpeg|'.indexOf(type) !== -1;
       }
     });
 
@@ -24,8 +25,12 @@ angular.module('users').controller('GettingPaidAdditionalController', ['$scope',
         $scope.uploader.uploadAll();
         $scope.uploading = true;
       } else{
-        $scope.fileError = 'Sorry this file is too large, maximum 4MB are allowed';
+        toastr.error('Sorry this file is too large, maximum 4MB are allowed.');
       }
+    };
+
+    $scope.uploader.onWhenAddingFileFailed = function (fileItem){
+      toastr.error('Sorry this file type is not allowed.');
     };
 
     // Called after the user has successfully uploaded a new picture
@@ -37,6 +42,7 @@ angular.module('users').controller('GettingPaidAdditionalController', ['$scope',
     };
 
     $scope.uploader.onErrorItem = function (fileItem, response, status, headers) {
+      toastr.error(response.message);
       $scope.uploading = false;
     };
 
@@ -58,14 +64,9 @@ angular.module('users').controller('GettingPaidAdditionalController', ['$scope',
               initAccountInfo(account);
               $scope.accountUpdated = true;
             }
-
         });
-
-
       }
     };
-
-
 
     BillingService.getAccount(function (err, account) {
       initAccountInfo(account);

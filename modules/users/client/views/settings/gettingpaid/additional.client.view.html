@@ -7,7 +7,7 @@
       <h3>Submit additional information</h3>
     </div>
 
-    <div class="alert alert-success" ng-if="!verification.fields_needed.length && accountLoaded">
+    <div class="alert alert-success" ng-if="!verification.fields_needed.length && accountLoaded && !accountUpdated">
       <p>We do not require additional information at this time</p>
       <p><a ui-sref="settings.gettingpaid.account" class="btn btn-default">Back</a></p>
     </div>
@@ -24,7 +24,7 @@
             <span class="btn btn-default btn-file">
                 Select Document <input type="file" nv-file-select uploader="uploader">
             </span>
-            <p>image/jpeg, image/png, or application/pdf. The maximum allowed file size is 4MB.</p>
+            <p>image/jpeg or image/png. The maximum allowed file size is 4MB.</p>
           </div>
           <div class="form-group" ng-show="uploading">
             <strong>Please be patient we are uploading your document</strong>

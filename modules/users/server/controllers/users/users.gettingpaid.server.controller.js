@@ -56,7 +56,13 @@ var path = require('path'),
         user.stripeChargesEnabled = account.charges_enabled;
         user.save(function(err, user){
           if(err) return res.status(400).json({message:errorHandler.getErrorMessage(err)});
-          res.json(returnAccount(account));
+          if(!account.verification.fields_needed.length){
+            res.json(returnAccount(account));
+          }else{
+            exports.sendAdditionalFieldsEmail(req, user, account, function(){
+              res.json(returnAccount(account));
+            });
+          }
         });
       });
     };
@@ -151,17 +157,27 @@ var path = require('path'),
       var stripeUploadFileFilter = require(path.resolve('./config/lib/multer')).stripeUploadFileFilter;
       upload.fileFilter = stripeUploadFileFilter;
       upload(req, res, function (uploadError) {
+          var filedata;
           if (uploadError) return res.status(400).send({message: 'Error occurred while uploading document'});
+          try {
+            filedata = fs.readFileSync(req.file.path);
+          } catch (err) {
+            return res.status(400).send({message: 'Error occured while reading document'});
+          }
           stripe.fileUploads.create({
             purpose: 'identity_document',
             file: {
-              data: fs.readFileSync(req.file.path),
+              data: filedata,
               name: req.file.filename,
               type: 'application/octet-stream' }
             },
             {stripe_account: user.stripeAccount},
             function(err, fileUpload) {
-              fs.unlinkSync(req.file.path);
+              try {
+                fs.unlinkSync(req.file.path);
+              } catch (err) {
+                return res.status(400).send({message: 'Error occured while deleting document'});
+              }
               if(err) return handleStripeError(err, res);
               stripe.accounts.update(
                 user.stripeAccount,
@@ -173,6 +189,33 @@ var path = require('path'),
           });
       });
     };
+
+
+
+    exports.sendAdditionalFieldsEmail = function(req, user, account, next){
+      var fieldTexts = {
+        'legal_entity.verification.document':'Upload a scan of an identifying document, such as a passport or driver’s license.',
+        'legal_entity.personal_id_number':'Provide your social security number'
+      };
+      var fields = [];
+      for (var i = 0; i < account.verification.fields_needed.length; i++) {
+        fields.push(fieldTexts[account.verification.fields_needed[i]]);
+      }
+
+      email.send(user.email, 'We need additional information to verify your account',
+      {fields:fields, name:user.displayName, url:exports.getHostUrl(req) + '/settings/gettingpaid/additional'},
+        'modules/users/server/templates/account-verification-email', next);
+    };
+
+
+    exports.getHostUrl = function(req){
+      var httpTransport = 'http://';
+      if (config.secure && config.secure.ssl === true) {
+        httpTransport = 'https://';
+      }
+      return httpTransport + req.headers.host;
+    };
+
 
 
 
