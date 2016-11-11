@@ -32,6 +32,16 @@ angular.module('process')
        * must be registered.
        */
       var tasks = [{
+        title: 'Initial Transformations',
+        hideinlist: true,
+        subtasks: [{
+          title: 'Initial Transformations',
+          returnType: SCRIPT_RETURN_TYPE.DATASET,
+          options: {
+            transformationSteps: []
+          }
+        }]
+      }, {
         title: 'Summaries',
         color: 'blue',
         subtasks: []

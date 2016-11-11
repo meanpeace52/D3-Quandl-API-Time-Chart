@@ -2,8 +2,8 @@
 
 angular.module('process')
     .controller('ProcessWizardStep4Controller',
-    ['$state', '$stateParams', '$timeout', 'Tasks', 'Deployr', '$uibModal', '$q', 'toastr', 'Process', '$log',
-        function ($state, $stateParams, $timeout, Tasks, Deployr, $uibModal, $q, toastr, Process, $log) {
+    ['$state', '$stateParams', '$timeout', 'Tasks', 'Deployr', '$uibModal', '$q', 'toastr', 'Process', '$log', 'ProcessStateService',
+        function ($state, $stateParams, $timeout, Tasks, Deployr, $uibModal, $q, toastr, Process, $log, ProcessStateService) {
             var baseStateUrl = 'lab.process2.step4';
             var vm = this;
             var runningTask = null;
@@ -11,13 +11,15 @@ angular.module('process')
 
             vm.taskoptionsview = '';
 
-            vm.process = {
-                title: '',
-                tasks: []
-            };
+            ProcessStateService.loadProcessTasksData();
+
+            vm.process = ProcessStateService.currentProcessTasksData();
 
             vm.tasks = Tasks.getTasks();
-            vm.tasks.forEach(function(task, i) {
+            vm.displayTasks = _.filter(vm.tasks, function(task){
+                return !task.hideinlist;
+            });
+            vm.displayTasks.forEach(function(task, i) {
                 task.status = {
                     open: i === 0
                 };
@@ -82,13 +84,20 @@ angular.module('process')
                 if (!_.find(vm.process.tasks, {title: task.title})) {
                     updateTaskOptions();
                     vm.process.tasks.splice(index, 0, task);
+                    ProcessStateService.saveProcessTasksData(vm.process);
                     showTaskOptions(vm.process.tasks[index]);
                 }
                 return true;
             };
 
             vm.onTaskClick = function(task) {
-                showTaskOptions(task);
+                if (task.title === 'Initial Transformations'){
+                    $state.go('lab.process2.step3')
+                }
+                else{
+                    showTaskOptions(task);
+                }
+
             };
 
             function getRowsFromResult(result, columns) {

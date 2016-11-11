@@ -2,8 +2,8 @@
 
 angular.module('process')
     .controller('ProcessWizardStep3Controller',
-    ['$state', '$stateParams', 'Authentication', 'toastr', '$log', 'UsersFactory', 'ProcessStateService', 'Datasets', 'prompt', '$rootScope',
-        function ($state, $stateParams, Authentication, toastr, $log, UsersFactory, ProcessStateService, Datasets, prompt, $rootScope) {
+    ['$state', '$stateParams', 'Authentication', 'toastr', '$log', 'UsersFactory', 'ProcessStateService', 'Datasets', 'prompt', '$rootScope', 'Tasks',
+        function ($state, $stateParams, Authentication, toastr, $log, UsersFactory, ProcessStateService, Datasets, prompt, $rootScope, Tasks) {
             var vm = this;
 
             vm.user = Authentication.user;
@@ -45,6 +45,8 @@ angular.module('process')
 
             vm.showDatasetSearch = true;
 
+            vm.tasks = Tasks.getTasks()
+
             vm.changeTab = function(tab){
                 vm.activeTab = tab;
             };
@@ -72,7 +74,12 @@ angular.module('process')
                         vm.showLoader = false;
                         vm.currentdataset.columns = data.columns;
                         vm.availablecolumns = data.columns;
-                        vm.currentdataset.renamedcolumns = data.columns;
+                        vm.currentdataset.renamedcolumns = _.reduce(data.columns, function(hash, value) {
+                            var key = value;
+                            hash[key] = key;
+                            return hash;
+                        }, {});
+                        vm.currentdataset.renamedcolumnnames = data.columns;
                         vm.excludedcolumns = _.reduce(vm.currentdataset.columns, function(hash, value) {
                             var key = value;
                             hash[key] = false;
@@ -210,7 +217,7 @@ angular.module('process')
                 _.forOwn(vm.selecteddatasetcolumns, function(value, key) {
                     if (value){
                         selectedcolumns.push(key);
-                        renamedcolumns.push(vm.currentmodeldataset.renamedcolumns[key]);
+                        renamedcolumns.push(vm.currentselecteddataset.renamedcolumns[key]);
                     }
                     i++;
                 });
@@ -251,20 +258,30 @@ angular.module('process')
             };
 
 
-            vm.finalDatasetColumnsChanged = function(){
+            vm.dropColumns = function(){
                 vm.transformSteps = _.filter(vm.transformSteps, function(step){
                     return step.type !== 'drop';
                 });
+
+                var columnsToBeDropped = [];
                 _.forOwn(vm.excludedcolumns, function(value, key) {
                     if (value){
-                        var transformStep = { };
-                        transformStep.type = 'drop';
-                        transformStep.columnname = key;
-                        vm.transformSteps.push(transformStep);
+                        columnsToBeDropped.push(key);
                     }
                 });
-                ProcessStateService.saveTransformSteps(vm.transformSteps);
-                toastr.success('Transform step updated successfully.');
+
+                if (columnsToBeDropped.length > 0){
+                    var transformStep = { };
+                    transformStep.type = 'drop';
+                    transformStep.columnnames = columnsToBeDropped;
+                    vm.transformSteps.push(transformStep);
+
+                    ProcessStateService.saveTransformSteps(vm.transformSteps);
+                    toastr.success('Transform step updated successfully.');
+                }
+                else{
+                    toastr.error('No columns were marked to be dropped.');
+                }
             };
 
             vm.removeStep = function(step){
@@ -280,6 +297,76 @@ angular.module('process')
                     toastr.success('Step removed successfully!');
                 });
             };
+
+            vm.updateTransformProcessTask = function(){
+                ProcessStateService.loadProcessTasksData();
+                var currentProcessTasksData = ProcessStateService.currentProcessTasksData();
+
+                if (vm.transformSteps.length){
+                    var existingTask = _.find(currentProcessTasksData.tasks, {title: 'Initial Transformations'});
+                    if (!existingTask) {
+                        var taskDetail = _.find(vm.tasks, {title: 'Initial Transformations'});
+                        taskDetail.subtasks[0].options = vm.transformSteps;
+                        currentProcessTasksData.tasks.unshift(taskDetail.subtasks[0]);
+                    }
+                    else{
+                        existingTask.options = vm.transformSteps;
+                    }
+                    ProcessStateService.saveProcessTasksData(currentProcessTasksData);
+                }
+            };
+
+            vm.addTransformStep = function(action){
+                switch(action){
+                    case 'Rename Columns':
+                        vm.renameColumnNames();
+                        break;
+                    case 'Drop Selected Columns':
+                        vm.dropColumns();
+                        break;
+                }
+            };
+
+            vm.renameColumnNames = function(){
+                var different = false;
+                _.forOwn(vm.currentdataset.renamedcolumns, function(value, key) {
+                    if (value !== key){
+                        different = true;
+                    }
+                });
+
+                if (!different){
+                    toastr.error('No columns has been renamed!');
+                }
+                else{
+                    vm.transformSteps = _.filter(vm.transformSteps, function(step){
+                        return step.type !== 'rename';
+                    });
+                    var renamedColumnNames = [];
+                    _.forOwn(vm.currentdataset.renamedcolumns, function(value, key) {
+                        if (value){
+                            renamedColumnNames.push(value);
+                        }
+                    });
+
+                    if (hasDuplicates(renamedColumnNames)){
+                        toastr.error('Not all your columns have unique names!');
+                        return;
+                    }
+
+                    var transformStep = { };
+                    transformStep.type = 'rename';
+                    transformStep.newcolumnnames = renamedColumnNames;
+                    vm.transformSteps.push(transformStep);
+
+                    ProcessStateService.saveTransformSteps(vm.transformSteps);
+                    toastr.success('Transform step updated successfully.');
+                }
+            };
+
+            function hasDuplicates(a) {
+                return _.uniq(a).length !== a.length;
+            }
 
 
             $rootScope.$on('useDataset', function(event, dataset){

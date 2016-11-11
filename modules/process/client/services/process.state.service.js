@@ -5,6 +5,7 @@ angular.module('process')
       var stateHistory = [];
       var processData = {};
       var transformSteps = [];
+      var processTasksData = [];
 
       return {
         loadProcessData: function(){
@@ -26,7 +27,7 @@ angular.module('process')
             transformSteps = $localStorage.transformSteps;
           }
           else{
-            transformSteps = {};
+            transformSteps = [];
           }
         },
         saveTransformSteps: function(transformSteps){
@@ -35,6 +36,24 @@ angular.module('process')
         },
         currentTransformSteps: function(){
           return transformSteps;
+        },
+        loadProcessTasksData: function(){
+          if ($localStorage.processTasksData){
+            processTasksData = $localStorage.processTasksData;
+          }
+          else{
+            processTasksData = {
+              title : '',
+              tasks : []
+            };
+          }
+        },
+        saveProcessTasksData: function(processTasksData){
+          $localStorage.processTasksData = processTasksData;
+          processTasksData = processTasksData;
+        },
+        currentProcessTasksData: function(){
+          return processTasksData;
         },
         loadState: function(){
           if ($localStorage.stateHistory){
