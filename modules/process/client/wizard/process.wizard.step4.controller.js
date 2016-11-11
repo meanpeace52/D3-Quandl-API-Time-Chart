@@ -2,17 +2,20 @@
 
 angular.module('process')
     .controller('ProcessWizardStep4Controller',
-    ['$state', '$stateParams', '$timeout', 'Tasks',
-        function ($state, $stateParams, $timeout, Tasks) {
+    ['$state', '$stateParams', '$timeout', 'Tasks', 'Deployr', '$uibModal',
+        function ($state, $stateParams, $timeout, Tasks, Deployr, $uibModal) {
             var baseStateUrl = 'lab.process2.step4';
             var vm = this;
+            var runningTask = null;
+            vm.showProcessLoader = false;
+
             vm.taskoptionsview = '';
 
             vm.process = {
                 title: '',
                 tasks: []
             };
-            vm.type = $stateParams.type;
+
             vm.tasks = Tasks.getTasks();
             vm.tasks.forEach(function(task, i) {
                 task.status = {
@@ -49,7 +52,6 @@ angular.module('process')
             }
 
             function showTaskOptions(task) {
-                vm.taskoptionsview = task.slug;
                 if (task.slug) {
                     $state.go(baseStateUrl + '.' + task.slug, {options: task.options});
                 } else {
@@ -87,6 +89,112 @@ angular.module('process')
 
             vm.onTaskClick = function(task) {
                 showTaskOptions(task);
+            };
+
+            function getRowsFromResult(result, columns) {
+                return _.zip.apply(_, result[0].value.map(function (obj) {
+                    return obj.value;
+                })).map(function (rowValues) {
+                    var row = {};
+                    rowValues.forEach(function (rowValue, i) {
+                        row[columns[i]] = rowValue;
+                    });
+                    return row;
+                });
+            }
+
+            function process(inputFile, tasks, deferred, results) {
+                if (!deferred) deferred = $q.defer();
+                if (!results) results = [];
+                Deployr.run(inputFile, tasks[0])
+                    .then(function (res) {
+                        var result = res;
+                        if (tasks[0].returnType === 'dataset') {
+                            if (!result.length) {
+                                return deferred.reject('one of the tasks returned empty dataset!');
+                            }
+                            var _dataset = {
+                                columns: result[0].value.map(function (obj) {
+                                    return obj.name;
+                                })
+                            };
+                            _dataset.rows = getRowsFromResult(result, _dataset.columns);
+                            results.push(_dataset);
+                            if (typeof tasks[1] !== 'undefined') {
+                                return process(_dataset, _.drop(tasks), deferred, results);
+                            }
+                        } else {
+                            results.push(result);
+                        }
+                        return deferred.resolve(results);
+                    }).catch(function (error) {
+                        deferred.reject(error);
+                    });
+                return deferred.promise;
+            }
+
+            vm.performProcess = function () {
+                var invalidTasks = vm.process.tasks.filter(function (task) {
+                    return task.validate && !task.validate(task.options);
+                });
+                if (invalidTasks.length) {
+                    toastr.error('Please select the required options for the tasks present in the process!');
+                    return;
+                }
+                vm.showProcessLoader = true;
+                process(vm.s3reference, vm.process.tasks.filter(function (task) {
+                    return task.script;
+                }))
+                    .then(function (results) {
+                        if (results[0].status === 200) {
+                            var modalInstance = $uibModal.open({
+                                controller: 'ModelModalController',
+                                controllerAs: 'ModelModal',
+                                templateUrl: 'modules/process/client/model/model.modal.html',
+                                size: 'md',
+                                backdrop: true,
+                                resolve: {
+                                    selectedDataset: function () {
+                                        return Process.getSelectedDataset();
+                                    },
+                                    tasks: function () {
+                                        return vm.process.tasks;
+                                    },
+                                    results: function () {
+                                        return [results[0].text];
+                                    }
+                                }
+                            });
+                            modalInstance.result.then(function (model) {
+                                vm.alerts.push({
+                                    type: 'success',
+                                    msg: 'The result has been successfully saved!'
+                                });
+                                getDatasets();
+                            });
+                        }
+                        else {
+                            $log.debug(results);
+                            toastr.error('An error occurred while processing.');
+                        }
+
+                    })
+                    .catch(function (err) {
+                        console.log('error', err);
+                        if (err instanceof Error) {
+                            alert(err.message || err);
+                        }
+                    })
+                    .finally(function () {
+                        vm.showProcessLoader = false;
+                    });
+            };
+
+            vm.cancelProcess = function () {
+                if (runningTask) {
+                    runningTask.cancel(true);
+                    runningTask = null;
+                }
             };
 
         }]);
