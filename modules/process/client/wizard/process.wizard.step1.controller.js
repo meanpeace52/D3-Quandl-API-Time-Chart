@@ -9,6 +9,12 @@ angular.module('process')
             vm.user = Authentication.user;
 
             ProcessStateService.saveProcessData({});
-            ProcessStateService.setState(['lab.process2.step1']);
+            ProcessStateService.saveProcessTasksData({
+                title : '',
+                tasks : []
+            });
+            ProcessStateService.setSelectedDataset({});
+            ProcessStateService.saveTransformSteps([]);
+            ProcessStateService.setState('lab.process2.step1');
 
         }]);

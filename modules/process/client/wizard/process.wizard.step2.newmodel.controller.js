@@ -40,9 +40,10 @@ angular.module('process')
                     return;
                 }
 
-                ProcessStateService.currentProcessData().selecteddataset = dataset._id;
-                ProcessStateService.currentProcessData().step1selection = 'new-model';
-                ProcessStateService.saveProcessData();
+                var processData = ProcessStateService.currentProcessData();
+                processData.selecteddataset = dataset._id;
+                processData.step1selection = 'new-model';
+                ProcessStateService.saveProcessData(processData);
                 $scope.$emit('changeState', 'lab.process2.step3');
             };
 

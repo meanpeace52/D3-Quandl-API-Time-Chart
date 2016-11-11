@@ -51,7 +51,6 @@ angular.module('process')
                 vm.activeTab = tab;
             };
 
-            ProcessStateService.loadTransformSteps();
             vm.transformSteps = ProcessStateService.currentTransformSteps();
 
             UsersFactory.userData('datasets', vm.user.username)
@@ -302,7 +301,6 @@ angular.module('process')
             };
 
             vm.updateTransformProcessTask = function(){
-                ProcessStateService.loadProcessTasksData();
                 var currentProcessTasksData = ProcessStateService.currentProcessTasksData();
 
                 if (vm.transformSteps.length){

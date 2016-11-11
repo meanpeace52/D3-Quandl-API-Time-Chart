@@ -19,73 +19,57 @@ angular.module('process')
             return {};
           }
         },
-        loadProcessData: function(){
-          if ($localStorage.processData){
-            processData = $localStorage.processData;
-          }
-          else{
-            processData = {};
-          }
-        },
-        saveProcessData: function(){
-          $localStorage.processData = processData;
+        saveProcessData: function(data){
+          $localStorage.processData = data;
         },
         currentProcessData: function(){
-          return processData;
-        },
-        loadTransformSteps: function(){
-          if ($localStorage.transformSteps){
-            transformSteps = $localStorage.transformSteps;
+          if ($localStorage.processData){
+            return $localStorage.processData;
           }
           else{
-            transformSteps = [];
+            return {};
           }
         },
         saveTransformSteps: function(transformSteps){
           $localStorage.transformSteps = transformSteps;
-          transformSteps = transformSteps;
         },
         currentTransformSteps: function(){
-          return transformSteps;
-        },
-        loadProcessTasksData: function(){
-          if ($localStorage.processTasksData){
-            processTasksData = $localStorage.processTasksData;
+          if ($localStorage.transformSteps){
+            return $localStorage.transformSteps;
           }
           else{
-            processTasksData = {
+            return [];
+          }
+        },
+        saveProcessTasksData: function(processTasksData){
+          $localStorage.processTasksData = processTasksData;
+        },
+        currentProcessTasksData: function(){
+          if ($localStorage.processTasksData){
+            return $localStorage.processTasksData;
+          }
+          else{
+            return {
               title : '',
               tasks : []
             };
           }
         },
-        saveProcessTasksData: function(processTasksData){
-          $localStorage.processTasksData = processTasksData;
-          processTasksData = processTasksData;
-        },
-        currentProcessTasksData: function(){
-          return processTasksData;
-        },
-        loadState: function(){
-          if ($localStorage.stateHistory){
-            stateHistory = $localStorage.stateHistory;
-          }
-          else{
-            stateHistory = [];
-          }
-        },
         changeState: function(state){
-          stateHistory.push(state);
-          $localStorage.stateHistory = stateHistory;
+          $localStorage.stateHistory.push(state);
         },
-        previouseState: function(){
+        previousState: function(){
+          stateHistory = $localStorage.stateHistory;
           stateHistory.pop();
           $localStorage.stateHistory = stateHistory;
           return stateHistory[stateHistory.length - 1];
         },
         setState: function(state){
-          stateHistory = state;
-          $localStorage.stateHistory = stateHistory;
+          if (!$localStorage.stateHistory){
+            $localStorage.stateHistory = [];
+          }
+          $localStorage.stateHistory.push(state);
+
         }
       };
     }]);
