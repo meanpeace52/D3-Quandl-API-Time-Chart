@@ -8,6 +8,17 @@ angular.module('process')
       var processTasksData = [];
 
       return {
+        setSelectedDataset: function(dataset){
+          $localStorage.selectedDataset = dataset;
+        },
+        getSelectedDataset: function(){
+          if ($localStorage.selectedDataset){
+            return $localStorage.selectedDataset;
+          }
+          else{
+            return {};
+          }
+        },
         loadProcessData: function(){
           if ($localStorage.processData){
             processData = $localStorage.processData;

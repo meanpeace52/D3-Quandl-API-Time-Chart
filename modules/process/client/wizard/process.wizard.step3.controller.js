@@ -45,7 +45,7 @@ angular.module('process')
 
             vm.showDatasetSearch = true;
 
-            vm.tasks = Tasks.getTasks()
+            vm.tasks = Tasks.getTasks();
 
             vm.changeTab = function(tab){
                 vm.activeTab = tab;
@@ -72,6 +72,9 @@ angular.module('process')
                 Datasets.getDatasetWithS3(dataset._id)
                     .then(function (data) {
                         vm.showLoader = false;
+                        ProcessStateService.setSelectedDataset({
+                            columns : data.columns
+                        });
                         vm.currentdataset.columns = data.columns;
                         vm.availablecolumns = data.columns;
                         vm.currentdataset.renamedcolumns = _.reduce(data.columns, function(hash, value) {

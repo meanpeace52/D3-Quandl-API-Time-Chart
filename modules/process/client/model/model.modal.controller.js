@@ -2,8 +2,8 @@
 
 angular.module('process')
     .controller('ModelModalController',
-        ['$uibModalInstance', '$state', '$stateParams', '$q', 'Authentication', 'Datasets', 'Models', 'selectedDataset', 'tasks', 'results',
-          function ($uibModalInstance, $state, $stateParams, $q, Authentication, Datasets, Models, selectedDataset, tasks, results) {
+        ['$uibModalInstance', '$state', '$stateParams', '$q', 'Authentication', 'Datasets', 'Models', 'tasks', 'results',
+          function ($uibModalInstance, $state, $stateParams, $q, Authentication, Datasets, Models, tasks, results) {
             var vm = this;
 
         vm.model = null;
@@ -26,10 +26,10 @@ angular.module('process')
         function getDataset() {
           var deferred = $q.defer();
           if (!vm.dataset) {
-            deferred.resolve(selectedDataset._id);
+            //deferred.resolve(selectedDataset._id);
           } else {
             Datasets.insert({
-              selectedDataset: selectedDataset,
+              //selectedDataset: selectedDataset,
               title: vm.dataset.title,
               rows: vm.dataset.rows,
               columns: vm.dataset.columns

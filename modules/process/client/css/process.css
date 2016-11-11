@@ -199,3 +199,6 @@ ul.transformsteps[dnd-list] li.selected {
 .transformsteps .drop {
   background-color: #ffc1f8 !important;
 }
+.step4-footer .btn {
+  margin-right: 5px;
+}
