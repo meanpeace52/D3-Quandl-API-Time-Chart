@@ -2,8 +2,8 @@
 
 angular.module('process')
     .controller('ProcessWizardStep4Controller',
-    ['$state', '$stateParams', '$timeout', 'Tasks', 'Deployr', '$uibModal',
-        function ($state, $stateParams, $timeout, Tasks, Deployr, $uibModal) {
+    ['$state', '$stateParams', '$timeout', 'Tasks', 'Deployr', '$uibModal', '$q', 'toastr', 'Process', '$log',
+        function ($state, $stateParams, $timeout, Tasks, Deployr, $uibModal, $q, toastr, Process, $log) {
             var baseStateUrl = 'lab.process2.step4';
             var vm = this;
             var runningTask = null;
@@ -155,7 +155,7 @@ angular.module('process')
                                 backdrop: true,
                                 resolve: {
                                     selectedDataset: function () {
-                                        return Process.getSelectedDataset();
+                                        //return Process.getSelectedDataset();
                                     },
                                     tasks: function () {
                                         return vm.process.tasks;
@@ -170,7 +170,7 @@ angular.module('process')
                                     type: 'success',
                                     msg: 'The result has been successfully saved!'
                                 });
-                                getDatasets();
+                                //getDatasets();
                             });
                         }
                         else {
