@@ -43,7 +43,7 @@
                 </div>
                 <div class="col-md-{{ DatasetsList.state == 'lab.process2.step3' ? '6' : '4' }} text-right">
                     <span ng-if="!Datasetslist.modal">
-                        <a ng-if="dataset.access != 'for sale' || (dataset.access == 'for sale' && dataset.purchased) && DatasetsList.state == 'lab.process2.step3'" class="btn btn-secondary" ng-click="DatasetsList.useDataset(dataset)" class="pull-right">Use</a>
+                        <a ng-if="(dataset.access != 'for sale' || (dataset.access == 'for sale' && dataset.purchased)) && DatasetsList.state == 'lab.process2.step3'" class="btn btn-secondary" ng-click="DatasetsList.useDataset(dataset)" class="pull-right">Use</a>
                         <a ng-if="(dataset.access != 'for sale' || (dataset.access == 'for sale' && dataset.purchased)) && DatasetsList.state != 'lab.process2.step3'" class="btn btn-secondary" ui-sref="datasets.detail({datasetId: dataset._id})" class="pull-right">View</a>
                         <button ng-if="(DatasetsList.user._id != dataset.user && DatasetsList.user._id != dataset.user._id) && dataset.access == 'for sale' && !dataset.purchased" class="btn btn-primary" ng-click="DatasetsList.purchaseDataset(dataset)">Buy for ${{ dataset.cost | number: 2 }}</button>
                         <button data-ng-if="(DatasetsList.user._id != dataset.user && DatasetsList.user._id != dataset.user._id) && (!dataset.access || dataset.access == 'public')" class="btn btn-primary" ng-click="DatasetsList.addToUser(dataset)">Save to my Page</button>
