@@ -110,10 +110,10 @@ angular.module('process')
                 });
             }
 
-            function process(inputFile, tasks, deferred, results) {
+            function process(tasks, deferred, results) {
                 if (!deferred) deferred = $q.defer();
                 if (!results) results = [];
-                Deployr.run(inputFile, tasks[0])
+                Deployr.run(tasks)
                     .then(function (res) {
                         var result = res;
                         if (tasks[0].returnType === 'dataset') {
@@ -149,11 +149,9 @@ angular.module('process')
                     return;
                 }
                 vm.showProcessLoader = true;
-                process(vm.s3reference, vm.process.tasks.filter(function (task) {
-                    return task.script;
-                }))
+                process(vm.process.tasks)
                     .then(function (results) {
-                        if (results[0].status === 200) {
+                        //if (results[0].status === 200) {
                             var modalInstance = $uibModal.open({
                                 controller: 'ModelModalController',
                                 controllerAs: 'ModelModal',
@@ -168,7 +166,7 @@ angular.module('process')
                                         return vm.process.tasks;
                                     },
                                     results: function () {
-                                        return [results[0].text];
+                                        return [results[0].console];
                                     }
                                 }
                             });
@@ -179,18 +177,16 @@ angular.module('process')
                                 });
                                 //getDatasets();
                             });
-                        }
-                        else {
-                            $log.debug(results);
-                            toastr.error('An error occurred while processing.');
-                        }
+                        //}
+                        //else {
+                        //    $log.debug(results);
+                        //    toastr.error('An error occurred while processing.');
+                        //}
 
                     })
                     .catch(function (err) {
                         console.log('error', err);
-                        if (err instanceof Error) {
-                            alert(err.message || err);
-                        }
+                        toastr.error('An error occurred while running the workflow!');
                     })
                     .finally(function () {
                         vm.showProcessLoader = false;

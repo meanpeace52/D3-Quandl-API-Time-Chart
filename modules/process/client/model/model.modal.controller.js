@@ -16,7 +16,7 @@ angular.module('process')
           vm.model = {
             type: 'Linear Regression',
             equation: 'Some equation',
-            output: $(lastResult).filter('.printable').find('pre').html()
+            output: lastResult
           };
           //vm.dataset = _.last(_.dropRight(results));
         //} else {
