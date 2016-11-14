@@ -7,16 +7,15 @@
     <div class="col-sm-6"><a ui-sref="pricing" class="btn btn-default btn-block btn-lg">Compare plans</a></div>
     <div class="col-sm-6"><a ng-click="updateSubscription()" class="btn btn-primary btn-block btn-lg">Update your Subscription</a></div>
   </div>
-
 </div>
 
 
 <div ng-show="mySubscription.plan">
   <table class="table">
     <tr>
-      <th>Plan</th>
+      <th>Current Plan</th>
       <th>Price</th>
-      <th>Next Invoice</th>
+      <th>Invoice Date</th>
     </tr>
     <tr>
       <td>{{mySubscription.plan.name}}</td>
@@ -24,8 +23,8 @@
       <td>{{mySubscription.current_period_end * 1000 | date:"MM/dd/yyyy"}}</td>
     </tr>
   </table>
-  <div class="row">
-    <div class="col-sm-6"><a href="/pricing" class="btn btn-default btn-block btn-lg">Compare plans</a></div>
-    <div class="col-sm-6"><a ng-click="updateSubscription()" class="btn btn-primary btn-block btn-lg">Update your Subscription</a></div>
+  <div>
+      <a href="/pricing" class="btn btn-primary btn-lg">Change my Subscription</a>
+    <!--<div class="col-sm-6"><a ng-click="updateSubscription()" class="btn btn-primary btn-block btn-lg">Update your Subscription</a></div>-->
   </div>
 </div>

@@ -1,7 +1,10 @@
 <h2>What do you want to do?</h2>
-
-<ul class="list-unstyled">
-    <li><a href="" ng-click="ProcessWizard.changeState('lab.process2.step2.existingmodel')">I want to use an existing model as a starting point.</a></li>
-    <li><a href="" ng-click="ProcessWizard.changeState('lab.process2.step2.newmodel')">I want to fit a new model to a dataset and/or transform a dataset.</a></li>
-</ul>
+<br/>
+<label><input type="radio" name="selectedoption" ng-model="ProcessStep1.selectedoption" value="lab.process2.step2.existingmodel">&nbsp;&nbsp;&nbsp;I want to use an existing model as a starting point.</label>
+<br/><br/>
+<label><input type="radio" name="selectedoption" ng-model="ProcessStep1.selectedoption" value="lab.process2.step2.newmodel">&nbsp;&nbsp;&nbsp;I want to fit a new model to a dataset and/or transform a dataset.</label>
+<br/><br/>
+<div class="text-right">
+    <button class="btn btn-primary" ng-click="ProcessStep1.setSelectedOption(ProcessStep1.selectedoption)">Choose your data</button>
+</div>
 

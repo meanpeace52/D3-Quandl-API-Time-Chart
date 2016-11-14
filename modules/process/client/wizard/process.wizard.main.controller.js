@@ -8,9 +8,6 @@ angular.module('process')
 
             vm.user = Authentication.user;
 
-            ProcessStateService.loadState();
-            ProcessStateService.loadProcessData();
-
             vm.changeState = function(state){
                 ProcessStateService.changeState(state);
                 $state.go(state);
@@ -21,7 +18,7 @@ angular.module('process')
             });
 
             vm.goBack = function(){
-                $state.go(ProcessStateService.previouseState());
+                $state.go(ProcessStateService.previousState());
             };
 
         }]);

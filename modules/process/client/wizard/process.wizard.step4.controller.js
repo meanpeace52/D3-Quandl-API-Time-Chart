@@ -11,8 +11,6 @@ angular.module('process')
 
             vm.taskoptionsview = '';
 
-            ProcessStateService.loadProcessTasksData();
-
             vm.process = ProcessStateService.currentProcessTasksData();
 
             vm.tasks = Tasks.getTasks();

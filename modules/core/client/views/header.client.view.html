@@ -30,9 +30,9 @@
                     <li data-ui-sref-active="active"> <a data-ui-sref="settings.picture">Change Profile Picture</a> </li>
                     <li data-ui-sref-active="active" data-ng-show="authentication.user.provider === 'local'"> <a data-ui-sref="settings.password">Change Password</a> </li>
                     <li data-ui-sref-active="active"> <a data-ui-sref="settings.accounts">Manage Social Accounts</a> </li>
-                    <li ng-if="authentication.user.emailIsVerified" data-ui-sref-active="active"> <a data-ui-sref="settings.billing.subscription">Billing and subscription</a> </li>
+                    <li ui-sref-active="active"> <a data-ui-sref="settings.billing.subscription">Billing and subscription</a> </li>
                     <li ng-if="!authentication.user.emailIsVerified" data-ui-sref-active="active"> <a data-ui-sref="emailverification">Verify your email</a> </li>
-                    <li ng-if="authentication.user.plan !== 'free'" ui-sref-active="active"><a ui-sref="settings.gettingpaid.account">Getting Paid</a></li>
+                    <li ui-sref-active="active"><a ui-sref="settings.gettingpaid.account">Getting Paid</a></li>
                     <li class="divider"></li>
                     <li> <a href="/api/auth/signout" target="_self">Signout</a> </li>
                 </ul>
