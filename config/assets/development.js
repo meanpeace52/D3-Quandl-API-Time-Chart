@@ -10,8 +10,7 @@ module.exports = {
                 BOWER_PATH + 'angular-loading-bar/dist/loading-bar.css',
                 BOWER_PATH + 'angular-toastr/dist/angular-toastr.css',
                 BOWER_PATH + 'angularjs-slider/dist/rzslider.css',
-                BOWER_PATH + 'datatables/media/css/dataTables.bootstrap.min.css',
-                BOWER_PATH + 'font-awesome/css/font-awesome.min.css',
+                BOWER_PATH + 'datatables/media/css/dataTables.bootstrap.min.css'
             ],
             js: [
                 BOWER_PATH + 'jquery/dist/jquery.min.js',
