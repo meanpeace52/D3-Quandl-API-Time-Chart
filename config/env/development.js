@@ -81,7 +81,7 @@ module.exports = {
     secret_key: process.env.STRIPE_SECRET || 'sk_test_HhURh1PDuU8KuJLk8ASmcjtU',
     publishable_key: process.env.STRIPE_PUBLIC || 'pk_test_5gsED75zyGfKF9TlVIXo4adn',
   },
-  livereload: false,
+  livereload: true,
   seedDB: {
     seed: process.env.MONGO_SEED === 'true' ? true : false,
     options: {
