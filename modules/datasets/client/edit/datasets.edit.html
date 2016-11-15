@@ -21,7 +21,7 @@
                         </div>
                     </div>
                 </div>
-                <div class="form-group row" show-errors>
+                <div class="form-group row" show-errors ng-if="datasetsEdit.user.plan != 'free'">
                     <div class="col-md-2">
                         <label for="access">Access</label>
                     </div>
@@ -37,12 +37,12 @@
                     <div class="col-md-2">
                         <label class="control-label" for="cost">Price</label>
                     </div>
-                    <div class="col-md-2 input-group">
+                    <div class="col-md-4 input-group">
                         <span class="input-group-addon">$</span>
-                        <input type="number" name="cost" id="cost" class="form-control" ng-model="datasetsEdit.dataset.cost" min="1" ng-min="1" step="0.50" />
-                        <div ng-messages="datasetsForm.cost.$error && datasetsEdit.submitted" role="alert">
-                            <p class="help-block error-text" ng-message="required">Enter a price greater than $1.</p>
-                        </div>
+                        <input type="number" name="cost" id="cost" class="form-control" ng-model="datasetsEdit.dataset.cost" min="1" ng-min="1" step="0.50" required />
+                    </div>
+                    <div ng-if="datasetsForm.cost.$error && datasetsEdit.submitted" ng-messages="datasetsForm.cost.$error" role="alert">
+                        <p class="help-block error-text" ng-message="required">Enter a price greater than $1.</p>
                     </div>
                 </div>
                 <div class="row form-group" ng-if="datasetsEdit.user.plan !== 'free' && datasetsEdit.dataset.access == 'for sale'">

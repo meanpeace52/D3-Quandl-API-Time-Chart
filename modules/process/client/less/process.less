@@ -18,7 +18,7 @@
   border-radius: 0;
 }
 .task-accordion .panel-body {
-  padding: 0;
+  padding:0;
 }
 ul.task-list {
   list-style: none;
@@ -108,13 +108,13 @@ ul.drop-list li.task-arrow:after {
   vertical-align: middle;
 }
 .panel-group .panel {
-  border-radius: 0;
+  border-radius:0;
 }
 .panel-group .panel + .panel {
-  margin-top: 0;
+  margin-top:0;
 }
 .current-process {
-  display: inline-block;
+  display:inline-block;
   margin-left: 20px;
 }
 .current-process-text {
@@ -132,17 +132,19 @@ ul.drop-list li.task-arrow:after {
   margin-bottom: 0;
   text-align: right;
 }
-.exclude {
+.exclude{
   background: #ccc;
 }
+
 /**
  * For the correct positioning of the placeholder element, the dnd-list and
  * it's children must have position: relative
  */
-ul.transformsteps[dnd-list],
-ul.transformsteps[dnd-list] > li {
+ ul.transformsteps[dnd-list],
+ ul.transformsteps[dnd-list] > li {
   position: relative;
 }
+
 /**
  * The dnd-list should always have a min-height,
  * otherwise you can't drop to it once it's empty
@@ -151,6 +153,7 @@ ul.transformsteps[dnd-list] {
   min-height: 42px;
   padding-left: 0;
 }
+
 /**
  * The dndDraggingSource class will be applied to
  * the source element of a drag operation. It makes
@@ -160,6 +163,7 @@ ul.transformsteps[dnd-list] {
 ul.transformsteps[dnd-list] .dndDraggingSource {
   display: none;
 }
+
 /**
  * An element with .dndPlaceholder class will be
  * added to the dnd-list while the user is dragging
@@ -170,6 +174,7 @@ ul.transformsteps[dnd-list] .dndPlaceholder {
   background-color: #ddd;
   min-height: 42px;
 }
+
 /**
  * The dnd-lists's child elements currently MUST have
  * position: relative. Otherwise we can not determine
@@ -186,6 +191,7 @@ ul.transformsteps[dnd-list] li {
   padding: 10px 15px;
   margin-bottom: -1px;
 }
+
 /**
  * Show selected elements in green
  */
@@ -193,12 +199,18 @@ ul.transformsteps[dnd-list] li.selected {
   background-color: #dff0d8;
   color: #3c763d;
 }
-.transformsteps .merge {
-  background-color: #c9ceff !important;
+
+.transformsteps{
+  .merge{
+    background-color: #c9ceff !important;
+  }
+  .drop{
+    background-color: #ffc1f8 !important;
+  }
 }
-.transformsteps .drop {
-  background-color: #ffc1f8 !important;
-}
-.step4-footer .btn {
-  margin-right: 5px;
+
+.step4-footer{
+  .btn{
+    margin-right: 5px;
+  }
 }

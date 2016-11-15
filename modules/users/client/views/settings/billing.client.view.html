@@ -1,16 +1,22 @@
 <section class="row" ng-controller="BillingController">
-  <div class="col-xs-offset-1 col-xs-10 col-md-offset-2 col-md-10" >
-    <ul class="nav nav-tabs">
-      <li ng-if="billing.last4" ui-sref-active="active">
-        <a ui-sref="settings.billing.subscription">My Subscription</a>
-      </li>
-      <li ng-if="billing.last4" ui-sref-active="active">
-        <a ui-sref="settings.billing.card">My Credit Card</a>
-      </li>
-      <li ng-if="invoices.length" ui-sref-active="active">
-        <a ui-sref="settings.billing.invoices">Invoices</a>
-      </li>
-    </ul>
 
-    <ui-view/>
+    <div ng-if="!user.emailIsVerified" class="alert alert-warning" role="alert">
+        Please verify your email address first!
+    </div>
+    <div  ng-if="user.emailIsVerified">
+      <div class="col-xs-offset-1 col-xs-10 col-md-offset-2 col-md-10" >
+        <ul class="nav nav-tabs">
+          <li ng-if="billing.last4" ui-sref-active="active">
+            <a ui-sref="settings.billing.subscription">My Subscription</a>
+          </li>
+          <li ng-if="billing.last4" ui-sref-active="active">
+            <a ui-sref="settings.billing.card">My Credit Card</a>
+          </li>
+          <li ng-if="invoices.length" ui-sref-active="active">
+            <a ui-sref="settings.billing.invoices">Invoices</a>
+          </li>
+        </ul>
+
+        <ui-view/>
+    </div>
 </section>

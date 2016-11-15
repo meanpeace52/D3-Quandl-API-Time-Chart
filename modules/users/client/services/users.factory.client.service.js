@@ -46,7 +46,7 @@ angular.module('users')
                     url: 'api/users/' + username + '/models/' + model,
                     method: 'GET'
                 }).then(function (res) {
-                    console.log('userdata: ', res);
+                    //console.log('userdata: ', res);
                     return res.data;
                 }).catch(function (err) {
                     console.log('error finding user', err);

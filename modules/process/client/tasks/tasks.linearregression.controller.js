@@ -1,17 +1,20 @@
 'use strict';
 
 angular.module('process')
-    .controller('LROptionsController', ['$stateParams', 'Datasets', 'selectedDataset', function($stateParams, Datasets, selectedDataset) {
+    .controller('LROptionsController', ['$stateParams', 'ProcessStateService', 'toastr',
+        function($stateParams, ProcessStateService, toastr) {
 
-      var vm = this;
+            var vm = this;
 
-      vm.options = $stateParams.options || {};
+            vm.columns = ProcessStateService.getSelectedDataset().columns;
 
-      if (selectedDataset) {
-        Datasets.getDatasetWithS3(selectedDataset._id)
-        .then(function (data) {
-          vm.columns = data.columns;
-        });
-      }
+            vm.options = $stateParams.options;
 
-    }]);
+            vm.update = function(){
+                var currentProcess = ProcessStateService.currentProcessTasksData();
+                currentProcess.tasks[$stateParams.id].options = vm.options;
+                ProcessStateService.saveProcessTasksData(currentProcess);
+                toastr.success('Updated options successfully!');
+            };
+
+        }]);
