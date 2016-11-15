@@ -5,6 +5,7 @@
  */
 var _ = require('lodash'),
     defaultAssets = require('./config/assets/default'),
+    devAssets = require('./config/assets/development'),
     testAssets = require('./config/assets/test'),
     gulp = require('gulp'),
     gulpLoadPlugins = require('gulp-load-plugins'),
@@ -115,8 +116,9 @@ gulp.task('eslint', function () {
 // JS minifying task
 gulp.task('uglify', function () {
     var assets = _.union(
-        defaultAssets.client.js,
-        defaultAssets.client.templates
+        devAssets.client.lib.js,
+        devAssets.client.js,
+        devAssets.client.templates
     );
 
     return gulp.src(assets)
@@ -130,7 +132,13 @@ gulp.task('uglify', function () {
 
 // CSS minifying task
 gulp.task('cssmin', function () {
-    return gulp.src(defaultAssets.client.css)
+
+  var assets = _.union(
+      devAssets.client.lib.css,
+      devAssets.client.css
+  );
+
+    return gulp.src(assets)
         .pipe(plugins.cssmin())
         .pipe(plugins.concat('application.min.css'))
         .pipe(gulp.dest('public/dist'));
@@ -299,5 +307,5 @@ gulp.task('debug', function (done) {
 
 // Run the project in production mode
 gulp.task('prod', function (done) {
-    runSequence('templatecache', 'build', 'env:prod', 'lint', ['nodemon', 'watch'], done);
+    runSequence('templatecache', 'env:prod', ['nodemon', 'watch'], done);
 });
