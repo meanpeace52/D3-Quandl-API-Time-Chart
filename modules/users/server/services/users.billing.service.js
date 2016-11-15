@@ -6,17 +6,7 @@ var path = require('path'),
     stripe = require('stripe')(config.stripe.secret_key),
     errorHandler = require(path.resolve('./modules/core/server/controllers/errors.server.controller'));
 
-var plans = [
-      {name:'Premium', price:10,id:'premium',stripe_id:'premium_monthly', period:1},
-      {name:'Small Business', price:60,id:'small_business',stripe_id:'small_business_monthly', period:1},
-      {name:'Enterprise', price:200,id:'enterprise', stripe_id:'enterprise_monthly', period:1},
-      {name:'Premium', price:50,id:'premium',stripe_id:'premium6', period:6},
-      {name:'Small Business', price:290,id:'small_business',stripe_id:'small_business6', period:6},
-      {name:'Enterprise', price:950,id:'enterprise', stripe_id:'enterprise6', period:6},
-      {name:'Premium', price:80,id:'premium',stripe_id:'premium_yearly', period:12},
-      {name:'Small Business', price:450,id:'small_business',stripe_id:'small_business_yearly', period:12},
-      {name:'Enterprise', price:1400,id:'enterprise', stripe_id:'enterprise_yearly', period:12}
-    ];
+var plans = config.stripePlans;
 
 
    function purchaseItem (item, type, token, user, next){

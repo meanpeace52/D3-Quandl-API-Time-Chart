@@ -80,6 +80,16 @@ module.exports = {
     secret_key: process.env.STRIPE_SECRET || 'sk_test_HhURh1PDuU8KuJLk8ASmcjtU',
     publishable_key: process.env.STRIPE_PUBLIC || 'pk_test_5gsED75zyGfKF9TlVIXo4adn',
   },
+  stripePlans:[
+        {name:'Premium', price:10,id:'premium',stripe_id:'premium_monthly', period:1},
+        {name:'Small Business', price:60,id:'small_business',stripe_id:'small_business_monthly', period:1},
+        {name:'Enterprise', price:200,id:'enterprise', stripe_id:'enterprise_monthly', period:1},
+        {name:'Premium', price:50,id:'premium',stripe_id:'premium6', period:6},
+        {name:'Small Business', price:290,id:'small_business',stripe_id:'small_business6', period:6},
+        {name:'Enterprise', price:950,id:'enterprise', stripe_id:'enterprise6', period:6},
+        {name:'Premium', price:80,id:'premium',stripe_id:'premium_yearly', period:12},
+        {name:'Small Business', price:450,id:'small_business',stripe_id:'small_business_yearly', period:12},
+        {name:'Enterprise', price:1400,id:'enterprise', stripe_id:'enterprise_yearly', period:12}],
   seedDB: {
     seed: process.env.MONGO_SEED === 'true' ? true : false,
     options: {
