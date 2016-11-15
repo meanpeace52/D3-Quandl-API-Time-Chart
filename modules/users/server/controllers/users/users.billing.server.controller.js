@@ -65,7 +65,6 @@ var path = require('path'),
      * Get the available plans
      */
     exports.getPlans = function (req, res) {
-      console.log(billingService.plans);
       res.json(billingService.plans);
     };
 
