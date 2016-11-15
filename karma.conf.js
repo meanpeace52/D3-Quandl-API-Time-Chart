@@ -5,6 +5,7 @@
  */
 var _ = require('lodash'),
   defaultAssets = require('./config/assets/default'),
+  devAssets = require('./config/assets/development'),
   testAssets = require('./config/assets/test'),
   testConfig = require('./config/env/test'),
   karmaReporters = ['progress'];
@@ -39,7 +40,7 @@ module.exports = function (karmaConfig) {
     },
 
     // List of files / patterns to load in the browser
-    files: _.union(defaultAssets.client.lib.js, defaultAssets.client.lib.tests, defaultAssets.client.js, testAssets.tests.client, defaultAssets.client.views),
+    files: _.union(devAssets.client.lib.js, devAssets.client.lib.tests, defaultAssets.client.js, testAssets.tests.client, defaultAssets.client.views),
 
     // Test results reporter to use
     // Possible values: 'dots', 'progress', 'junit', 'growl', 'coverage'
