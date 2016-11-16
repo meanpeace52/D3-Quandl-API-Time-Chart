@@ -16,10 +16,36 @@ exports.deployrRun = function (req, response) {
 
     var generator = new RCodeGenerator();
 
+    var s3reference = req.body.processData.selecteddatasets3reference.replace('https://s3.amazonaws.com/datasetstl', '');
+
+    generator.setS3Configuration(config.s3AccessKeyId, config.s3SecretAccessKey, 'datasetstl')
+        .loads3File(s3reference, 'csvfile')
+        .loadCsvFile('csvfile', 'dataset');
+
     _.each(req.body.tasks, function(task){
         if (task.title === 'Linear Regression'){
             generator
-                .linearRegression(config.s3AccessKeyId, config.s3SecretAccessKey, 'datasetstl', '/test12345/34130f79766ca9afc495f6eea8cf7d58.csv', parseInt(task.options.yColIndex + 1, 10));
+                .linearRegression(config.s3AccessKeyId, config.s3SecretAccessKey, 'datasetstl', s3reference, parseInt(task.options.yColIndex + 1, 10));
+        }
+        else if (task.title === 'Initial Transformations'){
+            _.each(task.options.transformSteps, function(step){
+                if (step.type === 'drop'){
+                    //Exclude any undefined columns
+                    step.columnindexes = _.filter(step.columnindexes, function(i){
+                        return i > -1;
+                    });
+
+                    // Add one to index as R is not 0 based
+                    generator.dropColumns('dataset', step.columnindexes.map(function(column){
+                        return column + 1;
+                    }).join(','));
+                }
+                else if (step.type === 'rename') {
+                    generator.renameColumns('dataset', step.newcolumnnames.map(function(column){
+                        return '"' + column.replace(/"/g, '\\"') + '"';
+                    }).join(','));
+                }
+            });
         }
     });
 

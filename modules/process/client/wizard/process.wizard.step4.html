@@ -67,11 +67,14 @@
                 ng-click="ProcessStep4.performProcess()">
             Perform Workflow
         </button>
-        <button class="btn btn-primary pull-right"
+        <div ng-if="ProcessStep4.showProcessLoader" class="loader pull-right">
+            <i class="spinner"></i>
+        </div>
+        <!--<button class="btn btn-primary pull-right"
                 ng-if="ProcessStep4.showProcessLoader"
                 ng-click="ProcessStep4.cancelProcess()">
             Stop Workflow
-        </button>
+        </button>-->
 
         <button ng-click="ProcessWizard.goBack()" class="btn btn-seconday pull-left">Back - Prepare you data with transforms</button>
         </div>

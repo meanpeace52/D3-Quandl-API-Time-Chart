@@ -3,11 +3,12 @@
 angular.module('process')
     .factory('Deployr', ['$q', '$http', function($q, $http) {
       return {
-        run: function(tasks) {
+        run: function(tasks, processData) {
           var dfd = $q.defer();
 
           $http.post('/api/deployr/run', {
-            tasks : tasks
+            tasks : tasks,
+            processData : processData
           })
               .success(function (data, status, headers, config) {
                 dfd.resolve(data);

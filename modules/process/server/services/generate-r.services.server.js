@@ -50,16 +50,26 @@ function RCodeGenerator(){
         return this;
     };
 
+    this.renameColumns = function(datavar, columnnames){
+        this.code += 'colnames(' + datavar + ') <- c(' + columnnames + ')\n';
+        return this;
+    };
+
+    this.dropColumns = function(datavar, columnnumbers){
+        this.code += datavar + '[c(' + columnnumbers + ')] <- list(NULL)\n';
+        return this;
+    };
+
     this.linearRegression = function(s3accessKey, s3secretKey, s3bucket, inputData, yColIndex){
-        this.setS3Configuration(s3accessKey, s3secretKey, s3bucket)
-            .loads3File(inputData, 'csvfile')
-            .loadCsvFile('csvfile', 'dataset')
-            .printLMFit('dataset', yColIndex);
+        this.printLMFit('dataset', yColIndex);
         return this;
     };
 
     this.execute = function(host, username, password){
         var self = this;
+
+        console.log(this.code);
+
         return new Promise(function(resolve, reject){
             var project = null;
             deployr.configure({ host: host });

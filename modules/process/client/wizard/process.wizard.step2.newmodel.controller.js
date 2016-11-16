@@ -42,6 +42,7 @@ angular.module('process')
 
                 var processData = ProcessStateService.currentProcessData();
                 processData.selecteddataset = dataset._id;
+                processData.selecteddatasets3reference = dataset.s3reference;
                 processData.step1selection = 'new-model';
                 ProcessStateService.saveProcessData(processData);
                 $scope.$emit('changeState', 'lab.process2.step3');

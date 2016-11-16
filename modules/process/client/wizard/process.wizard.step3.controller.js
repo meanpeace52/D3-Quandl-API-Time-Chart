@@ -266,9 +266,11 @@ angular.module('process')
                 });
 
                 var columnsToBeDropped = [];
+                var columnIndexes = [];
                 _.forOwn(vm.excludedcolumns, function(value, key) {
                     if (value){
                         columnsToBeDropped.push(key);
+                        columnIndexes.push(vm.availablecolumns.indexOf(key));
                     }
                 });
 
@@ -276,6 +278,7 @@ angular.module('process')
                     var transformStep = { };
                     transformStep.type = 'drop';
                     transformStep.columnnames = columnsToBeDropped;
+                    transformStep.columnindexes = columnIndexes;
                     vm.transformSteps.push(transformStep);
 
                     ProcessStateService.saveTransformSteps(vm.transformSteps);
@@ -302,19 +305,25 @@ angular.module('process')
 
             vm.updateTransformProcessTask = function(){
                 var currentProcessTasksData = ProcessStateService.currentProcessTasksData();
-
+                var existingTask = _.find(currentProcessTasksData.tasks, {title: 'Initial Transformations'});
                 if (vm.transformSteps.length){
-                    var existingTask = _.find(currentProcessTasksData.tasks, {title: 'Initial Transformations'});
                     if (!existingTask) {
                         var taskDetail = _.find(vm.tasks, {title: 'Initial Transformations'});
-                        taskDetail.subtasks[0].options = vm.transformSteps;
+                        taskDetail.subtasks[0].options = {
+                            transformSteps: vm.transformSteps
+                        };
                         currentProcessTasksData.tasks.unshift(taskDetail.subtasks[0]);
                     }
                     else{
-                        existingTask.options = vm.transformSteps;
+                        existingTask.options.transformSteps = vm.transformSteps;
                     }
-                    ProcessStateService.saveProcessTasksData(currentProcessTasksData);
                 }
+                else{
+                    if (existingTask) {
+                        currentProcessTasksData.tasks = _.without(currentProcessTasksData.tasks, existingTask);
+                    }
+                }
+                ProcessStateService.saveProcessTasksData(currentProcessTasksData);
             };
 
             vm.addTransformStep = function(action){

@@ -12,6 +12,7 @@ angular.module('process')
             vm.taskoptionsview = '';
 
             vm.process = ProcessStateService.currentProcessTasksData();
+            vm.processData = ProcessStateService.currentProcessData();
 
             vm.tasks = Tasks.getTasks();
             vm.displayTasks = _.filter(vm.tasks, function(task){
@@ -113,10 +114,10 @@ angular.module('process')
             function process(tasks, deferred, results) {
                 if (!deferred) deferred = $q.defer();
                 if (!results) results = [];
-                Deployr.run(tasks)
+                Deployr.run(tasks, vm.processData)
                     .then(function (res) {
                         var result = res;
-                        if (tasks[0].returnType === 'dataset') {
+                        if (tasks[tasks.length - 1].returnType === 'dataset') {
                             if (!result.length) {
                                 return deferred.reject('one of the tasks returned empty dataset!');
                             }
