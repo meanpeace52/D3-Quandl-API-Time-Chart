@@ -158,7 +158,7 @@ angular.module('process')
                                 controllerAs: 'ModelModal',
                                 templateUrl: 'modules/process/client/model/model.modal.html',
                                 size: 'md',
-                                backdrop: true,
+                                backdrop: 'static',
                                 resolve: {
                                     selectedDataset: function () {
                                         //return Process.getSelectedDataset();

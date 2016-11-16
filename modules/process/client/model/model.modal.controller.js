@@ -11,6 +11,14 @@ angular.module('process')
         vm.tasks = tasks;
         vm.saving = false;
 
+        vm.tabs = ['Model', 'Transformation Steps'];
+
+        vm.activeTab = vm.tabs[0];
+
+        vm.changeTab = function(tab){
+            vm.activeTab = tab;
+        };
+
         var lastResult = _.last(results);
         //if (Array.isArray(lastResult)) {
           vm.model = {

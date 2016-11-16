@@ -139,15 +139,15 @@ ul.drop-list li.task-arrow:after {
  * For the correct positioning of the placeholder element, the dnd-list and
  * it's children must have position: relative
  */
-ul.transformsteps[dnd-list],
-ul.transformsteps[dnd-list] > li {
+ul.transformsteps,
+ul.transformsteps > li {
   position: relative;
 }
 /**
  * The dnd-list should always have a min-height,
  * otherwise you can't drop to it once it's empty
  */
-ul.transformsteps[dnd-list] {
+ul.transformsteps {
   min-height: 42px;
   padding-left: 0;
 }
@@ -157,7 +157,7 @@ ul.transformsteps[dnd-list] {
  * sense to hide it to give the user the feeling
  * that he's actually moving it.
  */
-ul.transformsteps[dnd-list] .dndDraggingSource {
+ul.transformsteps .dndDraggingSource {
   display: none;
 }
 /**
@@ -165,7 +165,7 @@ ul.transformsteps[dnd-list] .dndDraggingSource {
  * added to the dnd-list while the user is dragging
  * over it.
  */
-ul.transformsteps[dnd-list] .dndPlaceholder {
+ul.transformsteps .dndPlaceholder {
   display: block;
   background-color: #ddd;
   min-height: 42px;
@@ -177,7 +177,7 @@ ul.transformsteps[dnd-list] .dndPlaceholder {
  * half of the element we are dragging over. In other
  * browsers we can use event.offsetY for this.
  */
-ul.transformsteps[dnd-list] li {
+ul.transformsteps li {
   background-color: #fff;
   border: 1px solid #ddd;
   border-top-right-radius: 4px;
@@ -189,7 +189,7 @@ ul.transformsteps[dnd-list] li {
 /**
  * Show selected elements in green
  */
-ul.transformsteps[dnd-list] li.selected {
+ul.transformsteps li.selected {
   background-color: #dff0d8;
   color: #3c763d;
 }
