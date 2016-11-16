@@ -8,7 +8,7 @@
       "NODE_ENV": "development"
     },
     "env_staging" : {
-      "NODE_ENV" : "development",
+      "NODE_ENV" : "production",
     },
     "env_production" : {
       "NODE_ENV" : "production",
@@ -29,4 +29,3 @@
     }
   }
 }
-
