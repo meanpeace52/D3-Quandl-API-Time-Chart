@@ -13,7 +13,7 @@ var path = require('path'),
     config = require(path.resolve('./config/config')),
     stripe = require('stripe')(config.stripe.secret_key),
     errorHandler = require(path.resolve('./modules/core/server/controllers/errors.server.controller')),
-    email = require(path.resolve('./modules/core/server/controllers/emails.server.controller')),
+    email = require(path.resolve('./modules/core/server/services/emails.server.service')),
     accountController = require(path.resolve('./modules/users/server/controllers/users/users.gettingpaid.server.controller'));
 
 
@@ -50,7 +50,7 @@ var path = require('path'),
               User.findOne({stripeCustomer: customer}, function(err, user){
                 if(err) return res.status('400').send(errorHandler.getErrorMessage(err));
 
-                email.send(user.email, 'You have a new invoice', {invoice:invoice, name:user.displayName},
+                email.sendToUser(user, 'You have a new invoice', {invoice:invoice},
                   'modules/users/server/templates/invoice-email', next);
               });
 
@@ -60,7 +60,7 @@ var path = require('path'),
               User.findOne({stripeCustomer: customer}, function(err, user){
                 if(err) return res.status('400').send(errorHandler.getErrorMessage(err));
 
-                email.send(user.email, 'Your payment failed', {invoice:invoice, name:user.displayName, url:accountController.getHostUrl(req)+'/settings/billing/card'},
+                email.sendToUser(user, 'Your payment failed', {invoice:invoice, url:accountController.getHostUrl(req)+'/settings/billing/card'},
                   'modules/users/server/templates/billing-failed-email', next);
               });
 
@@ -74,7 +74,7 @@ var path = require('path'),
                 function(err, user){
                   if(err) return res.status('400').send(errorHandler.getErrorMessage(err));
 
-                  email.send(user.email, 'Your subscription was cancelled', {name:user.displayName},
+                  email.sendToUser(user, 'Your subscription was cancelled', {},
                     'modules/users/server/templates/subscription-cancelled-email', next);
               });
 
@@ -137,16 +137,16 @@ var path = require('path'),
                   if(err) return res.status('400').send(errorHandler.getErrorMessage(err));
                   user.stripeChargesEnabled = false;
                   user.save(function (err){
-                    email.send(user.email, 'Selling of items has been disabled',
-                    {name:user.displayName, url:accountController.getHostUrl(req) + '/settings/gettingpaid/account'},
+                    email.sendToUser(user, 'Selling of items has been disabled',
+                    {url:accountController.getHostUrl(req) + '/settings/gettingpaid/account'},
                       'modules/users/server/templates/account-charges-disabled', next);
                     });
                 });
               } else if (previous_attributes.transfers_enabled && !account.transfers_enabled) {
                 User.findOne({stripeAccount: account.id}, function(err, user){
                   if(err) return res.status('400').send(errorHandler.getErrorMessage(err));
-                  email.send(user.email, 'Transfers to your bank account are disabled',
-                  {name:user.displayName, url:accountController.getHostUrl(req) + '/settings/gettingpaid/account'},
+                  email.sendToUser(user, 'Transfers to your bank account are disabled',
+                  {url:accountController.getHostUrl(req) + '/settings/gettingpaid/account'},
                     'modules/users/server/templates/account-transfers-disabled', next);
                   });
               } else {
@@ -159,11 +159,6 @@ var path = require('path'),
         });
       });
     };
-
-
-
-
-
 
 
     exports.getEvents = function(req, res) {

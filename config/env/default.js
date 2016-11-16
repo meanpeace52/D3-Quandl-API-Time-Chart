@@ -28,7 +28,7 @@ module.exports = {
     secure: false
   },
   // sessionSecret should be changed for security measures and concerns
-  sessionSecret: process.env.SESSION_SECRET || 'MEAN',
+  sessionSecret: process.env.SESSION_SECRET || 'Ao3KR6b6zuzvcpDZ6g1HamfZUW09qM4CwKmtgbuxyhwhSZtBw68Yi9i8jN/v+MSaOP+ujSHQSbW40IWk4pi7E4PeAqB1B1yLYdTl',
   // sessionKey is set to the generic sessionId key used by PHP applications
   // for obsecurity reasons
   sessionKey: 'sessionId',

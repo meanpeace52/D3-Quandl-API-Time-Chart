@@ -6,8 +6,7 @@ angular.module('users').controller('GettingPaidAdditionalController', ['$scope',
     // Create file uploader instance
     $scope.uploader = new FileUploader({
       url: 'api/users/account/document',
-      alias: 'newAccountDocument',
-      resumeChunkSize:100000
+      alias: 'newAccountDocument'
     });
 
     // Set file uploader image filter

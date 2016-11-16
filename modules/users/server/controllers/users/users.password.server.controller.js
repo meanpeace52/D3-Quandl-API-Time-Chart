@@ -10,7 +10,7 @@ var path = require('path'),
   User = mongoose.model('User'),
   async = require('async'),
   crypto = require('crypto'),
-  email = require(path.resolve('./modules/core/server/controllers/emails.server.controller'));
+  email = require(path.resolve('./modules/core/server/services/emails.server.service'));
 
 
 /**
