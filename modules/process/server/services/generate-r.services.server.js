@@ -44,8 +44,30 @@ function RCodeGenerator(){
     };
 
     this.printLMFit = function(inputData, yColIndex){
-        this.code += 'colnames(' + inputData + ')[' + yColIndex + ']<-"depvar"\n';
-        this.code += 'lm.fit<- lm(depvar~.,data=' + inputData + ')\n';
+        this.code += 'print_lm <- function(fit, digits = 4) {\n';
+
+        this.code += 'if (class(fit) != "lm") {\n';
+        this.code += '        stop("First agrument should be of class lm!")\n';
+        this.code += '}\n';
+
+        this.code += 'cf <- coef(fit)\n';
+
+        this.code += 'yname <- as.character(attr(fit$terms, which = "variables"))[2]\n';
+
+
+        this.code += 'intercept <- sprintf(sprintf("%%0.%df", digits), cf[1])\n';
+
+        this.code += 'xpart <- paste(sprintf(sprintf(" %%s %%0.%df*%%s", digits),\n';
+        this.code += 'ifelse(cf[-1] > 0, "+", "-"), abs(cf[-1]), names(cf)[-1]), collapse = "")\n';
+
+        this.code += 'sprintf("%s = %s%s", yname, intercept, xpart)\n';
+        this.code += '}\n';
+
+        this.code += 'lm.fit <- lm(mpg ~ ., data = ' + inputData + ')\n';
+        this.code += 'print_lm(lm.fit, digits = 2)\n';
+
+        //this.code += 'colnames(' + inputData + ')[' + yColIndex + ']<-"depvar"\n';
+        //this.code += 'lm.fit<- lm(depvar~.,data=' + inputData + ')\n';
         this.code += 'print(summary(lm.fit))\n';
         return this;
     };
@@ -65,7 +87,7 @@ function RCodeGenerator(){
         return this;
     };
 
-    this.saveCVSToS3File = function(savevar, filename, ext, s3bucket, filevar){
+    this.saveCSVToS3File = function(savevar, filename, ext, s3bucket, filevar){
         if (!this.s3configured){
             throw new Error('You need to call setS3Configuration before you can run this function. RCodeGenerator.loads3File()');
         }

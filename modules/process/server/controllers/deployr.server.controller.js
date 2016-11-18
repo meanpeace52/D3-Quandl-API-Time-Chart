@@ -49,8 +49,10 @@ exports.deployrRun = function (req, response) {
         }
     });
 
+    var outputFileKey = '/' + req.user.username + '/' + (new Date().getTime()).toString(16);
+
     generator
-        .saveCVSToS3File('dataset', '/test12345/12345', 'csv', 'datasetstl', 'savedfile');
+        .saveCSVToS3File('dataset', outputFileKey, 'csv', 'datasetstl', 'savedfile');
 
     generator
         .execute(config.deployrHost, config.deployrUsername, config.deployrPassword)
