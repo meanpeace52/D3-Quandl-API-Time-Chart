@@ -7,6 +7,7 @@ var path = require('path'),
     config = require(path.resolve('./config/config')),
     deployr = require('deployr'),
     _ = require('lodash'),
+    datasetS3service = require(path.resolve('./modules/datasets/server/services/datasets.server.s3')),
     RCodeGenerator = require('../services/generate-r.services.server.js');
 
 /**
@@ -51,13 +52,30 @@ exports.deployrRun = function (req, response) {
 
     var outputFileKey = '/' + req.user.username + '/' + (new Date().getTime()).toString(16);
 
-    generator
-        .saveCSVToS3File('dataset', outputFileKey, 'csv', 'datasetstl', 'savedfile');
+    if (generator.transformedDataset){
+        generator
+            .saveCSVToS3File('dataset', outputFileKey, 'csv', 'datasetstl', 'savedfile');
+    }
+
 
     generator
         .execute(config.deployrHost, config.deployrUsername, config.deployrPassword)
         .then(function(result){
-            response.json(result);
+            if (generator.transformedDataset) {
+                datasetS3service.readWithS3('https://s3.amazonaws.com/datasetstl' + outputFileKey + '.csv')
+                    .then(function(data){
+                        result.dataset = data;
+                        result.dataset.rows = _.take(result.dataset.rows, 10);
+                        response.json(result);
+                    })
+                    .catch(function(err){
+                        response.status(500).json(err);
+                    });
+            }
+            else{
+                response.json(result);
+            }
+
         })
         .catch(function(err){
             response.status(500).json(err);

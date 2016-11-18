@@ -9,7 +9,28 @@
       <div role="tabpanel" ng-repeat="item in ModelModal.tabs" ng-class="{'active' : item == ModelModal.activeTab }" class="tab-pane">
           <div ng-if="item == 'Dataset'">
               <div ng-if="ModelModal.dataset">
-                  <p>The dataset has been modified!</p>
+                  <div style="width: 100%;overflow: auto;">
+                      <dataset-table columns="ModelModal.dataset.columns" rows="ModelModal.dataset.rows"></dataset-table>
+                  </div>
+                  <div class="col-md-12">
+                      <form class="form-inline">
+                          <div class="form-group">
+                              <label>Dataset Title:</label>
+                              <input type="text" ng-model="ModelModal.dataset.title" class="form-control" />
+                          </div>
+                          <div class="form-group">
+                              <label>Access:</label>
+                              <select class="form-control" ng-model="ModelModal.dataset.access">
+                                  <option value="public">Public</option>
+                                  <option value="sale">For Sale</option>
+                                  <option value="private">Private</option>
+                              </select>
+                          </div>
+                          <div class="form-group">
+                              <button class="btn btn-primary">Save</button>
+                          </div>
+                      </form>
+                  </div>
               </div>
           </div>
           <div ng-if="item == 'Model'">
@@ -32,6 +53,9 @@
                               <option value="paid">For Sale</option>
                               <option value="private">Private</option>
                           </select>
+                      </div>
+                      <div class="form-group">
+                          <button class="btn btn-primary">Save</button>
                       </div>
                   </form>
               </div>
@@ -67,32 +91,13 @@
 </div>
 <div class="modal-footer">
 
-  <div class="row" ng-if="ModelModal.dataset">
-    <div class="col-md-12">
-      <form class="form-inline">
-        <div class="form-group">
-          <label>Dataset Title:</label>
-          <input type="text" ng-model="ModelModal.dataset.title" class="form-control" />
-        </div>
-        <div class="form-group">
-          <label>Access:</label>
-          <select class="form-control" ng-model="ModelModal.dataset.access">
-            <option value="public">Public</option>
-            <option value="sale">For Sale</option>
-            <option value="private">Private</option>
-          </select>
-        </div>
-      </form>
-    </div>
-  </div>
-
   <div class="row">
     <div class="col-md-12">
-      <button class="btn btn-primary" ng-disabled="ModelModal.saving" ng-click="ModelModal.save()">
+      <!--<button class="btn btn-primary" ng-disabled="ModelModal.saving" ng-click="ModelModal.save()">
         <span ng-if="!ModelModal.saving">Save</span>
         <span ng-if="ModelModal.saving">Saving...</span>
-      </button>
-      <button class="btn btn-danger" ng-click="ModelModal.discard()">Discard</button>
+      </button>-->
+      <button class="btn btn-danger" ng-click="ModelModal.discard()">Close</button>
     </div>
   </div>
 

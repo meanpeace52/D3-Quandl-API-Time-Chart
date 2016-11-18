@@ -6,50 +6,31 @@ angular.module('process')
           function ($uibModalInstance, $state, $stateParams, $q, Authentication, Datasets, Models, tasks, results) {
             var vm = this;
 
-        vm.model = null;
-        vm.dataset = null;
-        vm.tasks = tasks;
-        vm.saving = false;
+            vm.model = null;
+            vm.dataset = null;
+            vm.tasks = tasks;
+            vm.saving = false;
+            vm.tabs = ['Transformation Steps'];
 
-        vm.tabs = ['Model', 'Transformation Steps'];
+            if (results.dataset){
+                vm.dataset = results.dataset;
+                vm.tabs.unshift('Dataset');
+            }
 
-        vm.activeTab = vm.tabs[0];
+            if (tasks[tasks.length - 1].returnType === 'model'){
+                vm.model = {
+                    type: tasks[tasks.length - 1].title,
+                    equation: _.find(results.objects, { name : 'equation' }).value,
+                    output: results.console
+                };
+                vm.tabs.unshift('Model');
+            }
 
-        vm.changeTab = function(tab){
-            vm.activeTab = tab;
-        };
+            vm.activeTab = vm.tabs[0];
 
-        var lastResult = results;
-        //if (Array.isArray(lastResult)) {
-          vm.model = {
-            type: 'Linear Regression',
-            equation: _.find(lastResult.objects, { name : 'equation' }).value,
-            output: lastResult.console
-          };
-          //vm.dataset = _.last(_.dropRight(results));
-        //} else {
-        //  vm.dataset = lastResult;
-        //}
-
-        function getDataset() {
-          var deferred = $q.defer();
-          if (!vm.dataset) {
-            //deferred.resolve(selectedDataset._id);
-          } else {
-            Datasets.insert({
-              //selectedDataset: selectedDataset,
-              title: vm.dataset.title,
-              rows: vm.dataset.rows,
-              columns: vm.dataset.columns
-            })
-            .then(function(dataset) {
-              deferred.resolve(dataset);
-            }, function(err) {
-              deferred.reject(err);
-            });
-          }
-          return deferred.promise;
-        }
+            vm.changeTab = function(tab){
+                vm.activeTab = tab;
+            };
 
         vm.save = function() {
           vm.saving = true;

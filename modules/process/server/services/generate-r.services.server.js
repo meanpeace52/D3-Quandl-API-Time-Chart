@@ -6,6 +6,7 @@ function RCodeGenerator(){
 
     this.code = 'require(deployrUtils)\n';
     this.outputVars = [];
+    this.transformedDataset = false;
 
     this.setS3Configuration = function(s3accessKey, s3secretKey, s3bucket){
         this.code += 'library("aws.s3")\n';
@@ -74,11 +75,13 @@ function RCodeGenerator(){
 
     this.renameColumns = function(datavar, columnnames){
         this.code += 'colnames(' + datavar + ') <- c(' + columnnames + ')\n';
+        this.transformedDataset = true;
         return this;
     };
 
     this.dropColumns = function(datavar, columnnumbers){
         this.code += datavar + '[c(' + columnnumbers + ')] <- list(NULL)\n';
+        this.transformedDataset = true;
         return this;
     };
 
