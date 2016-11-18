@@ -12,14 +12,9 @@ var mongoose = require('mongoose'),
 var ProcessSchema = new Schema({
     title: {
         type: String,
-        default: '',
-        required: 'Please give this Process a title',
-        trim: true
+        required: 'Please give this Process a title'
     },
-    tasks: [{
-        title: String,
-        slug: String,
-    }],
+    tasks: [],
     created: {
         type: Date,
         default: Date.now
@@ -32,12 +27,13 @@ var ProcessSchema = new Schema({
         type: Schema.ObjectId,
         ref: 'Dataset'
     },
-    access: {
-        type: [{
-            type: String,
-            enum: ['private']
-        }],
-        default: ['private']
+    model: {
+        type: Schema.ObjectId,
+        ref: 'Model'
+    },
+    type: {
+        type: String,
+        required: 'Please give this Process a type'
     }
 });
 

@@ -21,6 +21,7 @@ angular.module('process')
                 vm.model = {
                     type: tasks[tasks.length - 1].title,
                     equation: _.find(results.objects, { name : 'equation' }).value,
+                    metrics: _.find(results.objects, { name : 'metrics' }).value,
                     output: results.console
                 };
                 vm.tabs.unshift('Model');
@@ -34,6 +35,7 @@ angular.module('process')
 
         vm.save = function() {
           vm.saving = true;
+          /*
           getDataset()
             .then(function(dataset) {
               if (vm.model) {
@@ -66,6 +68,7 @@ angular.module('process')
             .finally(function() {
               vm.saving = false;
             });
+            */
         };
 
         vm.discard = function() {

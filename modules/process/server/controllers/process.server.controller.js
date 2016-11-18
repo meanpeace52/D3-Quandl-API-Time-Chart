@@ -14,7 +14,7 @@ var path = require('path'),
 exports.list = function (req, res) {
     Process.find({})
         .sort('-created')
-        .populate('user', 'displayName')
+        .populate('user', 'username')
         .exec(function (err, datasets) {
             if (err) {
                 return res.status(400).send({
@@ -32,10 +32,8 @@ exports.list = function (req, res) {
  */
 exports.listByUserId = function (req, res) {
     Process.find({
-            user: req.params.userId,
-            dataset: req.query.dataset
+            user: req.user._id
         })
-        .limit(100)
         .sort('-created')
         .exec(function (err, processes) {
             if (err) {
@@ -53,6 +51,7 @@ exports.listByUserId = function (req, res) {
  * Create a process
  */
 exports.create = function (req, res) {
+    req.body.process.user = req.user._id;
     new Process(req.body.process)
         .save(function (err, process) {
             if (err) {
@@ -73,7 +72,7 @@ exports.read = function (req, res) {
     Process.findOne({
             _id: req.params.processId
         })
-        .populate('user', 'displayName')
+        .populate('user', 'username')
         .exec(function (err, process) {
             if (err) {
                 res.status(400).send({

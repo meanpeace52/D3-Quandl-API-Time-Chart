@@ -203,21 +203,31 @@ angular.module('process')
 
             vm.saveProcess = function(){
                 var process = _.clone(vm.process);
-                //process.tasks = process.tasks.map(function (task) {
-                //    return _.pick(task, ['title', 'slug']);
-                //});
+
+                if (process.title === ''){
+                    toastr.error('Please provide a workflow title.');
+                    return;
+                }
+                process.dataset = ProcessStateService.currentProcessData().selecteddataset;
+                process.type= ProcessStateService.currentProcessData().step1selection;
+
                 if (process._id) {
                     Process.update(process)
                         .then(function (process) {
                             toastr.success('Process updated successfully!');
-                            //var index = _.findIndex(vm.usersProcesses, {_id: process._id});
-                            //vm.usersProcesses[index] = process;
+                        })
+                        .catch(function(err){
+                            $log.error(err);
+                            toastr.error('Error saving process!');
                         });
                 } else {
-                    //process.dataset = Process.getSelectedDataset()._id;
                     Process.create(process)
                         .then(function (process) {
                             toastr.success('Process created successfully!');
+                        })
+                        .catch(function(err){
+                            $log.error(err);
+                            toastr.error('Error saving process!');
                         });
                 }
             };

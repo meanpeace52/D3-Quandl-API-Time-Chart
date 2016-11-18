@@ -56,7 +56,6 @@ function RCodeGenerator(){
 
         this.code += 'yname <- as.character(attr(fit$terms, which = "variables"))[2]\n';
 
-
         this.code += 'intercept <- sprintf(sprintf("%%0.%df", digits), cf[1])\n';
 
         this.code += 'xpart <- paste(sprintf(sprintf(" %%s %%0.%df*%%s", digits),\n';
@@ -65,11 +64,30 @@ function RCodeGenerator(){
         this.code += 'sprintf("%s = %s%s", yname, intercept, xpart)\n';
         this.code += '}\n';
 
+        this.code += 'get_metrics <- function(fit, digits = 4) {\n';
+
+        this.code += 'if (class(fit) != "lm") {\n';
+        this.code += 'stop("First argument should be of class lm!")\n';
+        this.code += '}\n';
+
+        this.code += 'smr <- summary(fit)\n';
+
+        this.code += 'list(\n';
+        this.code += 'r_squared = round(smr$r.squared, digits),\n';
+        this.code += 'adj_r_squared = round(smr$adj.r.squared, digits),\n';
+        this.code += 'f_statistics = as.numeric(round(smr$fstatistic[1], digits)),\n';
+        this.code += 'p_value = as.numeric(pf(smr$fstatistic[1L], smr$fstatistic[2L], smr$fstatistic[3L], lower.tail = FALSE))[1]\n';
+        this.code += ')\n';
+        this.code += '}\n';
+
         this.code += 'colnames(' + inputData + ')[' + yColIndex + ']<-"depvar"\n';
         this.code += 'lm.fit<- lm(depvar~.,data=' + inputData + ')\n';
         this.code += 'equation <- print_lm(lm.fit, digits = 2)\n';
+        this.code += 'metrics <- get_metrics(lm.fit)\n';
         this.code += 'print(summary(lm.fit))\n';
+
         this.outputVars.push('equation');
+        this.outputVars.push('metrics');
         return this;
     };
 

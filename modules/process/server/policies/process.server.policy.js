@@ -25,7 +25,7 @@ exports.invokeRolesPolicies = function () {
                     permissions: ['get', 'put', 'delete']
                 },
                 {
-                    resources: '/api/process/user/:userId',
+                    resources: '/api/process/user',
                     permissions: ['get']
                 }
             ]
@@ -42,7 +42,7 @@ exports.invokeRolesPolicies = function () {
                     permissions: ['get', 'put', 'delete']
                 },
                 {
-                    resources: '/api/process/user/:userId',
+                    resources: '/api/process/user',
                     permissions: ['get']
                 },
                 {
@@ -54,18 +54,7 @@ exports.invokeRolesPolicies = function () {
         {
             roles: ['guest'],
             allows: [
-                {
-                    resources: '/api/process',
-                    permissions: ['get']
-                },
-                {
-                    resources: '/api/process/:processId',
-                    permissions: ['get']
-                },
-                {
-                    resources: '/api/process/user/:userId',
-                    permissions: ['get']
-                }
+
             ]
         }
     ]);

@@ -1,9 +1,7 @@
 'use strict';
 
 angular.module('process')
-    .factory('Process', ['$http', function($http) {
-      var currentProcess = null;
-      var selectedDataset = null;
+    .factory('Process', ['$http', '$q', function($http, $q) {
       var usersDatasets = null;
 
       return {
@@ -13,53 +11,44 @@ angular.module('process')
         getUsersDatasets: function() {
           return usersDatasets;
         },
-        setSelectedDataset: function(dataset) {
-          selectedDataset = dataset;
-        },
-        getSelectedDataset: function() {
-          return selectedDataset;
-        },
-        setSelectedProcess: function(process) {
-          currentProcess = process;
-        },
-        getSelectedProcess: function() {
-          return currentProcess;
-        },
-        getByUser: function(datasetId, userId) {
-          return $http({
-            url: 'api/process/user/' + userId + '?dataset=' + datasetId,
-            method: 'GET'
-          }).then(function(res) {
-              return res.data;
-          }, function (err) {
-              console.log(err);
-          });
+        getByUser: function() {
+          var dfd = $q.defer();
+
+          $http.get('api/process/user')
+              .success(function (data, status, headers, config) {
+                dfd.resolve(data);
+              })
+              .error(function (data, status, headers, config) {
+                dfd.reject(data);
+              });
+
+          return dfd.promise;
         },
         create: function(process) {
-          return $http({
-            url: 'api/process',
-            method: 'POST',
-            data: {
-              process: process
-            }
-          }).then(function(res) {
-              return res.data;
-          }, function (err) {
-              console.log(err);
-          });
+          var dfd = $q.defer();
+
+          $http.post('api/process', { process: process })
+            .success(function (data, status, headers, config) {
+              dfd.resolve(data);
+            })
+            .error(function (data, status, headers, config) {
+              dfd.reject(data);
+            });
+
+          return dfd.promise;
         },
         update: function(process) {
-          return $http({
-            url: 'api/process/' + process._id,
-            method: 'PUT',
-            data: {
-              process: process
-            }
-          }).then(function(res) {
-            return res.data;
-          }, function(err) {
-            console.log(err);
-          });
+          var dfd = $q.defer();
+
+          $http.put('api/process/' + process._id, { process: process })
+              .success(function (data, status, headers, config) {
+                dfd.resolve(data);
+              })
+              .error(function (data, status, headers, config) {
+                dfd.reject(data);
+              });
+
+          return dfd.promise;
         },
         remove: function(process) {
           return $http({
