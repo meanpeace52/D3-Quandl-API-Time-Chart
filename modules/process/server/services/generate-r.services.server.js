@@ -65,6 +65,19 @@ function RCodeGenerator(){
         return this;
     };
 
+    this.saveCVSToS3File = function(savevar, filename, ext, s3bucket, filevar){
+        if (!this.s3configured){
+            throw new Error('You need to call setS3Configuration before you can run this function. RCodeGenerator.loads3File()');
+        }
+
+        this.code += 'temp <- tempfile(pattern = "file", tmpdir = "", fileext = ".csv")\n';
+        this.code += 'temp <- paste(".", temp, sep="")\n';
+        this.code += 'write.csv(' + savevar + ', file = temp, row.names=FALSE)\n';
+        this.code += 'filename <- paste("' + filename + '", "' + ext + '", sep=".")\n';
+        this.code += filevar + ' <- put_object(temp, bucket="' + s3bucket + '", object = filename)\n';
+        this.code += 'unlink(temp)\n';
+    };
+
     this.execute = function(host, username, password){
         var self = this;
 

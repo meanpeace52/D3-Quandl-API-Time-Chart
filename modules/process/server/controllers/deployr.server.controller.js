@@ -50,6 +50,9 @@ exports.deployrRun = function (req, response) {
     });
 
     generator
+        .saveCVSToS3File('dataset', '/test12345/12345', 'csv', 'datasetstl', 'savedfile');
+
+    generator
         .execute(config.deployrHost, config.deployrUsername, config.deployrPassword)
         .then(function(result){
             response.json(result);
