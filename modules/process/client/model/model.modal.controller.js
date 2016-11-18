@@ -19,12 +19,12 @@ angular.module('process')
             vm.activeTab = tab;
         };
 
-        var lastResult = _.last(results);
+        var lastResult = results;
         //if (Array.isArray(lastResult)) {
           vm.model = {
             type: 'Linear Regression',
-            equation: 'Some equation',
-            output: lastResult
+            equation: _.find(lastResult.objects, { name : 'equation' }).value,
+            output: lastResult.console
           };
           //vm.dataset = _.last(_.dropRight(results));
         //} else {

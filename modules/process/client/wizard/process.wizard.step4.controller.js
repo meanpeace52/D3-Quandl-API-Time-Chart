@@ -167,7 +167,7 @@ angular.module('process')
                                         return vm.process.tasks;
                                     },
                                     results: function () {
-                                        return [results[0].console];
+                                        return results[0];
                                     }
                                 }
                             });

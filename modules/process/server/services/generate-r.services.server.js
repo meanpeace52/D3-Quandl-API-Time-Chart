@@ -5,6 +5,7 @@ function RCodeGenerator(){
         Promise = require('bluebird');
 
     this.code = 'require(deployrUtils)\n';
+    this.outputVars = [];
 
     this.setS3Configuration = function(s3accessKey, s3secretKey, s3bucket){
         this.code += 'library("aws.s3")\n';
@@ -63,12 +64,11 @@ function RCodeGenerator(){
         this.code += 'sprintf("%s = %s%s", yname, intercept, xpart)\n';
         this.code += '}\n';
 
-        this.code += 'lm.fit <- lm(mpg ~ ., data = ' + inputData + ')\n';
-        this.code += 'print_lm(lm.fit, digits = 2)\n';
-
-        //this.code += 'colnames(' + inputData + ')[' + yColIndex + ']<-"depvar"\n';
-        //this.code += 'lm.fit<- lm(depvar~.,data=' + inputData + ')\n';
+        this.code += 'colnames(' + inputData + ')[' + yColIndex + ']<-"depvar"\n';
+        this.code += 'lm.fit<- lm(depvar~.,data=' + inputData + ')\n';
+        this.code += 'equation <- print_lm(lm.fit, digits = 2)\n';
         this.code += 'print(summary(lm.fit))\n';
+        this.outputVars.push('equation');
         return this;
     };
 
@@ -133,6 +133,7 @@ function RCodeGenerator(){
                 })
                 .io('/r/project/execute/code')
                 .data({ code: self.code, echooff : true })
+                .routputs(self.outputVars)
                 .error(function(err) {
                     console.log(err);
                     return reject({
