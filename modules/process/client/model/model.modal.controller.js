@@ -6,45 +6,36 @@ angular.module('process')
           function ($uibModalInstance, $state, $stateParams, $q, Authentication, Datasets, Models, tasks, results) {
             var vm = this;
 
-        vm.model = null;
-        vm.dataset = null;
-        vm.tasks = tasks;
-        vm.saving = false;
+            vm.model = null;
+            vm.dataset = null;
+            vm.tasks = tasks;
+            vm.saving = false;
+            vm.tabs = ['Transformation Steps'];
 
-        var lastResult = _.last(results);
-        //if (Array.isArray(lastResult)) {
-          vm.model = {
-            type: 'Linear Regression',
-            equation: 'Some equation',
-            output: $(lastResult).filter('.printable').find('pre').html()
-          };
-          //vm.dataset = _.last(_.dropRight(results));
-        //} else {
-        //  vm.dataset = lastResult;
-        //}
+            if (results.dataset){
+                vm.dataset = results.dataset;
+                vm.tabs.unshift('Dataset');
+            }
 
-        function getDataset() {
-          var deferred = $q.defer();
-          if (!vm.dataset) {
-            //deferred.resolve(selectedDataset._id);
-          } else {
-            Datasets.insert({
-              //selectedDataset: selectedDataset,
-              title: vm.dataset.title,
-              rows: vm.dataset.rows,
-              columns: vm.dataset.columns
-            })
-            .then(function(dataset) {
-              deferred.resolve(dataset);
-            }, function(err) {
-              deferred.reject(err);
-            });
-          }
-          return deferred.promise;
-        }
+            if (tasks[tasks.length - 1].returnType === 'model'){
+                vm.model = {
+                    type: tasks[tasks.length - 1].title,
+                    equation: _.find(results.objects, { name : 'equation' }).value,
+                    metrics: _.find(results.objects, { name : 'metrics' }).value,
+                    output: results.console
+                };
+                vm.tabs.unshift('Model');
+            }
+
+            vm.activeTab = vm.tabs[0];
+
+            vm.changeTab = function(tab){
+                vm.activeTab = tab;
+            };
 
         vm.save = function() {
           vm.saving = true;
+          /*
           getDataset()
             .then(function(dataset) {
               if (vm.model) {
@@ -77,6 +68,7 @@ angular.module('process')
             .finally(function() {
               vm.saving = false;
             });
+            */
         };
 
         vm.discard = function() {

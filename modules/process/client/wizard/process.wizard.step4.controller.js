@@ -12,6 +12,7 @@ angular.module('process')
             vm.taskoptionsview = '';
 
             vm.process = ProcessStateService.currentProcessTasksData();
+            vm.processData = ProcessStateService.currentProcessData();
 
             vm.tasks = Tasks.getTasks();
             vm.displayTasks = _.filter(vm.tasks, function(task){
@@ -110,13 +111,13 @@ angular.module('process')
                 });
             }
 
-            function process(inputFile, tasks, deferred, results) {
+            function process(tasks, deferred, results) {
                 if (!deferred) deferred = $q.defer();
                 if (!results) results = [];
-                Deployr.run(inputFile, tasks[0])
+                Deployr.run(tasks, vm.processData)
                     .then(function (res) {
                         var result = res;
-                        if (tasks[0].returnType === 'dataset') {
+                        if (tasks[tasks.length - 1].returnType === 'dataset') {
                             if (!result.length) {
                                 return deferred.reject('one of the tasks returned empty dataset!');
                             }
@@ -149,17 +150,15 @@ angular.module('process')
                     return;
                 }
                 vm.showProcessLoader = true;
-                process(vm.s3reference, vm.process.tasks.filter(function (task) {
-                    return task.script;
-                }))
+                process(vm.process.tasks)
                     .then(function (results) {
-                        if (results[0].status === 200) {
+                        //if (results[0].status === 200) {
                             var modalInstance = $uibModal.open({
                                 controller: 'ModelModalController',
                                 controllerAs: 'ModelModal',
                                 templateUrl: 'modules/process/client/model/model.modal.html',
                                 size: 'md',
-                                backdrop: true,
+                                backdrop: 'static',
                                 resolve: {
                                     selectedDataset: function () {
                                         //return Process.getSelectedDataset();
@@ -168,7 +167,7 @@ angular.module('process')
                                         return vm.process.tasks;
                                     },
                                     results: function () {
-                                        return [results[0].text];
+                                        return results[0];
                                     }
                                 }
                             });
@@ -179,18 +178,16 @@ angular.module('process')
                                 });
                                 //getDatasets();
                             });
-                        }
-                        else {
-                            $log.debug(results);
-                            toastr.error('An error occurred while processing.');
-                        }
+                        //}
+                        //else {
+                        //    $log.debug(results);
+                        //    toastr.error('An error occurred while processing.');
+                        //}
 
                     })
                     .catch(function (err) {
                         console.log('error', err);
-                        if (err instanceof Error) {
-                            alert(err.message || err);
-                        }
+                        toastr.error('An error occurred while running the workflow!');
                     })
                     .finally(function () {
                         vm.showProcessLoader = false;
@@ -206,21 +203,31 @@ angular.module('process')
 
             vm.saveProcess = function(){
                 var process = _.clone(vm.process);
-                //process.tasks = process.tasks.map(function (task) {
-                //    return _.pick(task, ['title', 'slug']);
-                //});
+
+                if (process.title === ''){
+                    toastr.error('Please provide a workflow title.');
+                    return;
+                }
+                process.dataset = ProcessStateService.currentProcessData().selecteddataset;
+                process.type= ProcessStateService.currentProcessData().step1selection;
+
                 if (process._id) {
                     Process.update(process)
                         .then(function (process) {
                             toastr.success('Process updated successfully!');
-                            //var index = _.findIndex(vm.usersProcesses, {_id: process._id});
-                            //vm.usersProcesses[index] = process;
+                        })
+                        .catch(function(err){
+                            $log.error(err);
+                            toastr.error('Error saving process!');
                         });
                 } else {
-                    //process.dataset = Process.getSelectedDataset()._id;
                     Process.create(process)
                         .then(function (process) {
                             toastr.success('Process created successfully!');
+                        })
+                        .catch(function(err){
+                            $log.error(err);
+                            toastr.error('Error saving process!');
                         });
                 }
             };

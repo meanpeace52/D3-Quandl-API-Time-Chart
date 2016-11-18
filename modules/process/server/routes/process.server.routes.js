@@ -15,13 +15,13 @@ module.exports = function (app) {
         .get(process.list)
         .post(process.create);
 
+    app.route('/api/process/user').all(processPolicy.isAllowed)
+        .get(process.listByUserId);
+
     app.route('/api/process/:processId').all(processPolicy.isAllowed)
         .get(process.read)
         .put(process.update)
         .delete(process.delete);
-
-    app.route('/api/process/user/:userId').all(processPolicy.isAllowed)
-        .get(process.listByUserId);
 
     app.route('/api/deployr/run').all(processPolicy.isAllowed)
         .post(deployr.deployrRun);

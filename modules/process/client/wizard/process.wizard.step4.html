@@ -1,14 +1,6 @@
 <h2>Add a predictive model and finalize your workflow!</h2>
 <div class="container-fluid">
 
-    <div class="row">
-        <div class="form-group">
-            <label for="title" class="col-sm-3 control-label">Workflow Title:</label>
-            <div class="col-sm-9">
-                <input type="text" ng-model="ProcessStep4.process.title" class="form-control" id="title">
-            </div>
-        </div>
-    </div>
     <br/>
     <div class="row">
         <div class="col-md-3 task-accordion">
@@ -46,32 +38,37 @@
             <div class="options">
                 <div ui-view></div>
             </div>
+            <div class="row">
+                <div class="form-group">
+                    <label for="title" class="col-sm-3 control-label">Workflow Title:</label>
+                    <div class="col-sm-9">
+                        <input type="text" ng-model="ProcessStep4.process.title" class="form-control" id="title">
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 
-
     <div class="step4-footer">
         <button class="btn btn-default pull-right"
-                ng-if="!ProcessStep4.showProcessLoader"
-                ng-click="ProcessStep4.saveProcess()">
-            Save as New Workflow
-        </button>
-        <button class="btn btn-default pull-right"
-                ng-if="!ProcessStep4.showProcessLoader"
+                ng-if="!ProcessStep4.showProcessLoader && ProcessStep4.process.tasks.length"
                 ng-click="ProcessStep4.saveProcess()">
             Save Workflow
         </button>
         <button class="btn btn-primary pull-right"
                 ng-disabled="!ProcessStep4.process"
-                ng-if="!ProcessStep4.showProcessLoader"
+                ng-if="!ProcessStep4.showProcessLoader && ProcessStep4.process.tasks.length"
                 ng-click="ProcessStep4.performProcess()">
             Perform Workflow
         </button>
-        <button class="btn btn-primary pull-right"
+        <div ng-if="ProcessStep4.showProcessLoader" class="loader pull-right">
+            <i class="spinner"></i>
+        </div>
+        <!--<button class="btn btn-primary pull-right"
                 ng-if="ProcessStep4.showProcessLoader"
                 ng-click="ProcessStep4.cancelProcess()">
             Stop Workflow
-        </button>
+        </button>-->
 
         <button ng-click="ProcessWizard.goBack()" class="btn btn-seconday pull-left">Back - Prepare you data with transforms</button>
         </div>

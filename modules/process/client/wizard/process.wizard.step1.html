@@ -4,6 +4,13 @@
 <br/><br/>
 <label><input type="radio" name="selectedoption" ng-model="ProcessStep1.selectedoption" value="lab.process2.step2.newmodel">&nbsp;&nbsp;&nbsp;I want to fit a new model to a dataset and/or transform a dataset.</label>
 <br/><br/>
+<label><input type="radio" name="selectedoption" ng-model="ProcessStep1.selectedoption" value="lab.process2.step2.loadworkflow">&nbsp;&nbsp;&nbsp;Load previously saved workflow.</label>
+<br/><br/>
+<select ng-show="ProcessStep1.selectedoption == 'lab.process2.step2.loadworkflow'" ng-model="ProcessStep1.selectedworkflow" class="form-control" ng-options="workflow as workflow.title for workflow in ProcessStep1.workflows track by workflow._id">
+
+</select>
+<br/>
+<br/>
 <div class="text-right">
     <button class="btn btn-primary" ng-click="ProcessStep1.setSelectedOption(ProcessStep1.selectedoption)">Choose your data</button>
 </div>
