@@ -223,6 +223,8 @@ angular.module('process')
                 } else {
                     Process.create(process)
                         .then(function (process) {
+                            vm.process._id = process._id;
+                            ProcessStateService.saveProcessTasksData(vm.process);
                             toastr.success('Process created successfully!');
                         })
                         .catch(function(err){

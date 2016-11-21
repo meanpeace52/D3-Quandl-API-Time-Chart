@@ -2,8 +2,8 @@
 
 angular.module('process')
     .controller('ProcessWizardStep1Controller',
-    ['$state', '$stateParams', 'Authentication', 'toastr', '$log', 'ProcessStateService', 'Process',
-        function ($state, $stateParams, Authentication, toastr, $log, ProcessStateService, Process) {
+    ['$state', '$stateParams', 'Authentication', 'toastr', '$log', 'ProcessStateService', 'Process', '$localStorage',
+        function ($state, $stateParams, Authentication, toastr, $log, ProcessStateService, Process, $localStorage) {
             var vm = this;
 
             vm.selectedoption = 'lab.process2.step2.existingmodel';
@@ -30,12 +30,9 @@ angular.module('process')
 
             vm.setSelectedOption = function(state){
                 if (state === 'lab.process2.step2.loadworkflow'){
-                    if (vm.selectedworkflow.type === 'new-model'){
-                        state = 'lab.process2.step2.newmodel';
-                    }
-                    else{
-                        state = 'lab.process2.step2.existingmodel';
-                    }
+                    state = 'lab.process2.step3';
+
+                    $localStorage.savedWorkflow = true;
 
                     ProcessStateService.saveProcessData({
                         selecteddataset : vm.selectedworkflow.dataset,
@@ -52,9 +49,9 @@ angular.module('process')
                     if (initialTransformation){
                         ProcessStateService.saveTransformSteps(initialTransformation.options.transformSteps);
                     }
-
-
-
+                }
+                else{
+                    $localStorage.savedWorkflow = false;
                 }
 
                 ProcessStateService.changeState(state);
