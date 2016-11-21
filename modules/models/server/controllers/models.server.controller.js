@@ -201,6 +201,7 @@ exports.read = function (req, res) {
             _id: req.params.modelId
         })
         .populate('user', 'username')
+        .populate('dataset')
         .exec(function (err, model) {
             if (err) {
                 res.status(400).send({

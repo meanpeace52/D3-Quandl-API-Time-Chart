@@ -2,13 +2,18 @@
 
 angular.module('process')
     .controller('ProcessWizardStep1Controller',
-    ['$state', '$stateParams', 'Authentication', 'toastr', '$log', 'ProcessStateService', 'Process', '$localStorage',
-        function ($state, $stateParams, Authentication, toastr, $log, ProcessStateService, Process, $localStorage) {
+    ['$state', '$stateParams', 'Authentication', 'toastr', '$log', 'ProcessStateService', 'Process', '$localStorage', 'UsersFactory',
+        function ($state, $stateParams, Authentication, toastr, $log, ProcessStateService, Process, $localStorage, UsersFactory) {
             var vm = this;
 
             vm.selectedoption = 'lab.process2.step2.existingmodel';
 
             vm.user = Authentication.user;
+
+            UsersFactory.userData('datasets', vm.user.username)
+                .then(function (datasets) {
+                    vm.usersDatasets = datasets;
+                });
 
             Process.getByUser()
                 .then(function(workflows){
@@ -34,8 +39,11 @@ angular.module('process')
 
                     $localStorage.savedWorkflow = true;
 
+                    vm.selecteddataset = _.find(vm.usersDatasets, { _id : vm.selectedworkflow.dataset });
+
                     var processData = {
                         selecteddataset : vm.selectedworkflow.dataset,
+                        selecteddatasets3reference : vm.selecteddataset.s3reference,
                         step1selection : vm.selectedworkflow.type
                     };
 
