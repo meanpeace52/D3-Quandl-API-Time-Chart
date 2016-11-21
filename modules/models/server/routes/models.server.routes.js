@@ -26,6 +26,9 @@ module.exports = function (app) {
     app.route('/api/models/user/:id').all(modelPolicy.isAllowed)
         .get(model.listByUserId);
 
+    app.route('/api/models/dataset/:id').all(modelPolicy.isAllowed)
+        .get(model.getModelByDataset);
+
     app.route('/api/models/:modelId').all(modelPolicy.isAllowed)
         .get(model.read)
         .put(model.update)

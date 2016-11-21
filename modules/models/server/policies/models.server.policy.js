@@ -39,6 +39,10 @@ exports.invokeRolesPolicies = function () {
                 {
                     resources: '/api/models/copy',
                     permissions: ['post']
+                },
+                {
+                    resources: '/api/models/dataset/:id',
+                    permissions: ['get']
                 }
             ]
         },
@@ -68,25 +72,16 @@ exports.invokeRolesPolicies = function () {
                 {
                     resources: '/api/models/copy',
                     permissions: ['post']
+                },
+                {
+                    resources: '/api/models/dataset/:id',
+                    permissions: ['get']
                 }
             ]
         },
         {
             roles: ['guest'],
-            allows: [
-                {
-                    resources: '/api/models',
-                    permissions: ['get']
-                },
-                {
-                    resources: '/api/models/:modelId',
-                    permissions: ['get']
-                },
-                {
-                    resources: '/api/models/user/:userId',
-                    permissions: ['get']
-                }
-            ]
+            allows: []
         }
     ]);
 };

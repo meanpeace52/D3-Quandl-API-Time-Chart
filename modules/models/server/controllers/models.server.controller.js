@@ -269,6 +269,20 @@ exports.delete = function (req, res) {
     });
 };
 
+exports.getModelByDataset = function(req, res){
+    Model.findOne({ dataset : req.params.id })
+        .lean()
+        .exec(function(err, model){
+            if (err){
+                res.status(err.status).send(err);
+            }
+            else{
+                res.json(model);
+            }
+        });
+};
+
+
 exports.purchaseModel = function (id, user, next) {
     Model.findOneAndUpdate({ _id : id }, { $push : { buyers : user }}, function(err, doc){
         if (err){

@@ -21,6 +21,14 @@
                         </div>
                     </div>
                 </div>
+                <div class="form-group row" ng-if="datasetsEdit.model">
+                    <div class="col-md-2">
+                        <label>Linked Model</label>
+                    </div>
+                    <div class="col-md-10">
+                        <label>{{ datasetsEdit.model.title }}</label>
+                    </div>
+                </div>
                 <div class="form-group row" show-errors ng-if="datasetsEdit.user.plan != 'free'">
                     <div class="col-md-2">
                         <label for="access">Access</label>
