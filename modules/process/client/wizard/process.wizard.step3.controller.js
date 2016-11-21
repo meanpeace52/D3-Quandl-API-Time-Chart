@@ -317,6 +317,9 @@ angular.module('process')
                 }
                 process.dataset = ProcessStateService.currentProcessData().selecteddataset;
                 process.type= ProcessStateService.currentProcessData().step1selection;
+                if (ProcessStateService.currentProcessData().selectedmodel){
+                    process.model = ProcessStateService.currentProcessData().selectedmodel;
+                }
 
                 if (process._id) {
                     Process.update(process)
@@ -325,7 +328,7 @@ angular.module('process')
                         })
                         .catch(function(err){
                             $log.error(err);
-                            toastr.error('Error saving process!');
+                            toastr.error(err.message);
                         });
                 } else {
                     Process.create(process)
@@ -336,7 +339,7 @@ angular.module('process')
                         })
                         .catch(function(err){
                             $log.error(err);
-                            toastr.error('Error saving process!');
+                            toastr.error(err.message);
                         });
                 }
             };

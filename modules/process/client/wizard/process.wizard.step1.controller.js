@@ -34,10 +34,16 @@ angular.module('process')
 
                     $localStorage.savedWorkflow = true;
 
-                    ProcessStateService.saveProcessData({
+                    var processData = {
                         selecteddataset : vm.selectedworkflow.dataset,
                         step1selection : vm.selectedworkflow.type
-                    });
+                    };
+
+                    if (vm.selectedworkflow.type === 'existing-model'){
+                        processData.selectedmodel = vm.selectedworkflow.model;
+                    }
+
+                    ProcessStateService.saveProcessData(processData);
                     ProcessStateService.saveProcessTasksData({
                         _id : vm.selectedworkflow._id,
                         title : vm.selectedworkflow.title,

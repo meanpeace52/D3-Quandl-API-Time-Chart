@@ -70,7 +70,7 @@
             })
             .catch(function(err){
               $log.error(err);
-              toastr.error('Error creating model!');
+              toastr.error(err.message);
             });
       }
     }

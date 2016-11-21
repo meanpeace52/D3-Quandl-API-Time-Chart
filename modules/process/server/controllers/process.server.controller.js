@@ -51,18 +51,31 @@ exports.listByUserId = function (req, res) {
  * Create a process
  */
 exports.create = function (req, res) {
-    req.body.process.user = req.user._id;
-    new Process(req.body.process)
-        .save(function (err, process) {
-            if (err) {
-                res.status(400).send({
-                    message: errorHandler.getErrorMessage(err)
+    Process.findOne({ title : req.body.process.title, user : req.user._id }, function(err, foundprocess){
+        if (err){
+            return res.status(err.status).send({
+                message: errorHandler.getErrorMessage(err)
+            });
+        }
+
+        if (!foundprocess){
+            req.body.process.user = req.user._id;
+            new Process(req.body.process)
+                .save(function (err, process) {
+                    if (err) {
+                        res.status(400).send({
+                            message: errorHandler.getErrorMessage(err)
+                        });
+                    }
+                    else {
+                        res.json(process);
+                    }
                 });
-            }
-            else {
-                res.json(process);
-            }
-        });
+        }
+        else{
+            res.status(409).json('Workflow with this title already exists, please enter a different title.');
+        }
+    });
 };
 
 /**
@@ -89,16 +102,29 @@ exports.read = function (req, res) {
  * Update a process by id
  */
 exports.update = function (req, res) {
-    Process.update({
-        _id: req.params.processId
-    }, req.body.process, function (err, _res) {
+    Process.findOne({ title : req.body.process.title, user : req.user._id }, function(err, foundprocess) {
         if (err) {
-            res.status(400).send({
+            return res.status(err.status).send({
                 message: errorHandler.getErrorMessage(err)
             });
         }
-        else {
-            res.json(req.body.process);
+
+        if (!foundprocess || (foundprocess && foundprocess.id === req.body.process._id)) {
+            Process.update({
+                _id: req.params.processId
+            }, req.body.process, function (err, _res) {
+                if (err) {
+                    res.status(400).send({
+                        message: errorHandler.getErrorMessage(err)
+                    });
+                }
+                else {
+                    res.json(req.body.process);
+                }
+            });
+        }
+        else{
+            res.status(409).json('Workflow with this title already exists, please enter a different title.');
         }
     });
 };
