@@ -23,10 +23,15 @@ exports.deployrRun = function (req, response) {
         .loads3File(s3reference, 'csvfile')
         .loadCsvFile('csvfile', 'dataset');
 
+    var outputFileKey = '/' + req.user.username + '/' + (new Date().getTime()).toString(16);
+
     _.each(req.body.tasks, function(task){
         if (task.title === 'Linear Regression'){
             generator
-                .linearRegression(config.s3AccessKeyId, config.s3SecretAccessKey, 'datasetstl', s3reference, parseInt(task.options.yColIndex + 1, 10));
+                .saveCSVToS3File('dataset', outputFileKey, 'csv', 'datasetstl', 'savedfile');
+
+            generator
+                .linearRegression(config.s3AccessKeyId, config.s3SecretAccessKey, 'datasetstl', s3reference, parseInt(task.options.yColIndex, 10) + 1);
         }
         else if (task.title === 'Initial Transformations'){
             _.each(task.options.transformSteps, function(step){
@@ -50,13 +55,10 @@ exports.deployrRun = function (req, response) {
         }
     });
 
-    var outputFileKey = '/' + req.user.username + '/' + (new Date().getTime()).toString(16);
-
-    if (generator.transformedDataset){
+    if (!generator.transformedDataset){
         generator
             .saveCSVToS3File('dataset', outputFileKey, 'csv', 'datasetstl', 'savedfile');
     }
-
 
     generator
         .execute(config.deployrHost, config.deployrUsername, config.deployrPassword)

@@ -99,7 +99,6 @@ function RCodeGenerator(){
 
     this.dropColumns = function(datavar, columnnumbers){
         this.code += datavar + '[c(' + columnnumbers + ')] <- list(NULL)\n';
-        this.transformedDataset = true;
         return this;
     };
 
@@ -119,6 +118,9 @@ function RCodeGenerator(){
         this.code += 'filename <- paste("' + filename + '", "' + ext + '", sep=".")\n';
         this.code += filevar + ' <- put_object(temp, bucket="' + s3bucket + '", object = filename)\n';
         this.code += 'unlink(temp)\n';
+        this.datasetkey = filename + '.csv';
+        this.transformedDataset = true;
+        return this;
     };
 
     this.execute = function(host, username, password){
@@ -184,7 +186,8 @@ function RCodeGenerator(){
                         console : rconsole,
                         plots : plots,
                         files : files,
-                        objects : objects
+                        objects : objects,
+                        datasetkey : self.datasetkey
                     });
                 })
                 .ensure(function() {
