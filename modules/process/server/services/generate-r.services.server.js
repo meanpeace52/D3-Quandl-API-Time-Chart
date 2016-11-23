@@ -45,7 +45,11 @@ function RCodeGenerator(){
         return this;
     };
 
-    this.printLMFit = function(inputData, yColIndex){
+    this.printLMFit = function(inputData, yColIndex, filename){
+        if (!this.s3configured){
+            throw new Error('You need to call setS3Configuration before you can run this function. RCodeGenerator.loads3File()');
+        }
+
         this.code += 'print_lm <- function(fit, digits = 4) {\n';
 
         this.code += 'if (class(fit) != "lm") {\n';
@@ -85,6 +89,9 @@ function RCodeGenerator(){
         this.code += 'equation <- print_lm(lm.fit, digits = 2)\n';
         this.code += 'metrics <- get_metrics(lm.fit)\n';
         this.code += 'print(summary(lm.fit))\n';
+        this.code += 's3save(lm.fit, bucket="rdatamodels", object = "' + filename + '.rdata")\n';
+
+        this.modelkey = filename + '.rdata';
 
         this.outputVars.push('equation');
         this.outputVars.push('metrics');
@@ -102,8 +109,8 @@ function RCodeGenerator(){
         return this;
     };
 
-    this.linearRegression = function(s3accessKey, s3secretKey, s3bucket, inputData, yColIndex){
-        this.printLMFit('dataset', yColIndex);
+    this.linearRegression = function(s3accessKey, s3secretKey, s3bucket, inputData, yColIndex, filename){
+        this.printLMFit('dataset', yColIndex, filename);
         return this;
     };
 
@@ -187,7 +194,8 @@ function RCodeGenerator(){
                         plots : plots,
                         files : files,
                         objects : objects,
-                        datasetkey : self.datasetkey
+                        datasetkey : self.datasetkey,
+                        modelkey : self.modelkey
                     });
                 })
                 .ensure(function() {

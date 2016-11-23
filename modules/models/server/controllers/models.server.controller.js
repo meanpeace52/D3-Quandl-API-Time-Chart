@@ -101,6 +101,7 @@ exports.searchModel = function (req, res) {
                 .skip(req.query.itemsPerPage * (req.query.currentPage - 1))
                 .limit(req.query.itemsPerPage)
                 .populate('user', 'username')
+                .populate('dataset')
                 .lean()
                 .exec(function (err, results) {
                     if (err) {
@@ -169,6 +170,9 @@ exports.create = function (req, res) {
 
         if (!foundmodel){
             req.body.user = req.user._id;
+            if (req.body.modelkey){
+                req.body.s3reference = 'https://s3.amazonaws.com/rdatamodels' + req.body.modelkey;
+            }
             if (!req.user.plan || (req.user.plan && req.user.plan === 'free')){
                 req.body.access = 'public';
                 delete req.body.cost;

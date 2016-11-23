@@ -31,7 +31,7 @@ exports.deployrRun = function (req, response) {
                 .saveCSVToS3File('dataset', outputFileKey, 'csv', 'datasetstl', 'savedfile');
 
             generator
-                .linearRegression(config.s3AccessKeyId, config.s3SecretAccessKey, 'datasetstl', s3reference, parseInt(task.options.yColIndex, 10) + 1);
+                .linearRegression(config.s3AccessKeyId, config.s3SecretAccessKey, 'datasetstl', s3reference, parseInt(task.options.yColIndex, 10) + 1, outputFileKey);
         }
         else if (task.title === 'Initial Transformations'){
             _.each(task.options.transformSteps, function(step){

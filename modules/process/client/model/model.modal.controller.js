@@ -97,6 +97,7 @@ angular.module('process')
                 }
 
                 vm.modeldataset.datasetkey = results.datasetkey;
+                vm.model.modelkey = results.modelkey;
 
                 Datasets.create(vm.modeldataset)
                     .then(function(dataset){
