@@ -142,7 +142,7 @@ exports.listByUserId = function (req, res) {
             user: req.params.id
         })
         .populate('user', 'username')
-        .limit(100)
+        .populate('dataset')
         .sort('-created')
         .exec(function (err, models) {
             if (err) {

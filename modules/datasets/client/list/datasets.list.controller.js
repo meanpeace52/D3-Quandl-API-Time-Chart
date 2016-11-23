@@ -2,8 +2,8 @@
 
 //datasets List Controller
 angular.module('datasets').controller('DatasetsListController', ['$state', '$stateParams', '$sce', '$modal', 'Authentication',
-                                        'Datasets','UsersFactory', 'toastr', '$log', 'prompt', 'BillingService', '$rootScope',
-    function ($state, $stateParams, $sce, $modal, Authentication, Datasets, UsersFactory, toastr, $log, prompt, BillingService, $rootScope) {
+                                        'Datasets','UsersFactory', 'toastr', '$log', 'prompt', 'BillingService', '$rootScope', 'ModelsService',
+    function ($state, $stateParams, $sce, $modal, Authentication, Datasets, UsersFactory, toastr, $log, prompt, BillingService, $rootScope, ModelsService) {
         var vm = this;
 
         vm.authentication = Authentication;
@@ -50,22 +50,49 @@ angular.module('datasets').controller('DatasetsListController', ['$state', '$sta
                 });
         }
 
+        function removeDataset(dataset){
+            Datasets.remove(dataset)
+                .then(function () {
+                    vm.list = _.without(vm.list, dataset);
+                    toastr.success('Dataset deleted successfully.');
+                })
+                .catch(function (err) {
+                    $log.error(err);
+                    toastr.error('Error deleting dataset.');
+                });
+        }
+
+
         vm.deleteDataset = function(dataset){
             if (vm.user._id === dataset.user._id || vm.user._id === dataset.user){
-                prompt({
-                    title: 'Confirm Delete?',
-                    message: 'Are you sure you want to delete this dataset?'
-                }).then(function() {
-                    Datasets.remove(dataset)
-                        .then(function () {
-                            vm.list = _.without(vm.list, dataset);
-                            toastr.success('Dataset deleted successfully.');
-                        })
-                        .catch(function (err) {
-                            $log.error(err);
-                            toastr.error('Error deleting dataset.');
-                        });
-                });
+                ModelsService.findmodelbydataset(dataset._id)
+                    .then(function(model){
+                        if (model === null){
+                            prompt({
+                                title: 'Confirm Delete?',
+                                message: 'Are you sure you want to delete this dataset?'
+                            }).then(function() {
+                                removeDataset(dataset);
+                            });
+                        }
+                        else{
+                            prompt({
+                                title: 'Is that ok?',
+                                message: 'This dataset was used to fit a model - if you delete the dataset, the model you created with it will be deleted as well?'
+                            }).then(function() {
+                                ModelsService.remove(model);
+
+                                removeDataset(dataset);
+                            });
+                        }
+
+                    })
+                    .catch(function(err){
+                        $log.error(err);
+                        toastr.error('Error loading model.');
+                    });
+
+
             }
         };
 

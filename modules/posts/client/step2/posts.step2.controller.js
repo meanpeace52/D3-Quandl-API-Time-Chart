@@ -2,9 +2,11 @@
 
 //posts Step2 Controller
 angular.module('posts')
-    .controller('postsStep2Controller', ['$scope', '$state', '$stateParams', 'Authentication', 'posts', '$uibModal', '$window', '$timeout', 'FileUploader', 'postOptions',
-                'Models', 'Datasets', '$log', 'toastr', 'ModelsService', 'modelOptions',
-            function ($scope, $state, $stateParams, Authentication, posts, $uibModal, $window, $timeout, FileUploader, postOptions, Models, Datasets, $log, toastr, ModelsService, modelOptions) {
+    .controller('postsStep2Controller', ['$scope', '$state', '$stateParams', 'Authentication', 'posts', '$uibModal',
+                '$window', '$timeout', 'FileUploader', 'postOptions', 'Models', 'Datasets', '$log', 'toastr',
+                'ModelsService', 'modelOptions', 'prompt',
+            function ($scope, $state, $stateParams, Authentication, posts, $uibModal, $window, $timeout, FileUploader,
+                      postOptions, Models, Datasets, $log, toastr, ModelsService, modelOptions, prompt) {
             var vm = this;
 
             vm.user = Authentication.user;
@@ -83,19 +85,58 @@ angular.module('posts')
                         vm.post.models = [];
                     }
 
-                    ModelsService.update(model)
-                        .then(function(){
-
-                        })
-                        .catch(function(err){
-                            $log.error(err);
+                    if (model.dataset.access !== model.access && model.dataset.cost !== model.cost) {
+                        prompt({
+                            title: 'Is that ok?',
+                            message: 'The price and access for the dataset used for this model needs to be the same, so we\'ll change it to match?'
+                        }).then(function(){
+                            model.dataset.access = model.access;
+                            model.dataset.cost = model.cost;
+                            updateDataset(model.dataset);
+                            updateModel(model, true);
                         });
+                    }
+                    else if (vm.model.dataset.access !== vm.model.access){
+                        prompt({
+                            title: 'Is that ok?',
+                            message: 'The access for the dataset used for this model must also be changed to ' + vm.model.access + '?'
+                        }).then(function(){
+                            model.dataset.access = model.access;
+                            updateDataset(vm.model.dataset);
+                            updateModel(model, true);
+                        });
+                    }
+                    else if (vm.model.dataset.cost !== vm.model.cost){
+                        prompt({
+                            title: 'Is that ok?',
+                            message: 'The price for the dataset used for this model cannot be higher than the model, so we\'ll change it to match?'
+                        }).then(function(){
+                            vm.model.dataset.cost = vm.model.cost;
+                            updateDataset(vm.model.dataset);
+                            updateModel(model, true);
+                        });
+                    }
+                    else{
+                        updateModel(model, true);
+                    }
+                }
+            };
 
+            function updateModel(model, updateList){
+                ModelsService.update(model)
+                    .then(function(){
+
+                    })
+                    .catch(function(err){
+                        $log.error(err);
+                    });
+
+                if (updateList){
                     vm.models = _.without(vm.models, model);
                     vm.model = undefined;
                     vm.post.models.push(model);
                 }
-            };
+            }
 
             vm.addDataset = function(dataset){
                 if (dataset.access !== 'private'){
@@ -103,19 +144,63 @@ angular.module('posts')
                         vm.post.datasets = [];
                     }
 
-                    Datasets.update(dataset)
-                        .then(function(){
+                    if (vm.datasetmodel !== null){
+                        if (dataset.access !== vm.datasetmodel.access && dataset.cost !== vm.datasetmodel.cost) {
+                            prompt({
+                                title: 'Is that ok?',
+                                message: 'The price and access for the model built on this dataset needs to be the same, so we\'ll change it to match?'
+                            }).then(function(){
+                                vm.datasetmodel.access = dataset.access;
+                                vm.datasetmodel.cost = dataset.cost;
+                                updateDataset(dataset, true);
+                                updateModel(vm.datasetmodel);
+                            });
+                        }
+                        else if (vm.datasetmodel.access !== dataset.access){
+                            prompt({
+                                title: 'Is that ok?',
+                                message: 'The access for the model built on this dataset must also be changed to ' + vm.dataset.access + '?'
+                            }).then(function(){
+                                vm.datasetmodel.access = dataset.access;
+                                updateDataset(dataset, true);
+                                updateModel(vm.datasetmodel);
+                            });
+                        }
+                        else if (vm.datasetmodel.cost !== dataset.cost){
+                            prompt({
+                                title: 'Is that ok?',
+                                message: 'You can\'t make a dataset more expensive to purchase than the model built on it, so we\'ll change it to match?'
+                            }).then(function(){
+                                vm.datasetmodel.cost = dataset.cost;
+                                updateDataset(dataset, true);
+                                updateModel(vm.datasetmodel);
+                            });
+                        }
+                        else{
+                            updateDataset(dataset, true);
+                        }
+                    }
+                    else {
+                        updateDataset(dataset, true);
+                    }
+                }
+            };
 
-                        })
-                        .catch(function(err){
-                            $log.error(err);
-                        });
+            function updateDataset(dataset, updateList){
+                Datasets.update(dataset)
+                    .then(function(){
 
+                    })
+                    .catch(function(err){
+                        $log.error(err);
+                    });
+
+                if (updateList){
                     vm.datasets = _.without(vm.datasets, dataset);
                     vm.dataset = undefined;
                     vm.post.datasets.push(dataset);
                 }
-            };
+            }
 
             vm.addExistingFile = function(existingFile){
                 if (!vm.post.files){
@@ -160,6 +245,17 @@ angular.module('posts')
                 else{
                     delete model.cost;
                 }
+            };
+
+            vm.datasetChange = function(dataset){
+                ModelsService.findmodelbydataset(dataset._id)
+                    .then(function(model){
+                        vm.datasetmodel = model;
+                    })
+                    .catch(function(err){
+                        $log.error(err);
+                        toastr.error('Error loading model.');
+                    });
             };
 
             // IMPORTANT : fileuploader must be kept on $scope because of bug with controllerAs
