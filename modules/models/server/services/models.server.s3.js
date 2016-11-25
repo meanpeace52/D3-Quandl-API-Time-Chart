@@ -23,7 +23,7 @@ var Promise = require('bluebird'),
     });
 
 function getS3LocalPath(filePath) {
-    return './s3-cache/'+ filePath;
+    return './s3-cache/rdatamodels/' + filePath;
 }
 
 function getFileFromS3(bucket, filePath) {
@@ -57,7 +57,7 @@ function getFileFromS3(bucket, filePath) {
 function saveFileToS3(filePath){
     return new Promise(function(resolve, reject) {
         var params = {
-            localFile: './s3-cache/' + filePath,
+            localFile: './s3-cache/rdatamodels/' + filePath,
             s3Params: {
                 Bucket: 'rdatamodels',
                 Key: filePath
@@ -89,8 +89,8 @@ function copyModelFile(username, s3reference){
             localBucketFile = getS3LocalPath(bucketFile),
             filename = (new Date().getTime()).toString(16),
         //https://s3.amazonaws.com/datasetstl/
-            filekey = 'rdatamodels/' + username + '/' + filename + '.rdata',
-            filepath = path.resolve('./') + '/s3-cache/' + filekey;
+            filekey = username + '/' + filename + '.rdata',
+            filepath = path.resolve('./') + '/s3-cache/rdatamodels/' + filekey;
 
         mkdirp.sync(path.resolve('./')+'/s3-cache/rdatamodels/' + username + '/');
 
@@ -102,7 +102,7 @@ function copyModelFile(username, s3reference){
                     fs.writeFileSync(filepath, fs.readFileSync(path.resolve('./') + '/s3-cache/' + localBucketFile.replace('./s3-cache', '')));
                     saveFileToS3(filekey)
                         .then(function () {
-                            resolve(filekey);
+                            resolve(bucket + '/' + filekey);
                         })
                         .catch(function(err) {
                             console.log(err);
@@ -119,7 +119,7 @@ function copyModelFile(username, s3reference){
                     fs.writeFileSync(filepath, fs.readFileSync(path.resolve('./') + '/s3-cache/' + localBucketFile.replace('./s3-cache', '')));
                     saveFileToS3(filekey)
                         .then(function () {
-                            resolve(filekey);
+                            resolve(bucket + '/' + filekey);
                         })
                         .catch(function(err) {
                             console.log(err);

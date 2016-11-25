@@ -192,6 +192,10 @@ exports.create = function (req, res) {
                 delete req.body.previewnote;
             }
 
+            if (req.body.datasetkey){
+                req.body.s3reference = 'https://s3.amazonaws.com/datasetstl' + req.body.datasetkey;
+            }
+
             var dataset = new Dataset(req.body);
             dataset.user = req.user._id;
 

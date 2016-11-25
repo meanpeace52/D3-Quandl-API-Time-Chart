@@ -101,6 +101,7 @@ exports.searchModel = function (req, res) {
                 .skip(req.query.itemsPerPage * (req.query.currentPage - 1))
                 .limit(req.query.itemsPerPage)
                 .populate('user', 'username')
+                .populate('dataset')
                 .lean()
                 .exec(function (err, results) {
                     if (err) {
@@ -142,7 +143,7 @@ exports.listByUserId = function (req, res) {
             user: req.params.id
         })
         .populate('user', 'username')
-        .limit(100)
+        .populate('dataset')
         .sort('-created')
         .exec(function (err, models) {
             if (err) {
@@ -169,6 +170,9 @@ exports.create = function (req, res) {
 
         if (!foundmodel){
             req.body.user = req.user._id;
+            if (req.body.modelkey){
+                req.body.s3reference = 'https://s3.amazonaws.com/rdatamodels' + req.body.modelkey;
+            }
             if (!req.user.plan || (req.user.plan && req.user.plan === 'free')){
                 req.body.access = 'public';
                 delete req.body.cost;
@@ -201,6 +205,7 @@ exports.read = function (req, res) {
             _id: req.params.modelId
         })
         .populate('user', 'username')
+        .populate('dataset')
         .exec(function (err, model) {
             if (err) {
                 res.status(400).send({
@@ -267,6 +272,20 @@ exports.delete = function (req, res) {
         }
     });
 };
+
+exports.getModelByDataset = function(req, res){
+    Model.findOne({ dataset : req.params.id })
+        .lean()
+        .exec(function(err, model){
+            if (err){
+                res.status(err.status).send(err);
+            }
+            else{
+                res.json(model);
+            }
+        });
+};
+
 
 exports.purchaseModel = function (id, user, next) {
     Model.findOneAndUpdate({ _id : id }, { $push : { buyers : user }}, function(err, doc){

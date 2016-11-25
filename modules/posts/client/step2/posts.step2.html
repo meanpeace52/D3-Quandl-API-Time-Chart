@@ -37,7 +37,7 @@
                                         <label class="control-label" for="dataset">Dataset</label>
                                     </div>
                                     <div class="col-md-9">
-                                        <select name="dataset" id="dataset" ng-model="postsStep2.dataset" class="form-control" ng-options="dataset as dataset.title for dataset in postsStep2.datasets">
+                                        <select name="dataset" id="dataset" ng-model="postsStep2.dataset" ng-change="postsStep2.datasetChange(postsStep2.dataset)" class="form-control" ng-options="dataset as dataset.title for dataset in postsStep2.datasets">
                                             <option value="">- Select Dataset -</option>
                                         </select>
                                     </div>
@@ -79,7 +79,7 @@
                                 </div>
                                 <div class="row">
                                     <div class="col-md-12">
-                                        <button ng-show="postsStep2.dataset" data-ng-click="postsStep2.addDataset(postsStep2.dataset)" class="btn btn-default text-capitalize" type="button" dropdown-toggle>
+                                        <button ng-show="postsStep2.dataset" ng-click="postsStep2.addDataset(postsStep2.dataset)" class="btn btn-default text-capitalize">
                                             Add Dataset
                                         </button>
                                     </div>

@@ -209,7 +209,10 @@ angular.module('process')
                     return;
                 }
                 process.dataset = ProcessStateService.currentProcessData().selecteddataset;
-                process.type= ProcessStateService.currentProcessData().step1selection;
+                if (ProcessStateService.currentProcessData().selectedmodel){
+                    process.model = ProcessStateService.currentProcessData().selectedmodel;
+                }
+                process.type = ProcessStateService.currentProcessData().step1selection;
 
                 if (process._id) {
                     Process.update(process)
@@ -218,16 +221,18 @@ angular.module('process')
                         })
                         .catch(function(err){
                             $log.error(err);
-                            toastr.error('Error saving process!');
+                            toastr.error(err.message);
                         });
                 } else {
                     Process.create(process)
                         .then(function (process) {
+                            vm.process._id = process._id;
+                            ProcessStateService.saveProcessTasksData(vm.process);
                             toastr.success('Process created successfully!');
                         })
                         .catch(function(err){
                             $log.error(err);
-                            toastr.error('Error saving process!');
+                            toastr.error(err.message);
                         });
                 }
             };

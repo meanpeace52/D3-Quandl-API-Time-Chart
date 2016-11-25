@@ -1,7 +1,18 @@
 <h2>Add a predictive model and finalize your workflow!</h2>
+<br/>
 <div class="container-fluid">
-
-    <br/>
+    <form class="form-inline pull-right">
+        <div class="form-group">
+            <label for="title" style="width: 150px;float: left;" class="control-label">Workflow Title:</label>
+            <input type="text" style="width: 400px;float: left;" ng-model="ProcessStep4.process.title" class="form-control" id="title">
+        </div>
+        <div class="form-group">
+            <button class="btn btn-default" ng-click="ProcessStep4.saveProcess()">
+                Save Workflow
+            </button>
+        </div>
+    </form>
+    <br class="clearfix" /><br/>
     <div class="row">
         <div class="col-md-3 task-accordion">
             <uib-accordion close-others="true">
@@ -38,23 +49,10 @@
             <div class="options">
                 <div ui-view></div>
             </div>
-            <div class="row">
-                <div class="form-group">
-                    <label for="title" class="col-sm-3 control-label">Workflow Title:</label>
-                    <div class="col-sm-9">
-                        <input type="text" ng-model="ProcessStep4.process.title" class="form-control" id="title">
-                    </div>
-                </div>
-            </div>
         </div>
     </div>
 
     <div class="step4-footer">
-        <button class="btn btn-default pull-right"
-                ng-if="!ProcessStep4.showProcessLoader && ProcessStep4.process.tasks.length"
-                ng-click="ProcessStep4.saveProcess()">
-            Save Workflow
-        </button>
         <button class="btn btn-primary pull-right"
                 ng-disabled="!ProcessStep4.process"
                 ng-if="!ProcessStep4.showProcessLoader && ProcessStep4.process.tasks.length"

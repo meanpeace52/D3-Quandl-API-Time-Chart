@@ -2,8 +2,8 @@
 
 angular.module('process')
     .controller('ProcessWizardStep3Controller',
-    ['$state', '$stateParams', 'Authentication', 'toastr', '$log', 'UsersFactory', 'ProcessStateService', 'Datasets', 'prompt', '$rootScope', 'Tasks',
-        function ($state, $stateParams, Authentication, toastr, $log, UsersFactory, ProcessStateService, Datasets, prompt, $rootScope, Tasks) {
+    ['$state', '$stateParams', 'Authentication', 'toastr', '$log', 'UsersFactory', 'ProcessStateService', 'Datasets', 'prompt', '$rootScope', 'Tasks', 'Process', '$localStorage',
+        function ($state, $stateParams, Authentication, toastr, $log, UsersFactory, ProcessStateService, Datasets, prompt, $rootScope, Tasks, Process, $localStorage) {
             var vm = this;
 
             vm.user = Authentication.user;
@@ -24,6 +24,9 @@ angular.module('process')
             else{
                 vm.tabs = ['Search Data', 'Transform Steps'];
             }
+
+
+            vm.process = ProcessStateService.currentProcessTasksData();
 
             vm.activeTab = vm.tabs[0];
 
@@ -50,6 +53,8 @@ angular.module('process')
             vm.changeTab = function(tab){
                 vm.activeTab = tab;
             };
+
+            vm.loadedSavedWorkflow = $localStorage.savedWorkflow && $localStorage.savedWorkflow === true;
 
             vm.transformSteps = ProcessStateService.currentTransformSteps();
 
@@ -301,6 +306,42 @@ angular.module('process')
                     ProcessStateService.saveTransformSteps(vm.transformSteps);
                     toastr.success('Step removed successfully!');
                 });
+            };
+
+            vm.saveProcess = function(){
+                var process = _.clone(vm.process);
+
+                if (process.title === ''){
+                    toastr.error('Please provide a workflow title.');
+                    return;
+                }
+                process.dataset = ProcessStateService.currentProcessData().selecteddataset;
+                process.type= ProcessStateService.currentProcessData().step1selection;
+                if (ProcessStateService.currentProcessData().selectedmodel){
+                    process.model = ProcessStateService.currentProcessData().selectedmodel;
+                }
+
+                if (process._id) {
+                    Process.update(process)
+                        .then(function (process) {
+                            toastr.success('Process updated successfully!');
+                        })
+                        .catch(function(err){
+                            $log.error(err);
+                            toastr.error(err.message);
+                        });
+                } else {
+                    Process.create(process)
+                        .then(function (process) {
+                            vm.process._id = process._id;
+                            ProcessStateService.saveProcessTasksData(vm.process);
+                            toastr.success('Process created successfully!');
+                        })
+                        .catch(function(err){
+                            $log.error(err);
+                            toastr.error(err.message);
+                        });
+                }
             };
 
             vm.updateTransformProcessTask = function(){

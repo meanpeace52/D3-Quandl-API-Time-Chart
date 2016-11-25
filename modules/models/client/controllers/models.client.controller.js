@@ -6,9 +6,9 @@
     .module('models')
     .controller('ModelsController', ModelsController);
 
-  ModelsController.$inject = ['$scope', '$state', 'Authentication', 'modelResolve', 'modelOptions', 'ModelsService', 'toastr', '$log', 'prompt'];
+  ModelsController.$inject = ['$scope', '$state', 'Authentication', 'modelResolve', 'modelOptions', 'ModelsService', 'toastr', '$log', 'prompt', 'Datasets'];
 
-  function ModelsController ($scope, $state, Authentication, model, modelOptions, ModelsService, toastr, $log, prompt) {
+  function ModelsController ($scope, $state, Authentication, model, modelOptions, ModelsService, toastr, $log, prompt, Datasets) {
     var vm = this;
 
     vm.authentication = Authentication;
@@ -39,15 +39,7 @@
       });
     }
 
-    // Save Model
-    function save(isValid) {
-      vm.submitted = true;
-      if (!isValid) {
-        $scope.$broadcast('show-errors-check-validity', 'vm.form.modelForm');
-        toastr.error('Please fix all validation errors, before you can save.');
-        return false;
-      }
-
+    function saveModel(){
       if (vm.model._id) {
         ModelsService.update(vm.model)
             .then(function(result){
@@ -70,8 +62,58 @@
             })
             .catch(function(err){
               $log.error(err);
-              toastr.error('Error creating model!');
+              toastr.error(err.message);
             });
+      }
+    }
+
+    function updateDataset(dataset){
+      Datasets.update(dataset);
+    }
+
+    // Save Model
+    function save(isValid) {
+      vm.submitted = true;
+      if (!isValid) {
+        $scope.$broadcast('show-errors-check-validity', 'vm.form.modelForm');
+        toastr.error('Please fix all validation errors, before you can save.');
+        return false;
+      }
+
+
+      if (vm.model.dataset.access !== vm.model.access && vm.model.dataset.cost !== vm.model.cost) {
+          prompt({
+            title: 'Is that ok?',
+            message: 'The price and access for the dataset used for this model needs to be the same, so we\'ll change it to match?'
+          }).then(function(){
+            vm.model.dataset.access = vm.model.access;
+            vm.model.dataset.cost = vm.model.cost;
+            updateDataset(vm.model.dataset);
+            saveModel();
+          });
+      }
+      else if (vm.model.dataset.access !== vm.model.access){
+        prompt({
+          title: 'Is that ok?',
+          message: 'The access for the dataset used for this model must also be changed to ' + vm.model.access + '?'
+        }).then(function(){
+          vm.model.dataset.access = vm.model.access;
+          updateDataset(vm.model.dataset);
+          saveModel();
+        });
+      }
+      else if (vm.model.dataset.cost !== vm.model.cost){
+        prompt({
+          title: 'Is that ok?',
+          message: 'The price for the dataset used for this model cannot be higher than the model, so we\'ll change it to match?'
+        }).then(function(){
+          vm.model.dataset.cost = vm.model.cost;
+          updateDataset(vm.model.dataset);
+          saveModel();
+        });
+      }
+      else{
+        saveModel();
       }
     }
   }

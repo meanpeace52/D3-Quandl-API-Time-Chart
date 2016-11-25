@@ -24,6 +24,9 @@ var ModelSchema = new Schema({
       type: Number,
       default: 0.7
     },
+    equation: String,
+    metrics: [],
+    output: String,
     model: Object,
     origModel: {
         type: Schema.ObjectId,

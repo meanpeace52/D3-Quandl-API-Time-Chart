@@ -5,9 +5,9 @@
     .module('models')
     .controller('ModelsListController', ModelsListController);
 
-  ModelsListController.$inject = ['$state', '$stateParams', 'Models', 'ModelsService', 'UsersFactory', 'prompt', 'toastr', '$log', 'Authentication', 'BillingService'];
+  ModelsListController.$inject = ['$state', '$stateParams', 'Models', 'ModelsService', 'UsersFactory', 'prompt', 'toastr', '$log', 'Authentication', 'BillingService', 'Datasets'];
 
-  function ModelsListController($state, $stateParams, Models, ModelsService, UsersFactory, prompt, toastr, $log, Authentication, BillingService) {
+  function ModelsListController($state, $stateParams, Models, ModelsService, UsersFactory, prompt, toastr, $log, Authentication, BillingService, Datasets) {
 
     var vm = this;
 
@@ -98,14 +98,23 @@
     };
 
     vm.copyModel = function(model){
-      ModelsService.addToUserApiCall(model)
-          .then(function (data) {
-            toastr.success('Model copied to your page.');
+      Datasets.addToUserApiCall(model.dataset)
+          .then(function(newdataset){
+            model.dataset = newdataset._id;
+            ModelsService.addToUserApiCall(model)
+                .then(function (data) {
+                  toastr.success('Model copied to your page.');
+                })
+                .catch(function (err) {
+                  $log.error(err);
+                  toastr.error('An error occurred while copying the model.');
+                });
           })
           .catch(function (err) {
             $log.error(err);
-            toastr.error('An error occurred while copying the model.');
+            toastr.error('An error occurred while copying the dataset for the model.');
           });
+
     };
 
     if ($state.current.name === 'models.filter') {

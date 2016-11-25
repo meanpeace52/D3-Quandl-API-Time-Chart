@@ -55,6 +55,14 @@ angular.module('process')
             };
           }
         },
+        getStateHistory: function(){
+          if ($localStorage.stateHistory){
+            return $localStorage.stateHistory;
+          }
+          else{
+            return [];
+          }
+        },
         changeState: function(state){
           $localStorage.stateHistory.push(state);
         },

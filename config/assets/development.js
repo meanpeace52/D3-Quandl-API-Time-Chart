@@ -37,7 +37,7 @@ module.exports = {
                 BOWER_PATH + 'moment/moment.js',
                 BOWER_PATH + 'angular-moment/angular-moment.js',
                 BOWER_PATH + 'angularjs-slider/dist/rzslider.js',
-                BOWER_PATH + 'ngInfiniteScroll/build/ng-infinite-scroll.js',
+                //BOWER_PATH + 'ngInfiniteScroll/build/ng-infinite-scroll.js',
                 BOWER_PATH + 'datatables/media/js/jquery.dataTables.min.js',
                 BOWER_PATH + 'datatables/media/js/dataTables.bootstrap.min.js',
                 BOWER_PATH + 'angular-datatables/dist/angular-datatables.js',
@@ -49,7 +49,7 @@ module.exports = {
                 BOWER_PATH + 'angular-payments/lib/angular-payments.js',
                 BOWER_PATH + 'angular-dob/lib/angular-dob.js',
                 BOWER_PATH + 'angular-prompt/dist/angular-prompt.js',
-                BOWER_PATH + 'ngstorage/ngStorage.js',
+                BOWER_PATH + 'ngstorage/ngStorage.js'
             ],
             tests: [BOWER_PATH + 'angular-mocks/angular-mocks.js']
         },
