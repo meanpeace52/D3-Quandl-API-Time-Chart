@@ -230,6 +230,15 @@ angular.module('process')
                 });
 
                 transformStep.selectedcolumns = selectedcolumns;
+
+                var colindex = 1;
+                transformStep.dropcolumns = [];
+                _.each(vm.availablecomparitivedatasetcolumns, function(column){
+                    if (_.contains(transformStep.selectedcolumns, column)){
+                        transformStep.dropcolumns.push(colindex);
+                    }
+                    colindex++;
+                });
                 transformStep.renamedcolumns = renamedcolumns;
                 transformStep.destinationkeyfield = vm.keyfield;
                 transformStep.type = 'merge';

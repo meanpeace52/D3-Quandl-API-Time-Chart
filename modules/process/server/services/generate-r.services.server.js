@@ -114,6 +114,22 @@ function RCodeGenerator(){
         return this;
     };
 
+    this.mergeDataset = function(dataset1, keyindex1, dataset2, keyindex2){
+        this.code += 'library(data.table)\n';
+
+        this.code += 'merge_dt <- function(df1, col1, df2, col2) {';
+        this.code += 'dt1 <- as.data.table(df1)';
+        this.code += 'dt2 <- as.data.table(df2)';
+        this.code += 'key1 <- colnames(dt1)[1]';
+        this.code += 'key2 <- colnames(dt2)[1]';
+        this.code += 'setkeyv(dt1, key1)';
+        this.code += 'setkeyv(dt2, key2)';
+        this.code += 'merge(dt1, dt2, by.x = key1, by.y = key2)';
+        this.code += '}';
+
+        this.code += 'merge_dt(df1 = ' + dataset1 + ', col1 = ' + keyindex1 + ', df2 = ' + dataset2 + ', col2 = ' + keyindex2 + ')';
+    };
+
     this.saveCSVToS3File = function(savevar, filename, ext, s3bucket, filevar){
         if (!this.s3configured){
             throw new Error('You need to call setS3Configuration before you can run this function. RCodeGenerator.loads3File()');
@@ -195,7 +211,8 @@ function RCodeGenerator(){
                         files : files,
                         objects : objects,
                         datasetkey : self.datasetkey,
-                        modelkey : self.modelkey
+                        modelkey : self.modelkey,
+                        code: self.code
                     });
                 })
                 .ensure(function() {

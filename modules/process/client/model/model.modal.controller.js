@@ -19,8 +19,9 @@ angular.module('process')
             vm.dataset = null;
             vm.tasks = tasks;
             vm.saving = false;
-            vm.tabs = ['Transformation Steps'];
+            vm.tabs = ['Transformation Steps', 'R Code'];
             vm.access = 'public';
+            vm.code = results.code;
 
             if (results.dataset) {
                 vm.dataset = results.dataset;

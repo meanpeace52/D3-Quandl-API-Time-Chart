@@ -51,6 +51,27 @@ exports.deployrRun = function (req, response) {
                         return '"' + column.replace(/"/g, '\\"') + '"';
                     }).join(','));
                 }
+                else if (step.type === 'merge'){
+                    if (step.source === 'dataset'){
+                        var datasets3reference = step.dataset.s3reference.replace('https://s3.amazonaws.com/datasetstl', '');
+
+                        generator
+                            .loads3File(datasets3reference, 'csvfile')
+                            .loadCsvFile('csvfile', 'mergedataset')
+                            .renameColumns('mergedataset', step.renamedcolumns.map(function(column){
+                                return '"' + column.replace(/"/g, '\\"') + '"';
+                            }).join(','));
+
+                        if (step.dropcolumns && step.dropcolumns.length > 0){
+                            generator.dropColumns('mergedataset', step.dropcolumns.map(function(column){
+                                return column;
+                            }).join(','));
+                        }
+                    }
+                    else{
+
+                    }
+                }
             });
         }
     });
