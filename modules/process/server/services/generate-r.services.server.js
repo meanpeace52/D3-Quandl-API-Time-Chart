@@ -9,6 +9,7 @@ function RCodeGenerator(){
     this.transformedDataset = false;
 
     this.setS3Configuration = function(s3accessKey, s3secretKey, s3bucket){
+        this.code += '# Function: setS3Configuration - Start\n';
         this.code += 'library("aws.s3")\n';
 
         this.code += 'accessKey <- "' + s3accessKey + '"\n';
@@ -17,6 +18,7 @@ function RCodeGenerator(){
 
         this.code += 'Sys.setenv("AWS_ACCESS_KEY_ID" = accessKey,\n';
         this.code += '           "AWS_SECRET_ACCESS_KEY" = secretKey)\n';
+        this.code += '# Function: setS3Configuration - End\n';
 
         this.s3configured = true;
 
@@ -28,6 +30,7 @@ function RCodeGenerator(){
             throw new Error('You need to call setS3Configuration before you can run this function. RCodeGenerator.loads3File()');
         }
 
+        this.code += '# Function: loads3File - Start\n';
         this.code += 'getcsv <- function(fileName) {\n';
         this.code += '    baseName <- tail(unlist(strsplit(fileName, "/")), n=1)\n';
         this.code += '    tmpFile <- paste("/tmp", baseName, sep="/")\n';
@@ -36,12 +39,15 @@ function RCodeGenerator(){
         this.code += '}\n';
 
         this.code += s3filevar + ' <- getcsv("' + s3filekey + '")\n';
+        this.code += '# Function: loads3File - End\n';
 
         return this;
     };
 
     this.loadCsvFile = function(inputFile, csvvar){
+        this.code += '# Function: loadCsvFile - Start\n';
         this.code += csvvar + ' <- read.csv(' + inputFile + ')\n';
+        this.code += '# Function: loadCsvFile - End\n';
         return this;
     };
 
@@ -49,6 +55,8 @@ function RCodeGenerator(){
         if (!this.s3configured){
             throw new Error('You need to call setS3Configuration before you can run this function. RCodeGenerator.loads3File()');
         }
+
+        this.code += '# Function: printLMFit - Start\n';
 
         this.code += 'print_lm <- function(fit, digits = 4) {\n';
 
@@ -91,6 +99,8 @@ function RCodeGenerator(){
         this.code += 'print(summary(lm.fit))\n';
         this.code += 's3save(lm.fit, bucket="rdatamodels", object = "' + filename + '.rdata")\n';
 
+        this.code += '# Function: printLMFit - End\n';
+
         this.modelkey = filename + '.rdata';
 
         this.outputVars.push('equation');
@@ -99,13 +109,17 @@ function RCodeGenerator(){
     };
 
     this.renameColumns = function(datavar, columnnames){
+        this.code += '# Function: renameColumns - Start\n';
         this.code += 'colnames(' + datavar + ') <- c(' + columnnames + ')\n';
+        this.code += '# Function: renameColumns - End\n';
         this.transformedDataset = true;
         return this;
     };
 
     this.dropColumns = function(datavar, columnnumbers){
+        this.code += '# Function: dropColumns - Start\n';
         this.code += datavar + '[c(' + columnnumbers + ')] <- list(NULL)\n';
+        this.code += '# Function: dropColumns - End\n';
         return this;
     };
 
@@ -115,19 +129,22 @@ function RCodeGenerator(){
     };
 
     this.mergeDataset = function(dataset1, keyindex1, dataset2, keyindex2){
+        this.code += '# Function: mergeDataset - Start\n';
         this.code += 'library(data.table)\n';
 
         this.code += 'merge_dt <- function(df1, col1, df2, col2) {';
-        this.code += 'dt1 <- as.data.table(df1)';
-        this.code += 'dt2 <- as.data.table(df2)';
-        this.code += 'key1 <- colnames(dt1)[1]';
-        this.code += 'key2 <- colnames(dt2)[1]';
-        this.code += 'setkeyv(dt1, key1)';
-        this.code += 'setkeyv(dt2, key2)';
-        this.code += 'merge(dt1, dt2, by.x = key1, by.y = key2)';
+        this.code += '  dt1 <- as.data.table(df1)';
+        this.code += '  dt2 <- as.data.table(df2)';
+        this.code += '  key1 <- colnames(dt1)[1]';
+        this.code += '  key2 <- colnames(dt2)[1]';
+        this.code += '  setkeyv(dt1, key1)';
+        this.code += '  setkeyv(dt2, key2)';
+        this.code += '  merge(dt1, dt2, by.x = key1, by.y = key2)';
         this.code += '}';
 
         this.code += 'merge_dt(df1 = ' + dataset1 + ', col1 = ' + keyindex1 + ', df2 = ' + dataset2 + ', col2 = ' + keyindex2 + ')';
+        this.code += '# Function: mergeDataset - End\n';
+        return this;
     };
 
     this.saveCSVToS3File = function(savevar, filename, ext, s3bucket, filevar){
@@ -135,12 +152,14 @@ function RCodeGenerator(){
             throw new Error('You need to call setS3Configuration before you can run this function. RCodeGenerator.loads3File()');
         }
 
+        this.code += '# Function: saveCSVToS3File - Start\n';
         this.code += 'temp <- tempfile(pattern = "file", tmpdir = "", fileext = ".csv")\n';
         this.code += 'temp <- paste(".", temp, sep="")\n';
         this.code += 'write.csv(' + savevar + ', file = temp, row.names=FALSE)\n';
         this.code += 'filename <- paste("' + filename + '", "' + ext + '", sep=".")\n';
         this.code += filevar + ' <- put_object(temp, bucket="' + s3bucket + '", object = filename)\n';
         this.code += 'unlink(temp)\n';
+        this.code += '# Function: saveCSVToS3File - End\n';
         this.datasetkey = filename + '.csv';
         this.transformedDataset = true;
         return this;
