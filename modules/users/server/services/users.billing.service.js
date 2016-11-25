@@ -200,6 +200,7 @@ var plans = config.stripePlans;
   module.exports = {
      returnCustomerBillingInfo:returnCustomerBillingInfo,
      handleStripeError:handleStripeError,
+     subscribeOrUpdateUserPlan:subscribeOrUpdateUserPlan,
      createCustomer:createCustomer,
      updateSubscription:updateSubscription,
      subscribeCustomerToPlan:subscribeCustomerToPlan,

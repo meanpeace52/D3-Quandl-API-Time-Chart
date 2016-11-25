@@ -40,7 +40,7 @@ Before you begin we recommend you read about the basic building blocks that asse
 ## Prerequisites
 Make sure you have installed all of the following prerequisites on your development machine:
 * Node.js - [Download & Install Node.js](https://nodejs.org/en/download/) and the npm package manager. If you encounter any problems, you can also use this [GitHub Gist](https://gist.github.com/isaacs/579814) to install Node.js.
-  * Node v5 IS NOT SUPPORTED AT THIS TIME! 
+  * Node v5 IS NOT SUPPORTED AT THIS TIME!
 * MongoDB - [Download & Install MongoDB](http://www.mongodb.org/downloads), and make sure it's running on the default port (27017).
 * Ruby - [Download & Install Ruby](https://www.ruby-lang.org/en/documentation/installation/)
 * Bower - You're going to use the [Bower Package Manager](http://bower.io/) to manage your front-end packages. Make sure you've installed Node.js and npm first, then install bower globally using npm:
@@ -70,6 +70,16 @@ $ npm install -g grunt-cli
 ```bash
 $ npm install gulp -g
 ```
+
+## Stripe
+
+## Testing
+You can use stripe test card numbers for specific responses and errors [Testing Stripe](https://stripe.com/docs/testing)
+
+## Configuration
+Never save the LIVE secret key in this repository pass process.env.STRIPE_SECRET variable to the node process.
+The Plans for subscriptions are defined in config/env/ stripePlans The stripe_id of each plan should match the id of a plan in the Stripe dashboard.
+
 
 ## Downloading MEAN.JS
 There are several ways you can get the MEAN.JS boilerplate:
@@ -198,7 +208,7 @@ or
 $ gulp default
 ```
 
-The server is now running on http://localhost:3000 if you are using the default settings. 
+The server is now running on http://localhost:3000 if you are using the default settings.
 
 ### Running Gulp Development Environment
 
@@ -298,7 +308,7 @@ for hosting applications in the cloud.  After you have an account follow the bel
 * Deploy MEANJS to Cloud Foundry
   * `$ cf push`
 
-After `cf push` completes you will see the URL to your running MEANJS application 
+After `cf push` completes you will see the URL to your running MEANJS application
 (your URL will be different).
 
     requested state: started
