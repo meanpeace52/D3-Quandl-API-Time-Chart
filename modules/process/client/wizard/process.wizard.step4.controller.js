@@ -171,6 +171,7 @@ angular.module('process')
                     })
                     .catch(function (err) {
                         console.log('error', err);
+                        $log.debug(JSON.stringify(err.err.deployr.response));
                         toastr.error('An error occurred while running the workflow!');
                     })
                     .finally(function () {

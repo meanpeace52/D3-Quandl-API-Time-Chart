@@ -129,7 +129,7 @@ function RCodeGenerator(){
 
     this.mergeDataset = function(dataset1, keyindex1, dataset2, keyindex2){
         this.code += '# Function: mergeDataset - Start\n';
-        this.code += 'install.packages("data.table")\n'
+        this.code += 'install.packages("data.table")\n';
         this.code += 'library("data.table")\n';
 
         this.code += 'merge_dt <- function(df1, col1, df2, col2) {\n';

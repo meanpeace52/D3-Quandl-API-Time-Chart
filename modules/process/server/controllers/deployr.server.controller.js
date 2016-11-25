@@ -4,6 +4,8 @@
  * Module dependencies.
  */
 var path = require('path'),
+    mongoose = require('mongoose'),
+    Dataset = mongoose.model('Dataset'),
     config = require(path.resolve('./config/config')),
     deployr = require('deployr'),
     _ = require('lodash'),
@@ -71,7 +73,21 @@ exports.deployrRun = function (req, response) {
                         generator.mergeDataset('dataset', step.destinationkeyfieldindex, 'mergedataset', step.keyfieldindex);
                     }
                     else{
+                        var modeldatasets3reference = step.datasets3reference.replace('https://s3.amazonaws.com/datasetstl', '');
+                        generator
+                            .loads3File(modeldatasets3reference, 'csvfile')
+                            .loadCsvFile('csvfile', 'mergedataset')
+                            .renameColumns('mergedataset', step.renamedcolumns.map(function(column){
+                                return '"' + column.replace(/"/g, '\\"') + '"';
+                            }).join(','));
 
+                        if (step.dropcolumns && step.dropcolumns.length > 0){
+                            generator.dropColumns('mergedataset', step.dropcolumns.map(function(column){
+                                return column;
+                            }).join(','));
+                        }
+
+                        generator.mergeDataset('dataset', step.destinationkeyfieldindex, 'mergedataset', step.keyfieldindex);
                     }
                 }
             });

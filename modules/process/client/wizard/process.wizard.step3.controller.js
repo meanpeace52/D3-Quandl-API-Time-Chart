@@ -135,6 +135,11 @@ angular.module('process')
                 vm.currentmodeldataset.columns = [];
                 vm.showModelLoader = true;
 
+                Datasets.get(model.dataset)
+                    .then(function(dataset){
+                        vm.currentmodeldataset.datasets3reference = dataset.s3reference;
+                    });
+
                 Datasets.getDatasetWithS3(model.dataset)
                     .then(function (data) {
                         vm.showModelLoader = false;
@@ -188,6 +193,7 @@ angular.module('process')
                 var transformStep = { };
                 transformStep.model = vm.selectedmodel;
                 transformStep.keyfield = vm.modelkeyfield;
+                transformStep.keyfieldindex = vm.currentmodeldataset.columns.indexOf(transformStep.keyfield) + 1;
 
                 var selectedcolumns = [];
                 var renamedcolumns = [];
@@ -202,10 +208,22 @@ angular.module('process')
                 });
 
                 transformStep.selectedcolumns = selectedcolumns;
+
+                transformStep.dropcolumns = [];
+                var colindex = 1;
+                _.each(vm.currentmodeldataset.columns, function(column){
+                    if (!_.contains(transformStep.selectedcolumns, column)){
+                        transformStep.dropcolumns.push(colindex);
+                    }
+                    colindex++;
+                });
+
+                transformStep.datasets3reference = vm.currentmodeldataset.datasets3reference;
                 transformStep.renamedcolumns = renamedcolumns;
                 transformStep.type = 'merge';
                 transformStep.source = 'modeldataset';
                 transformStep.destinationkeyfield = vm.keyfield;
+                transformStep.destinationkeyfieldindex = vm.availablecolumns.indexOf(vm.keyfield) + 1;
 
                 vm.transformSteps.push(transformStep);
                 ProcessStateService.saveTransformSteps(vm.transformSteps);
@@ -216,7 +234,7 @@ angular.module('process')
                 var transformStep = { };
                 transformStep.dataset = vm.selectedcomparitivedataset;
                 transformStep.keyfield = vm.comparitivedatasetkeyfield;
-                transformStep.keyfieldindex = vm.availablecomparitivedatasetcolumns.indexOf(transformStep.keyfield) + 1;
+                transformStep.keyfieldindex = vm.currentselecteddataset.columns.indexOf(transformStep.keyfield) + 1;
 
                 var selectedcolumns = [];
                 var renamedcolumns = [];

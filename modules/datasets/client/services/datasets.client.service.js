@@ -6,6 +6,7 @@ angular.module('datasets')
 
             return {
                 crud: crud(),
+                get: get,
                 create: create,
                 update: update,
                 remove: remove,
@@ -28,6 +29,20 @@ angular.module('datasets')
                         method: 'PUT'
                     }
                 });
+            }
+
+            function get(id){
+                var dfd = $q.defer();
+
+                $http.get('/api/datasets/' + id)
+                    .success(function (data, status, headers, config) {
+                        dfd.resolve(data);
+                    })
+                    .error(function (data, status, headers, config) {
+                        dfd.reject({ status : status, message : data });
+                    });
+
+                return dfd.promise;
             }
 
             function create(dataset){
