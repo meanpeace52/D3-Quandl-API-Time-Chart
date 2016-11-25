@@ -216,6 +216,7 @@ angular.module('process')
                 var transformStep = { };
                 transformStep.dataset = vm.selectedcomparitivedataset;
                 transformStep.keyfield = vm.comparitivedatasetkeyfield;
+                transformStep.keyfieldindex = vm.availablecomparitivedatasetcolumns.indexOf(transformStep.keyfield) + 1;
 
                 var selectedcolumns = [];
                 var renamedcolumns = [];
@@ -224,8 +225,8 @@ angular.module('process')
                 _.forOwn(vm.selecteddatasetcolumns, function(value, key) {
                     if (value){
                         selectedcolumns.push(key);
-                        renamedcolumns.push(vm.currentselecteddataset.renamedcolumns[key]);
                     }
+                    renamedcolumns.push(vm.currentselecteddataset.renamedcolumns[key]);
                     i++;
                 });
 
@@ -233,14 +234,15 @@ angular.module('process')
 
                 var colindex = 1;
                 transformStep.dropcolumns = [];
-                _.each(vm.availablecomparitivedatasetcolumns, function(column){
-                    if (_.contains(transformStep.selectedcolumns, column)){
+                _.each(vm.currentselecteddataset.columns, function(column){
+                    if (!_.contains(transformStep.selectedcolumns, column)){
                         transformStep.dropcolumns.push(colindex);
                     }
                     colindex++;
                 });
                 transformStep.renamedcolumns = renamedcolumns;
                 transformStep.destinationkeyfield = vm.keyfield;
+                transformStep.destinationkeyfieldindex = vm.availablecolumns.indexOf(vm.keyfield) + 1;
                 transformStep.type = 'merge';
                 transformStep.source = 'dataset';
 

@@ -60,36 +60,36 @@ function RCodeGenerator(){
 
         this.code += 'print_lm <- function(fit, digits = 4) {\n';
 
-        this.code += 'if (class(fit) != "lm") {\n';
+        this.code += '  if (class(fit) != "lm") {\n';
         this.code += '        stop("First agrument should be of class lm!")\n';
-        this.code += '}\n';
+        this.code += '  }\n';
 
-        this.code += 'cf <- coef(fit)\n';
+        this.code += '  cf <- coef(fit)\n';
 
-        this.code += 'yname <- as.character(attr(fit$terms, which = "variables"))[2]\n';
+        this.code += '  yname <- as.character(attr(fit$terms, which = "variables"))[2]\n';
 
-        this.code += 'intercept <- sprintf(sprintf("%%0.%df", digits), cf[1])\n';
+        this.code += '  intercept <- sprintf(sprintf("%%0.%df", digits), cf[1])\n';
 
-        this.code += 'xpart <- paste(sprintf(sprintf(" %%s %%0.%df*%%s", digits),\n';
-        this.code += 'ifelse(cf[-1] > 0, "+", "-"), abs(cf[-1]), names(cf)[-1]), collapse = "")\n';
+        this.code += '  xpart <- paste(sprintf(sprintf(" %%s %%0.%df*%%s", digits),\n';
+        this.code += '  ifelse(cf[-1] > 0, "+", "-"), abs(cf[-1]), names(cf)[-1]), collapse = "")\n';
 
-        this.code += 'sprintf("%s = %s%s", yname, intercept, xpart)\n';
+        this.code += '  sprintf("%s = %s%s", yname, intercept, xpart)\n';
         this.code += '}\n';
 
         this.code += 'get_metrics <- function(fit, digits = 4) {\n';
 
-        this.code += 'if (class(fit) != "lm") {\n';
-        this.code += 'stop("First argument should be of class lm!")\n';
-        this.code += '}\n';
+        this.code += '  if (class(fit) != "lm") {\n';
+        this.code += '    stop("First argument should be of class lm!")\n';
+        this.code += '  }\n';
 
-        this.code += 'smr <- summary(fit)\n';
+        this.code += '  smr <- summary(fit)\n';
 
-        this.code += 'list(\n';
-        this.code += 'r_squared = round(smr$r.squared, digits),\n';
-        this.code += 'adj_r_squared = round(smr$adj.r.squared, digits),\n';
-        this.code += 'f_statistics = as.numeric(round(smr$fstatistic[1], digits)),\n';
-        this.code += 'p_value = as.numeric(pf(smr$fstatistic[1L], smr$fstatistic[2L], smr$fstatistic[3L], lower.tail = FALSE))[1]\n';
-        this.code += ')\n';
+        this.code += '  list(\n';
+        this.code += '    r_squared = round(smr$r.squared, digits),\n';
+        this.code += '    adj_r_squared = round(smr$adj.r.squared, digits),\n';
+        this.code += '    f_statistics = as.numeric(round(smr$fstatistic[1], digits)),\n';
+        this.code += '    p_value = as.numeric(pf(smr$fstatistic[1L], smr$fstatistic[2L], smr$fstatistic[3L], lower.tail = FALSE))[1]\n';
+        this.code += '  )\n';
         this.code += '}\n';
 
         this.code += 'colnames(' + inputData + ')[' + yColIndex + ']<-"depvar"\n';
@@ -112,7 +112,6 @@ function RCodeGenerator(){
         this.code += '# Function: renameColumns - Start\n';
         this.code += 'colnames(' + datavar + ') <- c(' + columnnames + ')\n';
         this.code += '# Function: renameColumns - End\n';
-        this.transformedDataset = true;
         return this;
     };
 
@@ -130,19 +129,20 @@ function RCodeGenerator(){
 
     this.mergeDataset = function(dataset1, keyindex1, dataset2, keyindex2){
         this.code += '# Function: mergeDataset - Start\n';
-        this.code += 'library(data.table)\n';
+        this.code += 'install.packages("data.table")\n'
+        this.code += 'library("data.table")\n';
 
-        this.code += 'merge_dt <- function(df1, col1, df2, col2) {';
-        this.code += '  dt1 <- as.data.table(df1)';
-        this.code += '  dt2 <- as.data.table(df2)';
-        this.code += '  key1 <- colnames(dt1)[1]';
-        this.code += '  key2 <- colnames(dt2)[1]';
-        this.code += '  setkeyv(dt1, key1)';
-        this.code += '  setkeyv(dt2, key2)';
-        this.code += '  merge(dt1, dt2, by.x = key1, by.y = key2)';
-        this.code += '}';
+        this.code += 'merge_dt <- function(df1, col1, df2, col2) {\n';
+        this.code += '  dt1 <- as.data.table(df1)\n';
+        this.code += '  dt2 <- as.data.table(df2)\n';
+        this.code += '  key1 <- colnames(dt1)[col1]\n';
+        this.code += '  key2 <- colnames(dt2)[col2]\n';
+        this.code += '  setkeyv(dt1, key1)\n';
+        this.code += '  setkeyv(dt2, key2)\n';
+        this.code += '  merge(dt1, dt2, by.x = key1, by.y = key2)\n';
+        this.code += '}\n';
 
-        this.code += 'merge_dt(df1 = ' + dataset1 + ', col1 = ' + keyindex1 + ', df2 = ' + dataset2 + ', col2 = ' + keyindex2 + ')';
+        this.code += dataset1 + '<- merge_dt(df1 = ' + dataset1 + ', col1 = ' + keyindex1 + ', df2 = ' + dataset2 + ', col2 = ' + keyindex2 + ')\n';
         this.code += '# Function: mergeDataset - End\n';
         return this;
     };

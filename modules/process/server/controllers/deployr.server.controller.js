@@ -67,6 +67,8 @@ exports.deployrRun = function (req, response) {
                                 return column;
                             }).join(','));
                         }
+
+                        generator.mergeDataset('dataset', step.destinationkeyfieldindex, 'mergedataset', step.keyfieldindex);
                     }
                     else{
 

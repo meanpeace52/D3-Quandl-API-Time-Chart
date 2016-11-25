@@ -117,23 +117,7 @@ angular.module('process')
                 Deployr.run(tasks, vm.processData)
                     .then(function (res) {
                         var result = res;
-                        if (tasks[tasks.length - 1].returnType === 'dataset') {
-                            if (!result.length) {
-                                return deferred.reject('one of the tasks returned empty dataset!');
-                            }
-                            var _dataset = {
-                                columns: result[0].value.map(function (obj) {
-                                    return obj.name;
-                                })
-                            };
-                            _dataset.rows = getRowsFromResult(result, _dataset.columns);
-                            results.push(_dataset);
-                            if (typeof tasks[1] !== 'undefined') {
-                                return process(_dataset, _.drop(tasks), deferred, results);
-                            }
-                        } else {
-                            results.push(result);
-                        }
+                        results.push(result);
                         return deferred.resolve(results);
                     }).catch(function (error) {
                         deferred.reject(error);
