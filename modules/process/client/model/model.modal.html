@@ -1,186 +1,239 @@
 <div class="modal-body">
-  <div class="container-fluid">
-  <ul class="nav nav-tabs" data-tabs="tabs">
-      <li ng-repeat="item in ModelModal.tabs" ng-class="{'active' : item == ModelModal.activeTab }" ng-click="ModelModal.changeTab(item)">
-          <a data-ng-bind="item" data-toggle="tab" href=""></a>
-      </li>
-  </ul>
-  <div class="tab-content">
-      <div role="tabpanel" ng-repeat="item in ModelModal.tabs" ng-class="{'active' : item == ModelModal.activeTab }" class="tab-pane">
-          <div ng-if="item == 'Dataset'">
-              <div ng-show="!ModelModal.savedataset">
-                  <div style="width: 100%;overflow: auto;" >
-                      <dataset-table columns="ModelModal.dataset.columns" rows="ModelModal.dataset.rows"></dataset-table>
-                  </div>
-                  <button class="btn btn-primary pull-right" ng-click="ModelModal.savedataset = true">Save Dataset</button>
-              </div>
-              <div ng-show="ModelModal.savedataset">
-                  <h2>Save Dataset</h2><br/>
-                  <form name="datasetform" class="form-horizontal" ng-submit="ModelModal.saveDataset(datasetform.$valid)" novalidate>
-                      <div class="form-group" show-errors>
-                          <label for="datasettitle" class="control-label col-md-3">Title:</label>
-                          <div class="col-md-9">
-                              <input type="text" class="form-control" id="datasettitle" name="datasettitle" ng-model="ModelModal.dataset.title" required>
-                          </div>
-                          <div ng-messages="datasetform.datasettitle.$error && ModelModal.datasetsubmitted" role="alert">
-                              <p class="help-block error-text" ng-message="required">Dataset title is required.</p>
-                          </div>
-                      </div>
-                      <div class="form-group" ng-if="ModelModal.user.plan != 'free' && ModelModal.dataset.access == 'for sale'">
-                          <label for="datasetpreviewnote" class="control-label col-md-3">Preview Note:</label>
-                          <div class="col-md-9">
-                              <textarea id="datasetpreviewnote" name="datasetpreviewnote" class="form-control" ng-model="ModelModal.dataset.previewnote">
-                              </textarea>
-                          </div>
-                      </div>
-                      <div ng-if="ModelModal.user.plan != 'free'">
-                          <div class="form-group">
-                              <label for="access" class="control-label col-md-3">Access:</label>
-                              <div class="col-md-9">
-                                  <select class="form-control" name="access" id="access" ng-model="ModelModal.dataset.access" ng-options="access as (access | capitalize) for access in ModelModal.accessList">
-                                  </select>
-                              </div>
-                          </div>
-                          <div class="form-group" ng-if="ModelModal.dataset.access == 'for sale'" show-errors>
-                              <label for="cost" class="control-label col-md-3">Price:</label>
-                              <div class="col-md-9 input-group" show-errors>
-                                  <span class="input-group-addon">$</span>
-                                  <input type="number" name="cost" id="cost" class="form-control" ng-model="ModelModal.dataset.cost" min="1"
-                                         ng-min="1" step="0.50" required />
-                                  <div ng-messages="datasetform.cost.$error && ModelModal.datasetsubmitted" role="alert">
-                                      <p class="help-block error-text" ng-message="required">Enter a price greater than $1.</p>
-                                  </div>
-                              </div>
-                          </div>
-                      </div>
-                      <div class="form-group pull-right">
-                          <button class="btn btn-primary" type="submit">Save</button>
-                          <a class="btn btn-secondary" ng-click="ModelModal.savedataset = false">Cancel</a>
-                      </div>
-                  </form>
-              </div>
-          </div>
-          <div ng-if="item == 'Model'">
-              <div ng-show="!ModelModal.savemodel">
-                  <p><strong>Type:</strong> {{ModelModal.model.type}}</p>
-                  <p><strong>Equation:</strong> {{ModelModal.model.equation}}</p>
-                  <p><strong>Full Summary Output:</strong> <pre ng-bind-html="ModelModal.model.output"></pre></p>
-                  <button class="btn btn-primary pull-right" ng-click="ModelModal.savemodel = true">Save Model and Dataset</button>
-              </div>
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-md-12">
+                <button class="btn btn-danger pull-right" ng-click="ModelModal.discard()">Close</button>
+            </div>
+        </div>
+        <br/>
+        <ul class="nav nav-tabs" data-tabs="tabs">
+            <li ng-repeat="item in ModelModal.tabs" ng-class="{'active' : item == ModelModal.activeTab }"
+                ng-click="ModelModal.changeTab(item)">
+                <a data-ng-bind="item" data-toggle="tab" href=""></a>
+            </li>
+        </ul>
+        <div class="tab-content">
+            <div role="tabpanel" ng-repeat="item in ModelModal.tabs"
+                 ng-class="{'active' : item == ModelModal.activeTab }" class="tab-pane">
+                <div ng-if="item == 'Dataset'">
+                    <div ng-show="!ModelModal.savedataset">
+                        <div style="width: 100%;overflow: auto;">
+                            <dataset-table columns="ModelModal.dataset.columns"
+                                           rows="ModelModal.dataset.rows"></dataset-table>
+                        </div>
+                        <div class="row">
+                            <button class="btn btn-primary pull-right" ng-click="ModelModal.savedataset = true">Save Dataset</button>
+                        </div>
+                    </div>
+                    <div ng-show="ModelModal.savedataset">
+                        <h2>Save Dataset</h2><br/>
 
-              <div ng-show="ModelModal.savemodel">
-                  <h2>Save Model and Dataset</h2>
-                  <form name="form" class="form-horizontal" ng-submit="ModelModal.saveModel(form.$valid)" novalidate>
-                      <h3>Model</h3>
-                      <hr/>
-                      <div class="form-group" show-errors>
-                          <label for="modeltitle" class="control-label col-md-3">Title:</label>
-                          <div class="col-md-9">
-                              <input type="text" class="form-control" id="modeltitle" name="modeltitle" ng-model="ModelModal.model.title" required>
-                          </div>
-                          <div ng-messages="form.modeltitle.$error && ModelModal.submitted" role="alert">
-                              <p class="help-block error-text" ng-message="required">Model title is required.</p>
-                          </div>
-                      </div>
-                      <div class="form-group" ng-if="ModelModal.user.plan != 'free' && ModelModal.access == 'for sale'">
-                          <label for="modelpreviewnote" class="control-label col-md-3">Preview Note:</label>
-                          <div class="col-md-9">
-                              <textarea id="modelpreviewnote" name="modelpreviewnote" class="form-control" ng-model="ModelModal.model.previewnote">
-                              </textarea>
-                          </div>
-                      </div>
-                      <h3>Dataset</h3>
-                      <hr/>
-                      <div class="form-group" show-errors>
-                          <label for="datasettitle" class="control-label col-md-3">Title:</label>
-                          <div class="col-md-9">
-                              <input type="text" class="form-control" id="datasettitle" name="datasettitle" ng-model="ModelModal.modeldataset.title" required>
-                          </div>
-                          <div ng-messages="form.datasettitle.$error && ModelModal.submitted" role="alert">
-                              <p class="help-block error-text" ng-message="required">Dataset title is required.</p>
-                          </div>
-                      </div>
-                      <div class="form-group" ng-if="ModelModal.user.plan != 'free' && ModelModal.access == 'for sale'">
-                          <label for="datasetpreviewnote" class="control-label col-md-3">Preview Note:</label>
-                          <div class="col-md-9">
-                              <textarea id="datasetpreviewnote" name="datasetpreviewnote" class="form-control" ng-model="ModelModal.modeldataset.previewnote">
-                              </textarea>
-                          </div>
-                      </div>
-                      <div ng-if="ModelModal.user.plan != 'free'">
-                          <h3>Access (applies to both)</h3>
-                          <hr/>
-                          <div class="form-group">
-                              <label for="access" class="control-label col-md-3">Access:</label>
-                              <div class="col-md-9">
-                                  <select class="form-control" name="access" id="access" ng-model="ModelModal.access" ng-options="access as (access | capitalize) for access in ModelModal.accessList">
-                                  </select>
-                              </div>
-                          </div>
-                          <div class="form-group" ng-if="ModelModal.access == 'for sale'" show-errors>
-                              <label for="cost" class="control-label col-md-3">Price:</label>
-                              <div class="col-md-9 input-group" show-errors>
-                                  <span class="input-group-addon">$</span>
-                                  <input type="number" name="cost" id="cost" class="form-control" ng-model="ModelModal.cost" min="1"
-                                         ng-min="1" step="0.50" required />
-                                  <div ng-messages="form.cost.$error && ModelModal.submitted" role="alert">
-                                      <p class="help-block error-text" ng-message="required">Enter a price greater than $1.</p>
-                                  </div>
-                              </div>
-                          </div>
-                      </div>
-                      <div class="form-group pull-right">
-                          <button class="btn btn-primary" type="submit">Save</button>
-                          <a class="btn btn-secondary" ng-click="ModelModal.savemodel = false">Cancel</a>
-                      </div>
+                        <form name="datasetform" class="form-horizontal"
+                              ng-submit="ModelModal.saveDataset(datasetform.$valid)" novalidate>
+                            <div class="form-group" show-errors>
+                                <label for="datasettitle" class="control-label col-md-3">Title:</label>
 
-                  </form>
-              </div>
-          </div>
-          <div ng-if="item == 'Transformation Steps'">
-              <div ng-repeat="task in ModelModal.tasks">
-                  <h4>{{$index + 1}}) {{task.title}}</h4>
-                  <div ng-if="task.title == 'Initial Transformations'">
-                      <ul class="list-unstyled transformsteps" style="overflow: auto;">
-                          <li ng-repeat="step in task.options.transformSteps" class="{{ step.type }}">
-                              <div ng-if="step.source == 'modeldataset'">
-                                  <strong>Merge with source model dataset:</strong> Model name: {{ step.model.title }} Key Column: {{ step.keyfield }} Destination Key Column: {{ step.keyfield }} Columns Included: {{ step.selectedcolumns.join(', ') }}
-                              </div>
-                              <div ng-if="step.source == 'dataset'">
-                                  <strong>Merge with source dataset: </strong> Dataset name: {{ step.dataset.title }} Key Column: {{ step.keyfield }} Destination Key Column: {{ step.keyfield }} Columns Included: {{ step.selectedcolumns.join(', ') }}
-                              </div>
-                              <div ng-if="step.type == 'drop'">
-                                  <strong>Drop Columns:</strong> {{ step.columnnames.join(', ') }}
-                              </div>
-                              <div ng-if="step.type == 'rename'">
-                                  <strong>Renamed Columns:</strong> {{ step.newcolumnnames.join(', ') }}
-                              </div>
-                          </li>
-                      </ul>
-                  </div>
-                  <div ng-if="task.options && task.title != 'Initial Transformations'">
-                    <p ng-repeat="(key, value) in task.options"><strong>{{ key }}:</strong> {{value}}</p>
-                  </div>
-              </div>
-          </div>
-          <div ng-if="item == 'R Code'">
+                                <div class="col-md-9">
+                                    <input type="text" class="form-control" id="datasettitle" name="datasettitle"
+                                           ng-model="ModelModal.dataset.title" required>
+                                </div>
+                                <div ng-messages="datasetform.datasettitle.$error && ModelModal.datasetsubmitted"
+                                     role="alert">
+                                    <p class="help-block error-text" ng-message="required">Dataset title is
+                                        required.</p>
+                                </div>
+                            </div>
+                            <div class="form-group"
+                                 ng-if="ModelModal.user.plan != 'free' && ModelModal.dataset.access == 'for sale'">
+                                <label for="datasetpreviewnote" class="control-label col-md-3">Preview Note:</label>
+
+                                <div class="col-md-9">
+                              <textarea id="datasetpreviewnote" name="datasetpreviewnote" class="form-control"
+                                        ng-model="ModelModal.dataset.previewnote">
+                              </textarea>
+                                </div>
+                            </div>
+                            <div ng-if="ModelModal.user.plan != 'free'">
+                                <div class="form-group">
+                                    <label for="access" class="control-label col-md-3">Access:</label>
+
+                                    <div class="col-md-9">
+                                        <select class="form-control" name="access" id="access"
+                                                ng-model="ModelModal.dataset.access"
+                                                ng-options="access as (access | capitalize) for access in ModelModal.accessList">
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="form-group" ng-if="ModelModal.dataset.access == 'for sale'" show-errors>
+                                    <label for="cost" class="control-label col-md-3">Price:</label>
+
+                                    <div class="col-md-9 input-group" show-errors>
+                                        <span class="input-group-addon">$</span>
+                                        <input type="number" name="cost" id="cost" class="form-control"
+                                               ng-model="ModelModal.dataset.cost" min="1"
+                                               ng-min="1" step="0.50" required/>
+
+                                        <div ng-messages="datasetform.cost.$error && ModelModal.datasetsubmitted"
+                                             role="alert">
+                                            <p class="help-block error-text" ng-message="required">Enter a price greater
+                                                than $1.</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group pull-right">
+                                <button class="btn btn-primary" type="submit">Save</button>
+                                <a class="btn btn-secondary" ng-click="ModelModal.savedataset = false">Cancel</a>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+                <div ng-if="item == 'Model'">
+                    <div ng-show="!ModelModal.savemodel">
+                        <p><strong>Type:</strong> {{ModelModal.model.type}}</p>
+
+                        <p><strong>Equation:</strong> {{ModelModal.model.equation}}</p>
+
+                        <p><strong>Full Summary Output:</strong>
+                            <pre ng-bind-html="ModelModal.model.output"></pre>
+                        </p>
+                        <div class="row">
+                            <button class="btn btn-primary pull-right" ng-click="ModelModal.savemodel = true">Save Model and Dataset</button>
+                        </div>
+                    </div>
+
+                    <div ng-show="ModelModal.savemodel">
+                        <h2>Save Model and Dataset</h2>
+
+                        <form name="form" class="form-horizontal" ng-submit="ModelModal.saveModel(form.$valid)"
+                              novalidate>
+                            <h3>Model</h3>
+                            <hr/>
+                            <div class="form-group" show-errors>
+                                <label for="modeltitle" class="control-label col-md-3">Title:</label>
+
+                                <div class="col-md-9">
+                                    <input type="text" class="form-control" id="modeltitle" name="modeltitle"
+                                           ng-model="ModelModal.model.title" required>
+                                </div>
+                                <div ng-messages="form.modeltitle.$error && ModelModal.submitted" role="alert">
+                                    <p class="help-block error-text" ng-message="required">Model title is required.</p>
+                                </div>
+                            </div>
+                            <div class="form-group"
+                                 ng-if="ModelModal.user.plan != 'free' && ModelModal.access == 'for sale'">
+                                <label for="modelpreviewnote" class="control-label col-md-3">Preview Note:</label>
+
+                                <div class="col-md-9">
+                              <textarea id="modelpreviewnote" name="modelpreviewnote" class="form-control"
+                                        ng-model="ModelModal.model.previewnote">
+                              </textarea>
+                                </div>
+                            </div>
+                            <h3>Dataset</h3>
+                            <hr/>
+                            <div class="form-group" show-errors>
+                                <label for="datasettitle" class="control-label col-md-3">Title:</label>
+
+                                <div class="col-md-9">
+                                    <input type="text" class="form-control" id="datasettitle" name="datasettitle"
+                                           ng-model="ModelModal.modeldataset.title" required>
+                                </div>
+                                <div ng-messages="form.datasettitle.$error && ModelModal.submitted" role="alert">
+                                    <p class="help-block error-text" ng-message="required">Dataset title is
+                                        required.</p>
+                                </div>
+                            </div>
+                            <div class="form-group"
+                                 ng-if="ModelModal.user.plan != 'free' && ModelModal.access == 'for sale'">
+                                <label for="datasetpreviewnote" class="control-label col-md-3">Preview Note:</label>
+
+                                <div class="col-md-9">
+                              <textarea id="datasetpreviewnote" name="datasetpreviewnote" class="form-control"
+                                        ng-model="ModelModal.modeldataset.previewnote">
+                              </textarea>
+                                </div>
+                            </div>
+                            <div ng-if="ModelModal.user.plan != 'free'">
+                                <h3>Access (applies to both)</h3>
+                                <hr/>
+                                <div class="form-group">
+                                    <label for="access" class="control-label col-md-3">Access:</label>
+
+                                    <div class="col-md-9">
+                                        <select class="form-control" name="access" id="access"
+                                                ng-model="ModelModal.access"
+                                                ng-options="access as (access | capitalize) for access in ModelModal.accessList">
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="form-group" ng-if="ModelModal.access == 'for sale'" show-errors>
+                                    <label for="cost" class="control-label col-md-3">Price:</label>
+
+                                    <div class="col-md-9 input-group" show-errors>
+                                        <span class="input-group-addon">$</span>
+                                        <input type="number" name="cost" id="cost" class="form-control"
+                                               ng-model="ModelModal.cost" min="1"
+                                               ng-min="1" step="0.50" required/>
+
+                                        <div ng-messages="form.cost.$error && ModelModal.submitted" role="alert">
+                                            <p class="help-block error-text" ng-message="required">Enter a price greater
+                                                than $1.</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group pull-right">
+                                <button class="btn btn-primary" type="submit">Save</button>
+                                <a class="btn btn-secondary" ng-click="ModelModal.savemodel = false">Cancel</a>
+                            </div>
+
+                        </form>
+                    </div>
+                </div>
+                <div ng-if="item == 'Transformation Steps'">
+                    <div ng-repeat="task in ModelModal.tasks">
+                        <h4>{{$index + 1}}) {{task.title}}</h4>
+
+                        <div ng-if="task.title == 'Initial Transformations'">
+                            <ul class="list-unstyled transformsteps" style="overflow: auto;">
+                                <li ng-repeat="step in task.options.transformSteps" class="{{ step.type }}">
+                                    <div ng-if="step.source == 'modeldataset'">
+                                        <strong>Merge with source model dataset:</strong> Model name: {{
+                                        step.model.title }} Key Column: {{ step.keyfield }} Destination Key Column: {{
+                                        step.keyfield }} Columns Included: {{ step.selectedcolumns.join(', ') }}
+                                    </div>
+                                    <div ng-if="step.source == 'dataset'">
+                                        <strong>Merge with source dataset: </strong> Dataset name: {{ step.dataset.title
+                                        }} Key Column: {{ step.keyfield }} Destination Key Column: {{ step.keyfield }}
+                                        Columns Included: {{ step.selectedcolumns.join(', ') }}
+                                    </div>
+                                    <div ng-if="step.type == 'drop'">
+                                        <strong>Drop Columns:</strong> {{ step.columnnames.join(', ') }}
+                                    </div>
+                                    <div ng-if="step.type == 'rename'">
+                                        <strong>Renamed Columns:</strong> {{ step.newcolumnnames.join(', ') }}
+                                    </div>
+                                </li>
+                            </ul>
+                        </div>
+                        <div ng-if="task.options && task.title != 'Initial Transformations'">
+                            <p ng-repeat="(key, value) in task.options"><strong>{{ key }}:</strong> {{value}}</p>
+                        </div>
+                    </div>
+                </div>
+                <div ng-if="item == 'R Code'">
               <pre>
                   {{ ModelModal.code }}
               </pre>
-          </div>
-      </div>
-  </div>
-</div>
-<div class="modal-footer">
-
-  <div class="row">
-    <div class="col-md-12">
-      <!--<button class="btn btn-primary" ng-disabled="ModelModal.saving" ng-click="ModelModal.save()">
-        <span ng-if="!ModelModal.saving">Save</span>
-        <span ng-if="ModelModal.saving">Saving...</span>
-      </button>-->
-      <button class="btn btn-danger" ng-click="ModelModal.discard()">Close</button>
+                </div>
+            </div>
+        </div>
     </div>
-  </div>
-
-</div>
+    <div class="modal-footer">
+        <div class="row">
+            <div class="col-md-12">
+                <button class="btn btn-danger" ng-click="ModelModal.discard()">Close</button>
+            </div>
+        </div>
+    </div>

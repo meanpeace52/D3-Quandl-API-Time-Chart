@@ -133,7 +133,7 @@ ul.drop-list li.task-arrow:after {
   text-align: right;
 }
 .exclude {
-  background: #ccc;
+  opacity: 0.5;
 }
 /**
  * For the correct positioning of the placeholder element, the dnd-list and
