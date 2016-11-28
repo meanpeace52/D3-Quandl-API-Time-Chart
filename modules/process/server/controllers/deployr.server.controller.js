@@ -56,6 +56,9 @@ exports.deployrRun = function (req, response) {
                 else if (step.type === 'removerowswithmissingdata') {
                     generator.removeNA('dataset');
                 }
+                else if (step.type === 'logtransform') {
+                    generator.logTransform('dataset');
+                }
                 else if (step.type === 'merge'){
                     if (step.source === 'dataset'){
                         var datasets3reference = step.dataset.s3reference.replace('https://s3.amazonaws.com/datasetstl', '');

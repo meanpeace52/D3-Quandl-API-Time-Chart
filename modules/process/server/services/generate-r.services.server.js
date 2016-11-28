@@ -129,6 +129,18 @@ function RCodeGenerator(){
         return this;
     };
 
+    this.logTransform = function(datavar){
+        this.code += '# Function: logTransform - Start\n';
+        this.code += 'df_log <- function(df, base = exp(1)) {\n';
+        this.code += '  # Checks columns classes\n';
+        this.code += '  is_numeric <- sapply(df, is.numeric)\n';
+        this.code += '  # Applies transformation\n';
+        this.code += '  df[, is_numeric] <- log(df[, is_numeric], base = base)\n';
+        this.code += '}\n';
+        this.code += datavar + ' <- df_log(' + datavar + ')';
+        this.code += '# Function: logTransform - End\n';
+    };
+
     this.linearRegression = function(s3accessKey, s3secretKey, s3bucket, inputData, yColIndex, filename){
         this.printLMFit('dataset', yColIndex, filename);
         return this;
