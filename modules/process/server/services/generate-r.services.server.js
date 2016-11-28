@@ -9,6 +9,7 @@ function RCodeGenerator(){
     this.transformedDataset = false;
 
     this.setS3Configuration = function(s3accessKey, s3secretKey, s3bucket){
+        this.code += '#sensitive\n';
         this.code += '# Function: setS3Configuration - Start\n';
         this.code += 'library("aws.s3")\n';
 
@@ -19,6 +20,7 @@ function RCodeGenerator(){
         this.code += 'Sys.setenv("AWS_ACCESS_KEY_ID" = accessKey,\n';
         this.code += '           "AWS_SECRET_ACCESS_KEY" = secretKey)\n';
         this.code += '# Function: setS3Configuration - End\n';
+        this.code += '#sensitive\n';
 
         this.s3configured = true;
 
@@ -30,6 +32,7 @@ function RCodeGenerator(){
             throw new Error('You need to call setS3Configuration before you can run this function. RCodeGenerator.loads3File()');
         }
 
+        this.code += '#sensitive\n';
         this.code += '# Function: loads3File - Start\n';
         this.code += 'getcsv <- function(fileName) {\n';
         this.code += '    baseName <- tail(unlist(strsplit(fileName, "/")), n=1)\n';
@@ -40,14 +43,17 @@ function RCodeGenerator(){
 
         this.code += s3filevar + ' <- getcsv("' + s3filekey + '")\n';
         this.code += '# Function: loads3File - End\n';
+        this.code += '#sensitive\n';
 
         return this;
     };
 
     this.loadCsvFile = function(inputFile, csvvar){
+        this.code += '#sensitive\n';
         this.code += '# Function: loadCsvFile - Start\n';
         this.code += csvvar + ' <- read.csv(' + inputFile + ', stringsAsFactors=TRUE)\n';
         this.code += '# Function: loadCsvFile - End\n';
+        this.code += '#sensitive\n';
         return this;
     };
 
@@ -97,7 +103,9 @@ function RCodeGenerator(){
         this.code += 'equation <- print_lm(lm.fit, digits = 2)\n';
         this.code += 'metrics <- get_metrics(lm.fit)\n';
         this.code += 'print(summary(lm.fit))\n';
+        this.code += '#sensitive\n';
         this.code += 's3save(lm.fit, bucket="rdatamodels", object = "' + filename + '.rdata")\n';
+        this.code += '#sensitive\n';
 
         this.code += '# Function: printLMFit - End\n';
 
@@ -171,6 +179,7 @@ function RCodeGenerator(){
             throw new Error('You need to call setS3Configuration before you can run this function. RCodeGenerator.loads3File()');
         }
 
+        this.code += '#sensitive\n';
         this.code += '# Function: saveCSVToS3File - Start\n';
         this.code += 'temp <- tempfile(pattern = "file", tmpdir = "", fileext = ".csv")\n';
         this.code += 'temp <- paste(".", temp, sep="")\n';
@@ -179,6 +188,7 @@ function RCodeGenerator(){
         this.code += filevar + ' <- put_object(temp, bucket="' + s3bucket + '", object = filename)\n';
         this.code += 'unlink(temp)\n';
         this.code += '# Function: saveCSVToS3File - End\n';
+        this.code += '#sensitive\n';
         this.datasetkey = filename + '.csv';
         this.transformedDataset = true;
         return this;
@@ -241,6 +251,9 @@ function RCodeGenerator(){
                     var objects = res.workspace(); // --or-- res.get('workspace').objects;
                     console.log(objects);
 
+                    // Remove senstive code
+                    var cleancode = self.code.replace(/#sensitive([\s\S]*?)#sensitive/g, '')
+
                     return resolve({
                         success : true,
                         execution : exec,
@@ -250,7 +263,7 @@ function RCodeGenerator(){
                         objects : objects,
                         datasetkey : self.datasetkey,
                         modelkey : self.modelkey,
-                        code: self.code
+                        code: cleancode
                     });
                 })
                 .ensure(function() {
