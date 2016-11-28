@@ -252,7 +252,7 @@ function RCodeGenerator(){
                     console.log(objects);
 
                     // Remove senstive code
-                    var cleancode = self.code.replace(/#sensitive([\s\S]*?)#sensitive/g, '')
+                    var cleancode = self.code.replace(/#sensitive([\s\S]*?)#sensitive/g, '');
 
                     return resolve({
                         success : true,

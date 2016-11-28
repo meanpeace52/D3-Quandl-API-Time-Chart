@@ -29,9 +29,11 @@ angular.module('process')
                 vm.tabs.unshift('Dataset');
             }
 
-            if (tasks[tasks.length - 1].returnType === 'model') {
+            var finaltask = _.find(tasks, { endpoint : true });
+
+            if (finaltask.returnType === 'model') {
                 vm.model = {
-                    type: tasks[tasks.length - 1].title,
+                    type: finaltask.title,
                     equation: _.find(results.objects, {name: 'equation'}).value,
                     metrics: _.find(results.objects, {name: 'metrics'}).value,
                     output: results.console
