@@ -46,7 +46,7 @@ function RCodeGenerator(){
 
     this.loadCsvFile = function(inputFile, csvvar){
         this.code += '# Function: loadCsvFile - Start\n';
-        this.code += csvvar + ' <- read.csv(' + inputFile + ')\n';
+        this.code += csvvar + ' <- read.csv(' + inputFile + ', stringsAsFactors=TRUE)\n';
         this.code += '# Function: loadCsvFile - End\n';
         return this;
     };
@@ -119,6 +119,13 @@ function RCodeGenerator(){
         this.code += '# Function: dropColumns - Start\n';
         this.code += datavar + '[c(' + columnnumbers + ')] <- list(NULL)\n';
         this.code += '# Function: dropColumns - End\n';
+        return this;
+    };
+
+    this.removeNA = function(datavar){
+        this.code += '# Function: removeNA - Start\n';
+        this.code += datavar + '<-na.omit(' + datavar + ')\n';
+        this.code += '# Function: removeNA - End\n';
         return this;
     };
 

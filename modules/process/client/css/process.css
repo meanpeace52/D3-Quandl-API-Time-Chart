@@ -206,3 +206,6 @@ ul.transformsteps li.selected {
   margin-left: 10px;
   margin-right: 0;
 }
+ul.transformsteps {
+  padding-bottom: 10px;
+}

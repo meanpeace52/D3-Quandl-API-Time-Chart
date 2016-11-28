@@ -53,6 +53,9 @@ exports.deployrRun = function (req, response) {
                         return '"' + column.replace(/"/g, '\\"') + '"';
                     }).join(','));
                 }
+                else if (step.type === 'removerowswithmissingdata') {
+                    generator.removeNA('dataset');
+                }
                 else if (step.type === 'merge'){
                     if (step.source === 'dataset'){
                         var datasets3reference = step.dataset.s3reference.replace('https://s3.amazonaws.com/datasetstl', '');

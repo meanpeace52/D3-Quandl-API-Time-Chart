@@ -41,6 +41,7 @@
                     <select class="form-control" ng-model="ProcessStep3.selectedAction">
                         <option>Rename Columns</option>
                         <option>Drop Selected Columns</option>
+                        <option>Remove rows with missing data</option>
                         <option>PCA/Whitening</option>
                     </select>
                 </div>
@@ -200,6 +201,10 @@
                             <div ng-if="step.type == 'rename'">
                                 <a href="" ng-click="ProcessStep3.removeStep(step)"><span class="glyphicon glyphicon-remove"></span></a>
                                 <strong>Renamed Columns:</strong> {{ step.newcolumnnames.join(', ') }}
+                            </div>
+                            <div ng-if="step.type == 'removerowswithmissingdata'">
+                                <a href="" ng-click="ProcessStep3.removeStep(step)"><span class="glyphicon glyphicon-remove"></span></a>
+                                <strong>Remove Rows with Missing Data</strong>
                             </div>
                         </li>
                     </ul>
