@@ -43,7 +43,7 @@
                     <i ng-show="ProcessStep4.showPlaceholderArrow" class="fa fa-long-arrow-right arrow"></i>
                 </li>
                 <li ng-repeat="task in ProcessStep4.process.tasks" ng-class="{'task-arrow': task.returnType == 'dataset'}">
-                    <button class="btn btn-default color-{{task.color}}" ng-click="ProcessStep4.onTaskClick(task)">{{task.title}}</button>
+                    <div class="btn btn-default color-{{task.color}}">{{task.title}}<a href="" ng-click="ProcessStep4.onTaskClick(task)"><span class="glyphicon glyphicon-wrench"></span></a><a href="" ng-click="ProcessStep4.removeTask(task)"><span class="glyphicon glyphicon-trash"></span></a></div>
                 </li>
             </ul>
             <div class="options">

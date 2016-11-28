@@ -2,8 +2,8 @@
 
 angular.module('process')
     .controller('ProcessWizardStep4Controller',
-    ['$state', '$stateParams', '$timeout', 'Tasks', 'Deployr', '$uibModal', '$q', 'toastr', 'Process', '$log', 'ProcessStateService',
-        function ($state, $stateParams, $timeout, Tasks, Deployr, $uibModal, $q, toastr, Process, $log, ProcessStateService) {
+    ['$state', '$stateParams', '$timeout', 'Tasks', 'Deployr', '$uibModal', '$q', 'toastr', 'Process', '$log', 'ProcessStateService', 'prompt',
+        function ($state, $stateParams, $timeout, Tasks, Deployr, $uibModal, $q, toastr, Process, $log, ProcessStateService, prompt) {
             var baseStateUrl = 'lab.process2.step4';
             var vm = this;
             var runningTask = null;
@@ -177,6 +177,16 @@ angular.module('process')
                     .finally(function () {
                         vm.showProcessLoader = false;
                     });
+            };
+
+            vm.removeTask = function(task){
+                prompt({
+                    title: 'Confirm?',
+                    message: 'Are you sure you want to remove this task?'
+                }).then(function() {
+                    vm.process.tasks = _.without(vm.process.tasks, task);
+                    ProcessStateService.saveProcessTasksData(vm.process);
+                });
             };
 
             vm.cancelProcess = function () {

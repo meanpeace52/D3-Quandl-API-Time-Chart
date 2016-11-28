@@ -202,3 +202,7 @@ ul.transformsteps li.selected {
 .step4-footer .btn {
   margin-right: 5px;
 }
+.drop-list .glyphicon {
+  margin-left: 10px;
+  margin-right: 0;
+}
