@@ -45,7 +45,7 @@ angular.module('process')
         title: 'Summaries',
         color: 'blue',
         subtasks: []
-      }, {
+      }/*, {
         title: 'Join',
         color: 'green',
         subtasks: [{
@@ -60,7 +60,7 @@ angular.module('process')
             mergeType: ''
           }
         }]
-      }, {
+      }*/, {
         title: 'Transforms',
         color: 'yellow',
         subtasks: [{
