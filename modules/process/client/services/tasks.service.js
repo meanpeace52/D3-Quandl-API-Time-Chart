@@ -45,22 +45,7 @@ angular.module('process')
         title: 'Summaries',
         color: 'blue',
         subtasks: []
-      }/*, {
-        title: 'Join',
-        color: 'green',
-        subtasks: [{
-          title: 'Merge (Drag me)',
-          slug: 'merge',
-          returnType: SCRIPT_RETURN_TYPE.DATASET,
-          options: {
-            dataset1: '',
-            dataset2: '',
-            dataset1Key: '',
-            dataset2Key: '',
-            mergeType: ''
-          }
-        }]
-      }*/, {
+      }, {
         title: 'Transforms',
         color: 'yellow',
         subtasks: [{
