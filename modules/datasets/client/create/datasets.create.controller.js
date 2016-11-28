@@ -16,7 +16,8 @@ angular.module('datasets')
                 vm.submitted = false;
 
                 vm.dataset = {
-                    access : 'public'
+                    access : 'public',
+                    hasheader : true
                 };
 
                 // Create new Post

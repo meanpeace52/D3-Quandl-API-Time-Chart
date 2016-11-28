@@ -40,13 +40,13 @@
                 </select>
             </div>
             <ul ng-show="DatasetsDetail.hasLoadedData && DatasetsDetail.totalItems > DatasetsDetail.itemsPerPage" uib-pagination total-items="DatasetsDetail.totalItems" ng-model="DatasetsDetail.currentPage" items-per-page="DatasetsDetail.itemsPerPage" max-size="5" force-ellipses="true" boundary-links="true" ng-change="DatasetsDetail.pageChanged()"></ul>
-            <dataset-table columns="DatasetsDetail.columns" rows="DatasetsDetail.rows"></dataset-table>
+            <dataset-table columns="DatasetsDetail.columns" rows="DatasetsDetail.rows" hasheader="DatasetsDetail.dataset.hasheader"></dataset-table>
             <ul ng-show="DatasetsDetail.hasLoadedData && DatasetsDetail.totalItems > DatasetsDetail.itemsPerPage" uib-pagination total-items="DatasetsDetail.totalItems" ng-model="DatasetsDetail.currentPage" items-per-page="DatasetsDetail.itemsPerPage" max-size="5" force-ellipses="true" boundary-links="true" ng-change="DatasetsDetail.pageChanged()"></ul>
         </div>
 
         <div class="col-md-6">
             <!-- <h3>{{ DatasetDetailModal.selectedDatasetOption.title }}</h3> -->
-            <dataset-table columns="DatasetsDetail.selectedDatasetColumns" rows="DatasetsDetail.selectedDatasetRows"></dataset-table>
+            <dataset-table columns="DatasetsDetail.selectedDatasetColumns" rows="DatasetsDetail.selectedDatasetRows" hasheader="DatasetsDetail.dataset.hasheader"></dataset-table>
         </div>
     </div><!-- row -->
     <div class="row">

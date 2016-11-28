@@ -14,7 +14,7 @@
     <div class="col-md-6">
         <p><strong>New Dataset: </strong>{{ ProcessStep3.selecteddataset.title }}</p>
         <div class="row">
-            <label class="control-label pull-right"><input type="checkbox" ng-model="" />  Has Header/Has Column Names?</label>
+            <label class="control-label pull-right"><input type="checkbox" ng-model="ProcessStep3.currentdataset.hasheader" />  Has Header/Has Column Names?</label>
         </div>
         <div class="loader text-center" ng-show="ProcessStep3.showLoader">
             <i class="spinner"></i>
@@ -25,7 +25,7 @@
                     <thead>
                     <th ng-repeat="column in ProcessStep3.currentdataset.columns"><a href="" ng-click="ProcessStep3.excludedcolumns[column] = !ProcessStep3.excludedcolumns[column];"><span class="glyphicon glyphicon-remove pull-right" ng-class="{ 'exclude' : ProcessStep3.excludedcolumns[column] }"></span></a></th>
                     </thead>
-                    <thead>
+                    <thead ng-if="!ProcessStep3.currentdataset.hasheader">
                         <th ng-repeat="column in ProcessStep3.currentdataset.columns" ng-bind="column" ng-class="{ 'exclude' : ProcessStep3.excludedcolumns[column] }"></th>
                     </thead>
                     <thead>
