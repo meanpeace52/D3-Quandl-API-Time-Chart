@@ -1,10 +1,28 @@
-<p>Linear Regression</p>
-
-<form class="form-inline">
-  <div class="form-group">
-    <label for="yColIndex">Y: </label>
-    <select id="yColIndex" class="form-control" ng-model="LROptions.options.yColIndex" ng-options="idx as column for (idx, column) in LROptions.columns">
-    </select>
-    <button ng-click="LROptions.update()" class="btn btn-secondary">Update</button>
-  </div>
+<hr/>
+<h3>Linear Regression Options</h3>
+<form class="form-horizontal">
+    <div class="form-group">
+        <label for="yColIndex" class="control-label col-md-4">Y: </label>
+        <div class="col-md-8">
+            <select id="yColIndex" class="form-control" ng-model="LROptions.options.yColIndex"
+                    ng-options="idx as column for (idx, column) in LROptions.columns">
+            </select>
+        </div>
+    </div>
+    <div class="form-group">
+        <label for="removeNA" class="control-label col-md-4">Remove rows with missing data?:</label>
+        <div class="col-md-8">
+            <input type="checkbox" id="removeNA" ng-model="LROptions.options.removeNA"/>
+        </div>
+    </div>
+    <div class="form-group">
+        <label for="train" class="control-label col-md-4">Train/test split: </label>
+        <div class="col-md-8">
+            <input name="train" id="train" type="number" class="form-control" ng-model="LROptions.options.train" min="0.01" max="1" step="0.01" />
+        </div>
+    </div>
+    <div class="form-group text-center">
+        <button ng-click="LROptions.update()" class="btn btn-secondary">Update</button>
+    </div>
 </form>
+<hr/>

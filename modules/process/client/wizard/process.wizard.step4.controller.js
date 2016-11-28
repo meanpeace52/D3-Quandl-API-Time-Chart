@@ -37,6 +37,26 @@ angular.module('process')
 
             vm.showPlaceholderArrow = true;
 
+            function setEndpoint(task){
+                _.each(vm.process.tasks, function (currenttask) {
+                    currenttask.endpoint = false;
+                    currenttask.disabled = false;
+                });
+                task.endpoint = true;
+                var endpointreach = false;
+                _.each(vm.process.tasks, function (currenttask) {
+                    if (endpointreach){
+                        currenttask.disabled = true;
+                    }
+                    if (!endpointreach && currenttask.endpoint){
+                        endpointreach = true;
+                    }
+                });
+            }
+
+            if (vm.process.tasks.length){
+                setEndpoint(vm.process.tasks[vm.process.tasks.length - 1]);
+            }
 
             // save current task options before closing the modal,
             // or showing options for another task
@@ -85,6 +105,9 @@ angular.module('process')
                     vm.process.tasks.splice(index, 1, task);
                     ProcessStateService.saveProcessTasksData(vm.process);
                     showTaskOptions(vm.process.tasks[index]);
+                    /*if (index === vm.process.tasks.length - 1){
+                        setEndpoint(vm.process.tasks[index]);
+                    }*/
                 }
                 return true;
             };
@@ -194,6 +217,10 @@ angular.module('process')
                     runningTask.cancel(true);
                     runningTask = null;
                 }
+            };
+
+            vm.setEndpoint = function(task) {
+                setEndpoint(task);
             };
 
             vm.saveProcess = function(){

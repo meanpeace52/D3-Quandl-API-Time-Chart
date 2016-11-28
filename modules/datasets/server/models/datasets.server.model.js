@@ -21,7 +21,10 @@ var DatasetSchema = new Schema({
         type: String,
         default: ''
     },
-    
+    hasheader: {
+        type: Boolean,
+        default: true
+    },
     created: {
         type: Date,
         default: Date.now

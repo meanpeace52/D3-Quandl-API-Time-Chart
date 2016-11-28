@@ -27,6 +27,9 @@ exports.deployrRun = function (req, response) {
 
     var outputFileKey = '/' + req.user.username + '/' + (new Date().getTime()).toString(16);
 
+    var endPointIndex = _.find(req.body.tasks, { endpoint : true });
+    req.body.tasks = _.take(req.body.tasks, endPointIndex + 1);
+
     _.each(req.body.tasks, function(task){
         if (task.title === 'Linear Regression'){
             generator
@@ -52,6 +55,12 @@ exports.deployrRun = function (req, response) {
                     generator.renameColumns('dataset', step.newcolumnnames.map(function(column){
                         return '"' + column.replace(/"/g, '\\"') + '"';
                     }).join(','));
+                }
+                else if (step.type === 'removerowswithmissingdata') {
+                    generator.removeNA('dataset');
+                }
+                else if (step.type === 'logtransform') {
+                    generator.logTransform('dataset');
                 }
                 else if (step.type === 'merge'){
                     if (step.source === 'dataset'){

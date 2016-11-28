@@ -13,6 +13,9 @@
 <div class="row">
     <div class="col-md-6">
         <p><strong>New Dataset: </strong>{{ ProcessStep3.selecteddataset.title }}</p>
+        <div class="row">
+            <label class="control-label pull-right"><input type="checkbox" ng-model="ProcessStep3.currentdataset.hasheader" />  Has Header/Has Column Names?</label>
+        </div>
         <div class="loader text-center" ng-show="ProcessStep3.showLoader">
             <i class="spinner"></i>
         </div>
@@ -22,7 +25,7 @@
                     <thead>
                     <th ng-repeat="column in ProcessStep3.currentdataset.columns"><a href="" ng-click="ProcessStep3.excludedcolumns[column] = !ProcessStep3.excludedcolumns[column];"><span class="glyphicon glyphicon-remove pull-right" ng-class="{ 'exclude' : ProcessStep3.excludedcolumns[column] }"></span></a></th>
                     </thead>
-                    <thead>
+                    <thead ng-if="!ProcessStep3.currentdataset.hasheader">
                         <th ng-repeat="column in ProcessStep3.currentdataset.columns" ng-bind="column" ng-class="{ 'exclude' : ProcessStep3.excludedcolumns[column] }"></th>
                     </thead>
                     <thead>
@@ -41,6 +44,8 @@
                     <select class="form-control" ng-model="ProcessStep3.selectedAction">
                         <option>Rename Columns</option>
                         <option>Drop Selected Columns</option>
+                        <option>Remove rows with missing data</option>
+                        <option>Log transform</option>
                         <option>PCA/Whitening</option>
                     </select>
                 </div>
@@ -200,6 +205,14 @@
                             <div ng-if="step.type == 'rename'">
                                 <a href="" ng-click="ProcessStep3.removeStep(step)"><span class="glyphicon glyphicon-remove"></span></a>
                                 <strong>Renamed Columns:</strong> {{ step.newcolumnnames.join(', ') }}
+                            </div>
+                            <div ng-if="step.type == 'removerowswithmissingdata'">
+                                <a href="" ng-click="ProcessStep3.removeStep(step)"><span class="glyphicon glyphicon-remove"></span></a>
+                                <strong>Remove Rows with Missing Data</strong>
+                            </div>
+                            <div ng-if="step.type == 'logtransform'">
+                                <a href="" ng-click="ProcessStep3.removeStep(step)"><span class="glyphicon glyphicon-remove"></span></a>
+                                <strong>Log transform</strong>
                             </div>
                         </li>
                     </ul>

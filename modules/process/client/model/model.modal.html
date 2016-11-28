@@ -214,6 +214,12 @@
                                     <div ng-if="step.type == 'rename'">
                                         <strong>Renamed Columns:</strong> {{ step.newcolumnnames.join(', ') }}
                                     </div>
+                                    <div ng-if="step.type == 'removerowswithmissingdata'">
+                                        <strong>Remove Rows with Missing Data</strong>
+                                    </div>
+                                    <div ng-if="step.type == 'logtransform'">
+                                        <strong>Log transform</strong>
+                                    </div>
                                 </li>
                             </ul>
                         </div>

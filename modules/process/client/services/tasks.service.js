@@ -92,7 +92,9 @@ angular.module('process')
           slug: 'linearregression',
           returnType: SCRIPT_RETURN_TYPE.MODEL,
           options: {
-            yColIndex: ''
+            yColIndex: '',
+            removeNA: false,
+            train: 0.01
           },
           validate: function(options) {
             return !isNaN(parseInt(options.yColIndex));

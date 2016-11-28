@@ -404,7 +404,43 @@ angular.module('process')
                     case 'Drop Selected Columns':
                         vm.dropColumns();
                         break;
+                    case 'Remove rows with missing data':
+                        vm.removeRowsWithMissingData();
+                        break;
+                    case 'Log transform':
+                        vm.logTransform();
+                        break;
                 }
+            };
+
+            vm.logTransform = function(){
+                var existingstep = _.find(vm.transformSteps, { type : 'logtransform'});
+                if (existingstep){
+                    toastr.error('You\'ve already added this step.');
+                    return;
+                }
+
+                var transformStep = { };
+                transformStep.type = 'logtransform';
+                vm.transformSteps.push(transformStep);
+
+                ProcessStateService.saveTransformSteps(vm.transformSteps);
+                toastr.success('Transform step updated successfully.');
+            };
+
+            vm.removeRowsWithMissingData = function(){
+                var existingstep = _.find(vm.transformSteps, { type : 'removerowswithmissingdata'});
+                if (existingstep){
+                    toastr.error('You\'ve already added this step.');
+                    return;
+                }
+
+                var transformStep = { };
+                transformStep.type = 'removerowswithmissingdata';
+                vm.transformSteps.push(transformStep);
+
+                ProcessStateService.saveTransformSteps(vm.transformSteps);
+                toastr.success('Transform step updated successfully.');
             };
 
             vm.renameColumnNames = function(){
