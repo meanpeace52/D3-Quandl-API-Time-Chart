@@ -156,7 +156,7 @@ function RCodeGenerator(){
     };
 
     this.predict = function(modelkey){
-        this.code += 's3load("' + + '", bucket = "rdatamodels")\n';
+        this.code += 's3load("' + modelkey + '", bucket = "rdatamodels")\n';
         this.code += 'predict(lm.fit, dataset)\n';
     };
 
