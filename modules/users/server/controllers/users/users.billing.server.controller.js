@@ -148,7 +148,7 @@ var path = require('path'),
       if(!stripe_plan) return res.status(400).json({message:'plan not found'});
 
       var confirm = function (err, subscription_id){
-        if (err) res.status(400).json({message:err.message});
+        if (err) return res.status(400).json({message:err.message});
         res.json(user_plan);
       };
 

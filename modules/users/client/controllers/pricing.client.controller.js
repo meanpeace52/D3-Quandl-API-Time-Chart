@@ -47,8 +47,7 @@ angular.module('users')
 
           $scope.selectPlan = function(plan_id, period){
             BillingService.openSelectPlanModal({ plan_id:plan_id, period:period, allow_choice:false }, function(){
-              getPlans();
-              $state.go('settings.billing');
+              $state.go('settings.billing.subscription');
             });
           };
 

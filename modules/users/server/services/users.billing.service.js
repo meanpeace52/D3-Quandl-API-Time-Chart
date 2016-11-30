@@ -138,7 +138,6 @@ var plans = config.stripePlans;
           stripe.invoices.create({
              customer: subscription.customer
            }, function(err, invoice) {
-             if(err) return next(err);
              user.plan = plan;
              user.save(function (err) {
                if (err) {
@@ -206,5 +205,6 @@ var plans = config.stripePlans;
      subscribeCustomerToPlan:subscribeCustomerToPlan,
      purchaseItem:purchaseItem,
      stripe:stripe,
-     plans:plans
+     plans:plans,
+     updateCustomerSource:updateCustomerSource 
   };
