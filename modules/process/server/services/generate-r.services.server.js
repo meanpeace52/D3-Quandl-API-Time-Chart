@@ -145,13 +145,19 @@ function RCodeGenerator(){
         this.code += '  # Applies transformation\n';
         this.code += '  df[, is_numeric] <- log(df[, is_numeric], base = base)\n';
         this.code += '}\n';
-        this.code += datavar + ' <- df_log(' + datavar + ')';
+        this.code += datavar + ' <- df_log(' + datavar + ')\n';
         this.code += '# Function: logTransform - End\n';
+        return this;
     };
 
     this.linearRegression = function(s3accessKey, s3secretKey, s3bucket, inputData, yColIndex, filename){
         this.printLMFit('dataset', yColIndex, filename);
         return this;
+    };
+
+    this.predict = function(modelkey){
+        this.code += 's3load("' + + '", bucket = "rdatamodels")\n';
+        this.code += 'predict(lm.fit, dataset)\n';
     };
 
     this.mergeDataset = function(dataset1, keyindex1, dataset2, keyindex2){
