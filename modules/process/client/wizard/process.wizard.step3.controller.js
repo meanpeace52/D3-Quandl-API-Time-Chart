@@ -2,8 +2,10 @@
 
 angular.module('process')
     .controller('ProcessWizardStep3Controller',
-    ['$state', '$stateParams', 'Authentication', 'toastr', '$log', 'UsersFactory', 'ProcessStateService', 'Datasets', 'prompt', '$rootScope', 'Tasks', 'Process', '$localStorage',
-        function ($state, $stateParams, Authentication, toastr, $log, UsersFactory, ProcessStateService, Datasets, prompt, $rootScope, Tasks, Process, $localStorage) {
+    ['$state', '$stateParams', 'Authentication', 'toastr', '$log', 'UsersFactory', 'ProcessStateService', 'Datasets',
+        'prompt', '$rootScope', 'Tasks', 'Process', '$localStorage', '$uibModal', '$scope',
+        function ($state, $stateParams, Authentication, toastr, $log, UsersFactory, ProcessStateService, Datasets,
+                  prompt, $rootScope, Tasks, Process, $localStorage, $uibModal, $scope) {
             var vm = this;
 
             vm.user = Authentication.user;
@@ -374,6 +376,35 @@ angular.module('process')
             };
 
             vm.updateTransformProcessTask = function(){
+                if (vm.transformSteps.length){
+                    var modalInstance = $uibModal.open({
+                        controller: 'ConfirmStepsModalController',
+                        controllerAs: 'ConfirmStepsModal',
+                        templateUrl: 'modules/process/client/confirmsteps/confirmsteps.modal.html',
+                        size: 'md',
+                        backdrop: 'static',
+                        resolve: {
+                            transformSteps: function () {
+                                return vm.transformSteps;
+                            }
+                        }
+                    });
+
+                    modalInstance.result
+                        .then(function () {
+                            saveTransformationTasks();
+                        });
+                }
+                else{
+                    saveTransformationTasks();
+                }
+
+                /*
+
+                 */
+            };
+
+            function saveTransformationTasks(){
                 var currentProcessTasksData = ProcessStateService.currentProcessTasksData();
                 var existingTask = _.find(currentProcessTasksData.tasks, {title: 'Initial Transformations'});
                 if (vm.transformSteps.length){
@@ -394,7 +425,8 @@ angular.module('process')
                     }
                 }
                 ProcessStateService.saveProcessTasksData(currentProcessTasksData);
-            };
+                $scope.$emit('changeState', 'lab.process2.step4');
+            }
 
             vm.addTransformStep = function(action){
                 switch(action){

@@ -1,0 +1,43 @@
+<div class="modal-header">
+    <h4 class="modal-title">
+        Confirm Transformation Steps?
+    </h4>
+</div>
+<div class="modal-body">
+    <div class="container-fluid">
+        <div class="row">
+            <div ng-show="ConfirmStepsModal.transformSteps.length">
+                <p>{{ConfirmStepsModal.transformSteps.length}} transformation steps</p>
+            </div>
+            <ul class="list-unstyled transformsteps" style="overflow: auto;">
+                <li ng-repeat="step in ConfirmStepsModal.transformSteps"
+                    class="{{ step.type }}">
+                    <div ng-if="step.source == 'modeldataset'">
+                        <strong>Merge with source model dataset:</strong> Model name: {{ step.model.title }} Key Column: {{ step.keyfield }} Destination Key Column: {{ step.keyfield }} Columns Included: {{ step.selectedcolumns.join(', ') }}
+                    </div>
+                    <div ng-if="step.source == 'dataset'">
+                        <strong>Merge with source dataset: </strong> Dataset name: {{ step.dataset.title }} Key Column: {{ step.keyfield }} Destination Key Column: {{ step.keyfield }} Columns Included: {{ step.selectedcolumns.join(', ') }}
+                    </div>
+                    <div ng-if="step.type == 'drop'">
+                        <strong>Drop Columns:</strong> {{ step.columnnames.join(', ') }}
+                    </div>
+                    <div ng-if="step.type == 'rename'">
+                        <strong>Renamed Columns:</strong> {{ step.newcolumnnames.join(', ') }}
+                    </div>
+                    <div ng-if="step.type == 'removerowswithmissingdata'">
+                        <strong>Remove Rows with Missing Data</strong>
+                    </div>
+                    <div ng-if="step.type == 'logtransform'">
+                        <strong>Log transform</strong>
+                    </div>
+                </li>
+            </ul>
+        </div>
+    </div>
+</div>
+<div class="modal-footer">
+    <div class="col-md-12 text-right">
+        <button class="btn btn-danger" ng-click="ConfirmStepsModal.cancel()">Cancel</button>
+        <button class="btn btn-primary" ng-click="ConfirmStepsModal.ok()">OK</button>
+    </div>
+</div>
