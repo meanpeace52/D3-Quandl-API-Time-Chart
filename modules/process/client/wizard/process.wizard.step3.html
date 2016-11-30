@@ -98,7 +98,7 @@
                             </div>
                             <table class="table table-striped table-bordered">
                                 <thead>
-                                    <th ng-repeat="column in ProcessStep3.currentmodeldataset.columns"><input type="checkbox" name="selectedcolumn" ng-change="ProcessStep3.modelColumnsChanged()" ng-model="ProcessStep3.selectedmodelcolumns[column]" /></th>
+                                    <th ng-repeat="column in ProcessStep3.currentmodeldataset.columns"><input type="checkbox" name="selectedcolumn" ng-change="ProcessStep3.modelColumnsChanged()" ng-model="ProcessStep3.selectedmodelcolumns[column]" /><a href="" ng-click="ProcessStep3.searchByColumnName(column)"><span class="glyphicon glyphicon-search"></span></a></th>
                                 </thead>
                                 <thead>
                                     <th ng-repeat="column in ProcessStep3.currentmodeldataset.columns" ng-bind="column" ng-class="{ 'exclude' : !ProcessStep3.selectedmodelcolumns[column] }"></th>

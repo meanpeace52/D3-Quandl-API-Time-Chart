@@ -428,6 +428,11 @@ angular.module('process')
                 toastr.success('Transform step updated successfully.');
             };
 
+            vm.searchByColumnName = function(column){
+                $rootScope.$emit('set-dataset-search', column);
+                vm.changeTab('Search Data');
+            };
+
             vm.removeRowsWithMissingData = function(){
                 var existingstep = _.find(vm.transformSteps, { type : 'removerowswithmissingdata'});
                 if (existingstep){

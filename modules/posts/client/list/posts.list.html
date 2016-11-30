@@ -25,7 +25,7 @@
         </button>
     </form>
     <div class="list-group">
-        <div data-ng-repeat="post in postsList.list | limitTo: postsList.postLimit" class="list-group-item posts">
+        <div data-ng-repeat="post in postsList.list | limitTo: postsList.postLimit" ui-sref="posts.detail({postId: post._id})" class="list-group-item posts">
             <div class="row">
                 <div class="col-md-6">
                     <small class="list-group-item-text">
@@ -36,7 +36,6 @@
                     </small>
                 </div>
                 <div class="col-md-6 buttons">
-                    <a class="pull-right btn btn-secondary" ui-sref="posts.detail({postId: post._id})">View</a>
                     <span ng-if="post.files.length" class="pull-right glyphicon glyphicon-file" title="PDFs attached"></span>
                     <span ng-if="post.datasets.length" class="pull-right glyphicon glyphicon-list" title="Datasets Attached"></span>
                     <span if="post.models.length" class="pull-right glyphicon glyphicon-stats" title="Models Attached"></span>

@@ -22,6 +22,10 @@ angular.module('datasets').controller('DatasetsListController', ['$state', '$sta
         vm.ownership = UsersFactory.ownership();
         vm.showCreate = $state.current.name == 'datasets.list' || $state.current.name == 'datasets.search';
         vm.myDatasets = $state.current.name == 'users.profilepage.datasets';
+
+        $rootScope.$on('set-dataset-search', function(event, data){
+            vm.q = data;
+        });
         
         vm.load = function () {
             vm.resolved = false;
