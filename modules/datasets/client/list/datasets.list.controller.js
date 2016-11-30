@@ -174,6 +174,21 @@ angular.module('datasets').controller('DatasetsListController', ['$state', '$sta
                 });
         };
 
+        vm.viewDataset = function(dataset){
+            if (vm.state !== 'users.profilepage.datasets'){
+                if (dataset.access == 'for sale' && !dataset.purchased ){
+                    return;
+                }
+            }
+
+            if (vm.state !== 'lab.process2.step3') {
+                $state.go('datasets.detail', {datasetId: dataset._id});
+            }
+            else{
+                vm.useDataset(dataset);
+            }
+        };
+
         vm.showData = function (dataset) {
             var modalInstance = $modal.open({
                 templateUrl: 'modules/datasets/client/detail/datasets.detail.modal.html',

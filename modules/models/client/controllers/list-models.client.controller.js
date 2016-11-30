@@ -114,7 +114,16 @@
             $log.error(err);
             toastr.error('An error occurred while copying the dataset for the model.');
           });
+    };
 
+    vm.viewModel = function(model){
+      if (vm.state !== 'users.profilepage.models'){
+        if (model.access == 'for sale' && !model.purchased ){
+          return;
+        }
+      }
+
+      $state.go('models.view', { modelId: model._id });
     };
 
     if ($state.current.name === 'models.filter') {

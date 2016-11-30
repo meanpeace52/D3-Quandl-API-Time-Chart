@@ -2,44 +2,54 @@
   position: relative;
   margin-bottom: 10px;
 }
+
 .datasets-search-container .btn {
   position: absolute;
   right: 0;
   top: 0;
 }
+
 .datasets-search-container .form-control {
   max-width: 95%;
 }
+
 .workbench .data-loading {
   text-align: center;
 }
-.workbench .data-loading .glyphicon {
+
+.workbench .data-loading .glyphicon{
   font-size: 50px;
 }
+
 .loader-data-row {
-  margin-bottom: 10px;
+  margin-bottom:  10px;
   padding: 0 15px;
 }
+
 .loader-data {
   background: url('loader.gif') no-repeat;
   background-size: contain;
   display: inline-block;
 }
+
 .workbench .loader-data {
   width: 50px;
   height: 50px;
   margin-top: 30px;
 }
+
 .loader-data--modal {
   width: 30px;
   height: 30px;
   vertical-align: middle;
 }
+
 .loader-data--modal + span {
   margin-left: 10px;
   display: inline-block;
   vertical-align: middle;
 }
+
 .title-checkbox-label,
 .title-radio-label {
   cursor: pointer;
@@ -48,15 +58,18 @@
   position: relative;
   z-index: 500;
 }
+
 .title-checkbox,
 .title-radio {
   margin: 0 10px 0 0 !important;
   vertical-align: middle;
   pointer-events: none;
+
 }
 .title-checkbox {
   margin: 0 0 0 10px !important;
 }
+
 .save-changes-btn-wrap {
   text-align: center;
 }
@@ -65,21 +78,32 @@
     text-align: left;
   }
 }
+
 .dataTables_scroll {
   border: 1px solid #DACACA;
 }
+
 table.dataTable {
   margin-top: 0 !important;
 }
+
+
 .workbench__footer-buttons {
   margin-top: 15px;
 }
+
 .top-buffer {
   margin-top: 15px;
 }
+
 .vresize {
   resize: vertical;
 }
-.dataset.list-group-item:hover {
-  cursor: pointer;
+
+.dataset{
+  &.list-group-item{
+    &:hover{
+      cursor: pointer;
+    }
+  }
 }
