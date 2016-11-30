@@ -433,6 +433,20 @@ angular.module('process')
                 vm.changeTab('Search Data');
             };
 
+            vm.generateColumnNames = function(){
+                var count = 1;
+                _.forOwn(vm.currentdataset.renamedcolumns, function(value, key) {
+                    vm.currentdataset.renamedcolumns[key] = 'col' + count;
+                    count++;
+                });
+            };
+
+            vm.revertColumnNames = function(){
+                _.forOwn(vm.currentdataset.renamedcolumns, function(value, key) {
+                    vm.currentdataset.renamedcolumns[key] = key;
+                });
+            };
+
             vm.removeRowsWithMissingData = function(){
                 var existingstep = _.find(vm.transformSteps, { type : 'removerowswithmissingdata'});
                 if (existingstep){

@@ -13,10 +13,12 @@
 <div class="row">
     <div class="col-md-6">
         <p><strong>New Dataset: </strong>{{ ProcessStep3.selecteddataset.title }}</p>
+        <button ng-click="ProcessStep3.generateColumnNames()" class="btn btn-default">Generate Column Names</button>
+        <button ng-click="ProcessStep3.revertColumnNames()" class="btn btn-default">Revert to Original Names</button>
         <div class="row">
             <label class="control-label pull-right"><input type="checkbox" ng-model="ProcessStep3.currentdataset.hasheader" />  Has Header/Has Column Names?</label>
         </div>
-        <div class="loader text-center" ng-show="ProcessStep3.showLoader">
+       <div class="loader text-center" ng-show="ProcessStep3.showLoader">
             <i class="spinner"></i>
         </div>
         <div class="overflow: auto;" ng-show="!ProcessStep3.showLoader">
@@ -46,7 +48,7 @@
                         <option>Drop Selected Columns</option>
                         <option>Remove rows with missing data</option>
                         <option>Log transform</option>
-                        <option>PCA/Whitening</option>
+                        <!--<option>PCA/Whitening</option>-->
                     </select>
                 </div>
                 <div class="col-md-3"><button class="btn btn-secondary" ng-click="ProcessStep3.addTransformStep(ProcessStep3.selectedAction)">Add</button></div>
