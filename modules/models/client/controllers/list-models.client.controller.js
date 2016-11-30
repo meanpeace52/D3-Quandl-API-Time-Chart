@@ -118,7 +118,7 @@
 
     vm.viewModel = function(model){
       if (vm.state !== 'users.profilepage.models'){
-        if (model.access == 'for sale' && !model.purchased ){
+        if (model.access == 'for sale' && !model.purchased){
           return;
         }
       }

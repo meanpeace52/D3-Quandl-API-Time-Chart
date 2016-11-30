@@ -176,7 +176,7 @@ angular.module('datasets').controller('DatasetsListController', ['$state', '$sta
 
         vm.viewDataset = function(dataset){
             if (vm.state !== 'users.profilepage.datasets'){
-                if (dataset.access == 'for sale' && !dataset.purchased ){
+                if (dataset.access == 'for sale' && !dataset.purchased){
                     return;
                 }
             }
