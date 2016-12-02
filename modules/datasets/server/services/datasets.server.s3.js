@@ -79,7 +79,7 @@ function saveFileToS3(filePath){
     });
 }
 
-function csvToJson(file) {
+function csvToJson(file, hasheader) {
     return new Promise(function (resolve, reject) {
         csv.parse({ filename: file }, function (err, content) {
             if (err) {
@@ -87,6 +87,13 @@ function csvToJson(file) {
                 return reject(err);
             }
 
+            if (!hasheader && content.length){
+                var newRow = {};
+                _.forOwn(content[0], function(value, key) {
+                    newRow[key] = key;
+                });
+                content.unshift(newRow);
+            }
             resolve(content);
         });   
     });
@@ -147,7 +154,7 @@ function copyDatasetFile(username, s3reference){
     });
 }
 
-function readWithS3(s3reference) {
+function readWithS3(s3reference, hasheader) {
     var ref = s3reference.split('https://s3.amazonaws.com/')[1].split('/'), // 'https://s3.amazonaws.com/datasetstl/fed/D/S/DSWP10.csv'
         bucket = ref[0];
 
@@ -158,13 +165,13 @@ function readWithS3(s3reference) {
     return new Promise(function (resolve, reject) {
         try {
             fs.accessSync(localBucketFile);
-            csvToJson(localBucketFile)
+            csvToJson(localBucketFile, hasheader)
                 .then(formatDataIntoTable)
                 .then(resolve)
                 .catch(reject);
         } catch (e) {
             getFileFromS3(bucket, bucketFile)
-                .then(csvToJson.bind(this, localBucketFile))
+                .then(csvToJson.bind(this, localBucketFile, hasheader))
                 .then(formatDataIntoTable)
                 .then(resolve)
                 .catch(reject);

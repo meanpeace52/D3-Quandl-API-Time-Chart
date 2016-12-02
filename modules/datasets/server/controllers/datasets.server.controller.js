@@ -157,11 +157,10 @@ function saveFileToS3(filePath, path, done) {
 
     var params = {
         localFile: './s3-cache/' + filePath,
-
         s3Params: {
             Bucket: 'datasetstl',
             Key: path + filePath
-        },
+        }
     };
     var uploader = client.uploadFile(params);
     uploader.on('error', function (err) {
@@ -729,7 +728,7 @@ exports.list = function (req, res) {
 exports.readWithS3 = function (req, res) {
     var dataset = req.dataset;
 
-    DatasetS3Service.readWithS3(dataset.s3reference).then(function (data) {
+    DatasetS3Service.readWithS3(dataset.s3reference, dataset.hasheader !== undefined ? dataset.hasheader : true).then(function (data) {
         res.json(data);
     }).catch(function (err) {
         res.status(400).json({

@@ -19,7 +19,7 @@
                     <div ng-show="!ModelModal.savedataset">
                         <div style="width: 100%;overflow: auto;">
                             <dataset-table columns="ModelModal.dataset.columns"
-                                           rows="ModelModal.dataset.rows"></dataset-table>
+                                           rows="ModelModal.dataset.rows" hasheader="true"></dataset-table>
                         </div>
                         <div class="row">
                             <button class="btn btn-primary pull-right" ng-click="ModelModal.savedataset = true">Save Dataset</button>

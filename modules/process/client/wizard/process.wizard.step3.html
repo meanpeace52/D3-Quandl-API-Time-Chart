@@ -27,10 +27,10 @@
                     <thead>
                     <th ng-repeat="column in ProcessStep3.currentdataset.columns"><a href="" ng-click="ProcessStep3.excludedcolumns[column] = !ProcessStep3.excludedcolumns[column];"><span class="glyphicon glyphicon-remove pull-right" ng-class="{ 'exclude' : ProcessStep3.excludedcolumns[column] }"></span></a></th>
                     </thead>
-                    <thead ng-if="!ProcessStep3.currentdataset.hasheader">
+                    <thead ng-if="ProcessStep3.currentdataset.hasheader">
                         <th ng-repeat="column in ProcessStep3.currentdataset.columns" ng-bind="column" ng-class="{ 'exclude' : ProcessStep3.excludedcolumns[column] }"></th>
                     </thead>
-                    <thead>
+                    <thead ng-if="ProcessStep3.currentdataset.hasheader">
                         <th ng-repeat="columnname in ProcessStep3.currentdataset.renamedcolumnnames" ng-class="{ 'exclude' : ProcessStep3.excludedcolumns[column] }"><input type="text" class="form-control" ng-model="ProcessStep3.currentdataset.renamedcolumns[columnname]" ng-disabled="ProcessStep3.excludedcolumns[columnname]" /></th>
                     </thead>
                     <tbody>
@@ -102,10 +102,10 @@
                                 <thead>
                                     <th ng-repeat="column in ProcessStep3.currentmodeldataset.columns"><input type="checkbox" name="selectedcolumn" ng-change="ProcessStep3.modelColumnsChanged()" ng-model="ProcessStep3.selectedmodelcolumns[column]" /><a href="" ng-click="ProcessStep3.searchByColumnName(column)"><span class="glyphicon glyphicon-search"></span></a></th>
                                 </thead>
-                                <thead>
+                                <thead ng-if="ProcessStep3.selectedmodel.dataset.hasheader">
                                     <th ng-repeat="column in ProcessStep3.currentmodeldataset.columns" ng-bind="column" ng-class="{ 'exclude' : !ProcessStep3.selectedmodelcolumns[column] }"></th>
                                 </thead>
-                                <thead>
+                                <thead ng-if="ProcessStep3.selectedmodel.dataset.hasheader">
                                     <th ng-repeat="renamedcolumn in ProcessStep3.currentmodeldataset.renamedcolumnnames" ng-class="{ 'exclude' : !ProcessStep3.selectedmodelcolumns[renamedcolumn] }"><input type="text" ng-model="ProcessStep3.currentmodeldataset.renamedcolumns[renamedcolumn]" class="form-control" ng-disabled="!ProcessStep3.selectedmodelcolumns[renamedcolumn]" /></th>
                                 </thead>
                                 <tbody>
@@ -160,10 +160,10 @@
                                     <thead>
                                     <th ng-repeat="column in ProcessStep3.currentselecteddataset.columns"><input type="checkbox" name="selectedcolumn" ng-change="ProcessStep3.datasetColumnsChanged()" ng-model="ProcessStep3.selecteddatasetcolumns[column]" /></th>
                                     </thead>
-                                    <thead>
+                                    <thead ng-if="ProcessStep3.selectedcomparitivedataset.hasheader">
                                     <th ng-repeat="column in ProcessStep3.currentselecteddataset.columns" ng-bind="column" ng-class="{ 'exclude' : !ProcessStep3.selecteddatasetcolumns[column] }"></th>
                                     </thead>
-                                    <thead>
+                                    <thead ng-if="ProcessStep3.selectedcomparitivedataset.hasheader">
                                     <th ng-repeat="renamedcolumn in ProcessStep3.currentselecteddataset.renamedcolumnnames" ng-class="{ 'exclude' : !ProcessStep3.selecteddatasetcolumns[renamedcolumn] }"><input type="text" ng-model="ProcessStep3.currentselecteddataset.renamedcolumns[renamedcolumn]" class="form-control" ng-disabled="!ProcessStep3.selecteddatasetcolumns[renamedcolumn]" /></th>
                                     </thead>
                                     <tbody>

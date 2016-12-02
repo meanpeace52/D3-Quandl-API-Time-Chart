@@ -73,6 +73,7 @@ angular.module('process')
                 // re-initialize table data
                 vm.currentdataset.rows = [];
                 vm.currentdataset.columns = [];
+                vm.currentdataset.hasheader = dataset.hasheader;
                 vm.showLoader = true;
 
                 Datasets.getDatasetWithS3(dataset._id)
@@ -424,6 +425,16 @@ angular.module('process')
                         currentProcessTasksData.tasks = _.without(currentProcessTasksData.tasks, existingTask);
                     }
                 }
+
+                if (currentProcessData.step1selection === 'existing-model'){
+                    var existingModelTask = _.find(currentProcessTasksData.tasks, {title: 'Load Existing Model'});
+                    if (existingModelTask){
+                        currentProcessTasksData.tasks = _.without(currentProcessTasksData.tasks, existingModelTask);
+                    }
+                    var taskDetail2 = _.find(vm.tasks, {title: 'Load Existing Model'});
+                    currentProcessTasksData.tasks.push(taskDetail2.subtasks[0]);
+                }
+
                 ProcessStateService.saveProcessTasksData(currentProcessTasksData);
                 $scope.$emit('changeState', 'lab.process2.step4');
             }

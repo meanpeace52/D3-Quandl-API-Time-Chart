@@ -35,8 +35,6 @@ angular.module('process')
                 }))[0].returnType;
             });
 
-            vm.showPlaceholderArrow = true;
-
             function setEndpoint(task){
                 _.each(vm.process.tasks, function (currenttask) {
                     currenttask.endpoint = false;
@@ -93,10 +91,11 @@ angular.module('process')
             // type "model".
             vm.onDrag = function(event, index, type) {
                 $timeout(function() {
-                    vm.showPlaceholderArrow = type === 'dataset';
+                    vm.showPlaceholderArrow = true;
                 }, 0);
-                return !((type === 'model' && index <= vm.process.tasks.length - 1) ||
-                ((_.last(vm.process.tasks) || {}).returnType === 'model' && index >= vm.process.tasks.length));
+                /*return !((type === 'model' && index <= vm.process.tasks.length - 1) ||
+                ((_.last(vm.process.tasks) || {}).returnType === 'model' && index >= vm.process.tasks.length));*/
+                return true;
             };
 
             vm.onCopy = function(event, index, task) {
@@ -109,6 +108,7 @@ angular.module('process')
                         setEndpoint(vm.process.tasks[index]);
                     }*/
                 }
+                vm.showPlaceholderArrow = false;
                 return true;
             };
 

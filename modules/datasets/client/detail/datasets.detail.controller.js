@@ -25,6 +25,10 @@ angular.module('datasets')
                 Datasets.crud.get({datasetId: $stateParams.datasetId})
                     .$promise.then(function (dataset) {
                         vm.dataset = dataset;
+
+                        //vm.dataset.hasheader = false;
+                        if (!vm.dataset.hasheader){
+                        }
                     });
 
                 Datasets.getDatasetWithS3($stateParams.datasetId)

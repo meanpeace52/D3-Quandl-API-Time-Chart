@@ -41,7 +41,16 @@ angular.module('process')
             transformationSteps: []
           }
         }]
-      }, {
+      },
+      {
+          title: 'Load Existing Model',
+          hideinlist: true,
+          subtasks: [{
+            title: 'Load Existing Model',
+            returnType: SCRIPT_RETURN_TYPE.MODEL,
+            options: {}
+          }]
+        }, {
         title: 'Summaries',
         color: 'blue',
         subtasks: []

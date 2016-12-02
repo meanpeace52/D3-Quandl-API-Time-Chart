@@ -39,11 +39,20 @@
                 dnd-dragover="ProcessStep4.onDrag(event, index, type)"
                 dnd-drop="ProcessStep4.onCopy(event, index, item)"
                 dnd-horizontal-list="true">
-                <li class="dndPlaceholder">
+                <li class="dndPlaceholder" style="margin-top:30px;">
                     <i ng-show="ProcessStep4.showPlaceholderArrow" class="fa fa-long-arrow-right arrow"></i>
                 </li>
-                <li ng-repeat="task in ProcessStep4.process.tasks" ng-class="{'task-arrow': task.returnType == 'dataset', 'disabled-task' : task.disabled }">
-                    <div class="btn btn-default color-{{task.color}}" ng-click="ProcessStep4.onTaskClick(task)">{{task.title}}<a href="" ng-click="ProcessStep4.setEndpoint(task);$event.stopPropagation();" ng-class="{ 'endpoint' : task.endpoint } "><span class="glyphicon glyphicon-off"></span></a><a href="" ng-click="ProcessStep4.removeTask(task);$event.stopPropagation();"><span class="glyphicon glyphicon-remove"></span></a></div>
+                <li ng-repeat="task in ProcessStep4.process.tasks" ng-class="{'task-arrow': true , 'disabled-task' : task.disabled }">
+                    <span>
+                        <span class="task-counter">{{ $index + 1 }}</span><br/>
+                        <div class="btn btn-default color-{{task.color}}" ng-click="ProcessStep4.onTaskClick(task)">{{task.title}}<a href="" ng-click="ProcessStep4.setEndpoint(task);$event.stopPropagation();" ng-class="{ 'endpoint' : task.endpoint } "><span class="glyphicon glyphicon-off"></span></a><a href="" ng-click="ProcessStep4.removeTask(task);$event.stopPropagation();"><span class="glyphicon glyphicon-remove"></span></a></div>
+                    </span>
+                </li>
+                <li>
+                    <span>
+                        <span class="task-counter placeholder-task-counter">{{ ProcessStep4.process.tasks.length + 1 }}</span><br/>
+                        <div class="btn btn-default" style="background:#e6e6e6;height: 35px;width: 100px;"></div>
+                    </span>
                 </li>
             </ul>
             <div class="options">

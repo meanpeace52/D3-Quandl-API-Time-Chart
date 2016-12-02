@@ -27,7 +27,8 @@ exports.deployrRun = function (req, response) {
 
     var outputFileKey = '/' + req.user.username + '/' + (new Date().getTime()).toString(16);
 
-    var endPointIndex = _.find(req.body.tasks, { endpoint : true });
+    var endPoint = _.find(req.body.tasks, { endpoint : true });
+    var endPointIndex = _.indexOf(req.body.tasks, endPoint);
     req.body.tasks = _.take(req.body.tasks, endPointIndex + 1);
 
     _.each(req.body.tasks, function(task){
@@ -108,6 +109,8 @@ exports.deployrRun = function (req, response) {
             .saveCSVToS3File('dataset', outputFileKey, 'csv', 'datasetstl', 'savedfile');
     }
 
+    generator.predict('test12345/158bebed76e.rdata');
+
     generator
         .execute(config.deployrHost, config.deployrUsername, config.deployrPassword)
         .then(function(result){
@@ -130,26 +133,5 @@ exports.deployrRun = function (req, response) {
         .catch(function(err){
             response.status(500).json(err);
         });
-
-    /*
-    deployr.configure({ host: config.deployrHost });
-
-    deployr.io('/r/user/login')
-        .data({ username: config.deployrUsername, password: config.deployrPassword })
-        .error(function(err) {
-            response.status(500).send(err.deployr.response);
-        })
-        .end()
-        .io('/r/repository/script/render')
-            .data({ filename: req.body.filename, author: 'testuser', echooff : true })
-            .rinputs(req.body.rinputs)
-            //.routputs(req.body.routputs)
-            .error(function(err) {
-                response.status(500).send(err.deployr.response);
-            })
-            .end(function(result) {
-                // handle successful response
-                response.send(result);
-            });*/
 
 };

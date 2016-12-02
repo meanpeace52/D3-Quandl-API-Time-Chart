@@ -3,11 +3,13 @@
 angular.module('datasets')
     .directive('datasetTable', [function() {
       var baseTpl = '   <table class="table table-striped table-bordered">';
+        baseTpl += '    {{#if hasheader }}';
           baseTpl += '    <thead>';
           baseTpl += '        {{#each columns}}';
           baseTpl += '	        	<th>{{this}}<\/th>';
           baseTpl += '        {{\/each}}';
           baseTpl += '    <\/thead>';
+        baseTpl += '      {{\/if}}';
           baseTpl += '    <tbody>';
           baseTpl += '      {{> rows}}';
           baseTpl += '    <\/tbody>';
@@ -28,14 +30,16 @@ angular.module('datasets')
         restrict: 'E',
         scope: {
           rows: '=',
-          columns: '='
+          columns: '=',
+          hasheader: '='
         },
         link: function($scope, element) {
-          $scope.$watchGroup(['columns', 'rows'], function(newData) {
-            if (newData[0] && newData[1] && newData[0].length && newData[1].length) {
+          $scope.$watchGroup(['columns', 'rows', 'hasheader'], function(newData) {
+            if (newData[0] && newData[1] && newData[0].length && newData[1].length && newData[2] !== undefined) {
               element.html(tpl({
                 columns: newData[0],
-                rows: newData[1]
+                rows: newData[1],
+                hasheader: newData[2]
               }));
             } else {
               element.html('');

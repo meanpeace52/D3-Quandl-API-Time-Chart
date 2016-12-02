@@ -157,7 +157,8 @@ function RCodeGenerator(){
 
     this.predict = function(modelkey){
         this.code += 's3load("' + modelkey + '", bucket = "rdatamodels")\n';
-        this.code += 'predict(lm.fit, dataset)\n';
+        this.code += 'predict(lm.fit, dataset, interval ="confidence")\n';
+        return this;
     };
 
     this.mergeDataset = function(dataset1, keyindex1, dataset2, keyindex2){
