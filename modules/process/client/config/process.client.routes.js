@@ -126,23 +126,15 @@ angular.module('process')
                         options: {}
                     }
                 })
-                .state('lab.process2.step4.merge', {
-                    templateUrl: MODULE_PATH + 'tasks/tasks.merge.html',
-                    controller: 'MergeTaskOptionsController',
-                    controllerAs: 'MergeTaskOptions',
-                    params: {options: {}},
-                    resolve: {
-                        // parameters to be shared by all the child states
-                        // including the modal and the states for task options
-                        processService: 'Process',
-                        usersDatasets: function (processService) {
-                            return processService.getUsersDatasets();
-                        },
-                        selectedDataset: function (processService) {
-                            return processService.getSelectedDataset();
-                        },
-                        process: function (processService) {
-                            return processService.getSelectedProcess();
+                .state('lab.process2.step4.predict', {
+                    templateUrl: MODULE_PATH + 'tasks/tasks.predict.html',
+                    controller: 'PredictOptionsController',
+                    controllerAs: 'PredictOptions',
+                    params: {
+
+                        id: {},
+                        options: {
+
                         }
                     }
                 });

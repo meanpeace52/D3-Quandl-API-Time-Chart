@@ -2,8 +2,10 @@
 
 angular.module('process')
     .controller('ProcessWizardStep4Controller',
-    ['$state', '$stateParams', '$timeout', 'Tasks', 'Deployr', '$uibModal', '$q', 'toastr', 'Process', '$log', 'ProcessStateService', 'prompt',
-        function ($state, $stateParams, $timeout, Tasks, Deployr, $uibModal, $q, toastr, Process, $log, ProcessStateService, prompt) {
+    ['$state', '$stateParams', '$timeout', 'Tasks', 'Deployr', '$uibModal', '$q', 'toastr', 'Process', '$log',
+        'ProcessStateService', 'prompt',
+        function ($state, $stateParams, $timeout, Tasks, Deployr, $uibModal, $q, toastr, Process, $log,
+                  ProcessStateService, prompt) {
             var baseStateUrl = 'lab.process2.step4';
             var vm = this;
             var runningTask = null;
@@ -73,10 +75,8 @@ angular.module('process')
             }
 
             function showTaskOptions(task) {
-                if (task.slug) {
-                    $state.go(baseStateUrl + '.' + task.slug, {id: vm.process.tasks.indexOf(task), options: task.options});
-                } else {
-                    //$state.go('lab.process.popup');
+                if (task && task.slug) {
+                    $state.go(baseStateUrl + '.' + task.slug, { id: vm.process.tasks.indexOf(task), options: task.options});
                 }
             }
 
