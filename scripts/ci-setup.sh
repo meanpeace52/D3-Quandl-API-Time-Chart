@@ -9,6 +9,7 @@ gem update --system
 npm install --no-optional
 npm install gulp -g
 # npm rebuild node-sass
+npm build
 
 
 npm install -g http-server protractor
