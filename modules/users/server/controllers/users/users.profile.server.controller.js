@@ -34,39 +34,57 @@ var _ = require('lodash'),
  */
 exports.update = function (req, res) {
     // Init Variables
-    var user = req.user, verifyemail = false;
-    if (user) {
+    var user = req.user,
+        verifyemail = false;
 
-        if(user.email !== req.body.email){
-          verifyemail = true;
-          user.emailIsVerified = false;
+    User.findOne({ email : req.body.email }, function(err, doc){
+        if (err){
+            return res.status(400).send({
+                message: 'Error looking up email address.'
+            });
         }
 
-        // For security measure we remove the roles from the req.body object
-        delete req.body.emailIsVerified;
-        delete req.body.roles;
-        // Merge existing user
-        user = _.extend(user, req.body);
+        if (user) {
+            if (doc && doc.id !== user._id.toString()){
+                return res.status(400).send({
+                    message: 'This email address has already been registered with another user.'
+                });
+            }
+
+            if(user.email !== req.body.email){
+                verifyemail = true;
+                user.emailIsVerified = false;
+            }
+
+            // For security measure we remove the roles from the req.body object
+            delete req.body.emailIsVerified;
+            delete req.body.roles;
+            // Merge existing user
+            user = _.extend(user, req.body);
 
 
-        user.updated = Date.now();
-        user.displayName = user.firstName + ' ' + user.lastName;
-        user.save(function (err) {
-          if (err) return res.status(400).send({message: errorHandler.getErrorMessage(err)});
-          if(verifyemail){
-            email.verifyEmail(req, user, function(err){
-              res.json(user.profile());
+            user.updated = Date.now();
+            user.displayName = user.firstName + ' ' + user.lastName;
+            user.save(function (err) {
+                if (err) return res.status(400).send({message: errorHandler.getErrorMessage(err)});
+                if(verifyemail){
+                    email.verifyEmail(req, user, function(err){
+                        res.json(user.profile());
+                    });
+                }else{
+                    res.json(user.profile());
+                }
             });
-          }else{
-            res.json(user.profile());
-          }
-        });
-    }
-    else {
-      res.status(400).send({
-          message: 'User is not signed in'
-      });
-    }
+        }
+        else {
+            res.status(400).send({
+                message: 'User is not signed in'
+            });
+        }
+    });
+
+
+
 };
 
 /**

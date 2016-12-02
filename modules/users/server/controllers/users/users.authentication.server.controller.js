@@ -25,41 +25,57 @@ exports.signup = function (req, res) {
   // For security measurement we remove the roles from the req.body object
   delete req.body.roles;
 
-  // Init Variables
-  var user = new User();
-
-  user.firstName = req.body.firstName;
-  user.lastName = req.body.lastName;
-  user.username = req.body.username;
-  user.email = req.body.email;
-  user.password = req.body.password;
-
-  var message = null;
-
-  // Add missing user fields
-  user.provider = 'local';
-  user.displayName = user.firstName + ' ' + user.lastName;
-  // Then save the user
-  user.save(function (err) {
+  User.findOne({ email : req.body.email }, function(err, doc) {
     if (err) {
       return res.status(400).send({
-        message: errorHandler.getErrorMessage(err)
-      });
-    } else {
-      email.verifyEmail(req, user, function(err){
-        // Remove sensitive data before login
-        user.password = undefined;
-        user.salt = undefined;
-        req.login(user, function (err) {
-          if (err) {
-            res.status(400).send(err);
-          } else {
-            res.json(user.profile());
-          }
-        });
+        message: 'Error looking up email address.'
       });
     }
+
+    if (doc){
+      return res.status(400).send({
+        message: 'This email address has already been registered with another user.'
+      });
+    }
+
+    // Init Variables
+    var user = new User();
+
+    user.firstName = req.body.firstName;
+    user.lastName = req.body.lastName;
+    user.username = req.body.username;
+    user.email = req.body.email;
+    user.password = req.body.password;
+
+    var message = null;
+
+    // Add missing user fields
+    user.provider = 'local';
+    user.displayName = user.firstName + ' ' + user.lastName;
+    // Then save the user
+    user.save(function (err) {
+      if (err) {
+        return res.status(400).send({
+          message: errorHandler.getErrorMessage(err)
+        });
+      } else {
+        email.verifyEmail(req, user, function(err){
+          // Remove sensitive data before login
+          user.password = undefined;
+          user.salt = undefined;
+          req.login(user, function (err) {
+            if (err) {
+              res.status(400).send(err);
+            } else {
+              res.json(user.profile());
+            }
+          });
+        });
+      }
+    });
   });
+
+
 };
 
 /**
