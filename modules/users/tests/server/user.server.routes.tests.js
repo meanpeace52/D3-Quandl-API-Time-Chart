@@ -794,7 +794,7 @@ describe('User CRUD tests', function () {
               }
 
               // Call the assertion callback
-              userInfoRes.body.message.should.equal('Email already exists');
+              userInfoRes.body.message.should.equal('This email address has already been registered with another user.');
 
               return done();
             });

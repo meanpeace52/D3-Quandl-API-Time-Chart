@@ -272,7 +272,7 @@ describe('Users E2E Tests:', function () {
       // Click Submit button
       element(by.css('button[type=submit]')).click();
       // Password Error
-      expect(element.all(by.css('strong')).get(0).getText()).toBe('Email already exists');
+      expect(element.all(by.css('strong')).get(0).getText()).toBe('This email address has already been registered with another user.');
     });
 
     it('Should report Username already exists', function () {
