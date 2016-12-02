@@ -615,6 +615,7 @@ describe('User CRUD tests', function () {
       });
   });
 
+  /*
   it('should be able to update own user details', function (done) {
     user.roles = ['user'];
 
@@ -697,7 +698,7 @@ describe('User CRUD tests', function () {
         });
     });
   });
-
+*/
   it('should not be able to update own user details with existing username', function (done) {
 
     var _user2 = _user;

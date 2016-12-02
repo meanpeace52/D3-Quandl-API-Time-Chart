@@ -60,7 +60,11 @@ exports.update = function (req, res) {
             delete req.body.emailIsVerified;
             delete req.body.roles;
             // Merge existing user
-            user = _.extend(user, req.body);
+            //user = _.extend(user, req.body);
+            user.username = req.body.username;
+            user.firstName = req.body.firstName;
+            user.lastName = req.body.lastName;
+            user.email = req.body.email;
 
 
             user.updated = Date.now();
