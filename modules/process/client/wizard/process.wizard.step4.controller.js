@@ -14,6 +14,8 @@ angular.module('process')
             vm.process = ProcessStateService.currentProcessTasksData();
             vm.processData = ProcessStateService.currentProcessData();
 
+            vm.showPlaceholderTooltip = true;
+
             vm.tasks = Tasks.getTasks();
             vm.displayTasks = _.filter(vm.tasks, function(task){
                 return !task.hideinlist;
@@ -109,6 +111,7 @@ angular.module('process')
                     }*/
                 }
                 vm.showPlaceholderArrow = false;
+                vm.showPlaceholderTooltip = false;
                 return true;
             };
 
