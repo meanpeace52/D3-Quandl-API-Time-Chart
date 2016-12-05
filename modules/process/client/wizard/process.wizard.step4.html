@@ -45,7 +45,8 @@
                 <li ng-repeat="task in ProcessStep4.process.tasks" ng-class="{'task-arrow': true , 'disabled-task' : task.disabled }">
                     <span>
                         <span class="task-counter">{{ $index + 1 }}</span><br/>
-                        <div class="btn btn-default color-{{task.color}}" ng-click="ProcessStep4.onTaskClick(task)">{{task.title}}<a href="" ng-click="ProcessStep4.setEndpoint(task);$event.stopPropagation();" ng-class="{ 'endpoint' : task.endpoint } "><span class="glyphicon glyphicon-off"></span></a><a href="" ng-click="ProcessStep4.removeTask(task);$event.stopPropagation();"><span class="glyphicon glyphicon-remove"></span></a></div>
+                        <div class="btn btn-default color-{{task.color}}" ng-click="ProcessStep4.onTaskClick(task)">{{task.title}} <span ng-if="task.title == 'Predict' && task.options.selectedModel != '' && parseInt(task.options.selectedModel, 10) != -1">(using task {{ parseInt(task.options.selectedModel, 10) + 1 }})</span><a href="" ng-click="ProcessStep4.setEndpoint(task);$event.stopPropagation();" ng-class="{ 'endpoint' : task.endpoint } "><span class="glyphicon glyphicon-off"></span></a><a href="" ng-click="ProcessStep4.removeTask(task);$event.stopPropagation();"><span class="glyphicon glyphicon-remove"></span></a></div>
+
                     </span>
                 </li>
                 <li>

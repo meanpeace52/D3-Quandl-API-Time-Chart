@@ -118,7 +118,7 @@ angular.module('process')
                     slug: 'predict',
                     returnType: SCRIPT_RETURN_TYPE.DATASET,
                     options: {
-                        selectedModel: ''
+                        selectedModel: -1
                     },
                     validate: function (options) {
                         return options.selectedModel !== '';
