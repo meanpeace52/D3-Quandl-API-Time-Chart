@@ -11,6 +11,7 @@ angular.module('process')
             vm.user = Authentication.user;
 
             var currentProcessData = ProcessStateService.currentProcessData();
+
             if (currentProcessData.step1selection === 'existing-model'){
                 vm.tabs = ['Old Model Dataset', 'Search Data', 'Transform Steps'];
 
@@ -407,6 +408,8 @@ angular.module('process')
 
             function saveTransformationTasks(){
                 var currentProcessTasksData = ProcessStateService.currentProcessTasksData();
+                currentProcessData.hasheader = vm.currentdataset.hasheader;
+                ProcessStateService.saveProcessData(currentProcessData);
                 var existingTask = _.find(currentProcessTasksData.tasks, {title: 'Initial Transformations'});
                 if (vm.transformSteps.length){
                     if (!existingTask) {

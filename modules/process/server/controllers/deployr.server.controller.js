@@ -23,7 +23,7 @@ exports.deployrRun = function (req, response) {
 
     generator.setS3Configuration(config.s3AccessKeyId, config.s3SecretAccessKey, 'datasetstl')
         .loads3File(s3reference, 'csvfile')
-        .loadCsvFile('csvfile', 'dataset');
+        .loadCsvFile('csvfile', 'dataset', req.body.processData.hasheader);
 
     var outputFileKey = '/' + req.user.username + '/' + (new Date().getTime()).toString(16);
 
@@ -106,10 +106,10 @@ exports.deployrRun = function (req, response) {
 
     if (!generator.transformedDataset){
         generator
-            .saveCSVToS3File('dataset', outputFileKey, 'csv', 'datasetstl', 'savedfile');
+            .saveCSVToS3File('dataset', outputFileKey, 'csv', 'datasetstl', 'savedfile', req.body.processData.hasheader);
     }
 
-    generator.predict('test12345/158bebed76e.rdata');
+    //generator.predict('test12345/158bebed76e.rdata');
 
     generator
         .execute(config.deployrHost, config.deployrUsername, config.deployrPassword)

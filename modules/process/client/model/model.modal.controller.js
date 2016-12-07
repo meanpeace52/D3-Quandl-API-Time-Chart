@@ -3,13 +3,14 @@
 angular.module('process')
     .controller('ModelModalController',
     ['$uibModalInstance', '$state', '$stateParams', '$q', 'Authentication', 'Datasets', 'ModelsService', 'tasks', 'results',
-        'modelOptions', 'toastr', '$log', '$scope',
+        'modelOptions', 'toastr', '$log', '$scope', 'processData',
         function ($uibModalInstance, $state, $stateParams, $q, Authentication, Datasets, ModelsService, tasks, results,
-                  modelOptions, toastr, $log, $scope) {
+                  modelOptions, toastr, $log, $scope, processData) {
             var vm = this;
 
             vm.user = Authentication.user;
             vm.accessList = modelOptions.access;
+            vm.processData = processData;
 
             vm.submitted = false;
             vm.datasetSubmitted = false;

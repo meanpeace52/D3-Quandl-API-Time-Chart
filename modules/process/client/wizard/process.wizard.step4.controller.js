@@ -178,6 +178,9 @@ angular.module('process')
                                     },
                                     results: function () {
                                         return results[0];
+                                    },
+                                    processData: function() {
+                                        return vm.processData;
                                     }
                                 }
                             });

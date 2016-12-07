@@ -48,10 +48,10 @@ function RCodeGenerator(){
         return this;
     };
 
-    this.loadCsvFile = function(inputFile, csvvar){
+    this.loadCsvFile = function(inputFile, csvvar, hasheader){
         this.code += '#sensitive\n';
         this.code += '# Function: loadCsvFile - Start\n';
-        this.code += csvvar + ' <- read.csv(' + inputFile + ', stringsAsFactors=TRUE)\n';
+        this.code += csvvar + ' <- read.csv(' + inputFile + ', header=' + ((hasheader && hasheader === true) ? 'TRUE' : 'FALSE') + ',stringsAsFactors=TRUE)\n';
         this.code += '# Function: loadCsvFile - End\n';
         this.code += '#sensitive\n';
         return this;
@@ -181,7 +181,7 @@ function RCodeGenerator(){
         return this;
     };
 
-    this.saveCSVToS3File = function(savevar, filename, ext, s3bucket, filevar){
+    this.saveCSVToS3File = function(savevar, filename, ext, s3bucket, filevar, hasheader){
         if (!this.s3configured){
             throw new Error('You need to call setS3Configuration before you can run this function. RCodeGenerator.loads3File()');
         }
@@ -190,7 +190,7 @@ function RCodeGenerator(){
         this.code += '# Function: saveCSVToS3File - Start\n';
         this.code += 'temp <- tempfile(pattern = "file", tmpdir = "", fileext = ".csv")\n';
         this.code += 'temp <- paste(".", temp, sep="")\n';
-        this.code += 'write.csv(' + savevar + ', file = temp, row.names=FALSE)\n';
+        this.code += 'write.csv(' + savevar + ', file = temp, row.names=FALSE, col.names=' + ((hasheader && hasheader === true) ? 'TRUE' : 'FALSE') + ')\n';
         this.code += 'filename <- paste("' + filename + '", "' + ext + '", sep=".")\n';
         this.code += filevar + ' <- put_object(temp, bucket="' + s3bucket + '", object = filename)\n';
         this.code += 'unlink(temp)\n';
