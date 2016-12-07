@@ -190,7 +190,7 @@ function RCodeGenerator(){
         this.code += '# Function: saveCSVToS3File - Start\n';
         this.code += 'temp <- tempfile(pattern = "file", tmpdir = "", fileext = ".csv")\n';
         this.code += 'temp <- paste(".", temp, sep="")\n';
-        this.code += 'write.csv(' + savevar + ', file = temp, row.names=FALSE, col.names=' + ((hasheader && hasheader === true) ? 'TRUE' : 'FALSE') + ')\n';
+        this.code += 'write.table(' + savevar + ', file = temp, row.names=FALSE, col.names=' + ((hasheader && hasheader === true) ? 'TRUE' : 'FALSE') + ', sep = ",")\n';
         this.code += 'filename <- paste("' + filename + '", "' + ext + '", sep=".")\n';
         this.code += filevar + ' <- put_object(temp, bucket="' + s3bucket + '", object = filename)\n';
         this.code += 'unlink(temp)\n';
