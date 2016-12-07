@@ -189,7 +189,7 @@
 
         <div class="container">
             <div ng-repeat="item in home.news">
-                <a ui-sref="posts.external({ url : item.link })"><h3>{{item.title}}</h3></a>
+                <a ui-sref="posts.external({ url : item.link })"><h3 ng-bind-html="item.title"></h3></a>
                 <p>{{item.created | date: 'dd MMMM yyyy' }}</p>
                 <p>{{item.description}}</p>
             </div>

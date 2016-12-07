@@ -8,9 +8,13 @@ angular.module('posts')
 
             vm.user = Authentication.user;
 
+
             posts.getRepubhubFeedArticle($stateParams.url)
-                .then(function(html){
-                    vm.html = $sce.trustAsHtml(html);
+                .then(function(article){
+                    //vm.article = $sce.trustAsHtml(html);
+                    vm.article = article;
+                    vm.title = $sce.trustAsHtml(article.title);
+                    vm.html = $sce.trustAsHtml(article.html);
                 })
                 .catch(function(err){
                     $log.error(err);

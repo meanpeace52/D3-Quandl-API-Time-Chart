@@ -56,7 +56,7 @@ angular.module('posts')
                     templateUrl: MODULE_PATH + 'step2/posts.step2.html'
                 })
                 .state('posts.external', {
-                    url: '/external/',
+                    url: '/external/{url}',
                     controller: 'postsExternalController',
                     controllerAs: 'postsExternal',
                     params: {

@@ -2,7 +2,7 @@
 
 ;(function () {
 
-    var HomeController = function ($scope, Authentication, toastr, $state, posts, $log) {
+    var HomeController = function ($scope, Authentication, toastr, $state, posts, $log, $sce) {
 
         var vm = this;
 
@@ -21,6 +21,7 @@
                 .then(function(news){
                     vm.news = news.items;
                     _.each(vm.news, function(item){
+                        item.title = $sce.trustAsHtml(item.title);
                         item.created = new Date(item.created);
                     });
                 })
@@ -55,6 +56,6 @@
     };
 
     angular.module('core')
-        .controller('HomeController', ['$scope', 'Authentication', 'toastr', '$state', 'posts', '$log', HomeController]);
+        .controller('HomeController', ['$scope', 'Authentication', 'toastr', '$state', 'posts', '$log', '$sce', HomeController]);
 
 })();

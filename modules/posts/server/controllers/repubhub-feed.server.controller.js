@@ -17,10 +17,11 @@ exports.getNewsFeed = function (req, res) {
 };
 
 exports.getNewsArticle = function (req, res) {
-    request(req.body.url, function (error, response, html) {
+
+    request('http://repubhub.icopyright.net/oembed.act?url=' + encodeURIComponent(req.body.url) + '&format=json', function (error, response, html) {
         if (!error && response.statusCode == 200) {
-            var $ = cheerio.load(html);
-            res.send($('#pagewidth').html());
+            //var $ = cheerio.load(html);
+            res.json(JSON.parse(response.body));
         }
     });
 };
