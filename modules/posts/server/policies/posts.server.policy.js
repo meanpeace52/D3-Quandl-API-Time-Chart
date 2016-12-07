@@ -31,7 +31,16 @@ exports.invokeRolesPolicies = function () {
                 {
                     resources: '/api/trackpostview/:postId',
                     permissions: ['post']
-                }]
+                },
+                {
+                    resources: '/api/repubhub-feed',
+                    permissions: ['get']
+                },
+                {
+                    resources: '/api/repubhub-feed-article',
+                    permissions: ['post']
+                }
+            ]
         },
         {
             roles: ['user'],
@@ -51,23 +60,16 @@ exports.invokeRolesPolicies = function () {
                 {
                     resources: '/api/trackpostview/:postId',
                     permissions: ['post']
-                }]
-        },
-        {
-            roles: ['guest'],
-            allows: [
+                },
                 {
-                    resources: '/api/posts',
+                    resources: '/api/repubhub-feed',
                     permissions: ['get']
                 },
                 {
-                    resources: '/api/posts/:postId',
-                    permissions: ['get']
-                },
-                {
-                    resources: '/api/search/:field/:value',
-                    permissions: ['get']
-                }]
+                    resources: '/api/repubhub-feed-article',
+                    permissions: ['post']
+                }
+            ]
         }
     ]);
 };

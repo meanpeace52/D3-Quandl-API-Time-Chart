@@ -2,7 +2,7 @@
 
 ;(function () {
 
-    var HomeController = function ($scope, Authentication, toastr, $state) {
+    var HomeController = function ($scope, Authentication, toastr, $state, posts, $log) {
 
         var vm = this;
 
@@ -15,6 +15,24 @@
         vm.changeTab = function(item){
             vm.activeTab = item;
         };
+
+        function newsFeed(){
+            posts.getRepubhubFeed()
+                .then(function(news){
+                    vm.news = news.items;
+                    _.each(vm.news, function(item){
+                        item.created = new Date(item.created);
+                    });
+                })
+                .catch(function(err){
+                    $log.error(err);
+                    toastr.error('Error fetching news.');
+                });
+        }
+
+        if (vm.authentication.user){
+            newsFeed();
+        }
 
         vm.searchCompany = function(company){
             if (company.query && company.query !== ''){
@@ -37,6 +55,6 @@
     };
 
     angular.module('core')
-        .controller('HomeController', ['$scope', 'Authentication', 'toastr', '$state', HomeController]);
+        .controller('HomeController', ['$scope', 'Authentication', 'toastr', '$state', 'posts', '$log', HomeController]);
 
 })();

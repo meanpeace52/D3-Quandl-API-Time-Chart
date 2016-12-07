@@ -4,6 +4,7 @@
  * Module dependencies.
  */
 var postsPolicy = require('../policies/posts.server.policy'),
+    repubhubFeed = require('../controllers/repubhub-feed.server.controller'),
     posts = require('../controllers/posts.server.controller');
 
 module.exports = function (app) {
@@ -26,6 +27,12 @@ module.exports = function (app) {
 
     app.route('/api/trackpostview/:postId').all(postsPolicy.isAllowed)
         .post(posts.trackPostView);
+
+    app.route('/api/repubhub-feed').all(postsPolicy.isAllowed)
+        .get(repubhubFeed.getNewsFeed);
+
+    app.route('/api/repubhub-feed-article').all(postsPolicy.isAllowed)
+        .post(repubhubFeed.getNewsArticle);
         
     // Finish by binding the post middleware
     app.param('postId', posts.postByID);

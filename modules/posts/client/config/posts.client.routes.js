@@ -54,6 +54,15 @@ angular.module('posts')
                     controller: 'postsStep2Controller',
                     controllerAs: 'postsStep2',
                     templateUrl: MODULE_PATH + 'step2/posts.step2.html'
+                })
+                .state('posts.external', {
+                    url: '/external/',
+                    controller: 'postsExternalController',
+                    controllerAs: 'postsExternal',
+                    params: {
+                        url : ''
+                    },
+                    templateUrl: MODULE_PATH + 'external/posts.external.html'
                 });
         }
     ]);

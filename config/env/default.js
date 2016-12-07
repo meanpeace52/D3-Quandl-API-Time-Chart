@@ -13,6 +13,7 @@ module.exports = {
   deployrUsername: 'testuser',
   deployrPassword: '8sBLAJkqJh4G6VhY',
   quandlApiKey: 'ZLbtxbexUUMvs4GCAa-m',
+  repubhubRssUrl: 'http://feeds.icopyright.net/rssFeeds/dbd10618cd452b3a2e7752829d0a1cd1fafca89b.rss',
   port: process.env.PORT || 3000,
   templateEngine: 'swig',
   // Session Cookie settings

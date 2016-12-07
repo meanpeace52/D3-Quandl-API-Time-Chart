@@ -15,5 +15,6 @@ module.exports = function (app) {
         .post(core.signUploadUrl);
 
     // Define application route
-    app.route('/*').get(core.renderIndex);
+    app.route('/*')
+        .get(core.renderIndex);
 };

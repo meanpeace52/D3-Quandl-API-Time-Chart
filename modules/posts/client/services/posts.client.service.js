@@ -60,6 +60,34 @@ angular.module('posts').factory('posts', ['$resource', '$http', '$state', '$q',
             });
         };
 
+        posts.getRepubhubFeed = function(){
+            var dfd = $q.defer();
+
+            $http.get('/api/repubhub-feed')
+                .success(function (data, status, headers, config) {
+                    dfd.resolve(data);
+                })
+                .error(function (data, status, headers, config) {
+                    dfd.reject(data);
+                });
+
+            return dfd.promise;
+        };
+
+        posts.getRepubhubFeedArticle = function(url){
+            var dfd = $q.defer();
+
+            $http.post('/api/repubhub-feed-article', { url : url})
+                .success(function (data, status, headers, config) {
+                    dfd.resolve(data);
+                })
+                .error(function (data, status, headers, config) {
+                    dfd.reject(data);
+                });
+
+            return dfd.promise;
+        };
+
         return posts;
     }
 ]);
