@@ -36,7 +36,7 @@
 				<span> {{user.username}} </span>
 			</small>
         </a>
-        <div class="alert alert-warning text-center" ng-show="!UsersList.users.length && !UsersList.loading && UsersList.q && UsersList.q != ''">
+        <div class="alert alert-warning text-center" ng-show="(UsersList.users && UsersList.users.length === 0) && !UsersList.loading">
             No users found.
         </div>
     </div>

@@ -143,6 +143,12 @@ angular.module('users').config(['$stateProvider',
               controllerAs: 'UsersList',
               templateUrl: MODULE_PATH + 'views/list/users.list.client.view.html'
           })
+          .state('users.search', {
+            url: '/search/:query',
+            controller: 'UsersListController',
+            controllerAs: 'UsersList',
+            templateUrl: MODULE_PATH + 'views/list/users.list.client.view.html'
+          })
           .state('users.profilepage', {
               url: '/:username',
               controller: 'UsersProfilePageController',
