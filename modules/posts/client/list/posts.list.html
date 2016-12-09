@@ -12,16 +12,16 @@
         </div>
     </div>
     <div class="row text-right" style="padding-right: 15px;">
-        <span class="glyphicon glyphicon-file legend-icon" title="PDFs attached"></span> PDF's Attached
-        <span class="glyphicon glyphicon-list legend-icon" title="Datasets Attached"></span> Datasets Attached
-        <span class="glyphicon glyphicon-stats legend-icon" title="Models Attached"></span> Models Attached
+        <span class="icon icon-news legend-icon" title="PDFs attached"></span> PDF's Attached
+        <span class="icon icon-list legend-icon" title="Datasets Attached"></span> Datasets Attached
+        <span class="icon icon-pie-chart legend-icon" title="Models Attached"></span> Models Attached
     </div>
     <br/>
     <form ng-if="!postsList.modal && postsList.state === 'posts.list'" ng-submit="postsList.search()" class="datasets-search-container">
         <input class="form-control" type="text" ng-model="postsList.query">
         <button ng-click="postsList.search()" class="btn btn-secondary" type="button">
-            <i ng-hide="postsList.loading" class="glyphicon glyphicon-search"></i>
-            <i ng-show="postsList.loading" class="glyphicon glyphicon-hourglass"></i>
+            <i ng-hide="postsList.loading" class="icon icon-magnifying-glass"></i>
+            <i ng-show="postsList.loading" class="icon icon-hour-glass"></i>
         </button>
     </form>
     <div class="list-group">
@@ -36,9 +36,9 @@
                     </small>
                 </div>
                 <div class="col-md-6 buttons">
-                    <span ng-if="post.files.length" class="pull-right glyphicon glyphicon-file" title="PDFs attached"></span>
-                    <span ng-if="post.datasets.length" class="pull-right glyphicon glyphicon-list" title="Datasets Attached"></span>
-                    <span if="post.models.length" class="pull-right glyphicon glyphicon-stats" title="Models Attached"></span>
+                    <span ng-if="post.files.length" class="pull-right icon icon-news" title="PDFs attached"></span>
+                    <span ng-if="post.datasets.length" class="pull-right icon icon-list" title="Datasets Attached"></span>
+                    <span if="post.models.length" class="pull-right icon icon-pie-chart" title="Models Attached"></span>
                 </div>
             </div>
             <!--<p class="list-group-item-text">{{post.content}}</p>-->

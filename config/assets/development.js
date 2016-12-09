@@ -6,7 +6,7 @@ module.exports = {
     client: {
         lib: {
             css: [
-                BOWER_PATH + 'bootstrap/dist/css/bootstrap.css',
+                //BOWER_PATH + 'bootstrap/dist/css/bootstrap.css',
                 BOWER_PATH + 'angular-loading-bar/dist/loading-bar.css',
                 BOWER_PATH + 'angular-toastr/dist/angular-toastr.css',
                 BOWER_PATH + 'angularjs-slider/dist/rzslider.css',

@@ -9,7 +9,7 @@
     <form ng-if="DatasetsList.state === 'datasets.list' || DatasetsList.state === 'datasets.search' || DatasetsList.state === 'lab.process2.step3'" ng-submit="DatasetsList.search()" class="datasets-search-container">
         <input class="form-control" type="text" ng-model="DatasetsList.q">
         <button ng-click="DatasetsList.search()" class="btn btn-secondary" type="button">
-	    	<i ng-hide="DatasetsList.loading" class="glyphicon glyphicon-search"></i>
+	    	<i ng-hide="DatasetsList.loading" class="icon icon-magnifying-glass"></i>
 	    	<i ng-show="DatasetsList.loading" class="glyphicon glyphicon-hourglass"></i>
 	    </button>
     </form>

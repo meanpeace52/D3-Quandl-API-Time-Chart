@@ -5,17 +5,17 @@
 
 	<div class="row" ng-show="Workbench.usersDatasets.length > 0">
 		<div class="graph col-md-6">
-			<select 
+			<select
 				class="form-control"
-				ng-options="dataset as dataset.title for dataset in Workbench.usersDatasets track by dataset._id" 
+				ng-options="dataset as dataset.title for dataset in Workbench.usersDatasets track by dataset._id"
 				ng-model="Workbench.ds1.data"
 				ng-change="Workbench.loadDataset('ds1')"></select>
 		</div>
-		
+
 		<div class="datasets-list col-md-6">
-			<select 
+			<select
 				class="form-control"
-				ng-options="dataset as dataset.title for dataset in Workbench.usersDatasets track by dataset._id" 
+				ng-options="dataset as dataset.title for dataset in Workbench.usersDatasets track by dataset._id"
 				ng-model="Workbench.ds2.data"
 				ng-change="Workbench.loadDataset('ds2')"></select>
 		</div>
@@ -40,11 +40,11 @@
 			<div class="data-loading">
 				<i ng-hide="Workbench.ds1.hasLoadedData" ng-if="Workbench.ds1.data" class="loader-data"></i>
 			</div>
-			
+
 			<p><div class="alert alert-info" role="alert" ng-if="!Workbench.ds1.hasLoadedDataIsFull && Workbench.ds1.hasLoadedData">Empty dataset.</div></p>
 
 			<div class="table-container" ng-if="Workbench.ds1.hasLoadedDataIsFull">
-			
+
 			<div class="radio clearfix">
 				<label class="pull-right">
 			    <input type="radio" name="primaryTable" value="ds1" ng-model="Workbench.mergeParams.primaryTable">
@@ -63,8 +63,8 @@
 					</thead>
 					<tbody>
 						<tr ng-repeat="row in Workbench.ds1.rows">
-							<td 
-								ng-repeat="column in Workbench.ds1.columns" 
+							<td
+								ng-repeat="column in Workbench.ds1.columns"
 								ng-show="row[column] && row[column].length > 0">
 								{{ row[column] }}
 							</td>
@@ -84,11 +84,11 @@
 			<!-- <h3>{{ Workbench.selectedDatasetOption.title }}</h3> -->
 			<div class="data-loading">
 				<i ng-hide="Workbench.ds2.hasLoadedData" ng-if="Workbench.ds2.data" class="loader-data"></i>
-				<!-- <i 
-		    		ng-hide="Workbench.ds2.hasLoadedData" 
-		    		class="glyphicon glyphicon-hourglass"></i> -->
+				<!-- <i
+		    		ng-hide="Workbench.ds2.hasLoadedData"
+		    		class="icon icon-hour-glass"></i> -->
 			</div>
-			
+
 			<p><div class="alert alert-info" role="alert" ng-if="!Workbench.ds2.hasLoadedDataIsFull && Workbench.ds2.hasLoadedData">Empty dataset.</div></p>
 
 			<div class="table-container"  ng-if="Workbench.ds2.hasLoadedDataIsFull">

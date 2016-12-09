@@ -2,10 +2,10 @@
     <div class="page-header">
         <span class="h1">{{ postsStep2.newPost ? 'New' : 'Edit' }} Post</span>
         <span>
-        <span data-ng-if="postsStep2.post.access === 'paid'" class="pull-right glyphicon glyphicon-usd" title="For Sale"></span>
+        <span data-ng-if="postsStep2.post.access === 'paid'" class="pull-right icon icon-credit" title="For Sale"></span>
         <span data-ng-if="postsStep2.post.files.length" class="pull-right glyphicon glyphicon-file" title="PDFs attached"></span>
-        <span data-ng-if="postsStep2.post.datasets.length" class="pull-right glyphicon glyphicon-list" title="Datasets Attached"></span>
-        <span data-ng-if="postsStep2.post.models.length" class="pull-right glyphicon glyphicon-stats" title="Models Attached"></span>
+        <span data-ng-if="postsStep2.post.datasets.length" class="pull-right icon icon-list" title="Datasets Attached"></span>
+        <span data-ng-if="postsStep2.post.models.length" class="pull-right icon icon-pie-chart" title="Models Attached"></span>
         </span>
     </div>
     <div class="col-md-12">
@@ -18,13 +18,13 @@
                 <div class="col-md-3">
                     <ul class="nav nav-pills nav-stacked">
                         <li ng-class="{'active' : postsStep2.activeTab == 'Datasets' }" ng-click="postsStep2.activeTab = 'Datasets'">
-                            <a data-toggle="pill" href=""><span class="glyphicon glyphicon-list"></span> Datasets</a>
+                            <a data-toggle="pill" href=""><span class="icon icon-list"></span> Datasets</a>
                         </li>
                         <li ng-class="{'active' : postsStep2.activeTab == 'Models' }" ng-click="postsStep2.activeTab = 'Models'">
-                            <a data-toggle="pill" href=""><span class="glyphicon glyphicon-stats"></span> Models</a>
+                            <a data-toggle="pill" href=""><span class="icon icon-pie-chart"></span> Models</a>
                         </li>
                         <li ng-class="{'active' : postsStep2.activeTab == 'PDF' }" ng-click="postsStep2.activeTab = 'PDF'">
-                            <a data-toggle="pill" href=""><span class="glyphicon glyphicon-file"></span> PDF's</a>
+                            <a data-toggle="pill" href=""><span class="icon icon-news"></span> PDF's</a>
                         </li>
                     </ul>
                 </div>
@@ -88,7 +88,7 @@
                             <div ng-show="postsStep2.post.datasets.length">
                                 <ul data-ng-if="postsStep2.post.datasets" class="list-inline">
                                     <li data-ng-repeat="dataset in postsStep2.post.datasets track by $index" class="badge text-capitalize">
-                                        <span data-ng-click="postsStep2.removeDataset(dataset)" class="glyphicon glyphicon-remove" href="#"></span>
+                                        <span data-ng-click="postsStep2.removeDataset(dataset)" class="icon icon-cross" href="#"></span>
                                         <a href="#" class="h5">{{dataset.title}}</a><br/>
                                     </li>
                                 </ul><br/>
@@ -152,7 +152,7 @@
                             <div ng-show="postsStep2.post.models.length">
                                 <ul data-ng-if="postsStep2.post.models" class="list-inline">
                                     <li data-ng-repeat="model in postsStep2.post.models track by $index" class="badge text-capitalize">
-                                        <span data-ng-click="postsStep2.removeModel(model)" class="glyphicon glyphicon-remove" href="#"></span>
+                                        <span data-ng-click="postsStep2.removeModel(model)" class="icon icon-cross" href="#"></span>
                                         <a href="#" class="h5">{{model.title}}</a><br/>
                                     </li>
                                 </ul><br/>
@@ -180,8 +180,8 @@
                             <div ng-show="postsStep2.post.files.length">
                                 <ul class="list-inline">
                                     <li ng-repeat="file in postsStep2.post.files track by $index" class="badge">
-                                        <span class="glyphicon glyphicon-file"></span> {{file.name}}
-                                        <span ng-click="postsStep2.removeFile(file)" class="glyphicon glyphicon-remove"></span>
+                                        <span class="icon icon-news"></span> {{file.name}}
+                                        <span ng-click="postsStep2.removeFile(file)" class="icon icon-cross"></span>
                                     </li>
                                 </ul>
                                 <br/>

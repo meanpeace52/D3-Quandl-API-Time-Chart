@@ -1,9 +1,9 @@
 <section>
     <div class="page-header">
         <span class="h1 capitalize">{{postsDetail.post.title}}</span>
-        <span data-ng-if="postsDetail.post.files.length" class="pull-right glyphicon glyphicon-file" title="PDFs attached"></span>
-        <span data-ng-if="postsDetail.post.datasets.length" class="pull-right glyphicon glyphicon-list" title="Datasets Attached"></span>
-        <span data-ng-if="postsDetail.post.models.length" class="pull-right glyphicon glyphicon-stats" title="Models Attached"></span>
+        <span data-ng-if="postsDetail.post.files.length" class="pull-right icon icon-news" title="PDFs attached"></span>
+        <span data-ng-if="postsDetail.post.datasets.length" class="pull-right icon icon-list" title="Datasets Attached"></span>
+        <span data-ng-if="postsDetail.post.models.length" class="pull-right icon icon-pie-chart" title="Models Attached"></span>
         </span>
     </div>
     <em class="text-muted">
@@ -16,10 +16,10 @@
                     capitalize }}</a></span>
                 <span class="pull-right" ng-if="postsDetail.authentication.user._id === postsDetail.post.user._id">
                     <a class="btn btn-primary" ui-sref="posts.edit({postId: postsDetail.post._id})">
-                        <i class="glyphicon glyphicon-edit"></i>
+                        <i class="icon icon-edit"></i>
                     </a>
                     <a class="btn btn-primary" ng-click="postsDetail.remove();">
-                        <i class="glyphicon glyphicon-trash"></i>
+                        <i class="icon icon-trash"></i>
                     </a>
                 </span>
             </div>
