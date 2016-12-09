@@ -202,7 +202,7 @@ ul.transformsteps li.selected {
 .step4-footer .btn {
   margin-right: 5px;
 }
-.drop-list .glyphicon {
+.drop-list .icon {
   margin-left: 10px;
   margin-right: 0;
 }
@@ -211,6 +211,9 @@ ul.transformsteps {
 }
 .drop-list li.disabled-task {
   opacity: .5;
+}
+.drop-list .tooltip {
+  z-index: 1;
 }
 .endpoint span {
   background: green;

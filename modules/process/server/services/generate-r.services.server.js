@@ -116,6 +116,184 @@ function RCodeGenerator(){
         return this;
     };
 
+    this.gbm = function(inputData, yColIndex, trainRatio, noTrees, filename) {
+        if (!this.s3configured) {
+            throw new Error('You need to call setS3Configuration before you can run this function. RCodeGenerator.loads3File()');
+        }
+
+        this.code += '# Function: gbm - Start\n';
+        this.code += 'deployrPackage("digest")\n';
+        this.code += 'deployrPackage("gbm")\n';
+
+        this.code += '# Splits data into train/test sets----------------------------------------------\n';
+        this.code += 'train_index <- sort(sample(1:nrow(' + inputData + '), nrow(' + inputData + ') * ' + trainRatio + '))\n';
+        this.code += 'test_index <- which(!1:nrow(' + inputData + ') %in% train_index)\n';
+
+        this.code += 'train_data <- ' + inputData + '[train_index, ]\n';
+        this.code += 'test_data <- ' + inputData + '[test_index, ]\n';
+
+        this.code += 'xvars <- paste(names(' + inputData + ')[-1], collapse = ", ")\n';
+        this.code += 'yvar <- names(' + inputData + ')[' + yColIndex + ']\n';
+
+        this.code += '# Selects variables & runs regression-------------------------------------------\n';
+        this.code += '.formula <- as.formula(sprintf("%s ~ %s", yvar, paste(strsplit(xvars, split = ",")[[1]], collapse = " + ")))\n';
+        this.code += '.family <- ifelse(is.numeric(' + inputData + '[, yvar]), "gaussian", "bernoulli")\n';
+        this.code += 'model <- gbm(.formula, data = train_data, distribution = .family, n.trees = ' + noTrees + ',\n';
+        this.code += '             keep.data = TRUE,\n';
+        this.code += '             bag.fraction = 0.8,\n';
+        this.code += '             interaction.depth = 5,\n';
+        this.code += '             shrinkage = 0.1)\n';
+
+
+        this.code += '# Other metrics-----------------------------------------------------------------\n';
+
+        this.code += '# Helper function to print model equation\n';
+        this.code += 'print_gbm <- function(fit, digits = 4) {\n';
+        this.code += '  if (!"gbm" %in% class(fit)) {\n';
+        this.code += '    stop("First agrument should be of class gbm!")\n';
+        this.code += '  }\n';
+
+        this.code += '  yname <- fit$response.name\n';
+        this.code += '  smr <- summary.gbm(fit, plotit = FALSE)\n';
+
+        this.code += '  xpart <- paste(sprintf(sprintf("[%%0.%df]%%s", digits),\n';
+        this.code += '  smr$rel.inf, smr$var), collapse = ", ")\n';
+        this.code += '  sprintf("%s = f(%s)", yname, xpart)\n';
+        this.code += '}\n';
+
+
+        this.code += '# Helper function to print model statistics\n';
+        this.code += 'get_metrics <- function(fit, digits = 4) {\n';
+        this.code += '  if (!"gbm" %in% class(fit)) {\n';
+        this.code += '    stop("First argument should be of class gbm!")\n';
+        this.code += '  }\n';
+        this.code += '  smr <- summary(fit)\n';
+
+        this.code += '  # Measures model performance\n';
+        this.code += '  pred <- predict(fit, newdata = test_data, n.trees = ' + noTrees + ')\n';
+        this.code += '  err <- test_data[, yvar] - as.numeric(pred)\n';
+        this.code += '  MAPE <- mean(abs(err) / test_data[, yvar])\n';
+        this.code += '  MSE <- mean(err^2)\n';
+
+        this.code += '  list(\n';
+        this.code += '    MAPE = MAPE,\n';
+        this.code += '    MSE = MSE\n';
+        this.code += '  )\n';
+        this.code += '}\n';
+
+        this.code += '# Creates & saves results-------------------------------------------------------\n';
+        this.code += 'equation <- print_gbm(model)\n';
+        this.code += 'metrics <- get_metrics(model)\n';
+
+        this.code += 'result <- list(model = model, equation = equation, metrics = metrics)\n';
+        this.code += 'result_id <- digest(result, algo = "sha1")\n';
+        //result_id <- sprintf("%s/%s", output_path, result_id)
+
+        this.code += 'print(summary(model))\n';
+        this.code += '#sensitive\n';
+        this.code += 's3save(model, bucket="rdatamodels", object = "' + filename + '.rdata")\n';
+        this.code += '#sensitive\n';
+        this.code += '# Function: gbm - End\n';
+
+        this.modelkey = filename + '.rdata';
+
+        this.outputVars.push('equation');
+        this.outputVars.push('metrics');
+        return this;
+    };
+
+    this.smartRegression = function(inputData, yColIndex, trainRatio, stepModel, filename){
+        if (!this.s3configured){
+            throw new Error('You need to call setS3Configuration before you can run this function. RCodeGenerator.loads3File()');
+        }
+
+        this.code += '# Function: smartRegression - Start\n';
+        this.code += 'deployrPackage("digest")\n';
+
+        this.code += '# Splits data into train/test sets----------------------------------------------\n';
+        this.code += 'train_index <- sort(sample(1:nrow(' + inputData + '), nrow(' + inputData + ') * ' + trainRatio + '))\n';
+        this.code += 'test_index <- which(!1:nrow(' + inputData + ') %in% train_index)\n';
+
+        this.code += 'train_data <- ' + inputData + '[train_index, ]\n';
+        this.code += 'test_data <- ' + inputData + '[test_index, ]\n';
+
+        this.code += 'xvars <- paste(names(' + inputData + '), collapse = ", ")\n';
+        this.code += 'yvar <- names(' + inputData + ')[' + yColIndex + ']\n';
+        this.code += '.formula <- as.formula(sprintf("%s ~ %s", yvar, paste(strsplit(xvars, split = ",")[[1]], collapse = " + ")))\n';
+        this.code += '.family <- ifelse(is.numeric(' + inputData + '[, yvar]), gaussian, binomial)\n';
+        this.code += 'model <- glm(.formula, data = train_data, family = .family)\n';
+
+        if (stepModel){
+            this.code += '# Steps model if needed\n';
+            this.code += 'model <- step(model, direction = "both")\n';
+        }
+
+        this.code += '# Measures model performance----------------------------------------------------\n';
+        this.code += 'pred <- predict(model, newdata = test_data)\n';
+        this.code += 'err <- test_data[, yvar] - as.numeric(pred)\n';
+        this.code += 'MAPE <- mean(abs(err) / test_data[, yvar])\n';
+        this.code += 'MSE <- mean(err^2)\n';
+
+        this.code += '# Other metrics-----------------------------------------------------------------\n';
+
+        this.code += '# Helper function to print model equation\n';
+        this.code += 'print_lm <- function(fit, digits = 4) {\n';
+        this.code += '  if (!"lm" %in% class(fit)) {\n';
+        this.code += '    stop("First agrument should be of class lm!")\n';
+        this.code += '  }\n';
+        this.code += '  cf <- coef(fit)\n';
+        this.code += '  yname <- as.character(attr(fit$terms, which = "variables"))[2]\n';
+        this.code += '  intercept <- sprintf(sprintf("%%0.%df", digits), cf[1])\n';
+        this.code += '  xpart <- paste(sprintf(sprintf(" %%s %%0.%df*%%s", digits),\n';
+        this.code += '  ifelse(cf[-1] > 0, "+", "-"), abs(cf[-1]), names(cf)[-1]), collapse = "")\n';
+        this.code += '  sprintf("%s = %s%s", yname, intercept, xpart)\n';
+        this.code += '}\n';
+
+        this.code += '# Helper function to print model statistics\n';
+        this.code += 'get_metrics <- function(fit, digits = 4) {\n';
+        this.code += '  if (!"lm" %in% class(fit)) {\n';
+        this.code += '    stop("First argument should be of class lm!")\n';
+        this.code += '  }\n';
+        this.code += '  smr <- summary(fit)\n';
+
+        this.code += '  if (all(class(fit) == "lm")) {\n';
+        this.code += '    list(\n';
+        this.code += '      r_squared = round(smr$r.squared, digits),\n';
+        this.code += '      adj_r_squared = round(smr$adj.r.squared, digits),\n';
+        this.code += '      f_statistics = as.numeric(round(smr$fstatistic[1], digits)),\n';
+        this.code += '      p_value = as.numeric(pf(smr$fstatistic[1L], smr$fstatistic[2L], smr$fstatistic[3L], lower.tail = FALSE))[1]\n';
+        this.code += '    )\n';
+        this.code += '  } else {\n';
+        this.code += '    list(\n';
+        this.code += '      r_squared = round(1 - fit$deviance / fit$null.deviance, digits),\n';
+        this.code += '      adj_r_squared = round(1 - (fit$deviance / fit$df.residual) / (fit$null.deviance / fit$df.null), digits),\n';
+        this.code += '      aic = round(fit$aic, digits)\n';
+        this.code += '    )\n';
+        this.code += '  }\n';
+        this.code += '}\n';
+
+
+        this.code += '# Creates & saves results-------------------------------------------------------\n';
+        this.code += 'equation <- print_lm(model)\n';
+        this.code += 'metrics <- get_metrics(model)\n';
+
+        this.code += 'result <- list(model = model, MAPE = MAPE, MSE = MSE, equation = equation, metrics = metrics)\n';
+        this.code += 'result_id <- digest(result, algo = "sha1")\n';
+        //this.code += 'result_id <- sprintf("%s/%s", output_path, result_id)\n';
+        this.code += 'print(summary(model))\n';
+        this.code += '#sensitive\n';
+        this.code += 's3save(model, bucket="rdatamodels", object = "' + filename + '.rdata")\n';
+        this.code += '#sensitive\n';
+
+        this.code += '# Function: smartRegression - End\n';
+
+        this.modelkey = filename + '.rdata';
+
+        this.outputVars.push('equation');
+        this.outputVars.push('metrics');
+        return this;
+    };
+
     this.renameColumns = function(datavar, columnnames){
         this.code += '# Function: renameColumns - Start\n';
         this.code += 'colnames(' + datavar + ') <- c(' + columnnames + ')\n';
@@ -150,7 +328,7 @@ function RCodeGenerator(){
         return this;
     };
 
-    this.linearRegression = function(s3accessKey, s3secretKey, s3bucket, inputData, yColIndex, filename){
+    this.linearRegression = function(yColIndex, filename){
         this.printLMFit('dataset', yColIndex, filename);
         return this;
     };

@@ -14,7 +14,7 @@
     <div class="row text-right" style="padding-right: 15px;">
         <span class="icon icon-news legend-icon" title="PDFs attached"></span> PDF's Attached
         <span class="icon icon-list legend-icon" title="Datasets Attached"></span> Datasets Attached
-        <span class="icon icon-pie-chart legend-icon" title="Models Attached"></span> Models Attached
+        <span class="icon icon-bar-graph legend-icon" title="Models Attached"></span> Models Attached
     </div>
     <br/>
     <form ng-if="!postsList.modal && postsList.state === 'posts.list'" ng-submit="postsList.search()" class="datasets-search-container">
@@ -38,7 +38,7 @@
                 <div class="col-md-6 buttons">
                     <span ng-if="post.files.length" class="pull-right icon icon-news" title="PDFs attached"></span>
                     <span ng-if="post.datasets.length" class="pull-right icon icon-list" title="Datasets Attached"></span>
-                    <span if="post.models.length" class="pull-right icon icon-pie-chart" title="Models Attached"></span>
+                    <span if="post.models.length" class="pull-right icon icon-bar-graph" title="Models Attached"></span>
                 </div>
             </div>
             <!--<p class="list-group-item-text">{{post.content}}</p>-->

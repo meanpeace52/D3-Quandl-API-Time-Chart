@@ -37,7 +37,21 @@ exports.deployrRun = function (req, response) {
                 .saveCSVToS3File('dataset', outputFileKey, 'csv', 'datasetstl', 'savedfile');
 
             generator
-                .linearRegression(config.s3AccessKeyId, config.s3SecretAccessKey, 'datasetstl', s3reference, parseInt(task.options.yColIndex, 10) + 1, outputFileKey);
+                .linearRegression(parseInt(task.options.yColIndex, 10) + 1, outputFileKey);
+        }
+        else if (task.title === 'Smart Regression'){
+            generator
+                .saveCSVToS3File('dataset', outputFileKey, 'csv', 'datasetstl', 'savedfile');
+
+            generator
+                .smartRegression('dataset', parseInt(task.options.yColIndex, 10) + 1, parseFloat(task.options.train, 10), task.options.stepwise, outputFileKey);
+        }
+        else if (task.title === 'GBM'){
+            generator
+                .saveCSVToS3File('dataset', outputFileKey, 'csv', 'datasetstl', 'savedfile');
+
+            generator
+                .gbm('dataset', parseInt(task.options.yColIndex, 10) + 1, parseFloat(task.options.train, 10), parseInt(task.options.notrees, 10), outputFileKey);
         }
         else if (task.title === 'Initial Transformations'){
             _.each(task.options.transformSteps, function(step){

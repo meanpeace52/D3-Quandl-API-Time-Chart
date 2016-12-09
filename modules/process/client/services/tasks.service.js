@@ -105,7 +105,35 @@ angular.module('process')
                     options: {
                         yColIndex: '',
                         removeNA: false,
-                        train: 0.01
+                        train: 0.7
+                    },
+                    validate: function (options) {
+                        return !isNaN(parseInt(options.yColIndex));
+                    }
+                },
+                {
+                    title: 'Smart Regression',
+                    slug: 'smartregression',
+                    returnType: SCRIPT_RETURN_TYPE.MODEL,
+                    options: {
+                        yColIndex: '',
+                        removeNA: false,
+                        train: 0.7,
+                        stepwise: false
+                    },
+                    validate: function (options) {
+                        return !isNaN(parseInt(options.yColIndex));
+                    }
+                },
+                {
+                    title: 'GBM',
+                    slug: 'gbm',
+                    returnType: SCRIPT_RETURN_TYPE.MODEL,
+                    options: {
+                        yColIndex: '',
+                        removeNA: false,
+                        train: 0.7,
+                        notrees: 10
                     },
                     validate: function (options) {
                         return !isNaN(parseInt(options.yColIndex));

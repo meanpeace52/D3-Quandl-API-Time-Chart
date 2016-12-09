@@ -126,6 +126,24 @@ angular.module('process')
                         options: {}
                     }
                 })
+                .state('lab.process2.step4.smartregression', {
+                    templateUrl: MODULE_PATH + 'tasks/tasks.smartregression.html',
+                    controller: 'SmartRegressionOptionsController',
+                    controllerAs: 'SmartRegressionOptions',
+                    params: {
+                        id: {},
+                        options: {}
+                    }
+                })
+                .state('lab.process2.step4.gbm', {
+                    templateUrl: MODULE_PATH + 'tasks/tasks.gbm.html',
+                    controller: 'GBMOptionsController',
+                    controllerAs: 'GBMOptions',
+                    params: {
+                        id: {},
+                        options: {}
+                    }
+                })
                 .state('lab.process2.step4.predict', {
                     templateUrl: MODULE_PATH + 'tasks/tasks.predict.html',
                     controller: 'PredictOptionsController',

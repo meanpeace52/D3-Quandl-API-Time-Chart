@@ -66,6 +66,7 @@ angular.module('process')
                     vm.usersDatasets = datasets;
                     if (ProcessStateService.currentProcessData().selecteddataset){
                         vm.selecteddataset = _.find(vm.usersDatasets, { _id : ProcessStateService.currentProcessData().selecteddataset });
+                        vm.selecteddataset.hasheader = vm.selecteddataset.hasheader === undefined ? true : vm.selecteddataset.hasheader;
                         vm.onDatasetChange(vm.selecteddataset);
                     }
                 });

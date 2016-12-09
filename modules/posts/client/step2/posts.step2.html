@@ -5,7 +5,7 @@
         <span data-ng-if="postsStep2.post.access === 'paid'" class="pull-right icon icon-credit" title="For Sale"></span>
         <span data-ng-if="postsStep2.post.files.length" class="pull-right glyphicon glyphicon-file" title="PDFs attached"></span>
         <span data-ng-if="postsStep2.post.datasets.length" class="pull-right icon icon-list" title="Datasets Attached"></span>
-        <span data-ng-if="postsStep2.post.models.length" class="pull-right icon icon-pie-chart" title="Models Attached"></span>
+        <span data-ng-if="postsStep2.post.models.length" class="pull-right icon icon-bar-graph" title="Models Attached"></span>
         </span>
     </div>
     <div class="col-md-12">
@@ -21,7 +21,7 @@
                             <a data-toggle="pill" href=""><span class="icon icon-list"></span> Datasets</a>
                         </li>
                         <li ng-class="{'active' : postsStep2.activeTab == 'Models' }" ng-click="postsStep2.activeTab = 'Models'">
-                            <a data-toggle="pill" href=""><span class="icon icon-pie-chart"></span> Models</a>
+                            <a data-toggle="pill" href=""><span class="icon icon-bar-graph"></span> Models</a>
                         </li>
                         <li ng-class="{'active' : postsStep2.activeTab == 'PDF' }" ng-click="postsStep2.activeTab = 'PDF'">
                             <a data-toggle="pill" href=""><span class="icon icon-news"></span> PDF's</a>
