@@ -294,6 +294,14 @@ function RCodeGenerator(){
         return this;
     };
 
+    this.smartPredict = function(){
+        return this;
+    };
+
+    this.gbmPredict = function(){
+        return this;
+    };
+
     this.renameColumns = function(datavar, columnnames){
         this.code += '# Function: renameColumns - Start\n';
         this.code += 'colnames(' + datavar + ') <- c(' + columnnames + ')\n';
