@@ -30,6 +30,9 @@
                     <thead ng-if="ProcessStep3.currentdataset.hasheader">
                         <th ng-repeat="column in ProcessStep3.currentdataset.columns" ng-bind="column" ng-class="{ 'exclude' : ProcessStep3.excludedcolumns[column] }"></th>
                     </thead>
+                    <tbody ng-if="!ProcessStep3.currentdataset.hasheader">
+                        <td ng-repeat="column in ProcessStep3.currentdataset.columns" ng-bind="column" ng-class="{ 'exclude' : ProcessStep3.excludedcolumns[column] }"></td>
+                    </tbody>
                     <thead ng-if="ProcessStep3.currentdataset.hasheader">
                         <th ng-repeat="columnname in ProcessStep3.currentdataset.renamedcolumnnames" ng-class="{ 'exclude' : ProcessStep3.excludedcolumns[column] }"><input type="text" class="form-control" ng-model="ProcessStep3.currentdataset.renamedcolumns[columnname]" ng-disabled="ProcessStep3.excludedcolumns[columnname]" /></th>
                     </thead>
