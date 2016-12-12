@@ -53,6 +53,27 @@ exports.deployrRun = function (req, response) {
             generator
                 .gbm('dataset', parseInt(task.options.yColIndex, 10) + 1, parseFloat(task.options.train, 10), parseInt(task.options.notrees, 10), outputFileKey);
         }
+        else if (task.title === 'Predict'){
+            var predictModel = req.body.tasks[task.options.selectedModel];
+            var modeltype = '';
+            if (predictModel.title !== 'Load Existing Model'){
+                modeltype = predictModel.title;
+            }
+            else{
+                modeltype = predictModel.options.modeltype;
+            }
+            switch(modeltype){
+                case 'Linear Regression':
+                    generator.predict();
+                    break;
+                case 'Smart Regression':
+                    generator.smartRegression();
+                    break;
+                case 'GBM':
+                    generator.gbmPredict();
+                    break;
+            }
+        }
         else if (task.title === 'Initial Transformations'){
             _.each(task.options.transformSteps, function(step){
                 if (step.type === 'drop'){

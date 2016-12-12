@@ -39,6 +39,10 @@ angular.module('process')
                 }))[0].returnType;
             });
 
+            if (vm.process.tasks.length > 1){
+                vm.showPlaceholderTooltip = false;
+            }
+
             function setEndpoint(task){
                 _.each(vm.process.tasks, function (currenttask) {
                     currenttask.endpoint = false;
@@ -152,8 +156,31 @@ angular.module('process')
             }
 
             vm.performProcess = function () {
+                //Reattach validate function as it gets removed on copy
+                var subtasks = [];
+                _.each(vm.tasks, function(task){
+                    if (task.subtasks){
+                        subtasks = subtasks.concat(task.subtasks);
+                    }
+                });
+
+                _.each(vm.process.tasks, function(task){
+                    var subtask = _.find(subtasks, { title : task.title });
+                    if (subtask.validate){
+                        task.validate = subtask.validate;
+                    }
+                });
+
+                // Check if any of the tasks options is invalid
                 var invalidTasks = vm.process.tasks.filter(function (task) {
-                    return task.validate && !task.validate(task.options);
+                    var invalid = task.validate && !task.validate(task.options);
+                    if (invalid){
+                        task.invalid = true;
+                    }
+                    else{
+                        delete task.invalid;
+                    }
+                    return invalid;
                 });
                 if (invalidTasks.length) {
                     toastr.error('Please select the required options for the tasks present in the process!');

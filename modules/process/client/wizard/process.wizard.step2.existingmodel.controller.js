@@ -56,7 +56,7 @@ angular.module('process')
                 vm.showModelLoader = true;
 
                 vm.selectedmodel = model;
-                vm.selectedmodel.dataset.hasheader = vm.selectedmodel.dataset.hasheader === undefined ? true : vm.selectedmodel.dataset.hasheader;
+                //vm.selectedmodel.dataset.hasheader = vm.selectedmodel.dataset.hasheader === undefined ? true : vm.selectedmodel.dataset.hasheader;
 
                 Datasets.getDatasetWithS3(model.dataset)
                     .then(function (data) {
@@ -79,6 +79,7 @@ angular.module('process')
 
                 var processData = ProcessStateService.currentProcessData();
                 processData.selectedmodel = model._id;
+                processData.selectedmodeltype = model.type;
                 processData.selecteddataset = dataset._id;
                 processData.selecteddatasets3reference = dataset.s3reference;
                 processData.step1selection = 'existing-model';

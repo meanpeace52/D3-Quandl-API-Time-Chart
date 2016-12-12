@@ -414,7 +414,7 @@ angular.module('process')
                 var existingTask = _.find(currentProcessTasksData.tasks, {title: 'Initial Transformations'});
                 if (vm.transformSteps.length){
                     if (!existingTask) {
-                        var taskDetail = _.find(vm.tasks, {title: 'Initial Transformations'});
+                        var taskDetail = _.clone(_.find(vm.tasks, {title: 'Initial Transformations'}));
                         taskDetail.subtasks[0].options = {
                             transformSteps: vm.transformSteps
                         };
@@ -436,7 +436,9 @@ angular.module('process')
                         currentProcessTasksData.tasks = _.without(currentProcessTasksData.tasks, existingModelTask);
                     }
                     var taskDetail2 = _.find(vm.tasks, {title: 'Load Existing Model'});
-                    currentProcessTasksData.tasks.push(taskDetail2.subtasks[0]);
+                    existingModelTask = _.clone(taskDetail2.subtasks[0]);
+                    existingModelTask.options.modeltype = currentProcessData.selectedmodeltype;
+                    currentProcessTasksData.tasks.unshift(existingModelTask);
                 }
 
                 ProcessStateService.saveProcessTasksData(currentProcessTasksData);

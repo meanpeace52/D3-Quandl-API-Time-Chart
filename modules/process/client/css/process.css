@@ -212,6 +212,10 @@ ul.transformsteps {
 .drop-list li.disabled-task {
   opacity: .5;
 }
+.drop-list li.invalid > span > div {
+  background: red;
+  color: #fff;
+}
 .drop-list .tooltip {
   z-index: 1;
 }

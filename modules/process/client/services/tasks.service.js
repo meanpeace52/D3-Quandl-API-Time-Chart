@@ -50,7 +50,9 @@ angular.module('process')
                 subtasks: [{
                     title: 'Load Existing Model',
                     returnType: SCRIPT_RETURN_TYPE.MODEL,
-                    options: {}
+                    options: {
+                        modeltype : ''
+                    }
                 }]
             }, {
                 title: 'Summaries',
@@ -146,10 +148,10 @@ angular.module('process')
                     slug: 'predict',
                     returnType: SCRIPT_RETURN_TYPE.DATASET,
                     options: {
-                        selectedModel: -1
+                        selectedModel: ''
                     },
                     validate: function (options) {
-                        return options.selectedModel !== '';
+                        return !isNaN(parseInt(options.selectedModel)) && options.selectedModel;
                     }
                 }]
             }];
