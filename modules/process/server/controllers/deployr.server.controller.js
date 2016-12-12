@@ -53,6 +53,10 @@ exports.deployrRun = function (req, response) {
             generator
                 .gbm('dataset', parseInt(task.options.yColIndex, 10) + 1, parseFloat(task.options.train, 10), parseInt(task.options.notrees, 10), outputFileKey);
         }
+        else if (task.title === 'Load Existing Model'){
+            generator
+                .loadModel(req.body.processData.selectedmodels3reference.replace('https://s3.amazonaws.com/rdatamodels', ''));
+        }
         else if (task.title === 'Predict'){
             var predictModel = req.body.tasks[task.options.selectedModel];
             var modeltype = '';
@@ -67,10 +71,10 @@ exports.deployrRun = function (req, response) {
                     generator.predict();
                     break;
                 case 'Smart Regression':
-                    generator.smartRegression();
+                    generator.smartPredict('dataset', parseInt(task.options.yColIndex, 10) + 1);
                     break;
                 case 'GBM':
-                    generator.gbmPredict();
+                    generator.gbmPredict('dataset', parseInt(task.options.yColIndex, 10) + 1);
                     break;
             }
         }

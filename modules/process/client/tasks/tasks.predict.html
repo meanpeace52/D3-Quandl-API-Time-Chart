@@ -4,6 +4,14 @@
     <div ng-if="PredictOptions.models.length == 0">
         You need to add an operation that returns a model first. The operation will need to be before the predict operation.
     </div>
+    <div class="form-group">
+        <label for="yColIndex" class="control-label col-md-4">Dependent Variable: </label>
+        <div class="col-md-8">
+            <select id="yColIndex" class="form-control" ng-model="PredictOptions.options.yColIndex"
+                    ng-options="idx as column for (idx, column) in PredictOptions.columns">
+            </select>
+        </div>
+    </div>
     <div class="form-group" ng-if="PredictOptions.models.length">
         <label for="model" class="control-label col-md-4">Model: </label>
         <div class="col-md-8">

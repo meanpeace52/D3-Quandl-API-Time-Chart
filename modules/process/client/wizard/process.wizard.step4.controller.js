@@ -108,6 +108,9 @@ angular.module('process')
                 if (!_.find(vm.process.tasks, {title: task.title})) {
                     updateTaskOptions();
                     vm.process.tasks.splice(index, 1, task);
+                    if (index === vm.process.tasks.length - 1){
+                        setEndpoint(task);
+                    }
                     ProcessStateService.saveProcessTasksData(vm.process);
                     showTaskOptions(vm.process.tasks[index]);
                     /*if (index === vm.process.tasks.length - 1){
@@ -156,6 +159,13 @@ angular.module('process')
             }
 
             vm.performProcess = function () {
+
+                var endpoint = _.find(vm.process.tasks, { endpoint : true });
+                if (!endpoint){
+                    toastr.error('You need to set a workflow endpoint of where you would like your workflow to stop!');
+                    return;
+                }
+
                 //Reattach validate function as it gets removed on copy
                 var subtasks = [];
                 _.each(vm.tasks, function(task){
@@ -241,6 +251,13 @@ angular.module('process')
                     message: 'Are you sure you want to remove this task?'
                 }).then(function() {
                     vm.process.tasks = _.without(vm.process.tasks, task);
+                    //check if endpoint is set
+                    if (vm.process.tasks.length > 0){
+                        var endpoint = _.find(vm.process.tasks, { endpoint : true });
+                        if (!endpoint){
+                            setEndpoint(vm.process.tasks[vm.process.tasks.length - 1]);
+                        }
+                    }
                     ProcessStateService.saveProcessTasksData(vm.process);
                 });
             };

@@ -191,7 +191,7 @@ function RCodeGenerator(){
 
         this.code += 'print(summary(model))\n';
         this.code += '#sensitive\n';
-        this.code += 's3save(model, bucket="rdatamodels", object = "' + filename + '.rdata")\n';
+        this.code += 's3save(result, bucket="rdatamodels", object = "' + filename + '.rdata")\n';
         this.code += '#sensitive\n';
         this.code += '# Function: gbm - End\n';
 
@@ -282,7 +282,7 @@ function RCodeGenerator(){
         //this.code += 'result_id <- sprintf("%s/%s", output_path, result_id)\n';
         this.code += 'print(summary(model))\n';
         this.code += '#sensitive\n';
-        this.code += 's3save(model, bucket="rdatamodels", object = "' + filename + '.rdata")\n';
+        this.code += 's3save(result, bucket="rdatamodels", object = "' + filename + '.rdata")\n';
         this.code += '#sensitive\n';
 
         this.code += '# Function: smartRegression - End\n';
@@ -294,11 +294,143 @@ function RCodeGenerator(){
         return this;
     };
 
-    this.smartPredict = function(){
+    this.loadModel = function(modelkey){
+        this.code += '# Function: loadModel - Start\n';
+        //this.code += 'e <- new.env()\n';
+        this.code += 's3load("' + modelkey + '", bucket = "rdatamodels")\n';
+        //this.code += 'result <- get(ls(e), envir = e)\n';
+        //this.code += 'rm(e)\n';
+        this.code += '# Function: loadModel - End\n';
+    };
+
+    this.smartPredict = function(inputData, yIndex){
+        this.code += '# Function: smartPredict - Start\n';
+
+        this.code += '# Checks columns----------------------------------------------------------------\n';
+
+        this.code += '# Dependant var\n';
+        this.code += 'yvar <- names(' + inputData + ')[' + yIndex + ']\n';
+        this.code += 'xvars <- names(' + inputData + ')[-1]\n';
+
+        this.code += '# Restricts dataset-----------------------------------------------------------\n';
+        this.code += inputData + ' <- ' + inputData + '[, c(yvar, xvars)]\n';
+
+        this.code += '# Checks columns in model & dataset-------------------------------------------\n';
+        this.code += 'model_yvar <- as.character(result$model$formula)[2]\n';
+        this.code += 'model_xvars <- names(coef(result$model))[-1]\n';
+
+        this.code += '# Checks Y var\n';
+        this.code += 'if (model_yvar != yvar) {\n';
+        this.code += '  stop("Dependent variable is not the same!")\n';
+        this.code += '}\n';
+
+        this.code += 'if (all(model_xvars %in% xvars) & all(xvars %in% model_xvars)) {\n';
+        this.code += '  # (1) All is ok / boston\n';
+
+        this.code += '} else if (all(model_xvars %in% xvars) & !all(xvars %in% model_xvars)) {\n';
+        this.code += '  # (2) Extra cols in new dataset / boston2\n';
+        this.code += inputData + ' <- ' + inputData + '[, c(yvar, model_xvars)]\n';
+
+        this.code += '} else if (!all(model_xvars %in% xvars) & all(xvars %in% model_xvars)) {\n';
+        this.code += '  # (3) Missing cols in new dataset / boston3\n';
+        this.code += '  .formula <- as.formula(sprintf("%s ~ %s", yvar, paste(xvars, collapse = " + ")))\n';
+        this.code += '  .family <- ifelse(is.numeric(' + inputData + '[, yvar]), gaussian, binomial)\n';
+        this.code += '  model <- glm(.formula, data = result$model$data, family = .family)\n';
+        this.code += '  result$model <- model\n';
+
+        this.code += '} else {\n';
+        this.code += '  # (4) Combination of (2) + (3) / boston4\n';
+        this.code += '  xvars <- xvars[xvars %in% model_xvars]\n';
+        this.code += inputData + ' <- ' + inputData + '[, c(yvar, xvars)]\n';
+
+        this.code += '  .formula <- as.formula(sprintf("%s ~ %s", yvar, paste(xvars, collapse = " + ")))\n';
+        this.code += '  .family <- ifelse(is.numeric(' + inputData + '[, yvar]), gaussian, binomial)\n';
+        this.code += '  model <- glm(.formula, data = result$model$data, family = .family)\n';
+        this.code += '  result$model <- model\n';
+        this.code += '}\n';
+
+        this.code += 'pred <- predict(result$model, ' + inputData + ' = ' + inputData + ')\n';
+        this.code += 'pred <- as.numeric(pred)\n';
+        this.code += 'pred\n';
+
+        this.code += '# Function: smartPredict - End\n';
         return this;
     };
 
-    this.gbmPredict = function(){
+    this.gbmPredict = function(inputData, yIndex){
+        this.code += '# Function: gbmPredict - Start\n';
+        this.code += 'deployrPackage("gbm")\n';
+
+        this.code += '# Checks columns----------------------------------------------------------------\n';
+
+        this.code += '# Dependant var\n';
+        this.code += 'yvar <- names(' + inputData + ')[' + yIndex + ']\n';
+        this.code += 'xvars <- names(' + inputData + ')[-1]\n';
+
+        this.code += '# Restricts dataset-----------------------------------------------------------\n';
+        this.code += inputData + ' <- ' + inputData + '[, c(yvar, xvars)]\n';
+
+        this.code += '# Checks columns in model & dataset-------------------------------------------\n';
+        this.code += 'model_yvar <- result$model$response.name\n';
+        this.code += 'model_xvars <- result$model$var.names\n';
+
+        this.code += 'if (all(model_xvars %in% xvars) & all(xvars %in% model_xvars)) {\n';
+        this.code += '  # (1) All is ok / boston\n';
+
+        this.code += '} else if (all(model_xvars %in% xvars) & !all(xvars %in% model_xvars)) {\n';
+        this.code += '  # (2) Extra cols in new dataset / boston2\n';
+        this.code += inputData + ' <- ' + inputData + '[, c(yvar, model_xvars)]\n';
+
+        this.code += '} else if (!all(model_xvars %in% xvars) & all(xvars %in% model_xvars)) {\n';
+        this.code += '  # (3) Missing cols in new dataset / boston3\n';
+        this.code += '  .formula <- as.formula(sprintf("%s ~ %s", yvar, paste(xvars, collapse = " + ")))\n';
+        this.code += '  .family <- ifelse(is.numeric(' + inputData + '[, yvar]), "gaussian", "bernoulli")\n';
+
+        this.code += '  # Reconstructs data\n';
+        this.code += '  model_data <- matrix(result$model$data$x, ncol = length(model_xvars), byrow = FALSE)\n';
+        this.code += '  colnames(model_data) <- model_xvars\n';
+        this.code += '  model_data <- cbind(as.numeric(result$model$data$y), model_data)\n';
+        this.code += '  colnames(model_data)[1] <- model_yvar\n';
+        this.code += '  model_data <- as.data.frame(model_data)\n';
+
+        this.code += '  # Re-fit model\n';
+        this.code += '  model <- gbm(.formula, data = model_data, distribution = .family, n.trees = result$model$n.trees,\n';
+        this.code += '  keep.data = TRUE,\n';
+        this.code += '  bag.fraction = 0.8,\n';
+        this.code += '  interaction.depth = 5,\n';
+        this.code += '  shrinkage = 0.1)\n';
+        this.code += '  result$model <- model\n';
+
+        this.code += '} else {\n';
+        this.code += '  # (4) Combination of (2) + (3) / boston4\n';
+        this.code += '  xvars <- xvars[xvars %in% model_xvars]\n';
+        this.code += inputData + ' <- ' + inputData + '[, c(yvar, xvars)]\n';
+
+        this.code += '  .formula <- as.formula(sprintf("%s ~ %s", yvar, paste(xvars, collapse = " + ")))\n';
+        this.code += '  .family <- ifelse(is.numeric(' + inputData + '[, yvar]), "gaussian", "bernoulli")\n';
+
+        this.code += '  # Reconstructs data\n';
+        this.code += '  model_data <- matrix(result$model$data$x, ncol = length(model_xvars), byrow = FALSE)\n';
+        this.code += '  colnames(model_data) <- model_xvars\n';
+        this.code += '  model_data <- cbind(as.numeric(result$model$data$y), model_data)\n';
+        this.code += '  colnames(model_data)[1] <- model_yvar\n';
+        this.code += '  model_data <- as.data.frame(model_data)\n';
+
+        this.code += '  # Re-fit model\n';
+        this.code += '  model <- gbm(.formula, data = model_data, distribution = .family, n.trees = result$model$n.trees,\n';
+        this.code += '  keep.data = TRUE,\n';
+        this.code += '  bag.fraction = 0.8,\n';
+        this.code += '  interaction.depth = 5,\n';
+        this.code += '  shrinkage = 0.1)\n';
+        this.code += '  result$model <- model\n';
+        this.code += '}\n';
+
+        this.code += '# Makes prediction--------------------------------------------------------------\n';
+        this.code += 'pred <- predict(result$model, ' + inputData + ' = ' + inputData + ', n.trees = result$model$n.trees)\n';
+        this.code += 'pred <- as.numeric(pred)\n';
+        this.code += 'pred\n';
+
+        this.code += '# Function: gbmPredict - End\n';
         return this;
     };
 

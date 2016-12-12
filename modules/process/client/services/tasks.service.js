@@ -146,12 +146,12 @@ angular.module('process')
                 subtasks: [{
                     title: 'Predict',
                     slug: 'predict',
-                    returnType: SCRIPT_RETURN_TYPE.DATASET,
+                    returnType: SCRIPT_RETURN_TYPE.MODEL,
                     options: {
                         selectedModel: ''
                     },
                     validate: function (options) {
-                        return !isNaN(parseInt(options.selectedModel)) && options.selectedModel;
+                        return !isNaN(parseInt(options.selectedModel)) && options.selectedModel > -1 && !isNaN(parseInt(options.yColIndex));
                     }
                 }]
             }];

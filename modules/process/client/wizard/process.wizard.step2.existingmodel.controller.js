@@ -80,6 +80,7 @@ angular.module('process')
                 var processData = ProcessStateService.currentProcessData();
                 processData.selectedmodel = model._id;
                 processData.selectedmodeltype = model.type;
+                processData.selectedmodels3reference = model.s3reference;
                 processData.selecteddataset = dataset._id;
                 processData.selecteddatasets3reference = dataset.s3reference;
                 processData.step1selection = 'existing-model';

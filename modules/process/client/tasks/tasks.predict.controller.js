@@ -10,6 +10,8 @@ angular.module('process')
 
             vm.tasks = ProcessStateService.currentProcessTasksData().tasks;
 
+            vm.columns = ProcessStateService.getSelectedDataset().columns;
+
             var currentTaskIndex = -1;
             vm.models = _.filter(vm.tasks, function(task){
                 currentTaskIndex++;
