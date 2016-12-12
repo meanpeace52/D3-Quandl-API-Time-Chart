@@ -17,6 +17,7 @@ angular.module('process')
                     vm.usersDatasets = datasets;
                     if (ProcessStateService.currentProcessData().selecteddataset){
                         vm.selecteddataset = _.find(vm.usersDatasets, { _id : ProcessStateService.currentProcessData().selecteddataset });
+                        vm.selecteddataset.hasheader = vm.selecteddataset.hasheader === undefined ? true : vm.selecteddataset.hasheader;
                         vm.onDatasetChange(vm.selecteddataset);
                     }
                 });
@@ -26,6 +27,7 @@ angular.module('process')
                     vm.usersModels = models;
                     if (ProcessStateService.currentProcessData().selectedmodel){
                         vm.selectedmodel = _.find(vm.usersModels, { _id : ProcessStateService.currentProcessData().selectedmodel });
+                        vm.selectedmodel.dataset.hasheader = vm.selectedmodel.dataset.hasheader === undefined ? true : vm.selectedmodel.dataset.hasheader;
                         vm.onModelChange(vm.selectedmodel);
                     }
                 });
@@ -35,6 +37,9 @@ angular.module('process')
                 vm.currentdataset.rows = [];
                 vm.currentdataset.columns = [];
                 vm.showLoader = true;
+
+                vm.selecteddataset = dataset;
+                vm.selecteddataset.hasheader = vm.selecteddataset.hasheader === undefined ? true : vm.selecteddataset.hasheader;
 
                 Datasets.getDatasetWithS3(dataset._id)
                     .then(function (data) {
@@ -49,6 +54,9 @@ angular.module('process')
                 vm.currentmodeldataset.rows = [];
                 vm.currentmodeldataset.columns = [];
                 vm.showModelLoader = true;
+
+                vm.selectedmodel = model;
+                vm.selectedmodel.dataset.hasheader = vm.selectedmodel.dataset.hasheader === undefined ? true : vm.selectedmodel.dataset.hasheader;
 
                 Datasets.getDatasetWithS3(model.dataset)
                     .then(function (data) {

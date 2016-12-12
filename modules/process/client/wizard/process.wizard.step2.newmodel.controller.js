@@ -27,6 +27,9 @@ angular.module('process')
                 vm.currentdataset.columns = [];
                 vm.showLoader = true;
 
+                vm.selecteddataset = dataset;
+                vm.selecteddataset.hasheader = vm.selecteddataset.hasheader === undefined ? true : vm.selecteddataset.hasheader;
+
                 Datasets.getDatasetWithS3(dataset._id)
                     .then(function (data) {
                         vm.showLoader = false;

@@ -108,10 +108,13 @@ exports.searchModel = function (req, res) {
                         callback(err);
                     }
                     else {
+                        results = _.filter(results, function(model){
+                            return model.access !== 'purchased' || (model.access === 'purchased' && model.user._id.toString() === req.user.id);
+                        });
                         _.each(results, function(model){
                             if (model.access === 'for sale' && model.buyers && model.buyers.length > 0){
                                 var purchased = _.find(model.buyers, function(buyer){
-                                    return buyer.id.toString() === req.user._id.id;
+                                    return buyer.id.toString() === req.user.id;
                                 });
                                 if (purchased){
                                     model.purchased = true;

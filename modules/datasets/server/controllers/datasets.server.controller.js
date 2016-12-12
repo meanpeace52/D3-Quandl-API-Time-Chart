@@ -100,10 +100,13 @@ exports.searchDataset = function (req, res) {
                         callback(err);
                     }
                     else {
+                        datasets = _.filter(datasets, function(dataset){
+                            return dataset.access !== 'purchased' || (dataset.access === 'purchased' && dataset.user._id.toString() === req.user.id);
+                        });
                         _.each(datasets, function(dataset){
                             if (dataset.access === 'for sale' && dataset.buyers && dataset.buyers.length > 0){
                                 var purchased = _.find(dataset.buyers, function(buyer){
-                                    return buyer.id.toString() === req.user._id.id;
+                                    return buyer.id.toString() === req.user.id;
                                 });
                                 if (purchased){
                                     dataset.purchased = true;
