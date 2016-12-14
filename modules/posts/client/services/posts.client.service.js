@@ -50,6 +50,20 @@ angular.module('posts').factory('posts', ['$resource', '$http', '$state', '$q',
                 return err.data;
             });
         };
+
+        posts.recent = function(){
+            var dfd = $q.defer();
+
+            $http.get('/api/posts/recent')
+                .success(function (data, status, headers, config) {
+                    dfd.resolve(data);
+                })
+                .error(function (data, status, headers, config) {
+                    dfd.reject(data);
+                });
+
+            return dfd.promise;
+        };
         
         posts.search = function (field, value) {
             var search = field + '/' + value;

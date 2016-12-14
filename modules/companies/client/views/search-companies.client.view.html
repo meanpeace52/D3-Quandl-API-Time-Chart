@@ -1,0 +1,22 @@
+<section>
+  <div class="page-header">
+    <h1>Search Companies</h1>
+  </div>
+    <form ng-submit="vm.search()" class="datasets-search-container">
+        <input class="form-control" type="text" ng-model="vm.query">
+        <button ng-click="vm.search()" class="btn btn-secondary" type="button">
+            <i ng-hide="vm.loading" class="icon icon-magnifying-glass"></i>
+            <i ng-show="vm.loading" class="glyphicon glyphicon-hourglass"></i>
+        </button>
+    </form>
+    <div class="container">
+        <div class="row">
+            <div class="list-group">
+                <div ng-repeat="company in vm.companies track by $index" class="list-group-item dataset">
+                    <strong><span>{{ company.ticker }}</span> <span ng-if="company.name && company.name != ''">- {{ company.name }}</span></strong>
+                </div>
+            </div>
+            <p ng-if="vm.companies.length == 0"><strong>No companies found for the search phrase.</strong></p>
+        </div>
+    </div>
+</section>

@@ -187,13 +187,6 @@
             </div>
         </header>
 
-        <div class="container">
-            <div ng-repeat="item in home.news">
-                <a ui-sref="posts.external({ url : item.link })"><h3 ng-bind-html="item.title"></h3></a>
-                <p>{{item.created | date: 'dd MMMM yyyy' }}</p>
-                <p>{{item.description}}</p>
-            </div>
-        </div>
         <!-- Page Content -->
         <div is-need-container="toggle">
             <ul class="nav nav-tabs" data-tabs="tabs">
@@ -207,8 +200,8 @@
                         <div class="row finance-company-container">
                             <div class="col-md-offset-7 col-md-3">
                                 <form name="companyform" ng-submit="home.searchCompany(company)">
-                                    <div class="inner-addon left-addon">
-                                        <i class="icon icon-magnifying-glass"></i>
+                                    <div class="input-group">
+                                        <span class="input-group-addon"><i class="icon icon-magnifying-glass"></i></span>
                                         <input type="text" class="form-control" ng-model="company.query" placeholder="Company Search">
                                     </div>
                                 </form>
@@ -217,12 +210,51 @@
                                 <a href="">Smart Screener</a>
                             </div>
                         </div>
-                        <div ui-view="posts-finance@home">
+                        <div class="row">
+                            <div class="col-md-12 text-center page-header">
+                                <ul data-ng-if="home.menuItems" class="list-inline">
+                                    <li ng-repeat="financeMenuItem in home.menuItems" ui-sref-active="active" ng-class="{'active': financeMenuItem === home.financeActiveMenuItem}" class="list-item">
+                                        <a href="" ng-click="home.changeFinanceMenuItem(financeMenuItem)" ng-bind="financeMenuItem" class="text-capitalize h4"></a>
+                                    </li>
+                                </ul>
+                            </div>
                         </div>
+                        <div class="row" ng-if="home.financeActiveMenuItem == 'In The News'">
+                            <div class="container">
+                                <div ng-repeat="newsItem in home.news">
+                                    <a ui-sref="posts.external({ url : newsItem.link })"><h3 ng-bind-html="newsItem.title"></h3></a>
+                                    <p>{{newsItem.created | date: 'dd MMMM yyyy' }}</p>
+                                    <p>{{newsItem.description}}</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row" ng-if="home.financeActiveMenuItem != 'In The News'">
+                            <div class="list-group">
+                                <div data-ng-repeat="post in home.financePosts" ui-sref="posts.detail({postId: post._id})" class="list-group-item posts">
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <small class="list-group-item-text">
+                                                <span ng-if="!post.user">Unknown User -</span>
+                                                <span ng-if="post.user">{{ post.user.username }} - </span> <span>{{post.created | date:'mediumDate'}}</span>
+                                                <p class="post-title">{{post.title}}</p>
+                                            </small>
+                                        </div>
+                                        <div class="col-md-6 buttons">
+                                            <span ng-if="post.files.length" class="pull-right icon icon-news" title="PDFs attached"></span>
+                                            <span ng-if="post.datasets.length" class="pull-right icon icon-list" title="Datasets Attached"></span>
+                                            <span if="post.models.length" class="pull-right icon icon-bar-graph" title="Models Attached"></span>
+                                        </div>
+                                    </div>
+                                    <!--<p class="list-group-item-text">{{post.content}}</p>-->
+                                </div>
+                            </div>
+                        </div>
+                        <!--<div ui-view="posts-finance@home">
+                        </div>-->
                     </div>
                     <div ng-if="item == 'SoshSci'">
-                        <div ui-view="posts-soshsci@home">
-                        </div>
+                        <!--<div ui-view="posts-soshsci@home">
+                        </div>-->
                     </div>
                 </div>
             </div>

@@ -23,6 +23,15 @@
           pageTitle: 'Companies List'
         }
       })
+      .state('companies.search', {
+        url: '/search/:query',
+        templateUrl: 'modules/companies/client/views/search-companies.client.view.html',
+        controller: 'CompaniesSearchController',
+        controllerAs: 'vm',
+        data: {
+          pageTitle: 'Companies Search'
+        }
+      })
       .state('companies.create', {
         url: '/create',
         templateUrl: 'modules/companies/client/views/form-company.client.view.html',

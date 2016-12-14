@@ -1,20 +1,38 @@
-// Companies service used to communicate Companies REST endpoints
-(function () {
-  'use strict';
+'use strict';
+//posts service used for communicating with the posts REST endpoints
+angular.module('companies').factory('CompaniesService', ['$resource', '$http', '$state', '$q',
+  function ($resource, $http, $state, $q) {
 
-  angular
-    .module('companies')
-    .factory('CompaniesService', CompaniesService);
+    var companies = {};
 
-  CompaniesService.$inject = ['$resource'];
+    companies.search = function (query) {
+      var dfd = $q.defer();
 
-  function CompaniesService($resource) {
-    return $resource('api/companies/:companyId', {
-      companyId: '@_id'
-    }, {
-      update: {
-        method: 'PUT'
-      }
-    });
+      $http.get('/api/companies/search/' + query)
+          .success(function (data, status, headers, config) {
+            dfd.resolve(data);
+          })
+          .error(function (data, status, headers, config) {
+            dfd.reject({ status : status, message : data });
+          });
+
+      return dfd.promise;
+    };
+
+    companies.searchStatements = function (query) {
+      var dfd = $q.defer();
+
+      $http.get('/api/companies/search-statements/' + query)
+          .success(function (data, status, headers, config) {
+              dfd.resolve(data);
+          })
+          .error(function (data, status, headers, config) {
+              dfd.reject({ status : status, message : data });
+          });
+
+      return dfd.promise;
+    };
+
+    return companies;
   }
-}());
+]);

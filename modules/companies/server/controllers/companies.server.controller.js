@@ -121,7 +121,7 @@ exports.companyByID = function(req, res, next, id) {
 exports.search = function(req, res) {
   if (req.params.query && req.params.query.length > 0){
     Company.find({ name : { '$regex': req.params.query, '$options': 'i' }})
-        .limit(10)
+        .limit(25)
         .exec(function(err, companies) {
           if (err) {
             return res.status(err.status).send({
@@ -135,7 +135,26 @@ exports.search = function(req, res) {
   else{
     res.status(400).json({ message : 'Please provide a query to search by.' });
   }
+};
 
+exports.searchStatements = function(req, res) {
+  if (req.params.query && req.params.query.length > 0){
+    mongoose.connection.db.collection('statements', function(err, collection){
+      collection.find({ $or: [{ name: { '$regex': req.params.query, '$options': 'i' }}, { ticker : { '$regex': req.params.query, '$options': 'i' }}]})
+          .toArray(function(err, companies) {
+            if (err) {
+              return res.status(err.status).send({
+                message: errorHandler.getErrorMessage(err)
+              });
+            } else {
+              res.json(companies);
+            }
+          });
+    });
+  }
+  else{
+    res.status(400).json({ message : 'Please provide a query to search by.' });
+  }
 };
 
 exports.findByCode = function(req, res) {

@@ -18,6 +18,10 @@ module.exports = function (app) {
         .get(posts.list);
     app.param('field', posts.list);
     app.param('value', posts.list);
+
+
+    app.route('/api/posts/recent').all(postsPolicy.isAllowed)
+        .get(posts.recentPosts);
         
     // Single post routes
     app.route('/api/posts/:postId').all(postsPolicy.isAllowed)

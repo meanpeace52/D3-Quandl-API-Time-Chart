@@ -26,6 +26,9 @@ exports.invokeRolesPolicies = function () {
         }, {
             resources: '/api/companies/findbycode/:id',
             permissions: '*'
+        }, {
+            resources: '/api/companies/search-statements/:query',
+            permissions: '*'
         }
         ]
     }, {
@@ -41,6 +44,9 @@ exports.invokeRolesPolicies = function () {
             permissions: ['get']
         }, {
             resources: '/api/companies/findbycode/:id',
+            permissions: ['get']
+        }, {
+            resources: '/api/companies/search-statements/:query',
             permissions: ['get']
         }]
     }]);

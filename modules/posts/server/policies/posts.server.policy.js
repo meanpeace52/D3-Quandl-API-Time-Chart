@@ -39,6 +39,10 @@ exports.invokeRolesPolicies = function () {
                 {
                     resources: '/api/repubhub-feed-article',
                     permissions: ['post']
+                },
+                {
+                    resources: '/api/posts/recent',
+                    permissions: ['get']
                 }
             ]
         },
@@ -68,6 +72,10 @@ exports.invokeRolesPolicies = function () {
                 {
                     resources: '/api/repubhub-feed-article',
                     permissions: ['post']
+                },
+                {
+                    resources: '/api/posts/recent',
+                    permissions: ['get']
                 }
             ]
         }

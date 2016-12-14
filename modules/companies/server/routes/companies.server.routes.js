@@ -23,6 +23,9 @@ module.exports = function(app) {
   app.route('/api/companies/search/:query')
       .get(companies.search);
 
+  app.route('/api/companies/search-statements/:query')
+        .get(companies.searchStatements);
+
   app.route('/api/companies/findbycode/:id')
       .get(companies.findByCode);
 

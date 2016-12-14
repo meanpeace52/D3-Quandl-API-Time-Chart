@@ -227,6 +227,22 @@ exports.trackPostView = function (req, res) {
     else{
         res.send({ success : true });
     }
+};
 
-
+exports.recentPosts = function(req, res){
+    Post.find({ })
+        .sort('-created')
+        .populate('user', 'username')
+        .lean()
+        .limit(10)
+        .exec(function (err, posts) {
+            if (err) {
+                return res.status(400).send({
+                    message: errorHandler.getErrorMessage(err)
+                });
+            }
+            else {
+                res.json(posts);
+            }
+        });
 };

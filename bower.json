@@ -45,7 +45,8 @@
     "ng-img-crop-full-extended": "ngImgCropFullExtended#^0.6.2",
     "ng-jcrop": "^2.1.2",
     "angular-prompt": "^1.2.0",
-    "ngstorage": "^0.3.11"
+    "ngstorage": "^0.3.11",
+    "async": "^2.1.4"
   },
   "resolutions": {
     "objectpath": "~1.1.0",
