@@ -76,4 +76,5 @@ temp/
 s3-cache/datasets
 s3-cache/fed
 s3-cache/files
+s3-cache/json
 .s3-cache/

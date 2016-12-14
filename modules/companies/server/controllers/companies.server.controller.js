@@ -6,6 +6,7 @@
 var path = require('path'),
   mongoose = require('mongoose'),
   Company = mongoose.model('Company'),
+  CompaniesService = require('../services/companies.server.services.js'),
   errorHandler = require(path.resolve('./modules/core/server/controllers/errors.server.controller')),
   quandlService = require(path.resolve('./modules/quandl/server/services/quandl.server.api')),
   _ = require('lodash'),
@@ -155,6 +156,52 @@ exports.searchStatements = function(req, res) {
   else{
     res.status(400).json({ message : 'Please provide a query to search by.' });
   }
+};
+
+exports.searchStatementsByTicker = function(req, res) {
+  mongoose.connection.db.collection('statements', function(err, collection) {
+    collection.findOne({ticker: req.params.ticker}, function (err, company) {
+      if (err) {
+        return res.status(err.status).send({
+          message: errorHandler.getErrorMessage(err)
+        });
+      } else {
+        res.json(company);
+      }
+    });
+  });
+};
+
+function renderStatement(statement){
+  var otherColumns = [];
+  var output = '<table class="table" style="width:100%;"><tr>';
+  Object.keys(statement).forEach(function (key, i) {
+    output += '<th><pre>' + key + '</pre></th>';
+    if (i > 0){
+      otherColumns.push(key);
+    }
+  });
+  output += '</tr>';
+  statement[Object.keys(statement)[0]].forEach(function(val, i){
+    output += '<tr>';
+    var printValue = '<td><pre>' + val + '</pre></td>';
+    otherColumns.forEach(function(key, j){
+      printValue += '<td><pre>' + statement[key][i] + '</pre></td>';
+    });
+    output += printValue + '</tr>';
+  });
+  output += '</table>';
+  return output;
+}
+
+exports.getStatement = function(req, res) {
+  CompaniesService.getFileFromS3('xbrltl', req.body.s3link)
+      .then(function(data){
+        res.send(renderStatement(data));
+      })
+      .catch(function(err){
+        res.status(err.status).json(err);
+      });
 };
 
 exports.findByCode = function(req, res) {

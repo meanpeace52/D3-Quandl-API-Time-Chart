@@ -62,13 +62,7 @@
         url: '/:companyId',
         templateUrl: 'modules/companies/client/views/view-company.client.view.html',
         controller: 'CompaniesController',
-        controllerAs: 'vm',
-        resolve: {
-          companyResolve: getCompany
-        },
-        data: {
-          pageTitle: 'Company {{ companyResolve.name }}'
-        }
+        controllerAs: 'vm'
       });
   }
 

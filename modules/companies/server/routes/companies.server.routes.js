@@ -14,20 +14,26 @@ module.exports = function(app) {
     .post(companies.create);
 
 
-  app.route('/api/companies/loadCompanies')
+  app.route('/api/companies/loadCompanies').all(companiesPolicy.isAllowed)
       .get(function(req, res){
         companiesService.loadCompanies(1);
         res.send({ success : true });
       });
 
-  app.route('/api/companies/search/:query')
+  app.route('/api/companies/search/:query').all(companiesPolicy.isAllowed)
       .get(companies.search);
 
-  app.route('/api/companies/search-statements/:query')
-        .get(companies.searchStatements);
+  app.route('/api/companies/search-statements/:query').all(companiesPolicy.isAllowed)
+      .get(companies.searchStatements);
 
-  app.route('/api/companies/findbycode/:id')
+  app.route('/api/companies/search-statements-by-ticker/:ticker').all(companiesPolicy.isAllowed)
+      .get(companies.searchStatementsByTicker);
+
+  app.route('/api/companies/findbycode/:id').all(companiesPolicy.isAllowed)
       .get(companies.findByCode);
+
+  app.route('/api/companies/statement').all(companiesPolicy.isAllowed)
+      .post(companies.getStatement);
 
   app.route('/api/companies/:companyId').all(companiesPolicy.isAllowed)
     .get(companies.read)

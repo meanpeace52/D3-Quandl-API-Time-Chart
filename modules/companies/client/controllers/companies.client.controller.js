@@ -1,53 +1,81 @@
 (function () {
-  'use strict';
+    'use strict';
 
-  // Companies controller
-  angular
-    .module('companies')
-    .controller('CompaniesController', CompaniesController);
+    // Companies controller
+    angular
+        .module('companies')
+        .controller('CompaniesController', CompaniesController);
 
-  CompaniesController.$inject = ['$scope', '$state', '$window', 'Authentication', 'companyResolve'];
+    CompaniesController.$inject = ['$scope', '$state', '$window', 'Authentication', '$stateParams', 'CompaniesService',
+        'toastr', '$log', '$sce'];
 
-  function CompaniesController ($scope, $state, $window, Authentication, company) {
-    var vm = this;
+    function CompaniesController($scope, $state, $window, Authentication, $stateParams, CompaniesService, toastr, $log, $sce) {
+        var vm = this;
 
-    vm.authentication = Authentication;
-    vm.company = company;
-    vm.error = null;
-    vm.form = {};
-    vm.remove = remove;
-    vm.save = save;
+        vm.authentication = Authentication;
 
-    // Remove existing Company
-    function remove() {
-      if ($window.confirm('Are you sure you want to delete?')) {
-        vm.company.$remove($state.go('companies.list'));
-      }
+        vm.company = {};
+
+        vm.displayeod = false;
+        vm.displaystatements = false;
+
+        vm.changePeriod = function (period) {
+            vm.statements = _.filter(vm.company.statements.statements, {date: period});
+            _.each(vm.statements, function (statement) {
+                statement.displayname = statement.type.replace(/([A-Z])/g, ' $1').trim();
+            });
+            if (vm.statements.length){
+                vm.loadStatement(vm.statements[0]);
+            }
+        };
+
+        vm.loadStatement = function (statement) {
+            vm.statement = null;
+
+
+            CompaniesService.getstatement(statement)
+                .then(function(results){
+                    vm.statement = $sce.trustAsHtml(results);
+                    vm.statementname = statement.displayname;
+                })
+                .catch(function(err){
+                    $log.error(err);
+                    toastr.error('Error loading statement.');
+                });
+        };
+
+        CompaniesService.findbycode($stateParams.companyId)
+            .then(function (eod) {
+                vm.company.eod = eod;
+                vm.displayeod = true;
+                if (vm.company.eod.dataset) {
+                    vm.company.eod.dataset.name = vm.company.eod.dataset.name.replace(' Prices, Dividends, Splits and Trading Volume', '');
+                }
+            })
+            .catch(function (err) {
+                $log.error(err);
+                //toastr.error('Error searching companies');
+            });
+
+        CompaniesService.searchStatementsByTicker($stateParams.companyId)
+            .then(function (result) {
+                vm.company.statements = result;
+                vm.displaystatements = true;
+                vm.periods = _.chain(vm.company.statements.statements)
+                    .map(function (statement) {
+                        return statement.date;
+                    })
+                    .uniq()
+                    .reverse()
+                    .value();
+                if (vm.periods.length > 0){
+                    vm.period = vm.periods[0];
+                    vm.changePeriod(vm.period);
+                }
+            })
+            .catch(function (err) {
+                $log.error(err);
+                //toastr.error('Error searching company statements');
+            });
     }
-
-    // Save Company
-    function save(isValid) {
-      if (!isValid) {
-        $scope.$broadcast('show-errors-check-validity', 'vm.form.companyForm');
-        return false;
-      }
-
-      // TODO: move create/update logic to service
-      if (vm.company._id) {
-        vm.company.$update(successCallback, errorCallback);
-      } else {
-        vm.company.$save(successCallback, errorCallback);
-      }
-
-      function successCallback(res) {
-        $state.go('companies.view', {
-          companyId: res._id
-        });
-      }
-
-      function errorCallback(res) {
-        vm.error = res.data.message;
-      }
-    }
-  }
 }());

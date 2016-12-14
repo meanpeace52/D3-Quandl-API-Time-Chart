@@ -29,8 +29,13 @@ exports.invokeRolesPolicies = function () {
         }, {
             resources: '/api/companies/search-statements/:query',
             permissions: '*'
-        }
-        ]
+        }, {
+            resources: '/api/companies/search-statements-by-ticker/:ticker',
+            permissions: '*'
+        }, {
+            resources: '/api/companies/statement',
+            permissions: '*'
+        }]
     }, {
         roles: ['user'],
         allows: [{
@@ -48,6 +53,12 @@ exports.invokeRolesPolicies = function () {
         }, {
             resources: '/api/companies/search-statements/:query',
             permissions: ['get']
+        }, {
+            resources: '/api/companies/search-statements-by-ticker/:ticker',
+            permissions: ['get']
+        }, {
+            resources: '/api/companies/statement',
+            permissions: ['post']
         }]
     }]);
 };
