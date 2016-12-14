@@ -6,10 +6,10 @@
   <div class="container">
       <div ng-if="vm.displaystatements">
           <div class="row">
-              <div class="col-md-4" ng-if="vm.statements.length > 0">
+              <div class="col-md-4" ng-if="vm.statementslist.length > 0">
                 <h3>Statements</h3>
                 <ul class="list-unstyled">
-                    <li ng-repeat="statement in vm.statements" ng-click="vm.loadStatement(statement)"><a href="">{{ statement.displayname }}</a></li>
+                    <li ng-repeat="statement in vm.statementslist" ng-click="vm.loadStatement(statement)"><a href="">{{ statement }}</a></li>
                 </ul>
               </div>
               <div class="col-md-8">
