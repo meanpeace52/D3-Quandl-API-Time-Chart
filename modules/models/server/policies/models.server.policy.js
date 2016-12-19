@@ -41,6 +41,10 @@ exports.invokeRolesPolicies = function () {
                     permissions: ['post']
                 },
                 {
+                    resources: '/api/models/validate-title',
+                    permissions: ['post']
+                },
+                {
                     resources: '/api/models/dataset/:id',
                     permissions: ['get']
                 }
@@ -76,6 +80,10 @@ exports.invokeRolesPolicies = function () {
                 {
                     resources: '/api/models/dataset/:id',
                     permissions: ['get']
+                },
+                {
+                    resources: '/api/models/validate-title',
+                    permissions: ['post']
                 }
             ]
         },

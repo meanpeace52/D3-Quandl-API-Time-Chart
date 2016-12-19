@@ -138,6 +138,23 @@ exports.searchModel = function (req, res) {
     });
 };
 
+exports.validateTitle = function(req, res){
+    Model.findOne({ title : req.body.title, user : req.user._id }, function(err, foundmodel){
+        if (err){
+            return res.status(err.status).send({
+                message: errorHandler.getErrorMessage(err)
+            });
+        }
+
+        if (!foundmodel || (foundmodel && foundmodel.id === req.body._id)) {
+            return res.json({ valid : true });
+        }
+        else{
+            return res.status(409).json({ valid : false });
+        }
+    });
+};
+
 /**
  * List by user id
  */

@@ -218,6 +218,23 @@ exports.create = function (req, res) {
     });
 };
 
+exports.validateTitle = function(req, res){
+    Dataset.findOne({ title : req.body.title, user : req.user._id }, function(err, founddataset){
+        if (err){
+            return res.status(err.status).send({
+                message: errorHandler.getErrorMessage(err)
+            });
+        }
+
+        if (!founddataset || (founddataset && founddataset.id === req.body._id)) {
+            return res.json({ valid : true });
+        }
+        else{
+            return res.status(409).json({ valid : false });
+        }
+    });
+};
+
 exports.copydataset = function (req, res) {
     Dataset.findById(req.body._id).exec(function (err, dataset) {
         if (err) {

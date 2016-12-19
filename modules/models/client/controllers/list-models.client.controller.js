@@ -100,7 +100,7 @@
     };
 
     vm.copyModel = function(model){
-      ModelsService.showTitleModal(model.title + ' - ' + moment().format('MM/DD/YYYY, h:mm:ss a'), function(result) {
+      ModelsService.showTitleModal(model.title + ' - ' + moment().format('MM/DD/YYYY, h:mm:ss a'), model, function(result) {
           model.title = result.title;
           ModelsService.addToUserApiCall(model)
                 .then(function (data) {

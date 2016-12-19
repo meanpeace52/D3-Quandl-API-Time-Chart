@@ -69,6 +69,9 @@ module.exports = function (app) {
     app.route('/api/datasets/search').all(datasetsPolicy.isAllowed)
         .get(datasets.searchDataset);
 
+    app.route('/api/datasets/validate-title').all(datasetsPolicy.isAllowed)
+        .post(datasets.validateTitle);
+
     app.route('/api/datasets/saveCustom').all(datasetsPolicy.isAllowed)
         .post(datasets.saveCustom);
 

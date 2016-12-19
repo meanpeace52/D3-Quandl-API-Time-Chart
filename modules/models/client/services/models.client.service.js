@@ -123,14 +123,17 @@
           return dfd.promise;
     };
 
-    models.showTitleModal = function(title, callback){
+    models.showTitleModal = function(title, model, callback){
           $uibModal.open({
-              controller: 'TitleModalController',
+              controller: 'ModelTitleModalController',
               controllerAs: 'SetTitleModal',
-              templateUrl: 'modules/datasets/client/titlemodal/title.modal.client.view.html',
+              templateUrl: 'modules/models/client/titlemodal/title.modal.client.view.html',
               size: 'md',
               backdrop: 'static',
               resolve: {
+                  model: function(){
+                      return model;
+                  },
                   modelTitle: function(){
                       return title;
                   }

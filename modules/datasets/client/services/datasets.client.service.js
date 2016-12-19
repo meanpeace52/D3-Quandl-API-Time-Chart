@@ -20,7 +20,8 @@ angular.module('datasets')
                 insert: insert,
                 user: user,
                 json2csvinsert: json2csvinsert,
-                showTitleModal: showTitleModal
+                showTitleModal: showTitleModal,
+                validateTitle: validateTitle
             };
 
             function crud() {
@@ -152,6 +153,20 @@ angular.module('datasets')
                 return dfd.promise;
             }
 
+            function validateTitle(dataset) {
+                var dfd = $q.defer();
+
+                $http.post('api/datasets/validate-title', { _id : dataset._id, title : dataset.title })
+                    .success(function (data, status, headers, config) {
+                        dfd.resolve(data);
+                    })
+                    .error(function (data, status, headers, config) {
+                        dfd.reject(data);
+                    });
+
+                return dfd.promise;
+            }
+
             function getDatasetWithS3(datasetId) {
                 return $http({
                     url: 'api/datasets/' + datasetId + '/withs3',
@@ -197,9 +212,9 @@ angular.module('datasets')
                 });
             }
 
-            function showTitleModal(title, callback){
+            function showTitleModal(title, dataset, callback){
                 $uibModal.open({
-                    controller: 'TitleModalController',
+                    controller: 'DatasetTitleModalController',
                     controllerAs: 'SetTitleModal',
                     templateUrl: 'modules/datasets/client/titlemodal/title.modal.client.view.html',
                     size: 'md',
@@ -207,6 +222,9 @@ angular.module('datasets')
                     resolve: {
                         datasetTitle: function(){
                             return title;
+                        },
+                        dataset: function(){
+                            return dataset;
                         }
                     }
                 }).result.then(function (result) {

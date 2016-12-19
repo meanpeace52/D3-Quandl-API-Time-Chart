@@ -55,6 +55,10 @@ exports.invokeRolesPolicies = function () {
                 {
                     resources: '/api/datasets/json2csvinsert',
                     permissions: ['post']
+                },
+                {
+                    resources: '/api/datasets/validate-title',
+                    permissions: ['post']
                 }
             ]
         },
@@ -99,6 +103,10 @@ exports.invokeRolesPolicies = function () {
                 },
                 {
                     resources: '/api/datasets/json2csvinsert',
+                    permissions: ['post']
+                },
+                {
+                    resources: '/api/datasets/validate-title',
                     permissions: ['post']
                 }
             ]

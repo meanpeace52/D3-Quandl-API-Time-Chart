@@ -23,6 +23,9 @@ module.exports = function (app) {
     app.route('/api/models/purchasemodel/:id').all(modelPolicy.isAllowed)
         .post(model.purchaseModel);
 
+    app.route('/api/models/validate-title').all(modelPolicy.isAllowed)
+        .post(model.validateTitle);
+
     app.route('/api/models/user/:id').all(modelPolicy.isAllowed)
         .get(model.listByUserId);
 

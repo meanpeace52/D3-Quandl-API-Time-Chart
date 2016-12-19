@@ -43,7 +43,7 @@ angular.module('datasets')
                     });
 
                 vm.addtoUser = function () {
-                    Datasets.showTitleModal(vm.dataset.title + ' - ' + moment().format('MM/DD/YYYY, h:mm:ss a'), function(result){
+                    Datasets.showTitleModal(vm.dataset.title + ' - ' + moment().format('MM/DD/YYYY, h:mm:ss a'), vm.dataset, function(result){
                         vm.dataset.title = result.title;
                         Datasets.addToUserApiCall(vm.dataset)
                             .then(function (dataset) {

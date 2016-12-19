@@ -118,7 +118,7 @@
         };
 
         vm.saveDataset = function(){
-            Datasets.showTitleModal(vm.company.eod.dataset.name + ' ' + vm.activePeriodTab + ' - ' + moment().format('MM/DD/YYYY, h:mm:ss a'), function(result) {
+            Datasets.showTitleModal(vm.company.eod.dataset.name + ' ' + vm.activePeriodTab + ' - ' + moment().format('MM/DD/YYYY, h:mm:ss a'), { _id : null }, function(result) {
                 Datasets.json2csvinsert({
                     title: result.title,
                     rows: vm.transformedRows,

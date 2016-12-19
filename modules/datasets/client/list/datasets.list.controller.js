@@ -170,7 +170,7 @@ angular.module('datasets').controller('DatasetsListController', ['$state', '$sta
         };
 
         vm.addToUser = function (dataset) {
-            Datasets.showTitleModal(dataset.title + ' - ' + moment().format('MM/DD/YYYY, h:mm:ss a'), function(result) {
+            Datasets.showTitleModal(dataset.title + ' - ' + moment().format('MM/DD/YYYY, h:mm:ss a'), dataset, function(result) {
                 dataset.title = result.title;
                 Datasets.addToUserApiCall(dataset)
                     .then(function (data) {
