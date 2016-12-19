@@ -1,5 +1,9 @@
+/* global moment */
+
 (function () {
     'use strict';
+
+
 
     // Companies controller
     angular
@@ -19,6 +23,8 @@
         vm.displayeod = false;
         vm.displaystatements = false;
         vm.loading = true;
+        vm.activePeriodTab = '';
+        vm.periodList = ['5D', '1M', '6M', 'YTD', '1Y', '2Y', '5Y', '10Y', 'ALL'];
 
         vm.changePeriod = function (period) {
             var statement = _.find(vm.company.statements.statements, {date: period, displayname : vm.selectedstatement });
@@ -50,6 +56,60 @@
                 vm.period = vm.periods[0];
                 vm.changePeriod(vm.period);
             }
+        };
+
+        vm.showEODData = function(period){
+            var startDate = new Date(),
+                endDate = new Date();
+
+            vm.activePeriodTab = period;
+            if (period !== 'ALL'){
+                switch(period){
+                    case '5D':
+                        startDate = moment(startDate).subtract(5, 'days').toDate();
+                        break;
+                    case '1M':
+                        startDate = moment(startDate).subtract(1, 'months').toDate();
+                        break;
+                    case '6M':
+                        startDate = moment(startDate).subtract(6, 'months').toDate();
+                        break;
+                    case 'YTD':
+                        startDate = moment(startDate).startOf('year').toDate();
+                        break;
+                    case '1Y':
+                        startDate = moment(startDate).subtract(1, 'years').toDate();
+                        break;
+                    case '2Y':
+                        startDate = moment(startDate).subtract(2, 'years').toDate();
+                        break;
+                    case '5Y':
+                        startDate = moment(startDate).subtract(6, 'years').toDate();
+                        break;
+                    case '10Y':
+                        startDate = moment(startDate).subtract(10, 'years').toDate();
+                        break;
+                }
+
+                vm.rows = _.filter(vm.company.eod.dataset.data, function(row){
+                    var date = new Date(row[0]);
+                    return date >= startDate && date <= endDate;
+                });
+            }
+            else{
+                vm.rows = vm.company.eod.dataset.data;
+            }
+
+            vm.transformedRows = [];
+            _.each(vm.rows, function(row){
+                var index = 0;
+                var newRow = {};
+                _.each(vm.company.eod.dataset.column_names, function(name){
+                    newRow[name] = row[index];
+                    index++;
+                });
+                vm.transformedRows.push(newRow);
+            });
         };
 
         CompaniesService.findbycode($stateParams.companyId)

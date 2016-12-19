@@ -1,7 +1,20 @@
 <section>
   <div class="page-header">
     <h1>{{ vm.company.eod && vm.company.eod.dataset.datasetcode ? vm.company.eod.dataset.datasetcode : vm.company.statements.ticker  }} {{ vm.company.eod && vm.company.eod.dataset.name ? vm.company.eod.dataset.name : vm.company.statements.name }}</h1>
-    <p ng-if="vm.displayeod">${{ vm.company.eod.dataset.data[0][4]}} as of EOD {{ vm.company.eod.dataset.data[0][0] }}</p>
+    <p ng-if="vm.displayeod"><span class="eod-price">${{ vm.company.eod.dataset.data[0][4]}}</span> as of EOD {{ vm.company.eod.dataset.data[0][0] }}</p>
+    <div ng-if="vm.displayeod">
+        <ul class="nav nav-tabs" data-tabs="tabs">
+            <li ng-repeat="period in vm.periodList" ng-click="vm.showEODData(period)" ng-class="{'active' : vm.activePeriodTab == period }"><a href="">{{ period }}</a></li>
+        </ul>
+    </div>
+    <div class="row" ng-if="vm.displayeod && vm.activePeriodTab != ''">
+      <div class="col-md-6">Chart Here</div>
+      <div class="col-md-6">
+          <div style="overflow: auto;max-height: 200px;">
+            <dataset-table columns="vm.company.eod.dataset.column_names" rows="vm.transformedRows" hasheader="true"></dataset-table>
+          </div>
+      </div>
+    </div>
   </div>
   <div class="container">
       <div ng-if="vm.displaystatements">
