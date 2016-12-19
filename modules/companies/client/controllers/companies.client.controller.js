@@ -18,6 +18,7 @@
 
         vm.displayeod = false;
         vm.displaystatements = false;
+        vm.loading = true;
 
         vm.changePeriod = function (period) {
             var statement = _.find(vm.company.statements.statements, {date: period, displayname : vm.selectedstatement });
@@ -32,14 +33,6 @@
                     toastr.error('Error loading statement.');
                 });
 
-            /*
-            vm.statements = _.filter(vm.company.statements.statements, {date: period});
-            _.each(vm.statements, function (statement) {
-                statement.displayname = statement.type.replace(/([A-Z])/g, ' $1').trim();
-            });
-            if (vm.statements.length){
-                vm.loadStatement(vm.statements[0]);
-            }*/
         };
 
         vm.loadStatement = function (statement) {
@@ -57,18 +50,6 @@
                 vm.period = vm.periods[0];
                 vm.changePeriod(vm.period);
             }
-            /*
-            vm.statement = null;
-
-            CompaniesService.getstatement(statement)
-                .then(function(results){
-                    vm.statement = $sce.trustAsHtml(results);
-                    vm.statementname = statement.displayname;
-                })
-                .catch(function(err){
-                    $log.error(err);
-                    toastr.error('Error loading statement.');
-                });*/
         };
 
         CompaniesService.findbycode($stateParams.companyId)
@@ -81,13 +62,13 @@
             })
             .catch(function (err) {
                 $log.error(err);
-                //toastr.error('Error searching companies');
             });
 
         CompaniesService.searchStatementsByTicker($stateParams.companyId)
             .then(function (result) {
                 vm.company.statements = result;
                 vm.displaystatements = true;
+                vm.loading = false;
 
                 _.each(vm.company.statements.statements, function (statement) {
                     statement.displayname = statement.type.replace(/([A-Z])/g, ' $1').trim();
@@ -104,22 +85,9 @@
                     vm.loadStatement(vm.statementslist[0]);
                 }
 
-
-                /*vm.periods = _.chain(vm.company.statements.statements)
-                    .map(function (statement) {
-                        return statement.date;
-                    })
-                    .uniq()
-                    .reverse()
-                    .value();
-                if (vm.periods.length > 0){
-                    vm.period = vm.periods[0];
-                    vm.changePeriod(vm.period);
-                }*/
             })
             .catch(function (err) {
                 $log.error(err);
-                //toastr.error('Error searching company statements');
             });
     }
 }());

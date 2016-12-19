@@ -9,14 +9,14 @@
             <i ng-show="vm.loading" class="glyphicon glyphicon-hourglass"></i>
         </button>
     </form>
-    <div class="container">
-        <div class="row">
-            <div class="list-group">
-                <div ng-repeat="company in vm.companies track by $index" class="list-group-item dataset" ui-sref="companies.view({ companyId: company.ticker })">
-                    <strong><span>{{ company.ticker }}</span> <span ng-if="company.name && company.name != ''">- {{ company.name }}</span></strong>
-                </div>
-            </div>
-            <p ng-if="vm.companies.length == 0"><strong>No companies found for the search phrase.</strong></p>
+    <div class="list-group" ng-if="!vm.loading">
+        <div ng-repeat="company in vm.companies track by $index" class="list-group-item dataset" ui-sref="companies.view({ companyId: company.ticker })">
+            <strong><span>{{ company.ticker }}</span> <span ng-if="company.name && company.name != ''">- {{ company.name }}</span></strong>
+            <span class="pull-right">
+                <span ng-if="company.haseod">Stock Price Information&nbsp;&nbsp;</span>
+                <span ng-if="company.hasstatements">Financial Statements Available</span>
+            </span>
         </div>
     </div>
+    <p ng-if="!vm.loading && vm.companies.length == 0"><strong>No companies found for the search phrase.</strong></p>
 </section>

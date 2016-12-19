@@ -33,7 +33,9 @@
             }
         };
 
-        vm.changeFinanceMenuItem('Trending in TheoryLab');
+        if (vm.authentication.user){
+            vm.changeFinanceMenuItem('Trending in TheoryLab');
+        }
 
         vm.changeTab = function(item){
             vm.activeTab = item;
@@ -55,8 +57,6 @@
                     });
             }
         }
-
-
 
         vm.searchCompany = function(company){
             if (company.query && company.query !== ''){
