@@ -18,7 +18,8 @@ angular.module('datasets')
                 saveCustom: saveCustom,
                 mergeColumns: mergeColumns,
                 insert: insert,
-                user: user
+                user: user,
+                json2csvinsert: json2csvinsert
             };
 
             function crud() {
@@ -126,6 +127,20 @@ angular.module('datasets')
                 var dfd = $q.defer();
 
                 $http.post('api/datasets/copy', dataset)
+                    .success(function (data, status, headers, config) {
+                        dfd.resolve(data);
+                    })
+                    .error(function (data, status, headers, config) {
+                        dfd.reject(data);
+                    });
+
+                return dfd.promise;
+            }
+
+            function json2csvinsert(dataset) {
+                var dfd = $q.defer();
+
+                $http.post('api/datasets/json2csvinsert', dataset)
                     .success(function (data, status, headers, config) {
                         dfd.resolve(data);
                     })

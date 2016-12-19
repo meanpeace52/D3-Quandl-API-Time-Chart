@@ -51,6 +51,10 @@ exports.invokeRolesPolicies = function () {
                 {
                     resources: '/api/datasets/purchasedataset/:id',
                     permissions: ['post']
+                },
+                {
+                    resources: '/api/datasets/json2csvinsert',
+                    permissions: ['post']
                 }
             ]
         },
@@ -92,31 +96,10 @@ exports.invokeRolesPolicies = function () {
                 {
                     resources: '/api/datasets/purchasedataset/:id',
                     permissions: ['post']
-                }
-            ]
-        },
-        {
-            roles: ['guest'],
-            allows: [
-                {
-                    resources: '/api/datasets',
-                    permissions: ['get']
                 },
                 {
-                    resources: '/api/datasets/:datasetId',
-                    permissions: ['get']
-                },
-                {
-                    resources: '/api/datasets/search',
-                    permissions: ['get']
-                },
-                {
-                    resources: '/api/datasets/user/:username',
-                    permissions: ['get']
-                },
-                {
-                    resources: '/api/datasets/:datasetId/withs3',
-                    permissions: ['get']
+                    resources: '/api/datasets/json2csvinsert',
+                    permissions: ['post']
                 }
             ]
         }

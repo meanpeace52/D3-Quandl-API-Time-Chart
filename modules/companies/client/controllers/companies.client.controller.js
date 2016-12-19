@@ -11,9 +11,10 @@
         .controller('CompaniesController', CompaniesController);
 
     CompaniesController.$inject = ['$scope', '$state', '$window', 'Authentication', '$stateParams', 'CompaniesService',
-        'toastr', '$log', '$sce'];
+        'toastr', '$log', '$sce', 'Datasets'];
 
-    function CompaniesController($scope, $state, $window, Authentication, $stateParams, CompaniesService, toastr, $log, $sce) {
+    function CompaniesController($scope, $state, $window, Authentication, $stateParams, CompaniesService, toastr, $log,
+                                 $sce, Datasets) {
         var vm = this;
 
         vm.authentication = Authentication;
@@ -25,6 +26,7 @@
         vm.loading = true;
         vm.activePeriodTab = '';
         vm.periodList = ['5D', '1M', '6M', 'YTD', '1Y', '2Y', '5Y', '10Y', 'ALL'];
+        vm.loadingEodData = false;
 
         vm.changePeriod = function (period) {
             var statement = _.find(vm.company.statements.statements, {date: period, displayname : vm.selectedstatement });
@@ -61,6 +63,8 @@
         vm.showEODData = function(period){
             var startDate = new Date(),
                 endDate = new Date();
+
+            vm.loadingEodData = true;
 
             vm.activePeriodTab = period;
             if (period !== 'ALL'){
@@ -110,6 +114,22 @@
                 });
                 vm.transformedRows.push(newRow);
             });
+            vm.loadingEodData = false;
+        };
+
+        vm.saveDataset = function(){
+            Datasets.json2csvinsert({
+                title : vm.company.eod.dataset.name + ' ' + vm.activePeriodTab + ' - ' + moment().format('MM/DD/YYYY, h:mm:ss a'),
+                rows : vm.transformedRows,
+                columns : vm.company.eod.dataset.column_names
+            })
+                .then(function(){
+                    toastr.success('The dataset has been copied to your page.');
+                })
+                .catch(function(err){
+                    $log.error(err);
+                    toastr.error('Error saving dataset.');
+                });
         };
 
         CompaniesService.findbycode($stateParams.companyId)

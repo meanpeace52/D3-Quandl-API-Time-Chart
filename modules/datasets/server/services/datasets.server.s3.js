@@ -8,6 +8,7 @@ var Promise = require('bluebird'),
     mkdirp = require('mkdirp'),
     config = require(path.resolve('./config/config')),
     _ = require('lodash'),
+    json2csv = require('json2csv'),
     client = s3.createClient({
         maxAsyncS3: 20,     // this is the default
         s3RetryCount: 3,    // this is the default

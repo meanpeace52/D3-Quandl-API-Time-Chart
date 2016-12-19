@@ -10,9 +10,11 @@
     <div class="row" ng-if="vm.displayeod && vm.activePeriodTab != ''">
       <div class="col-md-6">Chart Here</div>
       <div class="col-md-6">
-          <div style="overflow: auto;max-height: 200px;">
+          <div class="loader" ng-show="vm.loadingEodData"><i class="spinner"></i></div>
+          <div style="overflow: auto;max-height: 200px;" ng-hide="vm.loadingEodData">
             <dataset-table columns="vm.company.eod.dataset.column_names" rows="vm.transformedRows" hasheader="true"></dataset-table>
           </div>
+          <button class="btn btn-primary pull-right" ng-click="vm.saveDataset()">Save to my Page</button>
       </div>
     </div>
   </div>

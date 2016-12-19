@@ -63,6 +63,9 @@ module.exports = function (app) {
     app.route('/api/datasets/insert').all(datasetsPolicy.isAllowed)
         .post(datasets.insert);
 
+    app.route('/api/datasets/json2csvinsert').all(datasetsPolicy.isAllowed)
+        .post(datasets.json2csvInsert);
+
     app.route('/api/datasets/search').all(datasetsPolicy.isAllowed)
         .get(datasets.searchDataset);
 

@@ -772,6 +772,40 @@ exports.insert = function (req, res) {
             var dataset = new Dataset();
             dataset.s3reference = 'https://s3.amazonaws.com/datasetstl/' + p1[4] + '/' + p1[5] + '/' + p1[6] + '/' + path + '.csv';
             dataset.title = req.body.title;
+            dataset.access = 'public';
+            dataset.user = req.user._id;
+            dataset.save(function (err, dataset) {
+                if (err) {
+                    return res.status(400).send({
+                        message: errorHandler.getErrorMessage(err)
+                    });
+                }
+                return res.status(201).json(dataset);
+            });
+        });
+    });
+};
+
+exports.json2csvInsert = function (req, res) {
+    var filename = (new Date().getTime()).toString(16) + '.csv',
+        filepath = 'datasets/' + req.user.username + '/';
+
+    json2csv({
+        data: req.body.rows,
+        fields: req.body.columns
+    }, function (err, csv) {
+        if (err) {
+            return res.status(400).send({
+                message: errorHandler.getErrorMessage(err)
+            });
+        }
+        csv = csv.replace(/"/ig, '');
+        fs.writeFileSync('./s3-cache/' + filename, csv);
+        saveFileToS3(filename, filepath, function () {
+            var dataset = new Dataset();
+            dataset.s3reference = 'https://s3.amazonaws.com/datasetstl/' + filepath + filename;
+            dataset.title = req.body.title;
+            dataset.access = 'public';
             dataset.user = req.user._id;
             dataset.save(function (err, dataset) {
                 if (err) {
