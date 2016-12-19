@@ -6,7 +6,9 @@
         <div class="page-header">
             <span class="h1 text-capitalize" ng-if="UsersProfilePage.isCurrentUser">My Profile</span>
             <span class="h1" ng-if="!UsersProfilePage.isCurrentUser">{{UsersProfilePage.externaluser.username }}</span>
+            <p ng-if="!UsersProfilePage.isCurrentUser && (UsersProfilePage.externaluser.hideEmailInProfile == undefined || !UsersProfilePage.externaluser.hideEmailInProfile)">{{UsersProfilePage.externaluser.email }}</p>
         </div>
+        {{ UsersProfilePage.externaluser | json }}
         <ul class="nav nav-tabs" data-tabs="tabs">
             <li data-ng-repeat="item in UsersProfilePage.menuItems" data-ui-sref="{{item.state}}" data-ui-sref-active="active">
                 <a data-ng-bind="item.title" data-toggle="tab" href=""></a>

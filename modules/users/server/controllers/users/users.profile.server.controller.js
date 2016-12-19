@@ -65,6 +65,7 @@ exports.update = function (req, res) {
             user.firstName = req.body.firstName;
             user.lastName = req.body.lastName;
             user.email = req.body.email;
+            user.hideEmailInProfile = req.body.hideEmailInProfile;
 
 
             user.updated = Date.now();
@@ -340,7 +341,7 @@ exports.models = function (req, res) {
     model.find({
         user: req.readUser._id
     })
-    .populate('user', 'username')
+    .populate('user', 'username email hideEmailInProfile')
     .sort('-created')
     .lean()
     .exec(function (err, models) {

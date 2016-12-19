@@ -1,11 +1,9 @@
 <section class="row" ng-controller="EditProfileController">
   <div class="col-xs-offset-1 col-xs-10 col-md-offset-4 col-md-4">
-    <form name="userForm" ng-submit="updateUserProfile(userForm.$valid)" class="signin" novalidate autocomplete="off">
+    <form name="userForm" class="form-horizontal" ng-submit="updateUserProfile(userForm.$valid)" class="signin" novalidate autocomplete="off">
       <fieldset>
-        <div class="form-group row" show-errors>
-            <div class="col-md-5">
-              <label for="firstName">First Name</label>
-            </div>
+        <div class="form-group" show-errors>
+            <label for="firstName" class="control-label col-md-5">First Name</label>
             <div class="col-md-7">
               <input type="text" id="firstName" name="firstName" class="form-control" ng-model="user.firstName" placeholder="First Name" required>
               <div ng-messages="userForm.firstName.$error" role="alert">
@@ -13,10 +11,8 @@
               </div>
             </div>
         </div>
-        <div class="form-group row" show-errors>
-            <div class="col-md-5">
-                <label for="lastName">Last Name</label>
-            </div>
+        <div class="form-group">
+            <label for="lastName" class="control-label col-md-5">Last Name</label>
             <div class="col-md-7">
               <input type="text" id="lastName" name="lastName" class="form-control" ng-model="user.lastName" placeholder="Last Name" required>
               <div ng-messages="userForm.lastName.$error" role="alert">
@@ -24,10 +20,8 @@
               </div>
             </div>
         </div>
-        <div class="form-group row" show-errors>
-            <div class="col-md-5">
-                <label for="email">Email</label>
-            </div>
+        <div class="form-group" show-errors>
+            <label for="email" class="control-label col-md-5">Email</label>
             <div class="col-md-7">
               <input type="email" id="email" name="email" class="form-control" ng-model="user.email" placeholder="Email" lowercase required>
               <div ng-messages="userForm.email.$error" role="alert">
@@ -36,10 +30,8 @@
               </div>
             </div>
         </div>
-        <div class="form-group row" show-errors>
-            <div class="col-md-5">
-                <label for="username">Username</label>
-            </div>
+        <div class="form-group" show-errors>
+            <label for="username" class="control-label col-md-5">Username</label>
             <div class="col-md-7">
               <input type="text" id="username" name="username" class="form-control" ng-model="user.username" placeholder="Username" lowercase required>
               <div ng-messages="userForm.username.$error" role="alert">
@@ -47,6 +39,9 @@
               </div>
             </div>
         </div>
+          <div class="form-group">
+              <label class="control-label col-md-12"><input type="checkbox" ng-model="user.hideEmailInProfile"> Hide my email in my profile page?</label>
+          </div>
         <div class="text-center form-group">
           <button type="submit" class="btn btn-primary">Save Profile</button>
         </div>

@@ -123,8 +123,12 @@ var UserSchema = new Schema({
     },
     emailIsVerified: {
         type: Boolean,
-        default:false
+        default: false
     },
+    hideEmailInProfile: {
+        type: Boolean,
+        default: false
+    }
 });
 
 /**
@@ -143,6 +147,7 @@ UserSchema.methods.profile = function () {
       plan:this.plan,
       profileImageURL:this.profileImageURL,
       emailIsVerified:this.emailIsVerified,
+      hideEmailInProfile:this.hideEmailInProfile,
       provider:this.provider
     };
 };
