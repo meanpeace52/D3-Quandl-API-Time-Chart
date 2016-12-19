@@ -806,6 +806,7 @@ exports.json2csvInsert = function (req, res) {
             dataset.s3reference = 'https://s3.amazonaws.com/datasetstl/' + filepath + filename;
             dataset.title = req.body.title;
             dataset.access = 'public';
+            dataset.hasheader = true;
             dataset.user = req.user._id;
             dataset.save(function (err, dataset) {
                 if (err) {
