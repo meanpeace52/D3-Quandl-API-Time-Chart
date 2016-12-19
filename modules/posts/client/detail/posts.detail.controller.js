@@ -1,5 +1,7 @@
 'use strict';
 
+/* global moment */
+
 //posts Detail Controller
 angular.module('posts')
     .controller('postsDetailController', ['$stateParams', 'Authentication', 'posts', '$state', '$log', 'Datasets', '$modal', 'toastr', 'prompt', 'ModelsService', 'BillingService',
@@ -48,14 +50,17 @@ angular.module('posts')
             };
 
             vm.addToUser = function (dataset) {
-                Datasets.addToUserApiCall(dataset)
-                    .then(function (data) {
-                        toastr.success('Added dataset to your lab.');
-                    })
-                    .catch(function (error) {
-                        $log.error(error);
-                        toastr.error('An error occurred while adding dataset to your lab.');
-                    });
+                Datasets.showTitleModal(dataset.title + ' - ' + moment().format('MM/DD/YYYY, h:mm:ss a'), function(result) {
+                    dataset.title = result.title;
+                    Datasets.addToUserApiCall(dataset)
+                        .then(function (data) {
+                            toastr.success('Added dataset to your lab.');
+                        })
+                        .catch(function (error) {
+                            $log.error(error);
+                            toastr.error('An error occurred while adding dataset to your lab.');
+                        });
+                });
             };
 
             vm.showData = function (dataset) {
@@ -117,6 +122,24 @@ angular.module('posts')
                     }, function (err) {
                         vm.error = err.message;
                         toastr.error('Error deleting post.');
+                    });
+            };
+
+            vm.copyModel = function(model){
+                ModelsService.showTitleModal(model.title + ' - ' + moment().format('MM/DD/YYYY, h:mm:ss a'), function(result) {
+                    model.title = result.title;
+                    ModelsService.addToUserApiCall(model)
+                        .then(function (data) {
+                            toastr.success('Model copied to your page.');
+                        })
+                        .catch(function (err) {
+                            $log.error(err);
+                            toastr.error('An error occurred while copying the model.');
+                        });
+                })
+                    .catch(function (err) {
+                        $log.error(err);
+                        toastr.error('An error occurred while copying the dataset for the model.');
                     });
             };
 

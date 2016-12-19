@@ -6,9 +6,9 @@
     .module('models')
     .factory('ModelsService', ModelsService);
 
-  ModelsService.$inject = ['$resource', '$http', '$q'];
+  ModelsService.$inject = ['$resource', '$http', '$q', '$uibModal'];
 
-  function ModelsService($resource, $http, $q) {
+  function ModelsService($resource, $http, $q, $uibModal) {
     var models = {};
 
     models.crud = function(){
@@ -121,6 +121,23 @@
               });
 
           return dfd.promise;
+    };
+
+    models.showTitleModal = function(title, callback){
+          $uibModal.open({
+              controller: 'TitleModalController',
+              controllerAs: 'SetTitleModal',
+              templateUrl: 'modules/datasets/client/titlemodal/title.modal.client.view.html',
+              size: 'md',
+              backdrop: 'static',
+              resolve: {
+                  modelTitle: function(){
+                      return title;
+                  }
+              }
+          }).result.then(function (result) {
+                  callback(result);
+              });
     };
 
     return models;

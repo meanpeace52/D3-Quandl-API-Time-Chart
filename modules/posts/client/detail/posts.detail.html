@@ -59,7 +59,7 @@
                             <li ng-repeat="model in postsDetail.post.models" class="row">
                                 {{ model.title }}
                                 <button class="btn btn-primary pull-right" ng-if="model.access == 'for sale' && !model.purchased" ng-click="postsDetail.purchaseModel(model) && dataset.user != postsDetail.post.user._id">Buy for ${{ model.cost | number : 2 }}</button>
-                                <button ng-if="model.access != 'for sale' || (model.access == 'for sale' && model.purchased)" class="btn btn-primary pull-right" ng-click="">Save to your Page</button>
+                                <button ng-if="model.access != 'for sale' || (model.access == 'for sale' && model.purchased)" class="btn btn-primary pull-right" ng-click="postsDetail.copyModel(model)">Save to your Page</button>
                             </li>
                         </ul>
                     </div>

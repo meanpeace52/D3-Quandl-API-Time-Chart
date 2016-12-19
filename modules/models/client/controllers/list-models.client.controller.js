@@ -1,6 +1,8 @@
 (function () {
   'use strict';
 
+  /* global moment */
+
   angular
     .module('models')
     .controller('ModelsListController', ModelsListController);
@@ -98,10 +100,9 @@
     };
 
     vm.copyModel = function(model){
-      Datasets.addToUserApiCall(model.dataset)
-          .then(function(newdataset){
-            model.dataset = newdataset._id;
-            ModelsService.addToUserApiCall(model)
+      ModelsService.showTitleModal(model.title + ' - ' + moment().format('MM/DD/YYYY, h:mm:ss a'), function(result) {
+          model.title = result.title;
+          ModelsService.addToUserApiCall(model)
                 .then(function (data) {
                   toastr.success('Model copied to your page.');
                 })

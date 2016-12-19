@@ -31,7 +31,7 @@ exports.list = function (req, res) {
         });
 };
 
-function saveModelCopy(user, entry, cb) {
+function saveModelCopy(user, title, entry, cb) {
     if (entry.user && user._id === entry.user._id){
         throw new Error('You can not copy your own model.');
     }
@@ -43,7 +43,7 @@ function saveModelCopy(user, entry, cb) {
             model.users = [ entry.user ];
             model.created = new Date();
             model.origModel = entry._id;
-            model.title = model.title + ' - ' + moment().format('MM/DD/YYYY, h:mm:ss a');
+            model.title = title;
             model.s3reference = 'https://s3.amazonaws.com/' + path;
             model.save(cb);
         })
@@ -63,7 +63,7 @@ exports.copymodel = function (req, res) {
                 });
             }
 
-            saveModelCopy(req.user, model, function (err, result) {
+            saveModelCopy(req.user, req.body.title, model, function (err, result) {
                 if (err) {
                     return res.status(400).send({
                         message: errorHandler.getErrorMessage(err)

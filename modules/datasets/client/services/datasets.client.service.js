@@ -1,8 +1,8 @@
 'use strict';
 
 angular.module('datasets')
-    .factory('Datasets', ['$resource', '$http', '$q',
-        function ($resource, $http, $q) {
+    .factory('Datasets', ['$resource', '$http', '$q', '$uibModal',
+        function ($resource, $http, $q, $uibModal) {
 
             return {
                 crud: crud(),
@@ -19,7 +19,8 @@ angular.module('datasets')
                 mergeColumns: mergeColumns,
                 insert: insert,
                 user: user,
-                json2csvinsert: json2csvinsert
+                json2csvinsert: json2csvinsert,
+                showTitleModal: showTitleModal
             };
 
             function crud() {
@@ -193,6 +194,23 @@ angular.module('datasets')
                     method: 'POST'
                 }).then(function (res) {
                     return res.data;
+                });
+            }
+
+            function showTitleModal(title, callback){
+                $uibModal.open({
+                    controller: 'TitleModalController',
+                    controllerAs: 'SetTitleModal',
+                    templateUrl: 'modules/datasets/client/titlemodal/title.modal.client.view.html',
+                    size: 'md',
+                    backdrop: 'static',
+                    resolve: {
+                        datasetTitle: function(){
+                            return title;
+                        }
+                    }
+                }).result.then(function (result) {
+                        callback(result);
                 });
             }
         }

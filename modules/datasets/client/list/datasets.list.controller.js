@@ -1,5 +1,7 @@
 'use strict';
 
+/* global moment */
+
 //datasets List Controller
 angular.module('datasets').controller('DatasetsListController', ['$state', '$stateParams', '$sce', '$modal', 'Authentication',
                                         'Datasets','UsersFactory', 'toastr', '$log', 'prompt', 'BillingService', '$rootScope', 'ModelsService',
@@ -168,14 +170,17 @@ angular.module('datasets').controller('DatasetsListController', ['$state', '$sta
         };
 
         vm.addToUser = function (dataset) {
-            Datasets.addToUserApiCall(dataset)
-                .then(function (data) {
-                    toastr.success('Dataset copied to your page.');
-                })
-                .catch(function (err) {
-                    $log.error(err);
-                    toastr.error('An error occurred while copying the dataset.');
-                });
+            Datasets.showTitleModal(dataset.title + ' - ' + moment().format('MM/DD/YYYY, h:mm:ss a'), function(result) {
+                dataset.title = result.title;
+                Datasets.addToUserApiCall(dataset)
+                    .then(function (data) {
+                        toastr.success('Dataset copied to your page.');
+                    })
+                    .catch(function (err) {
+                        $log.error(err);
+                        toastr.error('An error occurred while copying the dataset.');
+                    });
+            });
         };
 
         vm.viewDataset = function(dataset){

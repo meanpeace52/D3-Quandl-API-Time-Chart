@@ -1,10 +1,12 @@
 'use strict';
 
+/* global moment */
+
 //Datasets Detail Controller
 angular.module('datasets')
     .controller('DatasetsDetailController',
-        ['$stateParams', 'Datasets', 'toastr', '$log', 'Authentication',
-            function ($stateParams, Datasets, toastr, $log, Authentication) {
+        ['$stateParams', 'Datasets', 'toastr', '$log', 'Authentication', '$uibModal',
+            function ($stateParams, Datasets, toastr, $log, Authentication, $uibModal) {
                 var vm = this;
                 vm.authentication = Authentication;
                 vm.user = vm.authentication.user;
@@ -41,14 +43,17 @@ angular.module('datasets')
                     });
 
                 vm.addtoUser = function () {
-                    Datasets.addToUserApiCall(vm.dataset)
-                        .then(function (dataset) {
-                            toastr.success('Dataset copied to your page.');
-                        })
-                        .catch(function (err) {
-                            $log.error(err);
-                            toastr.error('An error occurred while copying the dataset.');
-                        });
+                    Datasets.showTitleModal(vm.dataset.title + ' - ' + moment().format('MM/DD/YYYY, h:mm:ss a'), function(result){
+                        vm.dataset.title = result.title;
+                        Datasets.addToUserApiCall(vm.dataset)
+                            .then(function (dataset) {
+                                toastr.success('Dataset copied to your page.');
+                            })
+                            .catch(function (err) {
+                                $log.error(err);
+                                toastr.error('An error occurred while copying the dataset.');
+                            });
+                    });
                 };
 
                 vm.mergeDataset = function () {

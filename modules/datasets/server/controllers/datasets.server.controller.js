@@ -147,7 +147,7 @@ function saveDatasetCopy(user, entry, cb) {
             dataset.created = new Date();
             dataset.origDataset = entry._id;
             dataset.s3reference = 'https://s3.amazonaws.com/datasetstl/' + path;
-            dataset.title = dataset.title + ' - ' + moment().format('MM/DD/YYYY, h:mm:ss a');
+            dataset.title = dataset.title;
             console.log('inside save', dataset);
             dataset.save(cb);
         })
@@ -227,6 +227,7 @@ exports.copydataset = function (req, res) {
             });
         }
 
+        dataset.title = req.body.title;
         saveDatasetCopy(req.user, dataset, function (err, result) {
             if (err) {
                 return res.status(400).send({

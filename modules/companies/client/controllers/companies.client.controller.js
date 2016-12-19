@@ -118,18 +118,20 @@
         };
 
         vm.saveDataset = function(){
-            Datasets.json2csvinsert({
-                title : vm.company.eod.dataset.name + ' ' + vm.activePeriodTab + ' - ' + moment().format('MM/DD/YYYY, h:mm:ss a'),
-                rows : vm.transformedRows,
-                columns : vm.company.eod.dataset.column_names
-            })
-                .then(function(){
-                    toastr.success('The dataset has been copied to your page.');
+            Datasets.showTitleModal(vm.company.eod.dataset.name + ' ' + vm.activePeriodTab + ' - ' + moment().format('MM/DD/YYYY, h:mm:ss a'), function(result) {
+                Datasets.json2csvinsert({
+                    title: result.title,
+                    rows: vm.transformedRows,
+                    columns: vm.company.eod.dataset.column_names
                 })
-                .catch(function(err){
-                    $log.error(err);
-                    toastr.error('Error saving dataset.');
-                });
+                    .then(function () {
+                        toastr.success('The dataset has been copied to your page.');
+                    })
+                    .catch(function (err) {
+                        $log.error(err);
+                        toastr.error('Error saving dataset.');
+                    });
+            });
         };
 
         CompaniesService.findbycode($stateParams.companyId)
