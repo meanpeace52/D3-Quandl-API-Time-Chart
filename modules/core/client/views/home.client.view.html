@@ -167,10 +167,10 @@
         <!-- Header Carousel -->
         <header ng-controller="CarouselCtrl as carousel" class="header-carousel--home">
             <div style="height: 305px; position: relative;">
-                <div class="home-posts-search">
-                    <form name="postsform" ng-submit="home.searchPosts(post)">
-                        <div class="inner-addon left-addon">
-                            <i class="icon icon-magnifying-glass"></i>
+                <div class="home-posts-search row">
+                    <form name="postsform" class="col-md-offset-9 col-md-3" ng-submit="home.searchPosts(post)">
+                        <div class="input-group">
+                            <span class="input-group-addon"><i class="icon icon-magnifying-glass"></i></span>
                             <input type="text" class="form-control" ng-model="post.query" placeholder="Posts Search">
                         </div>
                     </form>
