@@ -1,0 +1,16 @@
+<div class="modal-header">
+    <h4 class="modal-title">
+        Get Help?
+    </h4>
+</div>
+<div class="modal-body">
+    <div class="container-fluid">
+        <iframe width="100%" height="315" src="{{ GetHelpModal.getIframeSrc() }}" frameborder="0"></iframe>
+        <p ng-if="GetHelpModal.content">{{ GetHelpModal.content }}</p>
+    </div>
+</div>
+<div class="modal-footer">
+    <div class="pull-right">
+        <button class="btn btn-default" ng-click="GetHelpModal.cancel()">Close</button>
+    </div>
+</div>
