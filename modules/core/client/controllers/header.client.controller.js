@@ -18,10 +18,26 @@ angular.module('core').controller('HeaderController', ['$rootScope', '$scope', '
 
         // Add the datasets dropdown item
         Menus.addMenuItem('topbar', {
+            title: 'Posts',
+            state: 'posts.list',
+            roles: ['user'],
+            position: 1
+        });
+
+        // Add the datasets dropdown item
+        Menus.addMenuItem('topbar', {
+            title: 'Companies',
+            state: 'companies.search',
+            roles: ['user'],
+            position: 2
+        });
+
+        // Add the datasets dropdown item
+        Menus.addMenuItem('topbar', {
             title: 'Datasets',
             state: 'datasets.list',
             roles: ['user'],
-            position: 1
+            position: 3
         });
 
 
@@ -29,14 +45,14 @@ angular.module('core').controller('HeaderController', ['$rootScope', '$scope', '
             title: 'Models',
             state: 'models.list',
             roles: ['user'],
-            position: 2
+            position: 4
         });
 
         Menus.addMenuItem('topbar', {
             title: 'Users',
             state: 'users.list',
             roles: ['user'],
-            position: 3
+            position: 5
         });
 
 

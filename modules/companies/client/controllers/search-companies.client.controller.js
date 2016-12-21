@@ -20,49 +20,50 @@
 
     vm.loading = true;
 
-    async.parallel({
-      companies: function(callback){
-        CompaniesService.search(vm.query)
-            .then(function(results){
-              callback(null, results);
-            })
-            .catch(function(err){
-              callback(err);
-            });
-      },
-      statements: function(callback){
-        CompaniesService.searchStatements(vm.query)
-            .then(function(results){
-              callback(null, results);
-            })
-            .catch(function(err){
-              callback(err);
-            });
-      }
-    }, function(err, results){
-      if (err){
-        $log.error(err);
-        toastr.error('Error searching companies');
-      }
-      else{
-        _.each(results.companies, function(company){
-          vm.companies.push({ ticker: company.code, name : company.name, haseod : true });
-        });
+    if (vm.query){
+      async.parallel({
+        companies: function(callback){
+          CompaniesService.search(vm.query)
+              .then(function(results){
+                callback(null, results);
+              })
+              .catch(function(err){
+                callback(err);
+              });
+        },
+        statements: function(callback){
+          CompaniesService.searchStatements(vm.query)
+              .then(function(results){
+                callback(null, results);
+              })
+              .catch(function(err){
+                callback(err);
+              });
+        }
+      }, function(err, results){
+        if (err){
+          $log.error(err);
+          toastr.error('Error searching companies');
+        }
+        else{
+          _.each(results.companies, function(company){
+            vm.companies.push({ ticker: company.code, name : company.name, haseod : true });
+          });
 
-        _.each(results.statements, function(company){
-          var foundcompany = _.find(vm.companies, { ticker : company.ticker });
-          if (!foundcompany){
-            vm.companies.push({ ticker: company.ticker, name: company.name, hasstatements: true });
-          }
-          else{
-            foundcompany.hasstatements = true;
-          }
-        });
+          _.each(results.statements, function(company){
+            var foundcompany = _.find(vm.companies, { ticker : company.ticker });
+            if (!foundcompany){
+              vm.companies.push({ ticker: company.ticker, name: company.name, hasstatements: true });
+            }
+            else{
+              foundcompany.hasstatements = true;
+            }
+          });
 
-        vm.loading = false;
-      }
-    });
-
+          vm.loading = false;
+        }
+      });
+    }
 
     vm.search = function(){
       if (vm.query && vm.query !== ''){
