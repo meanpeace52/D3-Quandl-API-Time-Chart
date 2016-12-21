@@ -1,9 +1,7 @@
-/* global moment */
+/* global moment, async */
 
 (function () {
     'use strict';
-
-
 
     // Companies controller
     angular
@@ -23,10 +21,12 @@
 
         vm.displayeod = false;
         vm.displaystatements = false;
+        vm.loadingcompany = true;
         vm.loading = true;
         vm.activePeriodTab = '';
         vm.periodList = ['5D', '1M', '6M', 'YTD', '1Y', '2Y', '5Y', '10Y', 'ALL'];
         vm.loadingEodData = false;
+        vm.loadingSteps = [];
 
         vm.changePeriod = function (period) {
             var statement = _.find(vm.company.statements.statements, {date: period, displayname : vm.selectedstatement });
@@ -134,42 +134,55 @@
             });
         };
 
-        CompaniesService.findbycode($stateParams.companyId)
-            .then(function (eod) {
-                vm.company.eod = eod;
-                vm.displayeod = true;
-                if (vm.company.eod.dataset) {
-                    vm.company.eod.dataset.name = vm.company.eod.dataset.name.replace(' Prices, Dividends, Splits and Trading Volume', '');
-                }
-            })
-            .catch(function (err) {
-                $log.error(err);
-            });
+        async.parallel([
+            function(callback){
+                CompaniesService.findbycode($stateParams.companyId)
+                    .then(function (eod) {
+                        vm.company.eod = eod;
+                        vm.displayeod = true;
+                        if (vm.company.eod.dataset) {
+                            vm.company.eod.dataset.name = vm.company.eod.dataset.name.replace(' Prices, Dividends, Splits and Trading Volume', '');
+                        }
+                        callback(null);
+                    })
+                    .catch(function (err) {
+                        $log.error(err);
+                        callback(null);
+                    });
+            },
+            function(callback){
+                CompaniesService.searchStatementsByTicker($stateParams.companyId)
+                    .then(function (result) {
+                        vm.company.statements = result;
+                        vm.displaystatements = true;
+                        vm.loading = false;
 
-        CompaniesService.searchStatementsByTicker($stateParams.companyId)
-            .then(function (result) {
-                vm.company.statements = result;
-                vm.displaystatements = true;
-                vm.loading = false;
+                        _.each(vm.company.statements.statements, function (statement) {
+                            statement.displayname = statement.type.replace(/([A-Z])/g, ' $1').trim();
+                        });
 
-                _.each(vm.company.statements.statements, function (statement) {
-                    statement.displayname = statement.type.replace(/([A-Z])/g, ' $1').trim();
-                });
+                        vm.statementslist = _.chain(vm.company.statements.statements)
+                            .map(function (statement) {
+                                return statement.displayname;
+                            })
+                            .uniq()
+                            .value();
 
-                vm.statementslist = _.chain(vm.company.statements.statements)
-                                    .map(function (statement) {
-                                        return statement.displayname;
-                                    })
-                                    .uniq()
-                                    .value();
+                        if (vm.statementslist.length){
+                            vm.loadStatement(vm.statementslist[0]);
+                        }
+                        callback(null);
+                    })
+                    .catch(function (err) {
+                        $log.error(err);
+                        callback(null);
+                    });
+            }
+        ], function(err, result){
+            vm.loadingcompany = false;
+        });
 
-                if (vm.statementslist.length){
-                    vm.loadStatement(vm.statementslist[0]);
-                }
 
-            })
-            .catch(function (err) {
-                $log.error(err);
-            });
+
     }
 }());

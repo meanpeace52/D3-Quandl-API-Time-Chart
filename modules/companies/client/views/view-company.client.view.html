@@ -1,5 +1,8 @@
 <section>
-  <div class="page-header">
+  <div class="loader text-center" ng-show="vm.loadingcompany">
+      <br/><br/><i class="spinner"></i>
+  </div>
+  <div class="page-header" ng-show="!vm.loadingcompany">
     <h1>{{ vm.company.eod && vm.company.eod.dataset.datasetcode ? vm.company.eod.dataset.datasetcode : vm.company.statements.ticker  }} {{ vm.company.eod && vm.company.eod.dataset.name ? vm.company.eod.dataset.name : vm.company.statements.name }}</h1>
     <p ng-if="vm.displayeod"><span class="eod-price">${{ vm.company.eod.dataset.data[0][4]}}</span> as of EOD {{ vm.company.eod.dataset.data[0][0] }}</p>
     <div ng-if="vm.displayeod">
@@ -18,7 +21,7 @@
       </div>
     </div>
   </div>
-  <div class="container">
+  <div class="container" ng-show="!vm.loadingcompany">
       <div ng-if="vm.displaystatements">
           <div class="row">
               <div class="col-md-4" ng-if="vm.statementslist.length > 0">
