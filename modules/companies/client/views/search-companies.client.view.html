@@ -13,8 +13,9 @@
         <div ng-repeat="company in vm.companies track by $index" class="list-group-item dataset" ui-sref="companies.view({ companyId: company.ticker })">
             <strong><span>{{ company.ticker }}</span> <span ng-if="company.name && company.name != ''">- {{ company.name }}</span></strong>
             <span class="pull-right">
-                <span ng-if="company.haseod">Stock Price Information&nbsp;&nbsp;</span>
-                <span ng-if="company.hasstatements">Financial Statements Available</span>
+                <span ng-if="company.haseod && company.hasstatements">Stock Price Information&nbsp;|&nbsp;Financial Statements Available</span>
+                <span ng-if="company.haseod && !company.hasstatements">Stock Price Information</span>
+                <span ng-if="!company.haseod &&company.hasstatements">Financial Statements Available</span>
             </span>
         </div>
     </div>

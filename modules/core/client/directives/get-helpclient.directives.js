@@ -5,7 +5,7 @@
         return {
             restrict: 'E',
             replace: true,
-            template: '<a href="" class="text-center"><span class="icon icon-lifebuoy"></span>&nbsp;&nbsp;<span style="font-size:12px;">Need Help?</span></a>',
+            template: '<a href="" class="text-center"><span class="icon icon-help-with-circle"></span>&nbsp;&nbsp;<span style="font-size:12px;">Need Help?</span></a>',
             scope: {
                 videoid: '@',
                 content: '@'
