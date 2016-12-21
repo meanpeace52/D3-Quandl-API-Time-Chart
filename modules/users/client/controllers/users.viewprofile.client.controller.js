@@ -75,4 +75,8 @@ angular.module('users').controller('UsersProfilePageController', ['$state', '$sc
                 }
             });
         };
+
+        vm.sendMessagePopup = function(){
+            UsersFactory.sendMessageModal(vm.externaluser.username);
+        };
 }]);

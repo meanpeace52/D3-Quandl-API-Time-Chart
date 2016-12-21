@@ -1,0 +1,35 @@
+<div class="modal-header">
+    <h4 class="modal-title">
+        Send message to {{ SendMessageModal.username  }}
+    </h4>
+</div>
+<div class="modal-body">
+    <div class="container-fluid">
+        <form name="form" class="form-horizontal" ng-submit="SendMessageModal.ok(form, SendMessageModal.message.subject, SendMessageModal.message.message)">
+            <div class="form-group" show-errors>
+                <label for="subject" class="col-md-2 control-label">Subject</label>
+                <div class="col-md-9">
+                    <input type="text" class="form-control" ng-model="SendMessageModal.message.subject" name="subject" id="subject" required>
+                    <div ng-messages="SendMessageModal.submitted && form.subject.$error" role="alert">
+                        <p class="help-block error-text" ng-message="required">Please enter a subject.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="form-group" show-errors>
+                <label for="message" class="col-md-2 control-label">Message</label>
+                <div class="col-md-9">
+                    <textarea class="form-control" ng-model="SendMessageModal.message.message" name="message" id="message" rows="5" required></textarea>
+                    <div ng-messages="SendMessageModal.submitted && form.message.$error" role="alert">
+                        <p class="help-block error-text" ng-message="required">Please enter a message.</p>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+<div class="modal-footer">
+    <div class="pull-right">
+        <button class="btn btn-default" ng-click="SendMessageModal.cancel()">Cancel</button>
+        <button class="btn btn-primary" ng-disabled="SendMessageModal.btnText === 'Sending...'" ng-click="SendMessageModal.ok(form, SendMessageModal.message.subject, SendMessageModal.message.message)">{{ SendMessageModal.btnText }}</button>
+    </div>
+</div>

@@ -356,3 +356,23 @@ exports.models = function (req, res) {
         }
     });
 };
+
+exports.sendUserProfileEmail = function (req, res) {
+    User.findOne({ username: req.body.username })
+        .lean()
+        .exec(function (err, user) {
+        if (err) return res.status(err.status).send(err);
+        if (!user) return res.status(404).send({ message : 'Failed to load User ' + req.body.username });
+
+        email.sendToProfileUser({
+            username : user.username,
+            email : user.email
+        }, {
+            username: req.user.username,
+            email: req.user.email
+        }, req.body.subject, req.body.message, function(){
+            res.json({ success : true });
+        });
+
+    });
+};

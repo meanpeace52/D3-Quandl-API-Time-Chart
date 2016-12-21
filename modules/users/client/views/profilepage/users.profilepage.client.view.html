@@ -7,6 +7,7 @@
             <span class="h1 text-capitalize" ng-if="UsersProfilePage.isCurrentUser">My Profile</span>
             <span class="h1" ng-if="!UsersProfilePage.isCurrentUser">{{UsersProfilePage.externaluser.username }}</span>
             <p ng-if="!UsersProfilePage.isCurrentUser && (UsersProfilePage.externaluser.hideEmailInProfile == undefined || !UsersProfilePage.externaluser.hideEmailInProfile)">{{UsersProfilePage.externaluser.email }}</p>
+            <button ng-if="!UsersProfilePage.isCurrentUser" ng-click="UsersProfilePage.sendMessagePopup()" class="btn btn-primary">Send Message</button>
         </div>
         <ul class="nav nav-tabs" data-tabs="tabs">
             <li data-ng-repeat="item in UsersProfilePage.menuItems" data-ui-sref="{{item.state}}" data-ui-sref-active="active">

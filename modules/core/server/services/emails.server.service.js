@@ -39,36 +39,56 @@ function send(to, subject, merge, template, next) {
  function sendToUser(user, subject, merge, template, next) {
     merge.name = user.displayName;
     send(user.email, subject, merge, template, next);
-  }
+ }
 
 
  /**
   * verify user email
   */
 
-  function verifyEmail(req, user, next){
-    crypto.randomBytes(20, function (err, buffer) {
-       var token = buffer.toString('hex');
-       user.verifyEmailToken = token;
-       user.save(function(err){
-         var httpTransport = 'http://';
-         if (config.secure && config.secure.ssl === true) {
-           httpTransport = 'https://';
-         }
-         send(user.email, 'Please verify your email', {
-             name: user.displayName,
-             url: httpTransport + req.headers.host + '/api/users/verify/' + user.verifyEmailToken
-           },
-           'modules/users/server/templates/verify-email',
-           function (err) {
-             if (!err) {
-               next();
-             } else {
-               next({message: 'Failure sending email'});
+  function verifyEmail(req, user, next) {
+     crypto.randomBytes(20, function (err, buffer) {
+         var token = buffer.toString('hex');
+         user.verifyEmailToken = token;
+         user.save(function (err) {
+             var httpTransport = 'http://';
+             if (config.secure && config.secure.ssl === true) {
+                 httpTransport = 'https://';
              }
+             send(user.email, 'Please verify your email', {
+                     name: user.displayName,
+                     url: httpTransport + req.headers.host + '/api/users/verify/' + user.verifyEmailToken
+                 },
+                 'modules/users/server/templates/verify-email',
+                 function (err) {
+                     if (!err) {
+                         next();
+                     } else {
+                         next({message: 'Failure sending email'});
+                     }
+                 });
          });
-       });
-   });
+     });
  }
 
- module.exports = { verifyEmail:verifyEmail, send:send, sendUser:sendToUser };
+ /**
+ * send email to profile user
+ */
+ function sendToProfileUser(user, sender, subject, message, next) {
+     var template = 'modules/users/server/templates/send-profile-email',
+         merge = {
+             username: user.username,
+             senderusername: sender.username,
+             senderemail: sender.email,
+             message: message,
+             appName: config.app.title
+         };
+     send(user.email, subject, merge, template, next);
+ }
+
+ module.exports = {
+     verifyEmail:verifyEmail,
+     send:send,
+     sendUser:sendToUser,
+     sendToProfileUser: sendToProfileUser
+ };

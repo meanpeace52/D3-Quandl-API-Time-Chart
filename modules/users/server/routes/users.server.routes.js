@@ -62,6 +62,7 @@ module.exports = function (app) {
   app.route('/api/users/:username/models/:model').get(users.models);
   app.route('/api/users/verify/:token').get(users.verifyEmail);
   app.route('/api/users/verify/').put(users.sendVerificationEmail);
+  app.route('/api/users/senduserprofileemail/').post(users.sendUserProfileEmail);
 
   // Finish by binding the user middleware
   app.param('username', users.userByUsername);
