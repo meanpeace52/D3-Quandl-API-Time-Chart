@@ -100,9 +100,10 @@ exports.searchDataset = function (req, res) {
                         callback(err);
                     }
                     else {
+                        /*
                         datasets = _.filter(datasets, function(dataset){
                             return dataset.access !== 'purchased' || (dataset.access === 'purchased' && dataset.user._id.toString() === req.user.id);
-                        });
+                        });*/
                         _.each(datasets, function(dataset){
                             if (dataset.access === 'for sale' && dataset.buyers && dataset.buyers.length > 0){
                                 var purchased = _.find(dataset.buyers, function(buyer){
@@ -694,7 +695,8 @@ exports.purchaseDataset = function (id, user, next) {
                         dataset.origDataset = doc._id;
                         dataset.s3reference = 'https://s3.amazonaws.com/datasetstl/' + path;
                         dataset.title = doc.title + ' - ' + moment().format('MM/DD/YYYY, h:mm:ss a');
-                        dataset.access = 'purchased';
+                        dataset.access = 'private';
+                        dataset.purchasedfromother = true;
                         dataset.save(function(err, doc){
                             if (err){
                               next(err);

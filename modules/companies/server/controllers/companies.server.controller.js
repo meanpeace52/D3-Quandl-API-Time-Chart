@@ -182,11 +182,26 @@ function renderStatement(statement){
     }
   });
   output += '</tr>';
+
+  console.log(statement);
+
   statement[Object.keys(statement)[0]].forEach(function(val, i){
-    output += '<tr>';
+    var total = false;
+    if (val.indexOf('=') > -1){
+      total = true;
+    }
+
     var printValue = '<td><pre>' + val + '</pre></td>';
+    if (total){
+      printValue = '<td><pre style="font-weight: bold;text-decoration: underline;">' + val + '</pre></td>';
+    }
     otherColumns.forEach(function(key, j){
-      printValue += '<td><pre>' + statement[key][i] + '</pre></td>';
+      if (total){
+        printValue += '<td><pre style="font-weight: bold;text-decoration: underline;">' + statement[key][i] + '</pre></td>';
+      }
+      else{
+        printValue += '<td><pre>' + statement[key][i] + '</pre></td>';
+      }
     });
     output += printValue + '</tr>';
   });

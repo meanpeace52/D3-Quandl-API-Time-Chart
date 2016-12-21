@@ -108,9 +108,9 @@ exports.searchModel = function (req, res) {
                         callback(err);
                     }
                     else {
-                        results = _.filter(results, function(model){
+                        /*results = _.filter(results, function(model){
                             return model.access !== 'purchased' || (model.access === 'purchased' && model.user._id.toString() === req.user.id);
-                        });
+                        });*/
                         _.each(results, function(model){
                             if (model.access === 'for sale' && model.buyers && model.buyers.length > 0){
                                 var purchased = _.find(model.buyers, function(buyer){
@@ -323,7 +323,8 @@ exports.purchaseModel = function (id, user, next) {
                     model.origModel = doc._id;
                     //model.s3reference = 'https://s3.amazonaws.com/rdatamodels/' + path;
                     model.title = doc.title + ' - ' + moment().format('MM/DD/YYYY, h:mm:ss a');
-                    model.access = 'purchased';
+                    model.access = 'private';
+                    model.purchasedfromother = true;
                     model.save(function(err, doc){
                         if (err){
                             console.log(err);

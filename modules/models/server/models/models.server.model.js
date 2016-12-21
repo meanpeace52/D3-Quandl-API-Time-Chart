@@ -47,12 +47,13 @@ var ModelSchema = new Schema({
     s3reference: String,
     access: {
         type: String,
-        enum: ['public', 'for sale', 'private', 'purchased'],
+        enum: ['public', 'for sale', 'private'],
         default: 'public'
     },
     cost: {
         type: Number
     },
+    purchasedfromother: { type: Boolean },
     buyers: [{
         type: Schema.ObjectId,
         ref: 'User'

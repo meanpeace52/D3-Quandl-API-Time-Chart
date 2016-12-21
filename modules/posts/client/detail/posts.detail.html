@@ -45,7 +45,7 @@
                                 {{ dataset.title }}
                                 <button class="btn btn-default pull-right" ng-if="dataset.access == 'public' || (dataset.access == 'for sale' && dataset.purchased) || postsDetail.authentication.user._id == postsDetail.post.user._id" ng-click="postsDetail.showData(dataset)">View</button>
                                 <button class="btn btn-primary pull-right" ng-if="dataset.access == 'for sale' && !dataset.purchased" ng-click="postsDetail.purchaseDataset(dataset) && dataset.user != postsDetail.post.user._id">Buy for ${{ dataset.cost | number : 2 }}</button>
-                                <button class="btn btn-primary pull-right" ng-if="dataset.access == 'public'" ng-show="dataset.user != postsDetail.post.user._id" ng-click="postsDetail.addToUser(dataset)">Save to Lab</button>
+                                <button class="btn btn-primary pull-right" ng-if="dataset.access == 'public' || (dataset.access == 'for sale' && dataset.purchased)" ng-show="dataset.user != postsDetail.post.user._id" ng-click="postsDetail.addToUser(dataset)">Save to your Page</button>
                             </li>
                         </ul>
                     </div>
