@@ -39,7 +39,7 @@
   },
   "dependencies": {
     "d.js": "^0.7.3",    
-    "superagent": "^0.21.0",
+    "superagent": "^5.2.2",
     "ws": "^0.4.32"
   },
   "main": "deployr.js",
